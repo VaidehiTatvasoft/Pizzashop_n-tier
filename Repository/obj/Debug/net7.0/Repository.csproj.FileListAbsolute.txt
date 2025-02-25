@@ -1,0 +1,15 @@
+D:\Project_pce54\Pizzashop_n-tier\Repository\bin\Debug\net7.0\Repository.deps.json
+D:\Project_pce54\Pizzashop_n-tier\Repository\bin\Debug\net7.0\Repository.dll
+D:\Project_pce54\Pizzashop_n-tier\Repository\bin\Debug\net7.0\Repository.pdb
+D:\Project_pce54\Pizzashop_n-tier\Repository\bin\Debug\net7.0\Entity.dll
+D:\Project_pce54\Pizzashop_n-tier\Repository\bin\Debug\net7.0\Entity.pdb
+D:\Project_pce54\Pizzashop_n-tier\Repository\obj\Debug\net7.0\Repository.csproj.AssemblyReference.cache
+D:\Project_pce54\Pizzashop_n-tier\Repository\obj\Debug\net7.0\Repository.GeneratedMSBuildEditorConfig.editorconfig
+D:\Project_pce54\Pizzashop_n-tier\Repository\obj\Debug\net7.0\Repository.AssemblyInfoInputs.cache
+D:\Project_pce54\Pizzashop_n-tier\Repository\obj\Debug\net7.0\Repository.AssemblyInfo.cs
+D:\Project_pce54\Pizzashop_n-tier\Repository\obj\Debug\net7.0\Repository.csproj.CoreCompileInputs.cache
+D:\Project_pce54\Pizzashop_n-tier\Repository\obj\Debug\net7.0\Repository.csproj.CopyComplete
+D:\Project_pce54\Pizzashop_n-tier\Repository\obj\Debug\net7.0\Repository.dll
+D:\Project_pce54\Pizzashop_n-tier\Repository\obj\Debug\net7.0\refint\Repository.dll
+D:\Project_pce54\Pizzashop_n-tier\Repository\obj\Debug\net7.0\Repository.pdb
+D:\Project_pce54\Pizzashop_n-tier\Repository\obj\Debug\net7.0\ref\Repository.dll

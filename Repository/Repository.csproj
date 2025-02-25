@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <ProjectReference Include="..\Web\Web.csproj" />
     <ProjectReference Include="..\Entity\Entity.csproj" />
   </ItemGroup>
   <PropertyGroup>
