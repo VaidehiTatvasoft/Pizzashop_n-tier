@@ -28,6 +28,7 @@ namespace Pizzashop.Service.Implementation
                     Id = account.Id,
                     Email = account.Email,
                     PasswordHash = account.PasswordHash,
+                    RoleId = account.RoleId
                 };
             }
             return null;
@@ -48,20 +49,22 @@ namespace Pizzashop.Service.Implementation
                     Id = account.Id,
                     Email = account.Email,
                     PasswordHash = account.PasswordHash,
+                    RoleId = account.RoleId 
                 };
+                
             }
             return null;
         }
 
-        public async Task ResetPassword(string email, string newPassword)
-        {
-            var user = await GetUserByEmail(email);
-            if (user != null)
-            {
-                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
-                await _context.SaveChangesAsync();
-            }
-        }
+       public async Task ResetPassword(string email, string newPassword)
+{
+    var user = await GetUserByEmail(email);
+    if (user != null)
+    {
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+        await _context.SaveChangesAsync();
+    }
+}
          public void Logout(HttpContext context)
         {
             context.Session.Clear();

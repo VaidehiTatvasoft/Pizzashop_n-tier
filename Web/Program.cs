@@ -7,23 +7,20 @@ using Pizzashop.Repository.Implementation;
 using Pizzashop.Repository.Interfaces;
 using Pizzashop.Service.Implementation;
 using Pizzashop.Service.Interfaces;
+using Web;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddProjectServices(builder.Configuration);
 
 // Configure Database Connection
 var conn = builder.Configuration.GetConnectionString("pizza_shopConnection");
 builder.Services.AddDbContext<PizzaShopContext>(options => options.UseNpgsql(conn));
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddSession(); 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddSession();
 
-// Register IMailService
-builder.Services.AddScoped<IMailService, MailService>();
-
-// Add Authentication services
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
