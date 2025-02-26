@@ -1,0 +1,17 @@
+D:\Project_pce54\Pizzashop_n-tier\Service\bin\Debug\net7.0\Service.deps.json
+D:\Project_pce54\Pizzashop_n-tier\Service\bin\Debug\net7.0\Service.dll
+D:\Project_pce54\Pizzashop_n-tier\Service\bin\Debug\net7.0\Service.pdb
+D:\Project_pce54\Pizzashop_n-tier\Service\bin\Debug\net7.0\Entity.dll
+D:\Project_pce54\Pizzashop_n-tier\Service\bin\Debug\net7.0\Repository.dll
+D:\Project_pce54\Pizzashop_n-tier\Service\bin\Debug\net7.0\Repository.pdb
+D:\Project_pce54\Pizzashop_n-tier\Service\bin\Debug\net7.0\Entity.pdb
+D:\Project_pce54\Pizzashop_n-tier\Service\obj\Debug\net7.0\Service.csproj.AssemblyReference.cache
+D:\Project_pce54\Pizzashop_n-tier\Service\obj\Debug\net7.0\Service.GeneratedMSBuildEditorConfig.editorconfig
+D:\Project_pce54\Pizzashop_n-tier\Service\obj\Debug\net7.0\Service.AssemblyInfoInputs.cache
+D:\Project_pce54\Pizzashop_n-tier\Service\obj\Debug\net7.0\Service.AssemblyInfo.cs
+D:\Project_pce54\Pizzashop_n-tier\Service\obj\Debug\net7.0\Service.csproj.CoreCompileInputs.cache
+D:\Project_pce54\Pizzashop_n-tier\Service\obj\Debug\net7.0\Service.csproj.CopyComplete
+D:\Project_pce54\Pizzashop_n-tier\Service\obj\Debug\net7.0\Service.dll
+D:\Project_pce54\Pizzashop_n-tier\Service\obj\Debug\net7.0\refint\Service.dll
+D:\Project_pce54\Pizzashop_n-tier\Service\obj\Debug\net7.0\Service.pdb
+D:\Project_pce54\Pizzashop_n-tier\Service\obj\Debug\net7.0\ref\Service.dll
