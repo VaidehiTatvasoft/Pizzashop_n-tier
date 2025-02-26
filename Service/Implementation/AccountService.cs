@@ -3,6 +3,7 @@ using Pizzashop.Repository.Interfaces;
 using Pizzashop.Service.Interfaces;
 using Entity.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace Pizzashop.Service.Implementation
 {
@@ -19,8 +20,8 @@ namespace Pizzashop.Service.Implementation
 
         public async Task<User?> AuthenticateUser(string email, string password)
         {
-            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Email == email && a.PasswordHash == password);
-            if (account != null)
+            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Email == email);
+            if (account != null && BCrypt.Net.BCrypt.Verify(password, account.PasswordHash))
             {
                 return new User
                 {
@@ -30,7 +31,7 @@ namespace Pizzashop.Service.Implementation
                 };
             }
             return null;
-        }
+}
 
         public async Task SendForgotPasswordEmail(string email, string resetLink)
         {
@@ -60,6 +61,12 @@ namespace Pizzashop.Service.Implementation
                 user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
                 await _context.SaveChangesAsync();
             }
+        }
+         public void Logout(HttpContext context)
+        {
+            context.Session.Clear();
+            context.Response.Cookies.Delete(".AspNetCore.Identity.Application");
+            context.Response.Cookies.Delete("AuthToken");
         }
     }
 }

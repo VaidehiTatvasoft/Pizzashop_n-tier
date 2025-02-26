@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Entity.Data;
+using Microsoft.AspNetCore.Http;
 
 namespace Pizzashop.Service.Interfaces
 {
@@ -9,5 +10,7 @@ namespace Pizzashop.Service.Interfaces
     Task SendForgotPasswordEmail(string email, string resetLink);
     Task<User?> GetUserByEmail(string email);
     Task ResetPassword(string email, string newPassword);
+    void Logout(HttpContext context); 
+
 }
 }

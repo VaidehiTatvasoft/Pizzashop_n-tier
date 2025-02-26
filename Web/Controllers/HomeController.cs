@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Models;
 
@@ -17,7 +18,17 @@ public class HomeController : Controller
     {
         return View();
     }
+    [Authorize]
+    public IActionResult Dashboard()
+    {
+        return View();
+    }
 
+    [Authorize(Roles = "1")]
+    public IActionResult AdminDashboard()
+    {
+        return View();
+    }
     public IActionResult Privacy()
     {
         return View();
