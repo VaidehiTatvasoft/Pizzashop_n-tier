@@ -1,32 +1,35 @@
 using Entity.ViewModel;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Pizzashop.Service.Interfaces;
-using System.Threading.Tasks;
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 namespace Pizzashop.Web.Controllers
 {
-    [Route("[controller]")]
-    public class AccountsController : ControllerBase
+    public class AccountsController : Controller
     {
-        private readonly ILoginService _loginService;
-        private readonly IConfiguration _configuration;
+        private readonly IAccountService _accountService;
 
-        public AccountsController(ILoginService loginService, IConfiguration configuration)
+       public AccountsController(IAccountService accountService)
         {
-            _loginService = loginService;
-            _configuration = configuration;
+            _accountService = accountService;
         }
 
-        [HttpPost("login")]
+        // GET: Login Page
+        public IActionResult Index()
+        {
+            var email = Request.Cookies["UserEmail"];
+            var password = Request.Cookies["UserPassword"];
+            return View();
+        }
+
+        [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            var user = await _loginService.AuthenticateUser(model.Email, model.PasswordHash);
+            var user = await _accountService.AuthenticateUser(model.Email, model.PasswordHash);
             if (user == null)
             {
                 return Unauthorized(new { Message = "Invalid email or password." });
@@ -34,26 +37,21 @@ namespace Pizzashop.Web.Controllers
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"] ?? "DefaultSubject"),
+                new Claim(JwtRegisteredClaimNames.Sub, "your_subject"),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim("UserId", user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email.ToString()),
                 new Claim(ClaimTypes.Role, user.RoleId.ToString())
             };
 
-            var keyString = _configuration["Jwt:Key"];
-            if (string.IsNullOrEmpty(keyString))
-            {
-                throw new InvalidOperationException("JWT key is not configured.");
-            }
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyString));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("your_secret_key"));
             var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                _configuration["Jwt:Issuer"],
-                _configuration["Jwt:Audience"],
+                "your_issuer",
+                "your_audience",
                 claims,
-                expires: DateTime.UtcNow.AddDays(1), 
+                expires: DateTime.UtcNow.AddDays(1),
                 signingCredentials: signIn
             );
 
@@ -77,6 +75,64 @@ namespace Pizzashop.Web.Controllers
             }
 
             return Ok(new { Token = tokenString });
+        }
+          [HttpGet]
+        public IActionResult ForgotPassword(string? email)
+        {
+            var model = new ForgotPassword { Email = email ?? "" };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPassword model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await _accountService.GetUserByEmail(model.Email);
+            if (user == null)
+            {
+                ModelState.AddModelError("", "Email not found.");
+                return View(model);
+            }
+
+            string resetLink = $"http://localhost:5274/Accounts/ResetPassword?email={user.Email}";
+
+            await _accountService.SendForgotPasswordEmail(user.Email, resetLink);
+
+            TempData["Message"] = "Password reset link has been sent to your email.";
+            return RedirectToAction("Index");
+        }
+
+        // GET: Reset Password Page
+        [HttpGet]
+        public IActionResult ResetPassword(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return RedirectToAction("Index");
+            }
+
+            var model = new ResetPasswordModel { Email = email };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            await _accountService.ResetPassword(model.Email, model.NewPassword);
+
+            TempData["Message"] = "Password has been reset. You can now login.";
+            return RedirectToAction("Index");
         }
     }
 }
