@@ -975,9 +975,9 @@ public partial class PizzaShopContext : DbContext
                 .HasColumnName("last_name");
             entity.Property(e => e.ModifiedAt).HasColumnName("modified_at");
             entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
-            entity.Property(e => e.Password)
+            entity.Property(e => e.PasswordHash)
                 .HasColumnType("character varying")
-                .HasColumnName("password");
+                .HasColumnName("passwordHash");
             entity.Property(e => e.Phone).HasColumnName("phone");
             entity.Property(e => e.ProfileImage)
                 .HasColumnType("character varying")

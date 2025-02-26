@@ -1,0 +1,94 @@
+@{
+    Layout = "";
+}
+@model Entity.ViewModel.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] Pizzashop</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/AdminDashboard.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="~/pizzashop.styles.css" asp-append-version="true" />
+</head>
+<body class="main">
+    <div class="container-fluid">
+        <main>
+             <div class="d-flex row">
+    <div class="left-section col-md-6 col-lg-6 justify-content-center align-items-center ">
+        <img src="~/assets/dominos_background.jpg" alt="PizzaShop Background">
+    </div>
+
+    <div class="right-section col-md-6 col-lg-6 justify-content-center align-items-center d-flex">
+        <div class="brand">
+            <img src="~/assets/pizzashop_logo.png" alt="PizzaShop Logo" class="pizza-logo">
+            <div class="heading p-1"><b>PIZZASHOP</b></div>
+        </div>
+        <form asp-controller="Accounts" asp-action="Login" method="post" class="auth-form col-md-8">
+            <h4>Welcome,</h4>
+            <div class="mb-3 d-flex">
+                <input asp-for="Email" type="email" class="form-control ps-4" id="email" placeholder="Email*" required>
+                <i class="fa fa-user input-icon"></i>
+            </div>
+            <span asp-validation-for="Email" class="text-danger"></span>
+            <div class="mb-3 d-flex">
+                <input asp-for="PasswordHash" type="password" class="form-control ps-4" id="password" placeholder="Password*" required>
+                <i class="fa fa-eye eye-icon" onclick="togglePassword()"></i>
+            </div>
+                <span asp-validation-for="PasswordHash" class="text-danger"></span>
+
+            <div class="options d-flex justify-content-between align-items-center">
+                <div class="d-flex">
+                    <input asp-for="RememberMe" type="checkbox" value="RememberMe" id="rememberMe"><label for="rememberMe">Remember me</label></div>
+                <div class="d-flex">
+                    <a id="forgotPasswordLink">Forgot Password?</a>
+                </div>
+            </div>
+            <input type="submit" value="Login" class="btn fill-btn">
+        </form>
+    </div>
+    </div>
+
+        </main>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+            $(function(){
+                $('#email').on("change", function () {
+                var email = $(this).val();
+                $('#forgotPasswordLink').attr('href', '@Url.Action("ForgotPassword", "Accounts")?email=' + encodeURIComponent(email));
+            });
+            })
+
+    function togglePassword() {
+        var passwordField = document.getElementById("password");
+        var eyeIcon = document.querySelector(".eye-icon");
+
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            eyeIcon.classList.remove("fa-eye");
+            eyeIcon.classList.add("fa-eye-slash");
+        } else {
+            passwordField.type = "password";
+            eyeIcon.classList.remove("fa-eye-slash");
+            eyeIcon.classList.add("fa-eye");
+        }
+    }
+</script>
+</body>
+</html>

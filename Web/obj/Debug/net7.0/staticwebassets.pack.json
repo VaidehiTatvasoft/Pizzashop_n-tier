@@ -5,6 +5,82 @@
       "PackagePath": "staticwebassets\\Web.bundle.scp.css"
     },
     {
+      "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\assets\\Default_pfp.svg.png",
+      "PackagePath": "staticwebassets\\assets\\Default_pfp.svg.png"
+    },
+    {
+      "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\assets\\customer.svg",
+      "PackagePath": "staticwebassets\\assets\\customer.svg"
+    },
+    {
+      "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\assets\\dining-menu.png",
+      "PackagePath": "staticwebassets\\assets\\dining-menu.png"
+    },
+    {
+      "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\assets\\dinner-table.svg",
+      "PackagePath": "staticwebassets\\assets\\dinner-table.svg"
+    },
+    {
+      "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\assets\\dominos_background.jpg",
+      "PackagePath": "staticwebassets\\assets\\dominos_background.jpg"
+    },
+    {
+      "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\assets\\knob_toggle.svg",
+      "PackagePath": "staticwebassets\\assets\\knob_toggle.svg"
+    },
+    {
+      "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\assets\\non-veg-icon.svg",
+      "PackagePath": "staticwebassets\\assets\\non-veg-icon.svg"
+    },
+    {
+      "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\assets\\order-value.svg",
+      "PackagePath": "staticwebassets\\assets\\order-value.svg"
+    },
+    {
+      "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\assets\\pizzashop_logo.png",
+      "PackagePath": "staticwebassets\\assets\\pizzashop_logo.png"
+    },
+    {
+      "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\assets\\profile_div_bg.jpg",
+      "PackagePath": "staticwebassets\\assets\\profile_div_bg.jpg"
+    },
+    {
+      "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\assets\\total-orders.svg",
+      "PackagePath": "staticwebassets\\assets\\total-orders.svg"
+    },
+    {
+      "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\assets\\total-sales.svg",
+      "PackagePath": "staticwebassets\\assets\\total-sales.svg"
+    },
+    {
+      "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\assets\\veg-icon.svg",
+      "PackagePath": "staticwebassets\\assets\\veg-icon.svg"
+    },
+    {
+      "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\assets\\vegan-icon.svg",
+      "PackagePath": "staticwebassets\\assets\\vegan-icon.svg"
+    },
+    {
+      "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\assets\\waiting-list.svg",
+      "PackagePath": "staticwebassets\\assets\\waiting-list.svg"
+    },
+    {
+      "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\assets\\waiting-time.svg",
+      "PackagePath": "staticwebassets\\assets\\waiting-time.svg"
+    },
+    {
+      "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\assets\\warning.png",
+      "PackagePath": "staticwebassets\\assets\\warning.png"
+    },
+    {
+      "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\css\\AdminDashboard.css",
+      "PackagePath": "staticwebassets\\css\\AdminDashboard.css"
+    },
+    {
+      "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\css\\login.css",
+      "PackagePath": "staticwebassets\\css\\login.css"
+    },
+    {
       "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },

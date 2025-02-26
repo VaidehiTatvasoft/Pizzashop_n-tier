@@ -43,7 +43,7 @@ public partial class User
 
     public bool? IsActive { get; set; }
 
-    public string? Password { get; set; }
+    public string? PasswordHash { get; set; }
 
     public virtual ICollection<Account> AccountCreatedByNavigations { get; set; } = new List<Account>();
 
