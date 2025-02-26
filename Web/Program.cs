@@ -20,6 +20,9 @@ builder.Services.AddSession();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 
+// Register IMailService
+builder.Services.AddScoped<IMailService, MailService>();
+
 // Add Authentication services
 builder.Services.AddAuthentication(options =>
 {
