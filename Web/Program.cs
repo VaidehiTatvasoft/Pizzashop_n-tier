@@ -18,7 +18,7 @@ builder.Services.AddDbContext<PizzaShopContext>(options => options.UseNpgsql(con
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession(); 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 
 // Add Authentication services
 builder.Services.AddAuthentication(options =>
