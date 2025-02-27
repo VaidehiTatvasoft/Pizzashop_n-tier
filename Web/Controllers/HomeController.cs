@@ -18,13 +18,13 @@ public class HomeController : Controller
     {
         return View();
     }
-    [Authorize]
+
     public IActionResult Dashboard()
     {
         return View();
     }
 
-    [Authorize(Roles = "1")]
+
     public IActionResult AdminDashboard()
     {
         return View();

@@ -6,6 +6,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Pizzashop.Web.Controllers
 {
@@ -13,18 +15,21 @@ namespace Pizzashop.Web.Controllers
     {
         private readonly IAccountService _accountService;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<AccountsController> _logger;
 
-
-        public AccountsController(IAccountService accountService, IConfiguration configuration)
+        public AccountsController(IAccountService accountService, IConfiguration configuration, ILogger<AccountsController> logger)
         {
             _accountService = accountService;
             _configuration = configuration;
+            _logger = logger;
         }
+
         // GET: Login Page
         public IActionResult Index()
         {
             var email = Request.Cookies["UserEmail"];
             var password = Request.Cookies["UserPassword"];
+           
             return View();
         }
 
@@ -43,7 +48,7 @@ namespace Pizzashop.Web.Controllers
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim("UserId", user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email.ToString()),
-                new Claim(ClaimTypes.Role, user.RoleId.ToString()) 
+                new Claim(ClaimTypes.Role, user.RoleId.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
@@ -73,17 +78,25 @@ namespace Pizzashop.Web.Controllers
                     HttpOnly = true,
                     Secure = true,
                 });
+              
             }
+              Response.Cookies.Append("AuthToken", tokenString, new CookieOptions
+                {
+                    Expires = DateTimeOffset.UtcNow.AddDays(7),
+                    HttpOnly = true,
+                    Secure = true,
+                });
 
             if (user.RoleId == 1)
             {
-                return RedirectToAction("AdminDashboard", "Home");
+                return RedirectToAction("AdminDashboard","Home");
             }
             else
             {
                 return RedirectToAction("Dashboard", "Home");
             }
         }
+
         [HttpGet]
         public IActionResult ForgotPassword(string? email)
         {
@@ -142,6 +155,7 @@ namespace Pizzashop.Web.Controllers
             TempData["Message"] = "Password has been reset. You can now login.";
             return RedirectToAction("Index");
         }
+
         [HttpPost]
         public IActionResult Logout()
         {
