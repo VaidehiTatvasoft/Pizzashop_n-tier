@@ -1,4 +1,3 @@
-
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -16,16 +15,17 @@ public class EmailService : IEmailService
 
     public async Task SendEmailAsync(string to, string subject, string body)
     {
-        var smtpClient = new SmtpClient(_configuration["Smtp:Host"])
+        var smtpClient = new SmtpClient(_configuration["EmailSettings:SmtpServer"])
         {
-            Port = int.Parse(_configuration["Smtp:Port"]),
-            Credentials = new NetworkCredential(_configuration["Smtp:Username"], _configuration["Smtp:Password"]),
-            EnableSsl = bool.Parse(_configuration["Smtp:Ssl"])
+            Port = int.Parse(_configuration["EmailSettings:Port"]),
+            Credentials = new NetworkCredential(_configuration["EmailSettings:SenderEmail"], _configuration["EmailSettings:SenderPassword"]),
+            EnableSsl = bool.Parse(_configuration["EmailSettings:EnableSSL"]),
+            DeliveryMethod = SmtpDeliveryMethod.Network
         };
 
         var mailMessage = new MailMessage
         {
-            From = new MailAddress(_configuration["Smtp:From"]),
+            From = new MailAddress(_configuration["EmailSettings:SenderEmail"]),
             Subject = subject,
             Body = body,
             IsBodyHtml = true,

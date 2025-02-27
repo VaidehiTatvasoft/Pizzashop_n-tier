@@ -15,28 +15,22 @@ namespace Pizzashop.Service.Implementation
     public class AccountService : IAccountService
     {
         private readonly IEmailService _emailService;
-        private readonly PizzaShopContext _context;
+        private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration;
 
-        public AccountService(IEmailService emailService, PizzaShopContext context, IConfiguration configuration)
+        public AccountService(IEmailService emailService, IUserRepository userRepository, IConfiguration configuration)
         {
             _emailService = emailService;
-            _context = context;
+            _userRepository = userRepository;
             _configuration = configuration;
         }
 
         public async Task<User?> AuthenticateUser(string email, string password)
         {
-            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Email == email);
-            if (account != null && BCrypt.Net.BCrypt.Verify(password, account.PasswordHash))
+            var user = await _userRepository.AuthenticateUser(email, password);
+            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
             {
-                return new User
-                {
-                    Id = account.Id,
-                    Email = account.Email,
-                    PasswordHash = account.PasswordHash,
-                    RoleId = account.RoleId
-                };
+                return user;
             }
             return null;
         }
@@ -48,29 +42,12 @@ namespace Pizzashop.Service.Implementation
 
         public async Task<User?> GetUserByEmail(string email)
         {
-            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Email == email);
-            if (account != null)
-            {
-                return new User
-                {
-                    Id = account.Id,
-                    Email = account.Email,
-                    PasswordHash = account.PasswordHash,
-                    RoleId = account.RoleId 
-                };
-                
-            }
-            return null;
+            return await _userRepository.GetUserByEmail(email);
         }
 
         public async Task ResetPassword(string email, string newPassword)
         {
-            var user = await GetUserByEmail(email);
-            if (user != null)
-            {
-                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
-                await _context.SaveChangesAsync();
-            }
+            await _userRepository.ResetPassword(email, newPassword);
         }
 
         public void Logout(HttpContext context)

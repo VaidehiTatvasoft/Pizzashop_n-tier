@@ -18,5 +18,20 @@ namespace Pizzashop.Repository.Implementation
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.PasswordHash == passwordHash);
         }
+
+        public async Task<User?> GetUserByEmail(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
+
+        public async Task ResetPassword(string email, string newPassword)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user != null)
+            {
+                user.PasswordHash = newPassword;
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }
