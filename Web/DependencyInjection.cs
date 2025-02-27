@@ -2,7 +2,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Pizzashop.Service.Interfaces;
 using Pizzashop.Service.Implementation;
-using Service.Interface;
 using Pizzashop.Repository.Implementation;
 using Pizzashop.Repository.Interfaces;
 

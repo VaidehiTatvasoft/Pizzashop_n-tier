@@ -11,30 +11,39 @@ namespace Pizzashop.Web.Controllers
     public class AccountsController : Controller
     {
         private readonly IAccountService _accountService;
+                private readonly ITokenService _tokenService;
+
         private readonly ILogger<AccountsController> _logger;
 
-        public AccountsController(IAccountService accountService, ILogger<AccountsController> logger)
+        public AccountsController(IAccountService accountService, ITokenService tokenService,ILogger<AccountsController> logger)
         {
             _accountService = accountService;
+            _tokenService = tokenService;
             _logger = logger;
         }
 
        public IActionResult Index()
+{
+    if (HttpContext.Request.Cookies.TryGetValue("AuthToken", out string token))
+    {
+        var userClaims = _tokenService.ValidateToken(token);
+
+        if (userClaims != null)
         {
-             if (HttpContext.Session.GetString("UserId") != null)
+            var roleId = userClaims.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (roleId == "1") 
             {
-                var userRole = HttpContext.Session.GetString("UserRole");
-                if (userRole == "1") 
-                {
-                    return RedirectToAction("AdminDashboard", "Home");
-                }
-                else
-                {
-                    return RedirectToAction("Dashboard", "Home");
-                }
+                return RedirectToAction("AdminDashboard", "Home");
             }
-            return View();
+            else
+            {
+                return RedirectToAction("Dashboard", "Home");
+            }
         }
+    }
+    return View();
+}
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromForm] LoginModel model)
         {
@@ -49,7 +58,7 @@ namespace Pizzashop.Web.Controllers
                 return Unauthorized(new { Message = "Invalid email or password." });
             }
 
-            var tokenString = _accountService.GenerateToken(user);
+            var tokenString = _tokenService.GenerateToken(user);
             _accountService.SetCookies(HttpContext, tokenString, model.RememberMe);
 
             if (user.RoleId == 1)

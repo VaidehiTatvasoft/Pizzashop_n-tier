@@ -1,8 +1,12 @@
 using System.Collections.Generic;
 using System.Security.Claims;
-namespace Service.Interface;
+using Entity.Data;
 
-public interface ITokenService
+namespace Pizzashop.Service.Interfaces
 {
-        string GenerateToken(IEnumerable<Claim> claims);
+    public interface ITokenService
+    {
+        string GenerateToken(User user);
+        ClaimsPrincipal ValidateToken(string token);
+    }
 }

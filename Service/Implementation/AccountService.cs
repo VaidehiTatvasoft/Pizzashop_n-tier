@@ -2,16 +2,7 @@ using System.Threading.Tasks;
 using Pizzashop.Repository.Interfaces;
 using Pizzashop.Service.Interfaces;
 using Entity.Data;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using Microsoft.Extensions.Configuration;
-using System.Text.Json;
-using System;
-
 
 namespace Pizzashop.Service.Implementation
 {
@@ -19,13 +10,13 @@ namespace Pizzashop.Service.Implementation
     {
         private readonly IEmailService _emailService;
         private readonly IUserRepository _userRepository;
-        private readonly IConfiguration _configuration;
+        private readonly ITokenService _tokenService;
 
-        public AccountService(IEmailService emailService, IUserRepository userRepository, IConfiguration configuration)
+        public AccountService(IEmailService emailService, IUserRepository userRepository, ITokenService tokenService)
         {
             _emailService = emailService;
             _userRepository = userRepository;
-            _configuration = configuration;
+            _tokenService = tokenService;
         }
 
         public async Task<User?> AuthenticateUser(string email, string password)
@@ -60,34 +51,6 @@ namespace Pizzashop.Service.Implementation
             context.Response.Cookies.Delete("AuthToken");
         }
 
-
-        public string GenerateToken(User user)
-        {
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, "your_subject"),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("UserId", user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email.ToString()),
-                new Claim(ClaimTypes.Role, user.RoleId.ToString())
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? throw new ArgumentNullException("Jwt:Key")));
-            var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                _configuration["Jwt:Issuer"],
-                _configuration["Jwt:Audience"],
-                claims,
-                expires: DateTime.UtcNow.AddDays(1),
-                signingCredentials: signIn
-            );
-
-            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return JsonSerializer.Serialize(new { token = tokenString });
-        }
-
         public void SetCookies(HttpContext context, string token, bool rememberMe)
         {
             var cookieOptions = new CookieOptions
@@ -108,28 +71,14 @@ namespace Pizzashop.Service.Implementation
                 return null;
             }
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? throw new ArgumentNullException("Jwt:Key"));
-            try
-            {
-                tokenHandler.ValidateToken(token, new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ClockSkew = TimeSpan.Zero
-                }, out SecurityToken validatedToken);
-
-                var jwtToken = (JwtSecurityToken)validatedToken;
-                var userId = int.Parse(jwtToken.Claims.First(x => x.Type == "UserId").Value);
-
-                return await _userRepository.GetUserById(userId);
-            }
-            catch
+            var principal = _tokenService.ValidateToken(token);
+            if (principal == null)
             {
                 return null;
             }
+
+            var userId = int.Parse(principal.FindFirst("UserId").Value);
+            return await _userRepository.GetUserById(userId);
         }
     }
 }
