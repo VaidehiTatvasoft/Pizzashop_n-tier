@@ -22,7 +22,8 @@ public class HomeController : Controller
     {
         return View();
     }
-[Route ("/[controller]/admindashboard")]
+    
+    [Route ("/[controller]/admindashboard")]
     public IActionResult AdminDashboard()
     {
         return View();

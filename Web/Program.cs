@@ -3,10 +3,6 @@ using Entity.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Pizzashop.Repository.Implementation;
-using Pizzashop.Repository.Interfaces;
-using Pizzashop.Service.Implementation;
-using Pizzashop.Service.Interfaces;
 using Web;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +17,11 @@ builder.Services.AddDbContext<PizzaShopContext>(options => options.UseNpgsql(con
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
 
+var jwtKey = builder.Configuration["Jwt:key"];
+if(string.IsNullOrEmpty(jwtKey)){
+    throw new ArgumentNullException("Jwt:Key","Jwt Key is missing in appsettings.json");
+}
+var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -33,6 +34,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                if (context.Request.Cookies.ContainsKey("JwtToken")) 
+                {
+                    context.Token = context.Request.Cookies["JwtToken"];
+                }
+                return Task.CompletedTask;
+            }
         };
     });
 
