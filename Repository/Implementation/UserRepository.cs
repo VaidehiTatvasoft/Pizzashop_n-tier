@@ -34,7 +34,8 @@ namespace Pizzashop.Repository.Implementation
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (user != null)
             {
-                user.PasswordHash = newPassword;
+                string salt = BCrypt.Net.BCrypt.GenerateSalt();
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword, salt);
                 await _context.SaveChangesAsync();
             }
         }

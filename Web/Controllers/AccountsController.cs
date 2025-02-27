@@ -44,34 +44,32 @@ namespace Pizzashop.Web.Controllers
     }
     return View();
 }
-        [HttpPost("Login")]
         public async Task<IActionResult> Login([FromForm] LoginModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
+{
+    if (!ModelState.IsValid)
+    {
+        return View(model);
+    }
 
-            var user = await _accountService.AuthenticateUser(model.Email, model.PasswordHash);
-            if (user == null)
-            {
-                return Unauthorized(new { Message = "Invalid email or password." });
-            }
+    var user = await _accountService.AuthenticateUser(model.Email, model.PasswordHash);
+    if (user == null)
+    {
+        return Unauthorized(new { Message = "Invalid email or password." });
+    }
 
-            var tokenString = _tokenService.GenerateToken(user);
-            _accountService.SetCookies(HttpContext, tokenString, model.RememberMe);
+    var tokenString = _tokenService.GenerateToken(user, TimeSpan.FromHours(24));
+    _accountService.SetCookies(HttpContext, tokenString, model.RememberMe);
 
-            if (user.RoleId == 1)
-            {
-                return RedirectToAction("AdminDashboard", "Home");
-            }
-            else
-            {
-                return RedirectToAction("Dashboard", "Home");
-            }
-        }
-
-        public IActionResult ForgotPassword(string? email)
+    if (user.RoleId == 1)
+    {
+        return RedirectToAction("AdminDashboard", "Home");
+    }
+    else
+    {
+        return RedirectToAction("Dashboard", "Home");
+    }
+}
+ public IActionResult ForgotPassword(string? email)
         {
             var model = new ForgotPassword { Email = email ?? "" };
             return View(model);
@@ -93,15 +91,22 @@ namespace Pizzashop.Web.Controllers
                 return View(model);
             }
 
-            string resetLink = $"http://localhost:5274/Accounts/ResetPassword?email={user.Email}";
-            await _accountService.SendForgotPasswordEmail(user.Email, resetLink);
+            string resetLink = $"http://localhost:5274/Accounts/ResetPassword?token={_tokenService.GenerateToken(user, TimeSpan.FromHours(1))}";
+            string body = $"<div><b>PIZZASHOP</b></div><div><p>Please click <a href='{resetLink}'><b>here</b></a> to reset your account Password.<br>If you encounter any issues or have any question, please do not hesitate to contact our support team.<br><em>Important Note:</em> For security reasons, the link will expire in 24 hours. If you did not request a password reset, please ignore this email or contact our support team immediately.</p></div>";
+
+            await _accountService.SendForgotPasswordEmail(user.Email, body);
 
             TempData["Message"] = "Password reset link has been sent to your email.";
             return RedirectToAction("Index");
         }
-
-        public IActionResult ResetPassword(string email)
+        public IActionResult ResetPassword(string token)
         {
+            var userClaims = _tokenService.ValidateToken(token);
+            if (userClaims == null)
+            {
+                return RedirectToAction("Index"); 
+            }
+            var email = userClaims.FindFirst(ClaimTypes.Email)?.Value;
             if (string.IsNullOrEmpty(email))
             {
                 return RedirectToAction("Index");
@@ -125,7 +130,6 @@ namespace Pizzashop.Web.Controllers
             TempData["Message"] = "Password has been reset. You can now login.";
             return RedirectToAction("Index");
         }
-
         [HttpPost]
         public IActionResult Logout()
         {

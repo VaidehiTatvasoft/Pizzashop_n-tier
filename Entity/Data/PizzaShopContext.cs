@@ -11,8 +11,6 @@ public partial class PizzaShopContext : DbContext
     {
     }
 
-    public virtual DbSet<Account> Accounts { get; set; }
-
     public virtual DbSet<City> Cities { get; set; }
 
     public virtual DbSet<Country> Countries { get; set; }
@@ -67,48 +65,6 @@ public partial class PizzaShopContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Account>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("accounts_pkey");
-
-            entity.ToTable("accounts");
-
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("now()")
-                .HasColumnName("created_at");
-            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
-            entity.Property(e => e.Email)
-                .HasMaxLength(100)
-                .HasColumnName("email");
-            entity.Property(e => e.IsDeleted)
-                .HasDefaultValueSql("false")
-                .HasColumnName("is_deleted");
-            entity.Property(e => e.IsFirstLogin)
-                .HasDefaultValueSql("true")
-                .HasColumnName("is_first_login");
-            entity.Property(e => e.ModifiedAt).HasColumnName("modified_at");
-            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
-            entity.Property(e => e.PasswordHash)
-                .HasColumnType("character varying")
-                .HasColumnName("passwordHash");
-            entity.Property(e => e.RoleId).HasColumnName("role_id");
-
-            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.AccountCreatedByNavigations)
-                .HasForeignKey(d => d.CreatedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("created_by");
-
-            entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.AccountModifiedByNavigations)
-                .HasForeignKey(d => d.ModifiedBy)
-                .HasConstraintName("modified_by");
-
-            entity.HasOne(d => d.Role).WithMany(p => p.Accounts)
-                .HasForeignKey(d => d.RoleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("role_id");
-        });
-
         modelBuilder.Entity<City>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("city_pkey");

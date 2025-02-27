@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Web.Models;
 
 namespace Web.Controllers;
-
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -16,15 +15,14 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
+        Console.WriteLine("Method hit");
         return View();
     }
-    [Authorize]
     public IActionResult Dashboard()
     {
         return View();
     }
-
-    [Authorize(Roles = "1")] 
+[Route ("/[controller]/admindashboard")]
     public IActionResult AdminDashboard()
     {
         return View();

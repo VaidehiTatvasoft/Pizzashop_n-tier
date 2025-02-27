@@ -45,10 +45,6 @@ public partial class User
 
     public string? PasswordHash { get; set; }
 
-    public virtual ICollection<Account> AccountCreatedByNavigations { get; set; } = new List<Account>();
-
-    public virtual ICollection<Account> AccountModifiedByNavigations { get; set; } = new List<Account>();
-
     public virtual City? City { get; set; }
 
     public virtual Country? Country { get; set; }

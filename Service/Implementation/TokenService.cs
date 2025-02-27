@@ -11,65 +11,65 @@ using Pizzashop.Service.Interfaces;
 namespace Pizzashop.Service.Implementation
 {
     public class TokenService : ITokenService
+{
+    private readonly IConfiguration _configuration;
+
+    public TokenService(IConfiguration configuration)
     {
-        private readonly IConfiguration _configuration;
+        _configuration = configuration;
+    }
 
-        public TokenService(IConfiguration configuration)
+    public string GenerateToken(User user, TimeSpan validFor)
+    {
+        var claims = new List<Claim>
         {
-            _configuration = configuration;
-        }
+            new Claim(JwtRegisteredClaimNames.Sub, "your_subject"),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim("UserId", user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.RoleId.ToString())
+        };
 
-        public string GenerateToken(User user)
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+        var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var token = new JwtSecurityToken(
+            _configuration["Jwt:Issuer"],
+            _configuration["Jwt:Audience"],
+            claims,
+            expires: DateTime.UtcNow.Add(validFor),
+            signingCredentials: signIn
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public ClaimsPrincipal ValidateToken(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
+
+        try
         {
-            var claims = new List<Claim>
+            var validationParameters = new TokenValidationParameters
             {
-                new Claim(JwtRegisteredClaimNames.Sub, "your_subject"),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("UserId", user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.RoleId.ToString())
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = true,
+                ValidIssuer = _configuration["Jwt:Issuer"],
+                ValidateAudience = true,
+                ValidAudience = _configuration["Jwt:Audience"],
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                _configuration["Jwt:Issuer"],
-                _configuration["Jwt:Audience"],
-                claims,
-                expires: DateTime.UtcNow.AddDays(1),
-                signingCredentials: signIn
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+            return principal;
         }
-
-        public ClaimsPrincipal ValidateToken(string token)
+        catch
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
-
-            try
-            {
-                var validationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = true,
-                    ValidIssuer = _configuration["Jwt:Issuer"],
-                    ValidateAudience = true,
-                    ValidAudience = _configuration["Jwt:Audience"],
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
-                };
-
-                var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
-                return principal;
-            }
-            catch
-            {
-                return null;
-            }
+            return null;
         }
     }
+}
 }

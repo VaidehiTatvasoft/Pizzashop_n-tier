@@ -267,3 +267,5 @@ D:\Project_pce54\Pizzashop_n-tier\Web\obj\Debug\net7.0\refint\Web.dll
 D:\Project_pce54\Pizzashop_n-tier\Web\obj\Debug\net7.0\Web.pdb
 D:\Project_pce54\Pizzashop_n-tier\Web\obj\Debug\net7.0\Web.genruntimeconfig.cache
 D:\Project_pce54\Pizzashop_n-tier\Web\obj\Debug\net7.0\ref\Web.dll
+D:\Project_pce54\Pizzashop_n-tier\Web\bin\Debug\net7.0\Microsoft.Bcl.Memory.dll
+D:\Project_pce54\Pizzashop_n-tier\Web\bin\Debug\net7.0\Microsoft.Bcl.TimeProvider.dll
