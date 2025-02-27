@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Pizzashop.Service.Interfaces;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Pizzashop.Web.Controllers
 {
@@ -17,14 +19,19 @@ namespace Pizzashop.Web.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+       public IActionResult Index()
         {
+            
             return View();
         }
-
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromForm] LoginModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
             var user = await _accountService.AuthenticateUser(model.Email, model.PasswordHash);
             if (user == null)
             {

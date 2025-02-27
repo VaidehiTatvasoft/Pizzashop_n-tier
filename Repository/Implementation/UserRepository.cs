@@ -14,9 +14,14 @@ namespace Pizzashop.Repository.Implementation
             _context = context;
         }
 
-        public async Task<User?> AuthenticateUser(string email, string passwordHash)
+        public async Task<User?> AuthenticateUser(string email, string password)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.PasswordHash == passwordHash);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+            {
+                return user;
+            }
+            return null;
         }
 
         public async Task<User?> GetUserByEmail(string email)

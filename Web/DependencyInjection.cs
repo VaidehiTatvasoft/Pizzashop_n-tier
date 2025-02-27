@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Pizzashop.Service.Interfaces;
 using Pizzashop.Service.Implementation;
 using Service.Interface;
+using Pizzashop.Repository.Implementation;
+using Pizzashop.Repository.Interfaces;
 
 namespace Web
 {
@@ -13,6 +15,7 @@ namespace Web
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<ITokenService, TokenService>();  
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddSingleton<IConfiguration>(configuration);
         }
     }

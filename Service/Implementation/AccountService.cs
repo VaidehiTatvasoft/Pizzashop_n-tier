@@ -9,6 +9,9 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.Extensions.Configuration;
+using System.Text.Json;
+using System;
+
 
 namespace Pizzashop.Service.Implementation
 {
@@ -57,6 +60,7 @@ namespace Pizzashop.Service.Implementation
             context.Response.Cookies.Delete("AuthToken");
         }
 
+
         public string GenerateToken(User user)
         {
             var claims = new[]
@@ -79,7 +83,9 @@ namespace Pizzashop.Service.Implementation
                 signingCredentials: signIn
             );
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return JsonSerializer.Serialize(new { token = tokenString });
         }
 
         public void SetCookies(HttpContext context, string token, bool rememberMe)
@@ -118,7 +124,6 @@ namespace Pizzashop.Service.Implementation
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 var userId = int.Parse(jwtToken.Claims.First(x => x.Type == "UserId").Value);
 
-                // Fetch the user from the database using the userId
                 return await _userRepository.GetUserById(userId);
             }
             catch
