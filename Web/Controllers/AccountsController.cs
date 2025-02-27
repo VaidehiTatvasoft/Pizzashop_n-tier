@@ -21,7 +21,18 @@ namespace Pizzashop.Web.Controllers
 
        public IActionResult Index()
         {
-            
+             if (HttpContext.Session.GetString("UserId") != null)
+            {
+                var userRole = HttpContext.Session.GetString("UserRole");
+                if (userRole == "1") 
+                {
+                    return RedirectToAction("AdminDashboard", "Home");
+                }
+                else
+                {
+                    return RedirectToAction("Dashboard", "Home");
+                }
+            }
             return View();
         }
         [HttpPost("Login")]
