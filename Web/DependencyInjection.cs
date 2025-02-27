@@ -10,7 +10,7 @@ namespace Web
         public static void AddProjectServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IAccountService, AccountService>();
-            services.AddScoped<IMailService, MailService>(); 
+            services.AddScoped<IEmailService, EmailService>(); 
             services.AddSingleton<IConfiguration>(configuration);
         }
     }
