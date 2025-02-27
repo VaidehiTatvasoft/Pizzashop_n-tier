@@ -7,6 +7,7 @@ namespace Pizzashop.Repository.Interfaces
     {
         Task<User?> AuthenticateUser(string email, string passwordHash);
         Task<User?> GetUserByEmail(string email);
+        Task<User?> GetUserById(int userId);
         Task ResetPassword(string email, string newPassword);
     }
 }

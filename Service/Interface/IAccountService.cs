@@ -10,5 +10,8 @@ namespace Pizzashop.Service.Interfaces
         Task<User?> GetUserByEmail(string email);
         Task ResetPassword(string email, string newPassword);
         void Logout(HttpContext context);
+        string GenerateToken(User user);
+        void SetCookies(HttpContext context, User user, string token, bool rememberMe);
+        Task SendForgotPasswordEmail(string email, string resetLink);
     }
 }

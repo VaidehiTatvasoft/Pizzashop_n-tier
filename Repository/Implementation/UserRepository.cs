@@ -33,5 +33,10 @@ namespace Pizzashop.Repository.Implementation
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<User?> GetUserById(int userId)
+        {
+            return await _context.Users.FindAsync(userId);
+        }
     }
 }

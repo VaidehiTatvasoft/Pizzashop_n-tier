@@ -68,7 +68,7 @@ namespace Pizzashop.Service.Implementation
                 new Claim(ClaimTypes.Role, user.RoleId.ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? throw new ArgumentNullException("Jwt:Key")));
             var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
@@ -82,29 +82,49 @@ namespace Pizzashop.Service.Implementation
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public void SetCookies(HttpContext context, User user, string token, bool rememberMe)
+        public void SetCookies(HttpContext context, string token, bool rememberMe)
         {
-            if (rememberMe)
+            var cookieOptions = new CookieOptions
             {
-                context.Response.Cookies.Append("UserEmail", user.Email, new CookieOptions
-                {
-                    Expires = DateTimeOffset.UtcNow.AddDays(7),
-                    HttpOnly = true,
-                    Secure = true,
-                });
-                context.Response.Cookies.Append("UserPassword", user.PasswordHash, new CookieOptions
-                {
-                    Expires = DateTimeOffset.UtcNow.AddDays(7),
-                    HttpOnly = true,
-                    Secure = true,
-                });
-            }
-            context.Response.Cookies.Append("AuthToken", token, new CookieOptions
-            {
-                Expires = DateTimeOffset.UtcNow.AddDays(7),
                 HttpOnly = true,
                 Secure = true,
-            });
+                Expires = rememberMe ? DateTimeOffset.UtcNow.AddDays(30) : DateTimeOffset.UtcNow.AddHours(1)
+            };
+
+            context.Response.Cookies.Append("AuthToken", token, cookieOptions);
+        }
+
+        public async Task<User?> GetUserFromToken(HttpContext context)
+        {
+            var token = context.Request.Cookies["AuthToken"];
+            if (token == null)
+            {
+                return null;
+            }
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? throw new ArgumentNullException("Jwt:Key"));
+            try
+            {
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+
+                var jwtToken = (JwtSecurityToken)validatedToken;
+                var userId = int.Parse(jwtToken.Claims.First(x => x.Type == "UserId").Value);
+
+                // Fetch the user from the database using the userId
+                return await _userRepository.GetUserById(userId);
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

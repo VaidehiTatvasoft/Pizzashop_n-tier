@@ -32,7 +32,7 @@ namespace Pizzashop.Web.Controllers
             }
 
             var tokenString = _accountService.GenerateToken(user);
-            _accountService.SetCookies(HttpContext, user, tokenString, model.RememberMe);
+            _accountService.SetCookies(HttpContext, tokenString, model.RememberMe);
 
             if (user.RoleId == 1)
             {
