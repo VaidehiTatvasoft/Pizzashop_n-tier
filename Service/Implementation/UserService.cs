@@ -13,7 +13,6 @@ namespace Pizzashop.Service.Implementation
         public UserService(IUserRepository userRepository)
         {
             _userRepository = userRepository;
-           
         }
 
         public async Task<bool> AddUserAsync(UserViewModel model, ClaimsPrincipal userClaims)
@@ -25,7 +24,6 @@ namespace Pizzashop.Service.Implementation
             }
 
             var userId = int.Parse(userIdClaim.Value);
-
             var newUser = new User
             {
                 FirstName = model.FirstName,
@@ -60,18 +58,7 @@ namespace Pizzashop.Service.Implementation
                 return false;
             }
 
-            user.FirstName = model.FirstName;
-            user.LastName = model.LastName;
-            user.Username = model.Username;
-            user.Phone = model.Phone;
-            user.CountryId = model.CountryId;
-            user.StateId = model.StateId;
-            user.CityId = model.CityId;
-            user.Address = model.Address;
-            user.Zipcode = model.Zipcode;
-            user.RoleId = model.RoleId;
-            user.IsDeleted = model.Status == "Inactive";
-
+            UpdateUserFields(user, model);
             return await _userRepository.UpdateUserAsync(user);
         }
 
@@ -80,7 +67,7 @@ namespace Pizzashop.Service.Implementation
             return await _userRepository.DeleteUserAsync(id);
         }
 
-        public async Task<UserList> GetUserListAsync(string search, int page, int pageSize, string sortColumn, string sortOrder)
+        public async Task<UserListInfo> GetUserListAsync(string search, int page, int pageSize, string sortColumn, string sortOrder)
         {
             return await _userRepository.GetUserListAsync(search, page, pageSize, sortColumn, sortOrder);
         }
@@ -112,16 +99,7 @@ namespace Pizzashop.Service.Implementation
                 return false;
             }
 
-            user.FirstName = model.FirstName;
-            user.LastName = model.LastName;
-            user.Username = model.Username;
-            user.Phone = model.Phone;
-            user.Zipcode = model.Zipcode;
-            user.Address = model.Address;
-            user.CountryId = model.CountryId;
-            user.StateId = model.StateId;
-            user.CityId = model.CityId;
-
+            UpdateUserFields(user, model);
             return await _userRepository.UpdateUserAsync(user);
         }
 
@@ -149,5 +127,19 @@ namespace Pizzashop.Service.Implementation
             return await _userRepository.UpdateUserAsync(user);
         }
 
+        private void UpdateUserFields(User user, UserViewModel model)
+        {
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Username = model.Username;
+            user.Phone = model.Phone;
+            user.CountryId = model.CountryId;
+            user.StateId = model.StateId;
+            user.CityId = model.CityId;
+            user.Address = model.Address;
+            user.Zipcode = model.Zipcode;
+            user.RoleId = model.RoleId;
+            user.IsDeleted = model.Status == "Inactive";
+        }
     }
 }

@@ -2,28 +2,29 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using pizzashop.Services.Interfaces;
-using pizzashop.Models;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Entity.ViewModel;
+using Entity.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace pizzashop.Controllers
 {
-    [Authorize]  
     public class UserController : Controller
     {
+        private readonly PizzaShopContext _context;
         private readonly IUserService _userService;
-        private readonly IRoleService _roleService;
 
-        public UserController(IUserService userService, IRoleService roleService)
+        public UserController(PizzaShopContext context,IUserService userService)
         {
+            _context = context;
             _userService = userService;
-            _roleService = roleService;
         }
 
         public IActionResult AddUser()
         {
-            ViewBag.Countries = new SelectList(_userService.GetCountries(), "Id", "Name");
-            ViewBag.Roles = new SelectList(_roleService.GetRoles(), "Id", "Name");
+            ViewBag.Countries = new SelectList(_context.Countries, "Id", "Name");
+            ViewBag.Roles = new SelectList(_context.Roles, "Id", "Name");
             return View();
         }
 
@@ -50,6 +51,7 @@ namespace pizzashop.Controllers
             {
                 return NotFound();
             }
+            ViewBag.Roles = new SelectList(_context.Roles, "Id", "Name"); 
             await LoadDropdowns(user);
             return View(user);
         }
@@ -119,28 +121,36 @@ namespace pizzashop.Controllers
             return View(model);
         }
 
-        private async Task LoadDropdowns(UserViewModel model)
+       private async Task LoadDropdowns(UserViewModel model)
         {
-            ViewBag.Countries = new SelectList(await _userService.GetCountriesAsync(), "Id", "Name", model.CountryId);
-            ViewBag.States = new SelectList(await _userService.GetStatesByCountryIdAsync(model.CountryId), "Id", "Name", model.StateId);
-            ViewBag.Cities = new SelectList(await _userService.GetCitiesByStateIdAsync(model.StateId), "Id", "Name", model.CityId);
+            ViewBag.Countries = new SelectList(await _context.Countries.ToListAsync(), "Id", "Name", model.CountryId);
+            ViewBag.States = new SelectList(await _context.States.Where(s => s.CountryId == model.CountryId).ToListAsync(), "Id", "Name", model.StateId);
+            ViewBag.Cities = new SelectList(await _context.Cities.Where(c => c.StateId == model.StateId).ToListAsync(), "Id", "Name", model.CityId);
         }
 
         [HttpGet]
-        public JsonResult GetStates(int countryId)
+        public  JsonResult GetStates(int countryId)
         {
-            var states = _userService.GetStatesByCountryId(countryId);
+            var states =  _context.States
+                .Where(s => s.CountryId == countryId)
+                .Select(s => new{
+                    id = s.Id,name = s.Name }) .ToList();
             return Json(states);
         }
 
+        // Get Cities by StateId
         [HttpGet]
         public JsonResult GetCities(int stateId)
         {
-            var cities = _userService.GetCitiesByStateId(stateId);
+            var cities =  _context.Cities
+                .Where(c => c.StateId == stateId)
+                 .Select(c => new{
+                    id = c.Id,name = c.Name }) .ToList();
             return Json(cities);
         }
 
-        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+
+        public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
         {
             if (ModelState.IsValid)
             {

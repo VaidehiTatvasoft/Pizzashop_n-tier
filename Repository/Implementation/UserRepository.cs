@@ -45,6 +45,7 @@ namespace Pizzashop.Repository.Implementation
         {
             return await _context.Users.FindAsync(userId);
         }
+
         public async Task<bool> AddUserAsync(User user)
         {
             _context.Users.Add(user);
@@ -99,22 +100,36 @@ namespace Pizzashop.Repository.Implementation
             return await _context.SaveChangesAsync() > 0;
         }
 
-         public async Task<UserListInfo> GetUserListAsync(string search, int page, int pageSize, string sortColumn, string sortOrder)
-    {
-        var usersQuery = _context.Users.AsQueryable();
-
-        var totalUsers = await usersQuery.CountAsync();
-        var users = await usersQuery.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-        var totalPages = (int)Math.Ceiling(totalUsers / (double)pageSize);
-
-        return new UserListInfo
+        public async Task<UserListInfo> GetUserListAsync(string search, int page, int pageSize, string sortColumn, string sortOrder)
         {
-            Users = users,
-            TotalUsers = totalUsers,
-            CurrentPage = page,
-            TotalPages = totalPages
-        };
-    }
+            var usersQuery = _context.Users.AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                usersQuery = usersQuery.Where(u => u.FirstName.Contains(search) || u.LastName.Contains(search) || u.Email.Contains(search));
+            }
+
+            if (sortOrder.Equals("asc"))
+            {
+                usersQuery = usersQuery.OrderBy(u => EF.Property<object>(u, sortColumn));
+            }
+            else
+            {
+                usersQuery = usersQuery.OrderByDescending(u => EF.Property<object>(u, sortColumn));
+            }
+
+            var totalUsers = await usersQuery.CountAsync();
+            var users = await usersQuery.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            var totalPages = (int)Math.Ceiling(totalUsers / (double)pageSize);
+
+            return new UserListInfo
+            {
+                Users = users,
+                TotalUsers = totalUsers,
+                CurrentPage = page,
+                TotalPages = totalPages
+            };
+        }
 
         public async Task<UserViewModel> GetUserProfileByEmailAsync(string email)
         {
@@ -139,6 +154,5 @@ namespace Pizzashop.Repository.Implementation
                 })
                 .FirstOrDefaultAsync();
         }
-        
     }
 }
