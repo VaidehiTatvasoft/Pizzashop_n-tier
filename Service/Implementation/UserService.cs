@@ -24,79 +24,116 @@ namespace Pizzashop.Service.Implementation
             }
 
             var userId = int.Parse(userIdClaim.Value);
-            return await _userRepository.AddUserAsync(model, userId);
+            var newUser = new User
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Username = model.Username,
+                Phone = model.Phone,
+                CountryId = model.CountryId,
+                StateId = model.StateId,
+                CityId = model.CityId,
+                Address = model.Address,
+                Zipcode = model.Zipcode,
+                RoleId = model.RoleId,
+                ProfileImage = model.ProfileImage,
+                Email = model.Email,
+                PasswordHash = model.passwordHash,
+                CreatedBy = userId
+            };
+
+            return await _userRepository.AddUserAsync(newUser);
         }
 
         public async Task<UserViewModel> GetUserViewModelByIdAsync(int id)
         {
-            return await _userRepository.GetUserViewModelByIdAsync(id);
+            var user = await _userRepository.GetUserById(id);
+            if (user == null)
+            {
+                return null;
+            }
+
+            return new UserViewModel
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Username = user.Username,
+                Phone = user.Phone,
+                CountryId = user.CountryId,
+                StateId = user.StateId,
+                CityId = user.CityId,
+                Address = user.Address,
+                Zipcode = user.Zipcode,
+                RoleId = user.RoleId,
+                Status = user.IsDeleted.HasValue && user.IsDeleted.Value ? "Inactive" : "Active",
+                Email = user.Email,
+                ProfileImage = user.ProfileImage
+            };
         }
 
         public async Task<bool> EditUserAsync(UserViewModel model)
-{
-    var user = await _userRepository.GetUserById(model.Id);
-    if (user == null)
-    {
-        return false;
-    }
+        {
+            var user = await _userRepository.GetUserById(model.Id);
+            if (user == null)
+            {
+                return false;
+            }
 
-    UpdateUserFields(user, model);
-    return await _userRepository.UpdateUserAsync(user);
-}
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Username = model.Username;
+            user.Phone = model.Phone;
+            user.CountryId = model.CountryId;
+            user.StateId = model.StateId;
+            user.CityId = model.CityId;
+            user.Address = model.Address;
+            user.Zipcode = model.Zipcode;
+            user.RoleId = model.RoleId;
+            user.IsDeleted = model.Status == "Inactive";
+            user.ProfileImage = model.ProfileImage;
 
-private void UpdateUserFields(User user, UserViewModel model)
-{
-    user.FirstName = model.FirstName;
-    user.LastName = model.LastName;
-    user.Username = model.Username;
-    user.Phone = model.Phone;
-    user.CountryId = model.CountryId;
-    user.StateId = model.StateId;
-    user.CityId = model.CityId;
-    user.Address = model.Address;
-    user.Zipcode = model.Zipcode;
-    user.RoleId = model.RoleId;
-    user.IsDeleted = model.Status == "Inactive";
-}
+            return await _userRepository.UpdateUserAsync(user);
+        }
 
         public async Task<bool> UpdateProfileAsync(UserViewModel model, ClaimsPrincipal userClaims)
-{
-    var userEmailClaim = userClaims.FindFirst(ClaimTypes.Email);
-    if (userEmailClaim == null)
-    {
-        return false;
-    }
+        {
+            var userEmailClaim = userClaims.FindFirst(ClaimTypes.Email);
+            if (userEmailClaim == null)
+            {
+                return false;
+            }
 
-    string userEmail = userEmailClaim.Value;
-    var user = await _userRepository.GetUserByEmail(userEmail);
-    if (user == null)
-    {
-        return false;
-    }
+            string userEmail = userEmailClaim.Value;
+            var user = await _userRepository.GetUserByEmail(userEmail);
+            if (user == null)
+            {
+                return false;
+            }
 
-    user.FirstName = model.FirstName;
-    user.LastName = model.LastName;
-    user.Username = model.Username;
-    user.Phone = model.Phone;
-    user.CountryId = model.CountryId;
-    user.StateId = model.StateId;
-    user.CityId = model.CityId;
-    user.Address = model.Address;
-    user.Zipcode = model.Zipcode;
-    user.ProfileImage = model.ProfileImage;
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Username = model.Username;
+            user.Phone = model.Phone;
+            user.CountryId = model.CountryId;
+            user.StateId = model.StateId;
+            user.CityId = model.CityId;
+            user.Address = model.Address;
+            user.Zipcode = model.Zipcode;
+            user.ProfileImage = model.ProfileImage;
 
-    return await _userRepository.UpdateUserAsync(user);
-}
+            return await _userRepository.UpdateUserAsync(user);
+        }
 
         public async Task<bool> DeleteUserAsync(int id)
         {
             return await _userRepository.DeleteUserAsync(id);
         }
 
-        public async Task<UserListInfo> GetUserListAsync(string search, int page, int pageSize, string sortColumn, string sortOrder)
-        {
-            return await _userRepository.GetUserListAsync(search, page, pageSize, sortColumn, sortOrder);
-        }
+       public IEnumerable<User> GetUsersList(string searchString, string sortOrder, int pageIndex, int pageSize, out int count)
+    {
+        return _userRepository.GetUserList(searchString, sortOrder, pageIndex, pageSize, out count);
+    }
 
         public async Task<UserViewModel> GetUserProfileAsync(ClaimsPrincipal userClaims)
         {
@@ -107,31 +144,49 @@ private void UpdateUserFields(User user, UserViewModel model)
             }
 
             string userEmail = userEmailClaim.Value;
-            return await _userRepository.GetUserProfileByEmailAsync(userEmail);
+            var user = await _userRepository.GetUserByEmail(userEmail);
+            if (user == null)
+            {
+                return null;
+            }
+
+            return new UserViewModel
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Username = user.Username,
+                Phone = user.Phone,
+                RoleId = user.RoleId,
+                CountryId = user.CountryId,
+                StateId = user.StateId,
+                CityId = user.CityId,
+                Zipcode = user.Zipcode,
+                Address = user.Address
+            };
         }
 
         public async Task<bool> ChangePasswordAsync(ChangePasswordModel model, ClaimsPrincipal userClaims)
-{
-    var userEmailClaim = userClaims.FindFirst(ClaimTypes.Email);
-    if (userEmailClaim == null)
-    {
-        return false;
-    }
+        {
+            var userEmailClaim = userClaims.FindFirst(ClaimTypes.Email);
+            if (userEmailClaim == null)
+            {
+                return false;
+            }
 
-    string email = userEmailClaim.Value;
-    var user = await _userRepository.GetUserByEmail(email);
-    if (user == null)
-    {
-        return false;
-    }
+            string email = userEmailClaim.Value;
+            var user = await _userRepository.GetUserByEmail(email);
+            if (user == null)
+            {
+                return false;
+            }
 
-    if (!BCrypt.Net.BCrypt.Verify(model.CurrentPassword, user.PasswordHash))
-    {
-        return false;
-    }
+            if (!BCrypt.Net.BCrypt.Verify(model.CurrentPassword, user.PasswordHash))
+            {
+                return false;
+            }
 
-    user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
-    return await _userRepository.UpdateUserAsync(user);
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+            return await _userRepository.UpdateUserAsync(user);
+        }
     }
-}
 }

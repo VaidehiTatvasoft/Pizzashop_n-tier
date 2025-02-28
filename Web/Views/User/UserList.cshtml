@@ -1,155 +1,203 @@
+@model Entity.Data.User;
 @{
-  ViewData["Title"] = "UserList";
+    ViewData["Title"] = "UserList";
+    var count = ViewBag.Count;
+    var pageIndex = ViewBag.pageIndex;
+    var pageSize = ViewBag.pageSize;
+    var totalPage = ViewBag.TotalPage;
+    var searchString = ViewBag.SearchString as string;
+    var ErrorMessage = ViewBag.ErrorMessage;
 }
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        @TempData["SuccessMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<div class="d-flex justify-content-between  align-items-center">
+    <div class="d-flex justify-content-start align-items-center">
+        <h2><b>Users</b></h2>
     </div>
-}
-
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        @TempData["ErrorMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
-
-@model List<Entity.ViewModel.UserList>
-<div class="d-flex justify-content-between m-3 p-3">
-    <div><h4>Users</h4></div>
-    <div class="d-flex">
-        <input type="text" id="searchInput" class="form-control me-2" placeholder="Search" />
-        <a href="@Url.Action("AddUser", "User")" class="btn btn-primary">+ Add User</a>
+    <div class="d-flex justify-content-end align-items-center ">
+        <form method="get" class="searh">
+            <div class="input-group ">
+                <input type="text" class="form-control" placeholder="Search..." name="searchString"
+                    value="@searchString" aria-label="Search" aria-describedby="search-addon" />
+                <button class="btn bg-white " type="submit" id="search-addon">
+                    <i class="fas fa-search "></i>
+                </button>
+            </div>
+        </form>
+        <a href="@Url.Action("AddUser", "User")" class="btn btn-primary m-2"><i class="fa-solid fa-plus"></i> Add
+            User</a>
     </div>
 </div>
-<div class="card">
-<table class="table">
-    <thead>
-        <tr>
-            <th onclick="sortTable('Name')">Name <span id="sortIconName">↑↓</span></th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th onclick="sortTable('Role')">Role <span id="sortIconRole">↑↓</span></th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody id="userTableBody">
-        @foreach (var user in Model)
-        {
+<div class=" bg-light rounded shadow mt-2 ">
+    <table class="table  table-responsive  ml-3 p-3 pl-3">
+        <thead>
             <tr>
-                <td>@user.Name</td>
-                <td>@user.Email</td>
-                <td>@user.Phone</td>
-                <td>@user.RoleName</td>
-                <td><span class="badge-@user.Status">@user.Status</span></td>
-                <td>
-                    <a class="bi bi-pen m-1" href="@Url.Action("EditUser", new { id = user.Id })"></a>
-                    <a class="bi bi-trash m-1" href="javascript:void(0)" onclick="confirmDelete(@user.Id)"></a>
-                    <form id="deleteForm-@user.Id" method="post" action="@Url.Action("DeleteUser", "User", new { id = user.Id })" style="display:none;">
-                        @Html.AntiForgeryToken()
-                    </form>
-                </td>
+                <th scope="col" style="color:#5f5e5e" class="thead">Name
+                    <a asp-action="UserList" asp-route-sortOrder="@ViewData["UsernameSortParam"]" asp-route-offset="1"
+                        asp-route-pagesize="@pageSize" style="text-decoration: none;color: inherit;">
+                        <i class="fa-solid fa-arrow-up"></i>
+                        <i class="fa-solid fa-arrow-down"></i>
+                    </a>
+                </th>
+                <th scope="col" style="color:#5f5e5e" class="thead">Email</th>
+                <th scope="col" style="color:#5f5e5e" class="thead">Phone</th>
+                <th scope="col" style="color:#5f5e5e" class="thead">Role
+                    <a asp-action="UserList" asp-route-sortOrder="@ViewData["RoleSortParam"]" asp-route-offset="1"
+                        asp-route-pagesize="@pageSize" style="text-decoration: none;color: inherit;">
+                        <i class="fa-solid fa-arrow-up"></i>
+                        <i class="fa-solid fa-arrow-down"></i>
+                    </a>
+                </th>
+                <th scope="col" style="color:#5f5e5e" class="thead">Status</th>
+                <th scope="col" style="color:#5f5e5e" class="thead">Action</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            <p>@ErrorMessage</p>
+            @foreach (var user in ViewBag.UserList)
+            {
+                <tr id="@user.Id">
+                    <td>
+                        <div class="d-flex gap-3 align-items-center">
+                            <img class="user-profile-img" src="@Url.Content("~/assets/Default_pfp.svg.png")" alt="">
+                            @user.FirstName @user.LastName
+                        </div>
+                    </td>
+                    <td>@user.Email</td>
+                    <td>@user.Phone</td>
+                    <td>
+                        @switch (@user.RoleId)
+                        {
+                            case 1:
+                                <div>Super Admin</div>
+                                break;
+                            case 2:
+                                <div>Account Manager</div>
+                                break;
+                            case 3:
+                                <div>Chef</div>
+                                break;
+                        }
+                    </td>
+                    <td>
+                        @if (@user.IsActive)
+                        {
+                            <button class="active-status p-1"><b>Active</b></button>
+                        }
+                        else
+                        {
+                            <button class="status-value p-1"><b>Inctive</b></button>
+                        }
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            @if (user.IsActive)
+                            {
+                                <a asp-action="EditUser" asp-controller="User" asp-route-id="@user.Id">
+                                    <i class="bi bi-pen m-1"></i>
+                                </a>
+                            }
+                            <a class="bi bi-trash m-1" href="javascript:void(0)" onclick="confirmDelete(@user.Id)"></a>
+                            <form id="deleteForm-@user.Id" method="post"
+                                action="@Url.Action("DeleteUser", "User", new { id = user.Id })" style="display:none;">
+                                @Html.AntiForgeryToken()
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="d-flex flex-row justify-content-end align-item-center mt-4">
+        <form method="get" class="col-md-9 d-flex flex-row justify-content-end align-item-center">
+            <label for="form-select" class="mx-2">Items per Page</label>
+            <select class="form-select w-auto" name="pageSize" onchange="this.form.submit()" id="Select"
+                aria-label="Role" onchange="">
+                @if (pageSize == 5)
+                {
+                    <option selected value="5">5</option>
+                }
+                else
+                {
+                    <option value="5">5</option>
+                }
+                @if (pageSize == 10)
+                {
+                    <option selected value="10">10</option>
+                }
+                else
+                {
+                    <option value="10">10</option>
+                }
+                @if (pageSize == 15)
+                {
+                    <option selected value="15">15</option>
+                }
+                else
+                {
+                    <option value="15">15</option>
+                }
+            </select>
+            Showing @pageIndex out of <span>@totalPage</span>
+            @if (pageIndex > 1)
+            {
+                <a href="?pageIndex=@(pageIndex-1)&pageSize=@pageSize&searchString=@searchString"
+                    class="bg-llight border-1 bg-light mx-2 px-2 btn btn-outline-dark">
+                    <i class="fa-solid fa-less-than"></i>
+                </a>
+            }
+            else
+            {
+                <a class="bg-llight border-1 bg-light mx-2 px-2 btn btn-outline-dark" disabled>
+                    <i class="fa-solid fa-less-than"></i>
+                </a>
+            }
 
-<div class="d-flex justify-content-end align-items-center">
-    <label>Items per page</label>
-     <select id="pageSizeSelect" class="form-select form-select-sm d-inline-block w-auto" onchange="changePageSize()">
-            <option value="5" selected="@(ViewBag.PageSize == 5 ? "selected" : null)">5</option>
-            <option value="10" selected="@(ViewBag.PageSize == 10 ? "selected" : null)">10</option>
-            <option value="20" selected="@(ViewBag.PageSize == 20 ? "selected" : null)">20</option>
-        </select>
-    <label>Showing @(ViewBag.CurrentPage * ViewBag.PageSize - ViewBag.PageSize + 1)-@(ViewBag.CurrentPage * ViewBag.PageSize) of @ViewBag.TotalUsers</label>
-    <nav>
-        <ul class="pagination mb-0">
-            <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
-                <a class="page-link" href="javascript:void(0)" onclick="changePage(@(ViewBag.CurrentPage - 1))">←</a>
-            </li>
-            <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
-                <a class="page-link" href="javascript:void(0)" onclick="changePage(@(ViewBag.CurrentPage + 1))">→</a>
-            </li>
-        </ul>
-    </nav>
-</div>
-</div>
+            @if (pageIndex < totalPage)
+            {
+                <a href="?pageIndex=@(pageIndex+1)&pageSize=@pageSize&searchString=@searchString"
+                    class="bg-llight border-1 bg-light px-2 btn btn-outline-dark">
+                    <i class="fa-solid fa-greater-than"></i>
+                </a>
+            }
+            else
+            {
+                <a class="bg-llight border-1 bg-light px-2 btn btn-outline-dark" disabled>
+                    <i class="fa-solid fa-greater-than"></i>
+                </a>
+            }
 
-<!-- Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        Are you sure you want to delete this user?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button>
-      </div>
+        </form>
     </div>
-  </div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalCenterTitel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-between">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex justify-content-center align-items-center flex-column">
+                <div>
+                    <img src="@Url.Content("~/assets/warning.png")" height="40" width="40">
+                </div>
+                <div>Are you sure you want to delete this user?</div>
 
-<script>
-    document.getElementById("searchInput").addEventListener("input", debounce(function () {
-        let query = this.value.toLowerCase();
-        let rows = document.querySelectorAll("#userTableBody tr");
-
-        rows.forEach(row => {
-            let name = row.cells[0].textContent.toLowerCase();
-            let role = row.cells[1].textContent.toLowerCase();
-            row.style.display = (name.includes(query) || role.includes(query)) ? "" : "none";
-        });
-    }, 300));
-
-    function debounce(func, delay) {
-        let timeout;
-        return function () {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(this, arguments), delay);
-        };
-    }
-
-    function sortTable(column) {
-        let table = document.querySelector("table tbody");
-        let rows = Array.from(table.rows);
-        let isAscending = table.getAttribute("data-sort") !== column;
-
-        rows.sort((a, b) => {
-            let valA = a.cells[column === "Name" ? 0 : 1].textContent.trim().toLowerCase();
-            let valB = b.cells[column === "Name" ? 0 : 1].textContent.trim().toLowerCase();
-            return isAscending ? valA.localeCompare(valB) : valB.localeCompare(valA);
-        });
-
-        rows.forEach(row => table.appendChild(row));
-        table.setAttribute("data-sort", isAscending ? column : "");
-
-        document.getElementById(`sortIcon${column}`).textContent = isAscending ? "↑↓" : "↑↓";
-    }
-
-    function changePageSize() {
-        let pageSize = document.getElementById("pageSizeSelect").value;
-        window.location.href = `?pageSize=${pageSize}`;
-    }
-
-    function changePage(page) {
-        let pageSize = document.getElementById("pageSizeSelect").value;
-        window.location.href = `?page=${page}&pageSize=${pageSize}`;
-    }
-
-    function confirmDelete(userId) {
-        const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
-        document.getElementById("confirmDeleteButton").onclick = function() {
-            document.getElementById(`deleteForm-${userId}`).submit();
-        };
-        modal.show();
-    }
-</script>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-outline-primary" id="confirmDeleteButton">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        function confirmDelete(userId) {
+            const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            document.getElementById("confirmDeleteButton").onclick = function () {
+                document.getElementById(`deleteForm-${userId}`).submit();
+            };
+            modal.show();
+        }
+    </script>
+}

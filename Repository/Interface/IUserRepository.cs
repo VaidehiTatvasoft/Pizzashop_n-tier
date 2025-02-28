@@ -10,11 +10,8 @@ namespace Pizzashop.Repository.Interfaces
         Task<User?> GetUserByEmail(string email);
         Task<User?> GetUserById(int userId);
         Task ResetPassword(string email, string newPassword);
-        Task<bool> AddUserAsync(UserViewModel model, int userId);
-        Task<UserViewModel> GetUserViewModelByIdAsync(int id);
+        Task<bool> AddUserAsync(User user);
         Task<bool> UpdateUserAsync(User user);
         Task<bool> DeleteUserAsync(int id);
-        Task<UserListInfo> GetUserListAsync(string search, int page, int pageSize, string sortColumn, string sortOrder);
-        Task<UserViewModel> GetUserProfileByEmailAsync(string email);
-    }
+    IEnumerable<User> GetUserList(string searchString, string sortOrder, int pageIndex, int pageSize, out int count);    }
 }

@@ -46,52 +46,10 @@ namespace Pizzashop.Repository.Implementation
             return await _context.Users.FindAsync(userId);
         }
 
-        public async Task<bool> AddUserAsync(UserViewModel model, int userId)
+        public async Task<bool> AddUserAsync(User user)
         {
-            var newUser = new User
-            {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Username = model.Username,
-                Phone = model.Phone,
-                CountryId = model.CountryId,
-                StateId = model.StateId,
-                CityId = model.CityId,
-                Address = model.Address,
-                Zipcode = model.Zipcode,
-                RoleId = model.RoleId,
-                ProfileImage = model.ProfileImage,
-                Email = model.Email,
-                PasswordHash = model.passwordHash,
-                CreatedBy = userId
-            };
-
-            _context.Users.Add(newUser);
+            _context.Users.Add(user);
             return await _context.SaveChangesAsync() > 0;
-        }
-
-        public async Task<UserViewModel> GetUserViewModelByIdAsync(int id)
-        {
-            return await _context.Users
-                .Where(u => u.Id == id)
-                .Select(u => new UserViewModel
-                {
-                    Id = u.Id,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    Username = u.Username,
-                    Phone = u.Phone,
-                    CountryId = u.CountryId,
-                    StateId = u.StateId,
-                    CityId = u.CityId,
-                    Address = u.Address,
-                    Zipcode = u.Zipcode,
-                    RoleId = u.RoleId,
-                    Status = u.IsDeleted.HasValue && u.IsDeleted.Value ? "Inactive" : "Active",
-                    Email = u.Email,
-                    ProfileImage = u.ProfileImage,
-                })
-                .FirstOrDefaultAsync();
         }
 
         public async Task<bool> UpdateUserAsync(User user)
@@ -113,59 +71,44 @@ namespace Pizzashop.Repository.Implementation
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<UserListInfo> GetUserListAsync(string search, int page, int pageSize, string sortColumn, string sortOrder)
+         public IEnumerable<User> GetUserList(string searchString, string sortOrder, int pageIndex, int pageSize, out int count)
+    {
+        var userQuery = _context.Users.Where(u => u.IsDeleted == false);
+
+        switch (sortOrder)
         {
-            var usersQuery = _context.Users.AsQueryable();
+            case "username_asc":
+                userQuery = userQuery.OrderBy(u => u.FirstName);
+                break;
 
-            if (!string.IsNullOrEmpty(search))
-            {
-                usersQuery = usersQuery.Where(u => u.FirstName.Contains(search) || u.LastName.Contains(search) || u.Email.Contains(search));
-            }
+            case "username_desc":
+                userQuery = userQuery.OrderByDescending(u => u.FirstName);
+                break;
 
-            if (sortOrder.Equals("asc"))
-            {
-                usersQuery = usersQuery.OrderBy(u => EF.Property<object>(u, sortColumn));
-            }
-            else
-            {
-                usersQuery = usersQuery.OrderByDescending(u => EF.Property<object>(u, sortColumn));
-            }
+            case "role_asc":
+                userQuery = userQuery.OrderBy(u => u.Role.Name);
+                break;
 
-            var totalUsers = await usersQuery.CountAsync();
-            var users = await usersQuery.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-            var totalPages = (int)Math.Ceiling(totalUsers / (double)pageSize);
+            case "role_desc":
+                userQuery = userQuery.OrderByDescending(u => u.Role.Name);
+                break;
 
-            return new UserListInfo
-            {
-                Users = users,
-                TotalUsers = totalUsers,
-                CurrentPage = page,
-                TotalPages = totalPages
-            };
+            default:
+                userQuery = userQuery.OrderBy(u => u.Id);
+                break;
         }
 
-        public async Task<UserViewModel> GetUserProfileByEmailAsync(string email)
+        if (!string.IsNullOrEmpty(searchString))
         {
-            return await _context.Users
-                .Where(u => u.Email == email)
-                .Select(u => new UserViewModel
-                {
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    Username = u.Username,
-                    Phone = u.Phone,
-                    RoleId = u.RoleId,
-                    RoleName = _context.Roles.Where(r => r.Id == u.RoleId).Select(r => r.Name).FirstOrDefault(),
-                    CountryId = u.CountryId,
-                    CountryName = _context.Countries.Where(c => c.Id == u.CountryId).Select(c => c.Name).FirstOrDefault(),
-                    StateId = u.StateId,
-                    StateName = _context.States.Where(s => s.Id == u.StateId).Select(s => s.Name).FirstOrDefault(),
-                    CityId = u.CityId,
-                    CityName = _context.Cities.Where(c => c.StateId == u.CityId).Select(c => c.Name).FirstOrDefault(),
-                    Zipcode = u.Zipcode,
-                    Address = u.Address
-                })
-                .FirstOrDefaultAsync();
+            userQuery = userQuery.Where(u => u.FirstName.ToLower().Contains(searchString.ToLower()) || u.LastName.Contains(searchString));
         }
+
+        count = userQuery.Count();
+
+        return userQuery
+            .Skip((pageIndex - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+    }
     }
 }
