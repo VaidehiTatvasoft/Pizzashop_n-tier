@@ -1,6 +1,6 @@
 using System.Security.Claims;
-using Entity.Data;
 using Entity.ViewModel;
+using System.Threading.Tasks;
 
 namespace pizzashop.Services.Interfaces
 {

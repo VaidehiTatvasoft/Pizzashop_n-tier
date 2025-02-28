@@ -24,25 +24,7 @@ namespace Pizzashop.Service.Implementation
             }
 
             var userId = int.Parse(userIdClaim.Value);
-            var newUser = new User
-            {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Username = model.Username,
-                Phone = model.Phone,
-                CountryId = model.CountryId,
-                StateId = model.StateId,
-                CityId = model.CityId,
-                Address = model.Address,
-                Zipcode = model.Zipcode,
-                RoleId = model.RoleId,
-                ProfileImage = model.ProfileImage,
-                Email = model.Email,
-                PasswordHash = model.passwordHash,
-                CreatedBy = userId
-            };
-
-            return await _userRepository.AddUserAsync(newUser);
+            return await _userRepository.AddUserAsync(model, userId);
         }
 
         public async Task<UserViewModel> GetUserViewModelByIdAsync(int id)
@@ -51,16 +33,60 @@ namespace Pizzashop.Service.Implementation
         }
 
         public async Task<bool> EditUserAsync(UserViewModel model)
-        {
-            var user = await _userRepository.GetUserByIdAsync(model.Id);
-            if (user == null)
-            {
-                return false;
-            }
+{
+    var user = await _userRepository.GetUserById(model.Id);
+    if (user == null)
+    {
+        return false;
+    }
 
-            UpdateUserFields(user, model);
-            return await _userRepository.UpdateUserAsync(user);
-        }
+    UpdateUserFields(user, model);
+    return await _userRepository.UpdateUserAsync(user);
+}
+
+private void UpdateUserFields(User user, UserViewModel model)
+{
+    user.FirstName = model.FirstName;
+    user.LastName = model.LastName;
+    user.Username = model.Username;
+    user.Phone = model.Phone;
+    user.CountryId = model.CountryId;
+    user.StateId = model.StateId;
+    user.CityId = model.CityId;
+    user.Address = model.Address;
+    user.Zipcode = model.Zipcode;
+    user.RoleId = model.RoleId;
+    user.IsDeleted = model.Status == "Inactive";
+}
+
+        public async Task<bool> UpdateProfileAsync(UserViewModel model, ClaimsPrincipal userClaims)
+{
+    var userEmailClaim = userClaims.FindFirst(ClaimTypes.Email);
+    if (userEmailClaim == null)
+    {
+        return false;
+    }
+
+    string userEmail = userEmailClaim.Value;
+    var user = await _userRepository.GetUserByEmail(userEmail);
+    if (user == null)
+    {
+        return false;
+    }
+
+    user.FirstName = model.FirstName;
+    user.LastName = model.LastName;
+    user.Username = model.Username;
+    user.Phone = model.Phone;
+    user.CountryId = model.CountryId;
+    user.StateId = model.StateId;
+    user.CityId = model.CityId;
+    user.Address = model.Address;
+    user.Zipcode = model.Zipcode;
+    user.ProfileImage = model.ProfileImage;
+
+    return await _userRepository.UpdateUserAsync(user);
+}
 
         public async Task<bool> DeleteUserAsync(int id)
         {
@@ -84,62 +110,28 @@ namespace Pizzashop.Service.Implementation
             return await _userRepository.GetUserProfileByEmailAsync(userEmail);
         }
 
-        public async Task<bool> UpdateProfileAsync(UserViewModel model, ClaimsPrincipal userClaims)
-        {
-            var userEmailClaim = userClaims.FindFirst(ClaimTypes.Email);
-            if (userEmailClaim == null)
-            {
-                return false;
-            }
-
-            string userEmail = userEmailClaim.Value;
-            var user = await _userRepository.GetUserByEmail(userEmail);
-            if (user == null)
-            {
-                return false;
-            }
-
-            UpdateUserFields(user, model);
-            return await _userRepository.UpdateUserAsync(user);
-        }
-
         public async Task<bool> ChangePasswordAsync(ChangePasswordModel model, ClaimsPrincipal userClaims)
-        {
-            var userEmailClaim = userClaims.FindFirst(ClaimTypes.Email);
-            if (userEmailClaim == null)
-            {
-                return false;
-            }
-
-            string email = userEmailClaim.Value;
-            var user = await _userRepository.GetUserByEmail(email);
-            if (user == null)
-            {
-                return false;
-            }
-
-            if (!BCrypt.Net.BCrypt.Verify(model.CurrentPassword, user.PasswordHash))
-            {
-                return false;
-            }
-
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
-            return await _userRepository.UpdateUserAsync(user);
-        }
-
-        private void UpdateUserFields(User user, UserViewModel model)
-        {
-            user.FirstName = model.FirstName;
-            user.LastName = model.LastName;
-            user.Username = model.Username;
-            user.Phone = model.Phone;
-            user.CountryId = model.CountryId;
-            user.StateId = model.StateId;
-            user.CityId = model.CityId;
-            user.Address = model.Address;
-            user.Zipcode = model.Zipcode;
-            user.RoleId = model.RoleId;
-            user.IsDeleted = model.Status == "Inactive";
-        }
+{
+    var userEmailClaim = userClaims.FindFirst(ClaimTypes.Email);
+    if (userEmailClaim == null)
+    {
+        return false;
     }
+
+    string email = userEmailClaim.Value;
+    var user = await _userRepository.GetUserByEmail(email);
+    if (user == null)
+    {
+        return false;
+    }
+
+    if (!BCrypt.Net.BCrypt.Verify(model.CurrentPassword, user.PasswordHash))
+    {
+        return false;
+    }
+
+    user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+    return await _userRepository.UpdateUserAsync(user);
+    }
+}
 }

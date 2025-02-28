@@ -46,9 +46,27 @@ namespace Pizzashop.Repository.Implementation
             return await _context.Users.FindAsync(userId);
         }
 
-        public async Task<bool> AddUserAsync(User user)
+        public async Task<bool> AddUserAsync(UserViewModel model, int userId)
         {
-            _context.Users.Add(user);
+            var newUser = new User
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Username = model.Username,
+                Phone = model.Phone,
+                CountryId = model.CountryId,
+                StateId = model.StateId,
+                CityId = model.CityId,
+                Address = model.Address,
+                Zipcode = model.Zipcode,
+                RoleId = model.RoleId,
+                ProfileImage = model.ProfileImage,
+                Email = model.Email,
+                PasswordHash = model.passwordHash,
+                CreatedBy = userId
+            };
+
+            _context.Users.Add(newUser);
             return await _context.SaveChangesAsync() > 0;
         }
 
@@ -74,11 +92,6 @@ namespace Pizzashop.Repository.Implementation
                     ProfileImage = u.ProfileImage,
                 })
                 .FirstOrDefaultAsync();
-        }
-
-        public async Task<User> GetUserByIdAsync(int id)
-        {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
         }
 
         public async Task<bool> UpdateUserAsync(User user)
@@ -148,7 +161,7 @@ namespace Pizzashop.Repository.Implementation
                     StateId = u.StateId,
                     StateName = _context.States.Where(s => s.Id == u.StateId).Select(s => s.Name).FirstOrDefault(),
                     CityId = u.CityId,
-                    CityName = _context.Cities.Where(c => c.Id == u.CityId).Select(c => c.Name).FirstOrDefault(),
+                    CityName = _context.Cities.Where(c => c.StateId == u.CityId).Select(c => c.Name).FirstOrDefault(),
                     Zipcode = u.Zipcode,
                     Address = u.Address
                 })
