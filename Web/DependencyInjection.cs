@@ -4,6 +4,7 @@ using Pizzashop.Service.Interfaces;
 using Pizzashop.Service.Implementation;
 using Pizzashop.Repository.Implementation;
 using Pizzashop.Repository.Interfaces;
+using pizzashop.Services.Interfaces;
 
 namespace Web
 {
@@ -13,7 +14,8 @@ namespace Web
         {
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IEmailService, EmailService>();
-            services.AddScoped<ITokenService, TokenService>();  
+            services.AddScoped<ITokenService, TokenService>(); 
+            services.AddScoped<IUserService, UserService>(); 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddSingleton<IConfiguration>(configuration);
         }

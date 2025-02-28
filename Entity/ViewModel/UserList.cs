@@ -11,4 +11,5 @@ public class UserList
     public string? RoleName {get; set;}
     public string? Status { get; set; }
 
+
 }
