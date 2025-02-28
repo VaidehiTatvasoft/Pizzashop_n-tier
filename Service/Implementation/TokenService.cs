@@ -53,7 +53,7 @@ namespace Pizzashop.Service.Implementation
         {
             var validationParameters = new TokenValidationParameters
             {
-                ValidateIssuerSigningKey = true,
+                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(key),
                 ValidateIssuer = true,
                 ValidIssuer = _configuration["Jwt:Issuer"],

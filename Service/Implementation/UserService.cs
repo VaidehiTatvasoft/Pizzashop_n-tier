@@ -136,34 +136,34 @@ namespace Pizzashop.Service.Implementation
     }
 
         public async Task<UserViewModel> GetUserProfileAsync(ClaimsPrincipal userClaims)
+    {
+        var userEmailClaim = userClaims.FindFirst(ClaimTypes.Email);
+        if (userEmailClaim == null)
         {
-            var userEmailClaim = userClaims.FindFirst(ClaimTypes.Email);
-            if (userEmailClaim == null)
-            {
-                return null;
-            }
-
-            string userEmail = userEmailClaim.Value;
-            var user = await _userRepository.GetUserByEmail(userEmail);
-            if (user == null)
-            {
-                return null;
-            }
-
-            return new UserViewModel
-            {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Username = user.Username,
-                Phone = user.Phone,
-                RoleId = user.RoleId,
-                CountryId = user.CountryId,
-                StateId = user.StateId,
-                CityId = user.CityId,
-                Zipcode = user.Zipcode,
-                Address = user.Address
-            };
+            return null;
         }
+
+        string userEmail = userEmailClaim.Value;
+        var user = await _userRepository.GetUserByEmail(userEmail);
+        if (user == null)
+        {
+            return null;
+        }
+
+        return new UserViewModel
+        {
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Username = user.Username,
+            Phone = user.Phone,
+            RoleId = user.RoleId,
+            CountryId = user.CountryId,
+            StateId = user.StateId,
+            CityId = user.CityId,
+            Zipcode = user.Zipcode,
+            Address = user.Address
+        };
+    }
 
         public async Task<bool> ChangePasswordAsync(ChangePasswordModel model, ClaimsPrincipal userClaims)
         {

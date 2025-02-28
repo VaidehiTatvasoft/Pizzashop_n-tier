@@ -18,11 +18,12 @@ public class HomeController : Controller
         Console.WriteLine("Method hit");
         return View();
     }
+    [Authorize]
     public IActionResult Dashboard()
     {
         return View();
     }
-    
+    [Authorize(Roles = "1")] 
     [Route ("/[controller]/admindashboard")]
     public IActionResult AdminDashboard()
     {
