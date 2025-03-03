@@ -1,0 +1,27 @@
+@model IEnumerable<Entity.Data.Role>
+
+@{
+    ViewData["Title"] = "Roles";
+}
+
+<h1>Roles</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Role Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var role in Model)
+        {
+            <tr>
+                <td>@role.Name</td>
+                <td>
+                    <a asp-action="Permissions" asp-route-id="@role.Id"><i class="bi bi-pen m-1"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

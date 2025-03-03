@@ -13,10 +13,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/AdminDashboard.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/pizzashop.styles.css" asp-append-version="true" />
 </head>
 <body class="main">
     <div class="container-fluid">
@@ -24,12 +22,12 @@
             <div class="row ">
                 <div class="sidebar col-auto" id="sidebar">
                     <a class="navbar-brand">
-                        <img src="@Url.Content("~/assets/pizzashop_logo.png")" alt="" width="40" height="35" class="d-inline-block align-top">
+                        <img src="@Url.Content("~/assets/pizzashop_logo.png")" alt="" width="65" height="65" class="d-inline-block align-top">
                         <txt><b>PIZZASHOP</b></txt>
                     </a>
-                    <a class="btn" asp-controller="Home" asp-action="AdminDashboard"><i class="fa-solid fa-table-cells-large me-2"></i><b>Dashboard</b></a>
+                    <a class="active btn " asp-controller="Home" asp-action="AdminDashboard"><i class="fa-solid fa-table-cells-large me-2"></i><b>Dashboard</b></a>
                     <a class="btn" asp-controller="User" asp-action="UserList"><i class="fa-solid fa-users me-2"></i><b>Users</b></a>
-                    <a class="btn" asp-controller="Home" asp-action="AdminDashboard"><b>Roles and Permission</b></a>
+                    <a class="btn" asp-controller="Roles" asp-action="Roles"><b>Roles and Permission</b></a>
                     <a class="btn" asp-controller="Home" asp-action="AdminDashboard"><i class="fa-solid fa-monument me-2"></i><b>Menu</b></a>
                     <a class="btn" asp-controller="Home" asp-action="AdminDashboard"><i class="fa-solid fa-square"></i><b>Tables and Sections</b></a>
                     <a class="btn" asp-controller="Home" asp-action="AdminDashboard"><i class="fa-solid fa-money-check-dollar"></i><b>Taxes and Fees</b></a>

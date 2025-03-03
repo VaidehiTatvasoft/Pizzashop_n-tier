@@ -5,6 +5,12 @@ using Pizzashop.Service.Implementation;
 using Pizzashop.Repository.Implementation;
 using Pizzashop.Repository.Interfaces;
 using pizzashop.Services.Interfaces;
+using Web.Repositories.Interfaces;
+using Web.Repositories;
+using Web.Services.Interfaces;
+using Web.Services;
+using Service.Interface;
+using Repository.Interface;
 
 namespace Web
 {
@@ -16,7 +22,11 @@ namespace Web
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<ITokenService, TokenService>(); 
             services.AddScoped<IUserService, UserService>(); 
+            services.AddScoped<IPermissionService, PermissionService>(); 
+            services.AddScoped<IRoleService, RoleService>(); 
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IPermissionRepository, PermissionRepository>();
             services.AddSingleton<IConfiguration>(configuration);
         }
     }

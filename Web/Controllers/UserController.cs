@@ -176,7 +176,6 @@ namespace pizzashop.Controllers
                 }).ToList();
             return Json(cities);
         }
-
         public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
         {
             if (ModelState.IsValid)
@@ -189,5 +188,6 @@ namespace pizzashop.Controllers
             }
             return View(model);
         }
+
     }
 }

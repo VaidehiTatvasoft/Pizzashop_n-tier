@@ -1,0 +1,70 @@
+@using Entity.Data
+@model IEnumerable<Entity.Data.RolePermission>
+
+@{
+    ViewData["Title"] = "Edit Permissions";
+}
+
+<div class="d-flex justify-content-between align-items-center m-3">
+    <div>
+        <h4>Permissions</h4>
+    </div>
+    <div>
+        <a asp-controller="Roles" asp-action="Roles" class="btn btn-outline-info">
+            < Back</a>
+    </div>
+</div>
+<div class="md-11 col-lg-11 mb-4 justify-content-center align-items-center flex-wrap">
+    <div class="card-body table-responsive">
+        <div class="card">
+            <div class="div col-md-4">
+                <form class="form-floating role">
+                    <input type="text" class="form-control" >
+                    <label for="floatingInput">Role
+                    </label>
+                </form><br>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="color:#ADADAD" class="thead"><input type="checkbox"> Permission</th>
+                        <th style="color:#ADADAD" class="thead">Can View</th>
+                        <th style="color:#ADADAD" class="thead">Can Add/Edit</th>
+                        <th style="color:#ADADAD" class="thead">Can Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var rolePermission in Model)
+                    {
+                    <tr>
+                        <td><input type="checkbox"> @rolePermission.Permission.Name</td>
+                        <td>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" @(rolePermission.CanView == true ? "checked" : "")>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" @(rolePermission.CanEdit == true ? "checked" : "")>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" @(rolePermission.CanDelete == true ? "checked" : "")>
+                            </div>
+                        </td>
+                    </tr>
+                                        }
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-end">
+                <div class="p-2">
+                    <button class="btn btn-primary">Save</button>
+                </div>
+                <div class="p-2">
+                    <a asp-controller="Roles" asp-action="Roles" class="btn btn-outline-primary">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -26,6 +26,10 @@ h2{
   background-color: #FFFFFF;
   transition: transform 0.3s ease-in-out;
 }
+txt{
+  color: #006098;
+  font-size: 22px; 
+}
 
 @media (max-width: 986px) {
   .sidebar {
@@ -49,22 +53,27 @@ h2{
   }
 }
 .sidebar a {
-  display: block;
+  display: flex; 
   align-items: center;
+  text-align: left;
   gap:10px;
   padding:16px;
+  padding-left: 35px;
   font-size: 16px;
-  color: #3E3E3E;
+  color: #726e6e;
   text-decoration: none;
   transition: all 0.3 ease ease-in-out;
 }
-.sidebar a:hover{
-  background-color: #006ab0;
-  color:white;
-}
 .active, .btn:hover {
-  background-color: #e8e9eb;
+  background-color: rgb(240, 240, 240);
   color: #006ab0;
+  border:none;
+}
+a i {
+  text-decoration: none;
+  color: #3E3E3E;
+  background-color: transparent;
+  margin-right: 10px; 
 }
 * {
   padding: 0;
