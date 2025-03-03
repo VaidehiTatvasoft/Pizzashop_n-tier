@@ -40,7 +40,7 @@
                     <form asp-controller="Accounts" asp-action="Login" method="post" class="auth-form col-md-8">
                         <h4>Welcome,</h4>
                         <div class="mb-3 d-flex">
-                            <input asp-for="Email" type="email" class="form-control ps-4" id="email"
+                            <input asp-for="Email" type="email" class="form-control ps-4" id="Email"
                                 placeholder="Email*" required>
                             <i class="fa fa-user input-icon"></i>
                         </div>
@@ -53,15 +53,15 @@
                         <span asp-validation-for="PasswordHash" class="text-danger"></span>
 
                         <div class="options d-flex justify-content-between align-items-center">
-                            <div class="d-flex">
-                                <input asp-for="RememberMe" type="checkbox" id="rememberMe"><label
-                                    for="rememberMe">Remember me</label>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <input asp-for="RememberMe" type="checkbox" id="rememberMe" class="align-self-center">
+                                <label for="rememberMe" class="align-items-center p-2"> Remember me </label>
                             </div>
                             <div class="d-flex">
                                 <a id="forgotPasswordLink">Forgot Password?</a>
                             </div>
                         </div>
-                        <input type="submit" value="Login" class="btn fill-btn">
+                        <br><input type="submit" value="Login" class="btn fill-btn">
                     </form>
                 </div>
             </div>
@@ -93,7 +93,6 @@
                 eyeIcon.classList.add("fa-eye");
             }
         }
-    </script>
+</script>
 </body>
-
 </html>
