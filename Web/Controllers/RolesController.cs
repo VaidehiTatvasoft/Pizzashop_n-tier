@@ -36,5 +36,11 @@ public class RolesController : Controller
         var rolePermissions = await _permissionService.GetPermissionsByRoleIdAsync(id);
         return View(rolePermissions);
     }
+    // [HttpPost]
+    // public async Task<IActionResult> UpdatePermissions(int id, Dictionary<int, RolePermission> permissions)
+    // {
+    //     await _permissionService.UpdatePermissionsAsync(id, permissions);
+    //     return RedirectToAction("Roles");
+    // }
 
 }
