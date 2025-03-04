@@ -113,12 +113,6 @@ namespace pizzashop.Controllers
         [HttpGet]
         public async Task<IActionResult> Profile()
         {
-            var claims = User.Claims.ToList(); 
-            foreach (var claim in claims)
-            {
-                Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
-            }
-
             var user = await _userService.GetUserProfileAsync(User);
             if (user == null)
             {

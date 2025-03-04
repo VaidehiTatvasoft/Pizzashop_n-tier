@@ -1,7 +1,7 @@
 @model IEnumerable<Entity.Data.Role>
 
 @{
-    ViewData["Title"] = "Roles";
+    ViewData["Title"] = "Role";
 }
 
 <h1>Roles</h1>
@@ -19,7 +19,7 @@
             <tr>
                 <td>@role.Name</td>
                 <td class="d-flex justify-content-end">
-                    <a asp-action="Permissions" asp-route-id="@role.Id"><i class="bi bi-pen m-1"></i></a>
+                    <a asp-action="Permission" asp-route-id="@role.Id"><i class="bi bi-pen m-1"></i></a>
                 </td>
             </tr>
         }

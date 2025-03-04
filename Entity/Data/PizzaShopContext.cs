@@ -246,7 +246,9 @@ public partial class PizzaShopContext : DbContext
             entity.ToTable("menu_categories");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.Description)
                 .HasMaxLength(250)
@@ -278,7 +280,9 @@ public partial class PizzaShopContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CategoryId).HasColumnName("category_id");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.Description)
                 .HasMaxLength(250)
@@ -673,15 +677,9 @@ public partial class PizzaShopContext : DbContext
             entity.ToTable("role_permissions");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CanDelete)
-                .HasDefaultValueSql("false")
-                .HasColumnName("can_delete");
-            entity.Property(e => e.CanEdit)
-                .HasDefaultValueSql("false")
-                .HasColumnName("can_edit");
-            entity.Property(e => e.CanView)
-                .HasDefaultValueSql("false")
-                .HasColumnName("can_view");
+            entity.Property(e => e.CanDelete).HasColumnName("can_delete");
+            entity.Property(e => e.CanEdit).HasColumnName("can_edit");
+            entity.Property(e => e.CanView).HasColumnName("can_view");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("now()")
                 .HasColumnName("created_at");

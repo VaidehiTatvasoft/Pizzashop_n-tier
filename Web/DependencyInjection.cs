@@ -1,16 +1,10 @@
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Pizzashop.Service.Interfaces;
 using Pizzashop.Service.Implementation;
 using Pizzashop.Repository.Implementation;
 using Pizzashop.Repository.Interfaces;
 using pizzashop.Services.Interfaces;
-using Web.Repositories.Interfaces;
-using Web.Repositories;
-using Web.Services.Interfaces;
-using Web.Services;
 using Service.Interface;
-using Repository.Interface;
+using Repository.Interfaces;
 
 namespace Web
 {
@@ -22,11 +16,10 @@ namespace Web
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<ITokenService, TokenService>(); 
             services.AddScoped<IUserService, UserService>(); 
-            services.AddScoped<IPermissionService, PermissionService>(); 
-            services.AddScoped<IRoleService, RoleService>(); 
+            services.AddScoped<IRolePermissionService, RolePermissionService>(); 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
-            services.AddScoped<IPermissionRepository, PermissionRepository>();
+            services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
             services.AddSingleton<IConfiguration>(configuration);
         }
     }
