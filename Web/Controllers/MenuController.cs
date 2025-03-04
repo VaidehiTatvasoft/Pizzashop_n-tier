@@ -10,26 +10,47 @@ namespace Web.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IItemService _itemService;
         private readonly IModifierService _modifierService;
+        private readonly IModifierGroupService _modifierGroupService;
 
-        public MenuController(ICategoryService categoryService, IItemService itemService, IModifierService modifierService)
+        public MenuController(
+            ICategoryService categoryService, 
+            IItemService itemService,
+            IModifierService modifierService,
+            IModifierGroupService modifierGroupService)
         {
             _categoryService = categoryService;
             _itemService = itemService;
             _modifierService = modifierService;
+            _modifierGroupService = modifierGroupService;
         }
 
         public async Task<IActionResult> Index()
         {
+            return View();
+        }
+
+        public async Task<IActionResult> Items(int? categoryId)
+        {
             var categories = await _categoryService.GetAllCategoriesAsync();
-            var items = await _itemService.GetAllItemsAsync();
-            var modifiers = await _modifierService.GetAllModifiersAsync();
-            var model = new MenuViewModel
+            if (categoryId == null)
             {
-                Categories = categories,
-                Items = items,
-                Modifiers = modifiers
-            };
-            return View(model);
+                categoryId = categories.First().Id;
+            }
+
+            ViewBag.Items = await _itemService.GetItemsByCategoryAsync(categoryId.Value);
+            return View(categories);
+        }
+
+        public async Task<IActionResult> Modifiers(int? groupId)
+        {
+            var modifierGroups = await _modifierGroupService.GetAllModifierGroupsAsync();
+            if (groupId == null)
+            {
+                groupId = modifierGroups.First().Id;
+            }
+
+            ViewBag.Items = await _modifierService.GetModifiersByGroupAsync(groupId.Value);
+            return View(modifierGroups);
         }
     }
 }

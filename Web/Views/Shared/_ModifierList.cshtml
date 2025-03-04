@@ -1,0 +1,38 @@
+@using Entity.Data
+@model IEnumerable<Modifier>
+
+<div class="card-body table-responsive">
+    <table class="table align-items-center">
+        <thead>
+            <tr>
+                <th style="color:#ADADAD" class="thead"> <input type="checkbox"> NAME</th>
+                <th style="color:#ADADAD" class="thead">
+                    <div class="d-flex justify-content-center align-items-center">Rate</div>
+                </th>
+                <th style="color:#ADADAD" class="thead">
+                    <div class="d-flex justify-content-center align-items-center">Quantity</div>
+                </th>
+                <th style="color:#ADADAD" class="thead">
+                    <div class="d-flex justify-content-center align-items-center">ACTION</div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var modifier in Model)
+            {
+                <tr>
+                    <td> <input type="checkbox">@modifier.Name</td>
+                    <td>
+                        <div class="d-flex justify-content-center align-items-center">@modifier.Rate</div>
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-center align-items-center">@modifier.Quantity</div>
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-center align-items-center"><a class="bi bi-pen m-1 p-1" href="edit_modifier.html"></a><i type="button" class="bi bi-trash m-1 p-1"></i></div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

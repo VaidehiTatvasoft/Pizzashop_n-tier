@@ -8,16 +8,36 @@ namespace Service.Implementation
 {
     public class ModifierService : IModifierService
     {
-        private readonly IMenuRepository _menuRepository;
+        private readonly IModifierRepository _modifierRepository;
 
-        public ModifierService(IMenuRepository menuRepository)
-        {
-            _menuRepository = menuRepository;
-        }
+    public ModifierService(IModifierRepository modifierRepository)
+    {
+        _modifierRepository = modifierRepository;
+    }
 
-        public async Task<IEnumerable<Modifier>> GetAllModifiersAsync()
-        {
-            return await _menuRepository.GetAllModifiersAsync();
-        }
+    public Task<IEnumerable<Modifier>> GetModifiersByGroupAsync(int groupId)
+    {
+        return _modifierRepository.GetModifiersByGroupAsync(groupId);
+    }
+
+    public Task<IEnumerable<Modifier>> GetAllModifiersAsync()
+    {
+        return _modifierRepository.GetAllModifiersAsync();
+    }
+
+    public Task AddModifierAsync(Modifier modifier)
+    {
+        return _modifierRepository.AddModifierAsync(modifier);
+    }
+
+    public Task UpdateModifierAsync(Modifier modifier)
+    {
+        return _modifierRepository.UpdateModifierAsync(modifier);
+    }
+
+    public Task DeleteModifierAsync(int modifierId)
+    {
+        return _modifierRepository.DeleteModifierAsync(modifierId);
+    }
     }
 }

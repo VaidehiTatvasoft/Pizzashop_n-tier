@@ -19,14 +19,18 @@ namespace Web
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<ITokenService, TokenService>(); 
             services.AddScoped<IUserService, UserService>(); 
-            services.AddScoped<IItemService, ItemService>(); 
             services.AddScoped<ICategoryService, CategoryService>(); 
+            services.AddScoped<IItemService, ItemService>(); 
             services.AddScoped<IModifierService, ModifierService>(); 
             services.AddScoped<IRolePermissionService, RolePermissionService>(); 
+            services.AddScoped<IModifierGroupService, ModifierGroupService>();
+            services.AddScoped<IModifierGroupRepository, ModifierGroupRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
-            services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
             services.AddScoped<IMenuRepository, MenuRepository>();
+            services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
+            services.AddScoped<IItemRepository, ItemRepository>();
+            services.AddScoped<IModifierRepository, ModifierRepository>();
             services.AddSingleton<IConfiguration>(configuration);
         }
     }
