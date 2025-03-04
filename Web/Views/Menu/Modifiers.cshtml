@@ -1,0 +1,64 @@
+@model Entity.ViewModel.MenuViewModel
+
+<div class="d-flex justify-content-between align-items-center m-3 ">
+    <h4>Modifiers</h4>
+</div>
+<div class="card-md-8 col-lg-11 mb-4 justify-content-center align-items-center flex-wrap">
+    <div class="card">
+        <div class="tab-container d-flex">
+            <div class="tab">Items</div>
+            <div class="tab active-tab"><i class="fa fa-bars p-2" aria-hidden="true"></i> Modifiers</div>
+        </div>
+        <div class="d-flex row">
+            <div class="col-lg-9 justify-content-center align-items-center">
+                <h4>Modifiers</h4>
+                <div class="d-flex justify-content-end align-items-center m-3 ">
+                    <div class="p-2">
+                        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    </div>
+                    <div>
+                        <button><i class="bi bi-trash m-1" data-toggle="modal" data-target="#deleteModal"></i></button>
+                    </div>
+                    <div class="p-2">
+                        <a href="add_modifier.html" class="btn btn-primary">+ New Modifier</a>
+                    </div>
+                </div>
+                <div class="card-body table-responsive">
+                    <table class="table align-items-center ">
+                        <thead>
+                            <tr>
+                                <th style="color:#ADADAD" class="thead"> <input type="checkbox"> NAME</th>
+                                <th style="color:#ADADAD" class="thead">
+                                    <div class="d-flex justify-content-center align-items-center">Rate</div>
+                                </th>
+                                <th style="color:#ADADAD" class="thead">
+                                    <div class="d-flex justify-content-center align-items-center">Quantity</div>
+                                </th>
+                                <th style="color:#ADADAD" class="thead">
+                                    <div class="d-flex justify-content-center align-items-center">ACTION</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var modifier in Model.Modifiers)
+                            {
+                                <tr>
+                                    <td> <input type="checkbox"> <img src="images/dining-menu.png" width="30" height="30"> @modifier.Name</td>
+                                    <td>
+                                        <div class="d-flex justify-content-center align-items-center">@modifier.Rate</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex justify-content-center align-items-center">@modifier.Quantity</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex justify-content-center align-items-center"><a class="bi bi-pen m-1 p-1" href="edit_modifier.html"></a><i type="button" class="bi bi-trash m-1" data-toggle="modal" data-target="#deleteModal"></i></div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

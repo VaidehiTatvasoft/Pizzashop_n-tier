@@ -289,6 +289,7 @@ public partial class PizzaShopContext : DbContext
                 .HasColumnName("description");
             entity.Property(e => e.Image).HasColumnName("image");
             entity.Property(e => e.IsAvailable)
+                .IsRequired()
                 .HasDefaultValueSql("true")
                 .HasColumnName("is_available");
             entity.Property(e => e.IsDefaultTax)
@@ -316,6 +317,7 @@ public partial class PizzaShopContext : DbContext
                 .HasPrecision(18, 2)
                 .HasColumnName("tax_percentage");
             entity.Property(e => e.Type)
+                .IsRequired()
                 .HasDefaultValueSql("true")
                 .HasColumnName("type");
             entity.Property(e => e.UnitId).HasColumnName("unit_id");
@@ -352,9 +354,7 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.Description)
                 .HasMaxLength(250)
                 .HasColumnName("description");
-            entity.Property(e => e.IsDeleted)
-                .HasDefaultValueSql("false")
-                .HasColumnName("is_deleted");
+            entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.ModifiedAt).HasColumnName("modified_at");
             entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
             entity.Property(e => e.ModifierGroupId).HasColumnName("modifier_group_id");
