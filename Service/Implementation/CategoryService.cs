@@ -1,5 +1,6 @@
 using Entity.Data;
 using Repository.Interface;
+using Repository.Interfaces;
 using Service.Interface;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -8,16 +9,50 @@ namespace Service.Implementation
 {
     public class CategoryService : ICategoryService
     {
-        private readonly IMenuRepository _menuRepository;
+        private readonly ICategoryRepository _categoryRepository;
 
-        public CategoryService(IMenuRepository menuRepository)
+        private readonly IItemRepository _itemRepository;
+
+        public CategoryService(ICategoryRepository categoryRepository,IItemRepository itemRepository)
         {
-            _menuRepository = menuRepository;
+            _categoryRepository = categoryRepository;
+            _itemRepository = itemRepository;
         }
 
         public async Task<IEnumerable<MenuCategory>> GetAllCategoriesAsync()
         {
-            return await _menuRepository.GetAllCategoriesAsync();
+            return await _categoryRepository.GetAllCategoriesAsync();
+        }
+        public Task<MenuCategory> GetCategoryByIdAsync(int id)
+        {
+            return _categoryRepository.GetCategoryByIdAsync(id);
+        }
+
+        public Task AddCategoryAsync(MenuCategory category)
+        {
+            return _categoryRepository.AddCategoryAsync(category);
+        }
+
+        public Task UpdateCategoryAsync(MenuCategory category)
+        {
+            return _categoryRepository.UpdateCategoryAsync(category);
+        }
+
+        public async Task SoftDeleteCategoryAsync(int id)
+        {
+            var category = await _categoryRepository.GetCategoryByIdAsync(id);
+            if (category != null)
+            {
+                category.IsDeleted = true;
+                await _categoryRepository.UpdateCategoryAsync(category);
+
+                var menuItems = await _itemRepository.GetItemsByCategoryIdAsync(id);
+                foreach (var item in menuItems)
+                {
+                    item.IsDeleted = true;
+                    await _itemRepository.UpdateMenuItemAsync(item);
+                }
+            }
         }
     }
 }

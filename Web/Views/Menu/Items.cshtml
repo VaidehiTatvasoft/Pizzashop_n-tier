@@ -16,7 +16,8 @@
                 <nav class="nav flex-column left_bar bg-light">
                     <a class="navbar-brand nav-link p-4 d-flex justify-content-between" style="color:#0066a6">
                         <div><b>Categories</b></div>
-                        <div><i type="button" class="bi bi-plus-square" data-toggle="modal" data-target="#addCategoryModal"></i></div>
+                        <div><i type="button" class="bi bi-plus-square" data-toggle="modal"
+                                data-target="#addCategoryModal"></i></div>
                     </a>
                     <div class="overflow-auto">
                         @foreach (var category in Model)
@@ -43,25 +44,113 @@
                     @await Html.PartialAsync("_ItemList", ViewBag.Items as List<MenuItem>)
                 </div>
             </div>
+            <!-- Add Category Modal -->
+            <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog"
+                aria-labelledby="addCategoryModalTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header d-flex justify-content-between">
+                            <h5 class="modal-title" id="addCategoryModalLongTitle">Add Category</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body justify-content-center align-items-center">
+                            <form id="addCategoryForm" method="post" action="/Category/AddCategory">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="Name" placeholder="Name*" required>
+                                    <label for="Name">Name*</label>
+                                </div>
+                                <div class="form-floating">
+                                    <textarea class="form-control" name="Description"
+                                        placeholder="Description"></textarea>
+                                    <label for="Description">Description</label>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <button type="button" class="btn btn-outline-primary"
+                                        data-dismiss="modal">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Category Modal -->
+            <div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog"
+                aria-labelledby="editCategoryModalTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header d-flex justify-content-between">
+                            <h5 class="modal-title" id="editCategoryModalLongTitle">Edit Category</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body justify-content-center align-items-center">
+                            <form id="editCategoryForm" method="post" action="/Category/EditCategory">
+                                <input type="hidden" name="Id" id="editCategoryId">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="Name" id="editCategoryName"
+                                        placeholder="Name*" required>
+                                    <label for="Name">Name*</label>
+                                </div>
+                                <div class="form-floating">
+                                    <textarea class="form-control" name="Description" id="editCategoryDescription"
+                                        placeholder="Description"></textarea>
+                                    <label for="Description">Description</label>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <button type="button" class="btn btn-outline-primary"
+                                        data-dismiss="modal">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
-            $('.category-link').on('click', function(e) {
+        $(document).ready(function () {
+            $('.category-link').on('click', function (e) {
                 e.preventDefault();
                 var categoryId = $(this).data('category-id');
                 $.ajax({
                     url: '@Url.Action("Items", "Menu")',
                     type: 'GET',
                     data: { categoryId: categoryId },
-                    success: function(result) {
+                    success: function (result) {
                         $('#item-list').html($(result).find('#item-list').html());
                     }
                 });
             });
+        });
+        $('#addCategoryButton').on('click', function () {
+            $('#addCategoryModal').modal('show');
+        });
+
+        $('.editCategoryButton').on('click', function () {
+            var categoryId = $(this).data('id');
+            var categoryName = $(this).data('name');
+            var categoryDescription = $(this).data('description');
+
+            $('#editCategoryId').val(categoryId);
+            $('#editCategoryName').val(categoryName);
+            $('#editCategoryDescription').val(categoryDescription);
+
+            $('#editCategoryModal').modal('show');
+        });
+
+        $('.deleteCategoryButton').on('click', function () {
+            var categoryId = $(this).data('id');
+            $('#deleteForm').attr('action', '/Category/DeleteCategory/' + categoryId);
+            $('#deleteModal').modal('show');
         });
     </script>
 }

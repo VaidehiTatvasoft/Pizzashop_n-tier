@@ -22,7 +22,7 @@ namespace Repository.Implementation
 
         public async Task<IEnumerable<MenuItem>> GetAllItemsAsync()
         {
-            return await _context.MenuItems.ToListAsync();
+            return await _context.MenuItems.Where(i => i.IsDeleted == false).ToListAsync();
         }
 
         public async Task AddItemAsync(MenuItem item)

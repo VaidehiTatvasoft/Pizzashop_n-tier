@@ -31,6 +31,7 @@ namespace Web
             services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
             services.AddScoped<IItemRepository, ItemRepository>();
             services.AddScoped<IModifierRepository, ModifierRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddSingleton<IConfiguration>(configuration);
         }
     }
