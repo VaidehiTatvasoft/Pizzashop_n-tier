@@ -26,9 +26,9 @@ namespace Web.Controllers
             if (ModelState.IsValid)
             {
                 await _categoryService.AddCategoryAsync(category);
-                return RedirectToAction("Index");
+                return Json(new { success = true });
             }
-            return View(category);
+            return Json(new { success = false, message = "Invalid data" });
         }
 
         public async Task<IActionResult> EditCategory(int id)
@@ -47,9 +47,9 @@ namespace Web.Controllers
             if (ModelState.IsValid)
             {
                 await _categoryService.UpdateCategoryAsync(category);
-                return RedirectToAction("Index");
+                return Json(new { success = true });
             }
-            return View(category);
+            return Json(new { success = false, message = "Invalid data" });
         }
 
         [HttpPost]

@@ -16,13 +16,18 @@
                 <nav class="nav flex-column left_bar bg-light">
                     <a class="navbar-brand nav-link p-4 d-flex justify-content-between" style="color:#0066a6">
                         <div><b>Categories</b></div>
-                        <div><i type="button" class="bi bi-plus-square" data-toggle="modal"
-                                data-target="#addCategoryModal"></i></div>
+                        <div><i class="bi bi-plus-square" data-toggle="modal" data-target="#addCategoryModal"></i></div>
                     </a>
                     <div class="overflow-auto">
                         @foreach (var category in Model)
                         {
-                            <a class="nav-link category-link" href="#" data-category-id="@category.Id">@category.Name</a>
+                            <a class="nav-link category-link" href="#" data-category-id="@category.Id">
+                                @category.Name
+                                <i class="bi bi-pen edit-icon" data-toggle="modal" data-target="#editCategoryModal"
+                                    data-id="@category.Id" data-name="@category.Name"
+                                    data-description="@category.Description"></i>
+                                <i class="bi bi-trash delete-icon" data-id="@category.Id"></i>
+                            </a>
                         }
                     </div>
                 </nav>
@@ -76,7 +81,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Edit Category Modal -->
             <div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog"
                 aria-labelledby="editCategoryModalTitle" aria-hidden="true">
@@ -111,6 +115,8 @@
                     </div>
                 </div>
             </div>
+            <!-- Delete Confirmation Modal Partial -->
+            @Html.Partial("_DeleteConfirmationModal")
         </div>
     </div>
 </div>
@@ -130,27 +136,62 @@
                     }
                 });
             });
-        });
-        $('#addCategoryButton').on('click', function () {
-            $('#addCategoryModal').modal('show');
-        });
 
-        $('.editCategoryButton').on('click', function () {
-            var categoryId = $(this).data('id');
-            var categoryName = $(this).data('name');
-            var categoryDescription = $(this).data('description');
+            $('#addCategoryForm').on('submit', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            $('#addCategoryModal').modal('hide');
+                            location.reload();
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            });
 
-            $('#editCategoryId').val(categoryId);
-            $('#editCategoryName').val(categoryName);
-            $('#editCategoryDescription').val(categoryDescription);
+            $('#editCategoryForm').on('submit', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            $('#editCategoryModal').modal('hide');
+                            location.reload();
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            });
 
-            $('#editCategoryModal').modal('show');
-        });
+            $('.edit-icon').on('click', function () {
+                var categoryId = $(this).data('id');
+                var categoryName = $(this).data('name');
+                var categoryDescription = $(this).data('description');
 
-        $('.deleteCategoryButton').on('click', function () {
-            var categoryId = $(this).data('id');
-            $('#deleteForm').attr('action', '/Category/DeleteCategory/' + categoryId);
-            $('#deleteModal').modal('show');
+                $('#editCategoryId').val(categoryId);
+                $('#editCategoryName').val(categoryName);
+                $('#editCategoryDescription').val(categoryDescription);
+
+                $('#editCategoryModal').modal('show');
+            });
+
+            $('.delete-icon').on('click', function () {
+                var categoryId = $(this).data('id');
+                $('#deleteForm').attr('action', '/Category/DeleteCategory/' + categoryId);
+                $('#deleteModal').modal('show');
+            });
+
+            $('.modal').on('hidden.bs.modal', function () {
+                $(this).find('form')[0].reset();
+            });
         });
     </script>
 }

@@ -46,11 +46,11 @@ namespace Service.Implementation
                 category.IsDeleted = true;
                 await _categoryRepository.UpdateCategoryAsync(category);
 
-                var menuItems = await _itemRepository.GetItemsByCategoryIdAsync(id);
+                var menuItems = await _itemRepository.GetItemsByCategoryAsync(id);
                 foreach (var item in menuItems)
                 {
                     item.IsDeleted = true;
-                    await _itemRepository.UpdateMenuItemAsync(item);
+                    await _itemRepository.UpdateItemAsync(item);
                 }
             }
         }

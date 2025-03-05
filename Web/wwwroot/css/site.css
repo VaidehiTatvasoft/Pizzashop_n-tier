@@ -278,7 +278,25 @@ a i {
   width: 80%;
   padding:20px;
 }
+.category-link {
+  position: relative;
+}
 
+.category-link .edit-icon{
+  position: absolute;
+  right: 30px;
+  display: none;
+}
+.category-link .delete-icon {
+  position: absolute;
+  right: 15px;
+  display: none;
+}
+
+.category-link:hover .edit-icon,
+.category-link:hover .delete-icon {
+  display: inline;
+}
 
   
 
