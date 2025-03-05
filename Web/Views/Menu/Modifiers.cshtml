@@ -20,7 +20,7 @@
                     <div class="overflow-auto">
                         @foreach (var group in Model)
                         {
-                            <a class="nav-link" href="@Url.Action("Modifiers", "Menu", new { groupId = group.Id })">@group.Name</a>
+                            <a class="nav-link modifier-group-link" href="#" data-group-id="@group.Id">@group.Name</a>
                         }
                     </div>
                 </nav>
@@ -38,8 +38,29 @@
                         <a href="add_modifier.html" class="btn btn-primary">+ New Modifier</a>
                     </div>
                 </div>
-                @await Html.PartialAsync("_ModifierList", ViewBag.Items as List<Modifier>)
+                <div id="modifier-list">
+                    @await Html.PartialAsync("_ModifierList", ViewBag.Items as List<Modifier>)
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.modifier-group-link').on('click', function(e) {
+                e.preventDefault();
+                var groupId = $(this).data('group-id');
+                $.ajax({
+                    url: '@Url.Action("Modifiers", "Menu")',
+                    type: 'GET',
+                    data: { groupId: groupId },
+                    success: function(result) {
+                        $('#modifier-list').html($(result).find('#modifier-list').html());
+                    }
+                });
+            });
+        });
+    </script>
+}

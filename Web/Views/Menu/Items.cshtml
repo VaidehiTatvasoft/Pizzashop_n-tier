@@ -8,7 +8,7 @@
 <div class="d-flex justify-content-between align-items-center m-3">
     <h4>Menu</h4>
 </div>
-<div class="card-md-8 col-lg-11 mb-4 justify-content-center align-items-center flex-wrap">
+<div class="mb-4 justify-content-center align-items-center flex-wrap">
     <div class="card">
         @Html.Partial("_MenuTabs")
         <div class="d-flex row">
@@ -21,7 +21,7 @@
                     <div class="overflow-auto">
                         @foreach (var category in Model)
                         {
-                            <a class="nav-link" href="@Url.Action("Items", "Menu", new { categoryId = category.Id })">@category.Name</a>
+                            <a class="nav-link category-link" href="#" data-category-id="@category.Id">@category.Name</a>
                         }
                     </div>
                 </nav>
@@ -30,7 +30,7 @@
                 <h4>Items</h4>
                 <div class="d-flex justify-content-end align-items-center m-3">
                     <div class="p-2">
-                        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                        <input class="form-control " type="search" placeholder="Search" aria-label="Search">
                     </div>
                     <div>
                         <button><i class="bi bi-trash m-1" data-toggle="modal" data-target="#deleteModal"></i></button>
@@ -39,8 +39,29 @@
                         <a href="add_user.html" class="btn btn-primary">+ New Item</a>
                     </div>
                 </div>
-                @await Html.PartialAsync("_ItemList", ViewBag.Items as List<MenuItem>)
+                <div id="item-list">
+                    @await Html.PartialAsync("_ItemList", ViewBag.Items as List<MenuItem>)
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.category-link').on('click', function(e) {
+                e.preventDefault();
+                var categoryId = $(this).data('category-id');
+                $.ajax({
+                    url: '@Url.Action("Items", "Menu")',
+                    type: 'GET',
+                    data: { categoryId: categoryId },
+                    success: function(result) {
+                        $('#item-list').html($(result).find('#item-list').html());
+                    }
+                });
+            });
+        });
+    </script>
+}
