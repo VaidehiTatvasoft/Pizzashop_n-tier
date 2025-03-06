@@ -22,7 +22,7 @@ namespace Repository.Implementation
 
         public async Task<IEnumerable<Modifier>> GetAllModifiersAsync()
         {
-            return await _context.Modifiers.ToListAsync();
+            return await _context.Modifiers.Where(i => i.IsDeleted == false).ToListAsync();
         }
 
         public async Task AddModifierAsync(Modifier modifier)

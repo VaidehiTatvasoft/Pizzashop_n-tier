@@ -15,12 +15,18 @@
                 <nav class="nav flex-column left_bar bg-light">
                     <a class="navbar-brand nav-link p-4 d-flex justify-content-between" style="color:#0066a6">
                         <div><b>Modifier Groups</b></div>
-                        <div><i type="button" class="bi bi-plus-square" data-toggle="modal" data-target="#addModifierGroupModal"></i></div>
+                        <div><i type="button" class="bi bi-plus-square" data-toggle="modal"
+                                data-target="#addModifierGroupModal"></i></div>
                     </a>
                     <div class="overflow-auto">
                         @foreach (var group in Model)
                         {
-                            <a class="nav-link modifier-group-link" href="#" data-group-id="@group.Id">@group.Name</a>
+                            <a class="nav-link modifier-group-link" href="#" data-group-id="@group.Id">@group.Name
+                                <i class="bi bi-pen edit-icon" data-toggle="modal" data-target="#editModifierGroupModal"
+                                    data-id="@group.Id" data-name="@group.Name" data-description="@group.Description"></i>
+                                <i class="bi bi-trash delete-icon" data-id="@group.Id" data-toggle="modal"
+                                    data-target="#deleteModal"></i>
+                            </a>
                         }
                     </div>
                 </nav>
@@ -42,24 +48,118 @@
                     @await Html.PartialAsync("_ModifierList", ViewBag.Items as List<Modifier>)
                 </div>
             </div>
+            <!-- Add ModifierGroup Modal -->
+            @Html.Partial("_AddModifierGroupModal")
+            <!-- Edit ModifierGroup Modal -->
+            <div class="modal fade" id="editModifierGroupModal" tabindex="-1" role="dialog"
+                aria-labelledby="editModifierGroupModalTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header d-flex justify-content-between">
+                            <h5 class="modal-title" id="editModifierGroupModalLongTitle">Edit Modifier Group</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body justify-content-center align-items-center">
+                            <form id="editModifierGroupForm" method="post" action="/ModifierGroup/EditModifierGroup">
+                                <input type="hidden" name="Id" id="editModifierGroupId">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="Name" id="editModifierGroupName"
+                                        placeholder="Name*" required>
+                                    <label for="Name">Name*</label>
+                                </div>
+                                <div class="form-floating">
+                                    <textarea class="form-control" name="Description" id="editModifierGroupDescription"
+                                        placeholder="Description"></textarea>
+                                    <label for="Description">Description</label>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <button type="button" class="btn btn-outline-primary"
+                                        data-dismiss="modal">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Delete Confirmation Modal Partial -->
+            @Html.Partial("_DeleteConfirmationModal")
+
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
-            $('.modifier-group-link').on('click', function(e) {
+        $(document).ready(function () {
+            $('.modifier-group-link').on('click', function (e) {
                 e.preventDefault();
                 var groupId = $(this).data('group-id');
                 $.ajax({
                     url: '@Url.Action("Modifiers", "Menu")',
                     type: 'GET',
                     data: { groupId: groupId },
-                    success: function(result) {
+                    success: function (result) {
                         $('#modifier-list').html($(result).find('#modifier-list').html());
                     }
                 });
+            });
+            $('#addModifierGroupForm').on('submit', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            $('#addModifierGroupModal').modal('hide');
+                            location.reload();
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            });
+
+            $('#editModifierGroupForm').on('submit', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            $('#editModifierGroupModal').modal('hide');
+                            location.reload();
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            });
+
+            $('.edit-icon').on('click', function () {
+                var groupId = $(this).data('id');
+                var groupName = $(this).data('name');
+                var groupDescription = $(this).data('description');
+
+                $('#editgroupId').val(groupId);
+                $('#editgroupName').val(groupName);
+                $('#editgroupDescription').val(groupDescription);
+
+                $('#editModifierGroupModal').modal('show');
+            });
+
+            $('.delete-icon').on('click', function () {
+                var groupId = $(this).data('id');
+                $('#deleteForm').attr('action', '/ModifierGroup/DeleteModfierGroup/' + groupId);
+                $('#deleteModal').modal('show');
+            });
+
+            $('.modal').on('hidden.bs.modal', function () {
+                $(this).find('form')[0].reset();
             });
         });
     </script>

@@ -34,9 +34,9 @@ namespace Service.Implementation
         }
 
         public Task UpdateCategoryAsync(MenuCategory category)
-        {
-            return _categoryRepository.UpdateCategoryAsync(category);
-        }
+{
+    return _categoryRepository.UpdateCategoryAsync(category);
+}
 
         public async Task SoftDeleteCategoryAsync(int id)
         {
