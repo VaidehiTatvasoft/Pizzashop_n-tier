@@ -11547,11 +11547,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\Web.csproj",
+      "projectUniqueName": "d:\\Project_pce54\\Pizzashop_n-tier\\Web\\Web.csproj",
       "projectName": "Web",
-      "projectPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\Web.csproj",
+      "projectPath": "d:\\Project_pce54\\Pizzashop_n-tier\\Web\\Web.csproj",
       "packagesPath": "C:\\Users\\pce54\\.nuget\\packages\\",
-      "outputPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\obj\\",
+      "outputPath": "d:\\Project_pce54\\Pizzashop_n-tier\\Web\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\pce54\\AppData\\Roaming\\NuGet\\NuGet.Config"
