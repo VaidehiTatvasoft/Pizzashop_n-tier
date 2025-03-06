@@ -33,8 +33,8 @@
                     <span asp-validation-for="Username" class="text-danger"></span>
                 </div>
                 <div class="form-floating col">
-                <select id="RoleId" name="RoleId" class="form-control" asp-items="ViewBag.Roles"></select>
-                <label for="RoleId" class="float">Role</label>
+                    <select id="RoleId" name="RoleId" class="form-control" asp-items="ViewBag.Roles"></select>
+                    <label for="RoleId" class="float">Role</label>
                 </div>
             </div>
         </div>
@@ -59,57 +59,60 @@
         <br>
         <div class="col-xl-12">
             <div class="row">
-                 <div class="form-floating col">
-                    <input type="file" class="form-control" id="ProfilePicture" name="ProfilePicture">
-                    <label for="ProfilePicture" class="float">Profile Picture</label>
+                <div class="form-floating mb-3 upload-container d-flex flex-col col">
+                    <label for="ProfilePicture" class="float mx-1">
+                        <img src="~/images/cloud-upload.svg" alt="upload-icon" class="mx-4" />
+                        <br />
+                        Browse File
+                    </label>
+                    <input id="ProfilePicture" type="file" class="input-file" hidden />
                 </div>
             </div>
         </div>
-
         <br>
-
-        <div class="col-xl-12">
-            <div class="row">
-                <div class="form-floating col">
-                    <select id="CountryId" name="CountryId" class="form-control" asp-items="ViewBag.Countries"></select>
-                    <label for="CountryId" class="float">Country</label>
-                </div>
-                <div class="form-floating col">
-                    <select id="StateId" name="StateId" class="form-control"></select>
-                    <label for="StateId" class="float">State</label>
-                </div>
-                <div class="form-floating col">
-                    <select id="CityId" name="CityId" class="form-control"></select>
-                    <label for="CityId" class="float">City</label>
+            <div class="col-xl-12">
+                <div class="row">
+                    <div class="form-floating col">
+                        <select id="CountryId" name="CountryId" class="form-control"
+                            asp-items="ViewBag.Countries"></select>
+                        <label for="CountryId" class="float">Country</label>
+                    </div>
+                    <div class="form-floating col">
+                        <select id="StateId" name="StateId" class="form-control"></select>
+                        <label for="StateId" class="float">State</label>
+                    </div>
+                    <div class="form-floating col">
+                        <select id="CityId" name="CityId" class="form-control"></select>
+                        <label for="CityId" class="float">City</label>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <br>
-        <div class="col-xl-12">
-            <div class="row">
-                <div class="form-floating col">
-                    <input type="text" class="form-control twoc" id="Zipcode" asp-for="Zipcode">
-                    <label for="Zipcode" class="float">ZipCode</label>
-                </div>
-                <div class="form-floating col">
-                    <input type="text" class="form-control twoc" id="Address" asp-for="Address">
-                    <label for="Address" class="float">Address</label>
-                </div>
-                 <div class="form-floating col">
-                    <input type="text" class="form-control twoc" id="Phone" asp-for="Phone">
-                    <label for="Phone" class="float">Phone</label>
-                    <span asp-validation-for="Phone" class="text-danger"></span>
+            <br>
+            <div class="col-xl-12">
+                <div class="row">
+                    <div class="form-floating col">
+                        <input type="text" class="form-control twoc" id="Zipcode" asp-for="Zipcode">
+                        <label for="Zipcode" class="float">ZipCode</label>
+                    </div>
+                    <div class="form-floating col">
+                        <input type="text" class="form-control twoc" id="Address" asp-for="Address">
+                        <label for="Address" class="float">Address</label>
+                    </div>
+                    <div class="form-floating col">
+                        <input type="text" class="form-control twoc" id="Phone" asp-for="Phone">
+                        <label for="Phone" class="float">Phone</label>
+                        <span asp-validation-for="Phone" class="text-danger"></span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <br>
+            <br>
 
-        <div class="form-group p-3 d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary m-1">Create User</button>
-            <button asp-controller="User" asp-action="UserList" class="btn btn-outline-primary m-1">Cancel</button>
-        </div>
+            <div class="form-group p-3 d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary m-1">Create User</button>
+                <button asp-controller="User" asp-action="UserList" class="btn btn-outline-primary m-1">Cancel</button>
+            </div>
     </form>
 </div>
 

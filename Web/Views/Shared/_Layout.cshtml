@@ -17,26 +17,32 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body class="main">
-    <div class="container-fluid">
-        <main>
-            <div class="row ">
-                <div class="sidebar col-auto" id="sidebar">
-                    <a class="navbar-brand">
-                        <img src="@Url.Content("~/assets/pizzashop_logo.png")" alt="" width="65" height="65" class="d-inline-block align-top">
-                        <txt><b>PIZZASHOP</b></txt>
-                    </a>
-                    <a class="active btn " asp-controller="Home" asp-action="AdminDashboard"><i class="fa-solid fa-table-cells-large me-2"></i><b>Dashboard</b></a>
-                    <a class="btn" asp-controller="User" asp-action="UserList"><i class="fa-solid fa-users me-2"></i><b>Users</b></a>
-                    <a class="btn" asp-controller="RolePermission" asp-action="Role"><b>Roles and Permission</b></a>
-                    <a class="btn" asp-controller="Menu" asp-action="Items"><i class="fa-solid fa-monument me-2"></i><b>Menu</b></a>
-                    <a class="btn" asp-controller="Home" asp-action="AdminDashboard"><i class="fa-solid fa-square"></i><b>Tables and Sections</b></a>
-                    <a class="btn" asp-controller="Home" asp-action="AdminDashboard"><i class="fa-solid fa-money-check-dollar"></i><b>Taxes and Fees</b></a>
-                    <a class="btn" asp-controller="Home" asp-action="AdminDashboard"><i class="fa-solid fa-cart-plus"></i><b>Orders</b></a>
-                    <a class="btn" asp-controller="Home" asp-action="AdminDashboard"><i class="fa-solid fa-users-rectangle"></i><b>Customers</b></a>
-                </div>
-                <div class="col justify-content-center bg-light">
-                    <div>
-                        <nav class="navbar navbar-light justify-content-end">
+<div class="container-fluid">
+    <main>
+        <div class="row">
+            <div class="sidebar col-auto" id="sidebar">
+                <a class="navbar-brand">
+                    <img src="@Url.Content("~/assets/pizzashop_logo.png")" alt="" width="65" height="65" class="d-inline-block align-top">
+                    <txt><b>PIZZASHOP</b></txt>
+                </a>
+                <a class="btn" asp-controller="Home" asp-action="AdminDashboard"><i class="fa-solid fa-table-cells-large me-2"></i><b>Dashboard</b></a>
+                <a class="btn" asp-controller="User" asp-action="UserList"><i class="fa-solid fa-users me-2"></i><b>Users</b></a>
+                <a class="btn" asp-controller="RolePermission" asp-action="Role"><b>Roles and Permission</b></a>
+                <a class="btn" asp-controller="Menu" asp-action="Items"><i class="fa-solid fa-monument me-2"></i><b>Menu</b></a>
+                <a class="btn" asp-controller="Home" asp-action="AdminDasboard"><i class="fa-solid fa-square"></i><b>Tables and Sections</b></a>
+                <a class="btn" asp-controller="Home" asp-action="AdminDashoard"><i class="fa-solid fa-money-check-dollar"></i><b>Taxes and Fees</b></a>
+                <a class="btn" asp-controller="Home" asp-action="AdminDasboard"><i class="fa-solid fa-cart-plus"></i><b>Orders</b></a>
+                <a class="btn" asp-controller="Home" asp-action="AdminDashoard"><i class="fa-solid fa-users-rectangle"></i><b>Customers</b></a>
+            </div>
+            <div class="col justify-content-center bg-light">
+                <div>
+                    <nav class="navbar navbar-light d-flex justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <button class="btn d-md-none" id="toggle-sidebar" type="button">
+                                <img src="images/menu-bar.svg">
+                            </button>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-end flex-grow-1">
                             <a class="navbar-brand" data-bs-toggle="dropdown" aria-expanded="false">
                                  <img src="@Url.Content("~/assets/Default_pfp.svg.png")" width="30" height="30" alt="">
                             </a>
@@ -46,34 +52,34 @@
                                 <li><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Logout</a></li>
                             </ul>
                             <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-body d-flex flex-column justify-content-center align-items-center">
-                                    <img src="@Url.Content("~/assets/warning.png")" alt="" height="40px" width="40px">
-                                    Are you sure you want to logout?
-
-                                    <div class="d-flex justify-content-center align-items-center mt-3">
-                                        <form asp-controller="Accounts" asp-action="Logout" method="post">
-                                            <button type="submit" class="m-1" id="logoutButton"
-                                                style="background-color: #0066A7; color: white; border: 1px solid #0066A7; height: 30px; width: 60px;">Yes</button>
-                                        </form>
-                                        <button type="button" class="m-1"
-                                            style="background-color: white; color: #0066A7; border: 1px solid #0066A7; height: 30px; width: 60px;"
-                                            data-bs-dismiss="modal">No</button>
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-body d-flex flex-column justify-content-center align-items-center">
+                                            <img src="@Url.Content("~/assets/warning.png")" alt="" height="40px" width="40px">
+                                            Are you sure you want to logout?
+                                            <div class="d-flex justify-content-center align-items-center mt-3">
+                                                <form asp-controller="Accounts" asp-action="Logout" method="post">
+                                                    <button type="submit" class="m-1" id="logoutButton"
+                                                        style="background-color: #0066A7; color: white; border: 1px solid #0066A7; height: 30px; width: 60px;">Yes</button>
+                                                </form>
+                                                <button type="button" class="m-1"
+                                                    style="background-color: white; color: #0066A7; border: 1px solid #0066A7; height: 30px; width: 60px;"
+                                                    data-bs-dismiss="modal">No</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                        </nav>
-                    </div>
-                    <div class="md-10 m-4 justify-content-center align-items-center flex-wrap">
-                        @RenderBody()
-                    </div>
+                    </nav>
+                </div>
+                <div class="md-10 m-4 justify-content-center align-items-center flex-wrap">
+                    @RenderBody()
                 </div>
             </div>
-        </main>
-    </div>
+        </div>
+    </main>
+</div>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -82,11 +88,27 @@
     <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.2.2/js/dataTables.bootstrap5.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script>
-        function toggleSidebar() {
-            document.getElementById("sidebar").classList.toggle("active");
-        }
-    </script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('toggle-sidebar');
+        const sidebar = document.getElementById('sidebar');
+
+        toggleButton.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        const currentPath = window.location.pathname;
+        const navLinks = sidebar.querySelectorAll('.btn');
+
+        navLinks.forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+    });
+</script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

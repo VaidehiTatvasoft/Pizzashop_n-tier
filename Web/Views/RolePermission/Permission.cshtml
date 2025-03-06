@@ -13,7 +13,8 @@
             <label for="floatingInput">Role</label>
         </div>
     </div>
-    <table class="table">
+    <div class="table-responsive">
+    <table class="table ">
         <thead>
             <tr>
                 <th>
@@ -69,7 +70,7 @@
 
     <button type="submit" class="btn btn-primary">Save</button>
 <button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Role", "RolePermission")'">Cancel</button></form>
-
+</div>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const permissionCheckboxes = document.querySelectorAll(".permission-checkbox");
