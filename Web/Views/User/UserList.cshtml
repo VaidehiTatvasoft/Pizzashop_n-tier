@@ -22,8 +22,7 @@
                 </button>
             </div>
         </form>
-        <a href="@Url.Action("AddUser", "User")" class="btn btn-primary m-2"><i class="fa-solid fa-plus"></i> Add
-            User</a>
+        <a href="@Url.Action("AddUser", "User")" class="btn btn-primary m-2"><i class="fa-solid fa-plus"></i> Add User</a>
     </div>
 </div>
 <div class=" bg-light rounded shadow mt-2 ">
@@ -107,7 +106,7 @@
         </tbody>
     </table>
     <div class="d-flex flex-row justify-content-end align-item-center mt-4">
-        <form method="get" class="col-md-9 d-flex flex-row justify-content-end align-item-center">
+        <form method="get" class="d-flex flex-row justify-content-end align-item-center">
             <label for="form-select" class="mx-2">Items per Page</label>
             <select class="form-select w-auto" name="pageSize" onchange="this.form.submit()" id="Select"
                 aria-label="Role" onchange="">

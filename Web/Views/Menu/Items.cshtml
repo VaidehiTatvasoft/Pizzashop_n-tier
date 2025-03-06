@@ -11,85 +11,85 @@
 <div class="mb-4 justify-content-center align-items-center flex-wrap">
     <div class="card">
         @Html.Partial("_MenuTabs")
-        <div class="d-flex row">
-            <div class="col-auto">
-                <nav class="nav flex-column left_bar bg-light">
-                    <a class="navbar-brand nav-link p-4 d-flex justify-content-between" style="color:#0066a6">
-                        <div><b>Categories</b></div>
-                        <div><i class="bi bi-plus-square" data-toggle="modal" data-target="#addCategoryModal"></i></div>
+<div class="d-flex row">
+    <div class="col-md-2">
+        <div class="nav flex-column left_bar bg-light">
+            <div class="navbar-brand nav-link p-4 d-flex justify-content-between align-items-center" style="color:#0066a6">
+                <div><b>Categories</b></div>
+                <div><i class="bi bi-plus-square" data-toggle="modal" data-target="#addCategoryModal"></i></div>
+            </div>
+            <div class="overflow-auto" style="max-height: 400px;">
+                @foreach (var category in Model)
+                {
+                    <a class="nav-link menu-sidebar category-link d-flex justify-content-between align-items-center" href="#" data-category-id="@category.Id">
+                        <span><i class="fa-solid fa-grip-vertical"></i> @category.Name</span>
+                            <i class="bi bi-pen edit-icon" data-toggle="modal" data-target="#editCategoryModal"
+                                data-id="@category.Id" data-name="@category.Name"
+                                data-description="@category.Description"></i>
+                            <i class="bi bi-trash delete-icon" data-id="@category.Id" data-toggle="modal"
+                                data-target="#deleteModal"></i>
                     </a>
-                    <div class="overflow-auto">
-                        @foreach (var category in Model)
-                        {
-                            <a class="nav-link category-link" href="#" data-category-id="@category.Id">
-                                @category.Name
-                                <i class="bi bi-pen edit-icon" data-toggle="modal" data-target="#editCategoryModal"
-                                    data-id="@category.Id" data-name="@category.Name"
-                                    data-description="@category.Description"></i>
-                                <i class="bi bi-trash delete-icon" data-id="@category.Id" data-toggle="modal"
-                                    data-target="#deleteModal"></i>
-                            </a>
-                        }
-                    </div>
-                </nav>
+                }
             </div>
-            <div class="col-lg-9 justify-content-center align-items-center">
-                <h4>Items</h4>
-                <div class="d-flex justify-content-end align-items-center m-3">
-                    <div class="p-2">
-                        <input class="form-control " type="search" placeholder="Search" aria-label="Search">
-                    </div>
-                    <div>
-                        <button><i class="bi bi-trash m-1" data-toggle="modal" data-target="#deleteModal"></i></button>
-                    </div>
-                    <div class="p-2">
-                        <a href="add_user.html" class="btn btn-primary">+ New Item</a>
-                    </div>
-                </div>
-                <div id="item-list">
-                    @await Html.PartialAsync("_ItemList", ViewBag.Items as List<MenuItem>)
-                </div>
-            </div>
-            <!-- Add Category Modal -->
-            @Html.Partial("_AddCategoryModal")
-
-            <!-- Edit Category Modal -->
-            <div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog"
-                aria-labelledby="editCategoryModalTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header d-flex justify-content-between">
-                            <h5 class="modal-title" id="editCategoryModalLongTitle">Edit Category</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body justify-content-center align-items-center">
-                            <form id="editCategoryForm" method="post" action="/Category/EditCategory">
-                                <input type="hidden" name="Id" id="editCategoryId">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" name="Name" id="editCategoryName"
-                                        placeholder="Name*" required>
-                                    <label for="Name">Name*</label>
-                                </div>
-                                <div class="form-floating">
-                                    <textarea class="form-control" name="Description" id="editCategoryDescription"
-                                        placeholder="Description"></textarea>
-                                    <label for="Description">Description</label>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary">Save</button>
-                                    <button type="button" class="btn btn-outline-primary"
-                                        data-dismiss="modal">Cancel</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Delete Confirmation Modal Partial -->
-            @Html.Partial("_DeleteConfirmationModal")
         </div>
+    </div>
+    <div class="col-lg-9 justify-content-center align-items-center">
+        <h4>Items</h4>
+        <div class="d-flex justify-content-end align-items-center m-3">
+            <div class="p-2">
+                <input class="form-control " type="search" placeholder="Search" aria-label="Search">
+            </div>
+            <div>
+                <button><i class="bi bi-trash m-1" data-toggle="modal" data-target="#deleteModal"></i></button>
+            </div>
+            <div class="p-2">
+                <a href="add_user.html" class="btn btn-primary">+ New Item</a>
+            </div>
+        </div>
+        <div id="item-list">
+            @await Html.PartialAsync("_ItemList", ViewBag.Items as List<MenuItem>)
+        </div>
+    </div>
+    <!-- Add Category Modal -->
+    @Html.Partial("_AddCategoryModal")
+
+    <!-- Edit Category Modal -->
+    <div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog"
+        aria-labelledby="editCategoryModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header d-flex justify-content-between">
+                    <h5 class="modal-title" id="editCategoryModalLongTitle">Edit Category</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body justify-content-center align-items-center">
+                    <form id="editCategoryForm" method="post" action="/Category/EditCategory">
+                        <input type="hidden" name="Id" id="editCategoryId">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" name="Name" id="editCategoryName"
+                                placeholder="Name*" required>
+                            <label for="Name">Name*</label>
+                        </div>
+                        <div class="form-floating">
+                            <textarea class="form-control" name="Description" id="editCategoryDescription"
+                                placeholder="Description"></textarea>
+                            <label for="Description">Description</label>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-outline-primary"
+                                data-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Delete Confirmation Modal Partial -->
+    @Html.Partial("_DeleteConfirmationModal")
+</div>
     </div>
 </div>
 
