@@ -253,9 +253,7 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.Description)
                 .HasMaxLength(250)
                 .HasColumnName("description");
-            entity.Property(e => e.IsDeleted)
-                .HasDefaultValueSql("false")
-                .HasColumnName("is_deleted");
+            entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.ModifiedAt).HasColumnName("modified_at");
             entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
             entity.Property(e => e.Name)
@@ -402,9 +400,7 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.Description)
                 .HasMaxLength(250)
                 .HasColumnName("description");
-            entity.Property(e => e.IsDeleted)
-                .HasDefaultValueSql("false")
-                .HasColumnName("is_deleted");
+            entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.ModifiedAt).HasColumnName("modified_at");
             entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
             entity.Property(e => e.Name)

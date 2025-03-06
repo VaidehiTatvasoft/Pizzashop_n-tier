@@ -28,9 +28,7 @@ namespace Repository.Implementation
         public async Task AddCategoryAsync(MenuCategory category)
         {
             await _context.MenuCategories.AddAsync(category);
-            Console.WriteLine("Category added: " + category.Name);
             await _context.SaveChangesAsync();
-            Console.WriteLine("Changes saved to the database.");
         }
 
         public async Task UpdateCategoryAsync(MenuCategory category)

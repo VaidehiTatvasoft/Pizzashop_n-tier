@@ -13,7 +13,7 @@ namespace Service.Implementation
 
         private readonly IItemRepository _itemRepository;
 
-        public CategoryService(ICategoryRepository categoryRepository,IItemRepository itemRepository)
+        public CategoryService(ICategoryRepository categoryRepository, IItemRepository itemRepository)
         {
             _categoryRepository = categoryRepository;
             _itemRepository = itemRepository;
