@@ -264,7 +264,6 @@ public partial class PizzaShopContext : DbContext
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.MenuCategoryCreatedByNavigations)
                 .HasForeignKey(d => d.CreatedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("created_by");
 
             entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.MenuCategoryModifiedByNavigations)
@@ -329,7 +328,6 @@ public partial class PizzaShopContext : DbContext
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.MenuItemCreatedByNavigations)
                 .HasForeignKey(d => d.CreatedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("created_by");
 
             entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.MenuItemModifiedByNavigations)
@@ -349,12 +347,16 @@ public partial class PizzaShopContext : DbContext
             entity.ToTable("modifiers");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.Description)
                 .HasMaxLength(250)
                 .HasColumnName("description");
-            entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
+            entity.Property(e => e.IsDeleted)
+                .HasDefaultValueSql("false")
+                .HasColumnName("is_deleted");
             entity.Property(e => e.ModifiedAt).HasColumnName("modified_at");
             entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
             entity.Property(e => e.ModifierGroupId).HasColumnName("modifier_group_id");
@@ -369,7 +371,6 @@ public partial class PizzaShopContext : DbContext
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.ModifierCreatedByNavigations)
                 .HasForeignKey(d => d.CreatedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("created_by");
 
             entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.ModifierModifiedByNavigations)
@@ -394,7 +395,9 @@ public partial class PizzaShopContext : DbContext
             entity.ToTable("modifier_groups");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.Description)
                 .HasMaxLength(250)
@@ -410,7 +413,6 @@ public partial class PizzaShopContext : DbContext
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.ModifierGroupCreatedByNavigations)
                 .HasForeignKey(d => d.CreatedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("created_by");
 
             entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.ModifierGroupModifiedByNavigations)

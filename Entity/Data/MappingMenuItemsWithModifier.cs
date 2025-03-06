@@ -11,8 +11,6 @@ public partial class MappingMenuItemsWithModifier
 
     public int ModifierGroupId { get; set; }
 
-    public int[]? MinSelectionRequired { get; set; }
-
     public int? MaxSelectionAllowed { get; set; }
 
     public bool? IsDeleted { get; set; }
@@ -24,6 +22,8 @@ public partial class MappingMenuItemsWithModifier
     public DateTime? ModifiedAt { get; set; }
 
     public int? ModifiedBy { get; set; }
+
+    public int? MinSelectionRequired { get; set; }
 
     public virtual User CreatedByNavigation { get; set; } = null!;
 

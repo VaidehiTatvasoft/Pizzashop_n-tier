@@ -37,7 +37,6 @@ public async Task<IActionResult> AddCategory(MenuCategory category)
     }
 
     category.CreatedBy = userId;
-    category.CreatedByNavigation = null;
 
     if (ModelState.IsValid)
     {
