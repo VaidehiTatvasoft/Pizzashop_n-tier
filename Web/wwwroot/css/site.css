@@ -18,11 +18,15 @@ h2 {
   background-color: #0066A7;
   color: white;
   border: 1px solid #0066A7;
+  justify-content: center;
+  align-items: center;
 }
 .cancel-button{
   background-color: white; 
   color: #0066A7;
   border: 1px solid #0066A7; 
+  justify-content: center;
+  align-items: center;
 }
 .active-tab {
   color: #0066a6;
@@ -191,11 +195,11 @@ body {
 .profile-email {
   margin: 15px;
 }
-.svg-inline--fa{
+.eye-icon{
   color:grey;
   align-items: center;
-  margin-top:12px;
-  margin-left: -25px;
+  margin-top:18px;
+  margin-left: -32px;
 }
 .user-container {
   position: absolute;
@@ -270,9 +274,22 @@ body {
   color: gray !important;
   padding: 10px;
   border-bottom: 3px solid #ADADAD !important;
+}
+.table td{
+  justify-content: center;
+  background-color:  rgba(var(--bs-light-rgb),var(--bs-bg-opacity))!important;
+  color: gray !important;
+  padding: 10px;
 
 }
+.table th{
+  justify-content: center;
+  background-color:  rgba(var(--bs-light-rgb),var(--bs-bg-opacity))!important;
+  color: gray !important;
+  padding: 15px;
 
+
+}
 
 .active-status {
   width: 90px;
@@ -293,7 +310,11 @@ body {
   border: none;
 
 }
+.box{
+  border-radius:0px !important;
+  line-height: 2.5;
 
+}
 .search-bar {
   max-width: 500px;
   margin: auto auto;

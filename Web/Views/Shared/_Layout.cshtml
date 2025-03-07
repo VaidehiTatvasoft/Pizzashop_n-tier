@@ -74,15 +74,14 @@
                                                 class="modal-body d-flex flex-column justify-content-center align-items-center">
                                                 <img src="@Url.Content("~/assets/warning.png")" alt="" height="40px"
                                                     width="40px">
-                                                Are you sure you want to logout?
+                                               <br> Are you sure you want to logout?
                                                 <div class="d-flex justify-content-center align-items-center mt-3">
                                                     <form asp-controller="Accounts" asp-action="Logout" method="post">
-                                                        <button type="submit" class="m-1" id="logoutButton"
-                                                            style="background-color: #0066A7; color: white; border: 1px solid #0066A7; height: 30px; width: 60px;">Yes</button>
+                                                        <button type="submit" class="btn update-button m-1"
+                                                            id="logoutButton" style=" width: 70px;">Yes</button>
                                                     </form>
-                                                    <button type="button" class="m-1"
-                                                        style="background-color: white; color: #0066A7; border: 1px solid #0066A7; height: 30px; width: 60px;"
-                                                        data-bs-dismiss="modal">No</button>
+                                                    <button type="submit" class="btn cancel-button m-1"
+                                                        style=" width: 70px;" data-bs-dismiss="modal">No</button>
                                                 </div>
                                             </div>
                                         </div>
