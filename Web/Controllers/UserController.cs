@@ -30,16 +30,31 @@ namespace pizzashop.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddUserAsync(UserViewModel model)
+        public async Task<IActionResult> AddUserAsync(UserViewModel model, IFormFile ProfileImage)
         {
             if (ModelState.IsValid)
             {
+                if (ProfileImage != null && ProfileImage.Length > 0)
+                {
+                    var fileName = Path.GetFileName(ProfileImage.FileName);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await ProfileImage.CopyToAsync(stream);
+                    }
+
+                    model.ProfileImage = "/uploads/" + fileName;
+                }
+
                 var result = await _userService.AddUserAsync(model, User);
                 if (result)
                 {
                     return RedirectToAction("UserList");
                 }
             }
+            ViewBag.Roles = new SelectList(_context.Roles);
+            ViewBag.Countries = new SelectList(_context.Countries);
             return View(model);
         }
 
@@ -87,28 +102,28 @@ namespace pizzashop.Controllers
             return RedirectToAction("UserList");
         }
 
-       public IActionResult UserList(string searchString, int pageIndex = 1, int pageSize = 5, string sortOrder = "")
-    {
-        var users = _userService.GetUsersList(searchString, sortOrder, pageIndex, pageSize, out int count);
-
-        ViewData["UsernameSortParam"] = sortOrder == "username_asc" ? "username_desc" : "username_asc";
-        ViewData["RoleSortParam"] = sortOrder == "role_asc" ? "role_desc" : "role_asc";
-
-        ViewBag.count = count;
-        ViewBag.pageIndex = pageIndex;
-        ViewBag.pageSize = pageSize;
-        ViewBag.totalPage = (int)Math.Ceiling(count / (double)pageSize);
-        ViewBag.searchString = searchString;
-
-        if (users == null || !users.Any())
+        public IActionResult UserList(string searchString, int pageIndex = 1, int pageSize = 5, string sortOrder = "")
         {
-            ViewBag.ErrorMessage = "UserList is Empty";
+            var users = _userService.GetUsersList(searchString, sortOrder, pageIndex, pageSize, out int count);
+
+            ViewData["UsernameSortParam"] = sortOrder == "username_asc" ? "username_desc" : "username_asc";
+            ViewData["RoleSortParam"] = sortOrder == "role_asc" ? "role_desc" : "role_asc";
+
+            ViewBag.count = count;
+            ViewBag.pageIndex = pageIndex;
+            ViewBag.pageSize = pageSize;
+            ViewBag.totalPage = (int)Math.Ceiling(count / (double)pageSize);
+            ViewBag.searchString = searchString;
+
+            if (users == null || !users.Any())
+            {
+                ViewBag.ErrorMessage = "UserList is Empty";
+                return View();
+            }
+
+            ViewBag.UserList = users;
             return View();
         }
-
-        ViewBag.UserList = users;
-        return View();
-    }
 
         [HttpGet]
         public async Task<IActionResult> Profile()

@@ -149,7 +149,7 @@ namespace Pizzashop.Service.Implementation
         {
             return null;
         }
-    var roleName = await _userRepository.GetRoleNameById(user.RoleId);
+        var roleName = await _userRepository.GetRoleNameById(user.RoleId);
 
         return new UserViewModel
         {

@@ -1,12 +1,17 @@
-
 @model Entity.ViewModel.UserViewModel
 
 @{
     ViewData["Title"] = "Edit User";
 }
-
-<h2 class="dt p-2">Edit User</h2>
-
+<div class="d-flex justify-content-between align-items-center m-3 ">
+    <div>
+        <h2 class="dt p-2">Edit User</h2>
+    </div>
+    <div>
+        <a asp-controller="User" asp-action="UserList" class="btn cancel-button ">
+            Back</a>
+    </div>
+</div>
 <div class="form">
     <form asp-controller="User" asp-action="EditUser" method="post" enctype="multipart/form-data">
         <div class="col-xl-12">
@@ -45,7 +50,7 @@
         <div class="col-xl-12">
             <div class="row">
                 <div class="form-floating col">
-                    <input type="text" class="form-control twoc" id="Email" asp-for="Email">
+                    <input type="text" class="form-control twoc" id="Email" asp-for="Email" disabled>
                     <label for="Email" class="float">Email</label>
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
@@ -62,7 +67,7 @@
         <br>
         <div class="col-xl-12">
             <div class="row">
-                 <div class="form-floating col">
+                <div class="form-floating col">
                     <input type="file" class="form-control" id="ProfilePicture" name="ProfilePicture">
                     <label for="ProfilePicture" class="float">Profile Picture</label>
                 </div>
@@ -99,7 +104,7 @@
                     <input type="text" class="form-control twoc" id="Address" asp-for="Address">
                     <label for="Address" class="float">Address</label>
                 </div>
-                 <div class="form-floating col">
+                <div class="form-floating col">
                     <input type="text" class="form-control twoc" id="Phone" asp-for="Phone">
                     <label for="Phone" class="float">Phone</label>
                     <span asp-validation-for="Phone" class="text-danger"></span>
@@ -109,9 +114,9 @@
 
         <br>
 
-        <div class="form-group p-3 d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary m-1">Update User</button>
-            <button asp-controller="User" asp-action="UserList" class="btn btn-outline-primary m-1">Cancel</button>
+        <div class="form-group p-3 d-flex justify-content-start">
+            <button type="submit" class="btn update-button m-1">Update User</button>
+            <button asp-controller="User" asp-action="UserList" class="btn cancel-button m-1">Cancel</button>
         </div>
     </form>
 </div>
