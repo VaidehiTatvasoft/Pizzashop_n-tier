@@ -14,7 +14,16 @@ h2 {
   padding: 10px 20px;
   cursor: pointer;
 }
-
+.update-button{
+  background-color: #0066A7;
+  color: white;
+  border: 1px solid #0066A7;
+}
+.cancel-button{
+  background-color: white; 
+  color: #0066A7;
+  border: 1px solid #0066A7; 
+}
 .active-tab {
   color: #0066a6;
   display: flex;
@@ -40,7 +49,14 @@ txt {
   font-size: 22px;
 }
 
-@media (max-width: 986px) {
+@media (max-width: 768px) {
+  .navbar-toggler {
+    display: inline-block;
+  }
+  .fa-bars{
+    padding-left: 15px;
+    color:aliceblue;
+  }
   .sidebar {
     position: fixed;
     transform: translateX(-100%);
@@ -62,11 +78,6 @@ txt {
     background-color: #FFFFFF;
     margin: 0;
     padding: 0;
-
-  }
-
-  .navbar-toggler {
-    display: inline-block;
   }
 
   .content {
@@ -138,10 +149,14 @@ body {
   min-height: 100px;
   overflow: hidden;
   background-color: #F8F9FB;
-  padding: 20px;
   box-shadow: -2px 4px 11px 4px #DADADA;
+  margin:10px;
+  margin-right:25px;
 }
-
+.profile-form{
+  padding-left: 10px;
+  padding-right: 10px;
+}
 .btn-primary {
   background: #006ab0 0% 0% no-repeat padding-box;
   border: none;
@@ -163,29 +178,40 @@ body {
 }
 
 .profile-bg .img-1 {
-  margin: -15px;
-  height: 45px;
+  height: 50px;
   width: 100%;
   object-fit: cover;
 }
 
 .profile-bg .img-2 {
-  width: 70px;
-  height: 70px;
+  width: 85px;
+  height: 85px;
 
 }
-
+.profile-email {
+  margin: 15px;
+}
+.svg-inline--fa{
+  color:grey;
+  align-items: center;
+  margin-top:12px;
+  margin-left: -25px;
+}
 .user-container {
   position: absolute;
   transform: translateX(-50%);
-  left: 15%;
-  top: 60%;
+  left: 8%;
+  top: 80%;
   display: flex;
   gap: 8px;
   align-items: center;
-
+  opacity: 1;
 }
-
+@media (max-width: 1024px) {
+  .user-container {
+    left: 15%;
+  }
+}
 .twoc {
   height: 58px;
 }
@@ -211,7 +237,7 @@ body {
     position: absolute;
     transform: translateX(-50%);
     left: 20%;
-    top: 60%;
+    top: 70%;
     display: flex;
     gap: 8px;
     align-items: center;
@@ -225,7 +251,7 @@ body {
     position: absolute;
     transform: translateX(-50%);
     left: 50%;
-    top: 60%;
+    top: 70%;
     display: flex;
     gap: 8px;
     align-items: center;

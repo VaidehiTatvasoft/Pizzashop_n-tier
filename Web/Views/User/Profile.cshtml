@@ -9,18 +9,22 @@
     <form asp-controller="User" asp-action="Profile" method="post">
         <div class="profile-bg">
             <img class="img-1" src="@Url.Content("~/assets/profile_div_bg.jpg")" alt="">
-            <div class="user-container">
-                <img class="img-2" src="@Url.Content("~/assets/Default_pfp.svg.png")" alt="">
-                <div class="m-0 pt-2">
-                    <h5 class="m-0">@Model.FirstName @Model.LastName</h5>
-                    <p class="m-0">@Model.RoleName</p>
+            <div class="d-flex justify-content-between">
+                <div class="user-container">
+                    <img class="img-2" src="@Url.Content("~/assets/Default_pfp.svg.png")" alt="">
+                    <div class="m-0 pt-2">
+                        <h5 class="m-0">@Model.FirstName @Model.LastName</h5>
+                        <span class="m-0">@Model.RoleName</span>
+                    </div>
+                </div>
+                <div class="ms-auto">
+                    <p class="profile-email">@Model.Email</p>
                 </div>
             </div>
         </div>
-
         <br>
-        <div class="col-xl-12" style="margin-top: 40px;">
-            <div class="row">
+        <div class="col-xl-12 profile-form" style="padding-top: 30px;">
+            <div class=" row " style="margin-top: 50px;">
                 <div class="form-floating col">
                     <input type="text" class="form-control twoc" id="FirstName" asp-for="FirstName">
                     <label for="FirstName" class="float">First Name</label>
@@ -32,7 +36,7 @@
             </div>
         </div>
         <br>
-        <div class="col-xl-12">
+        <div class="col-xl-12 profile-form">
             <div class="row">
                 <div class="form-floating col">
                     <input type="text" class="form-control twoc" id="Username" asp-for="Username">
@@ -44,10 +48,8 @@
                 </div>
             </div>
         </div>
-
         <br>
-
-        <div class="col-xl-12">
+        <div class="col-xl-12 profile-form">
             <div class="row">
                 <div class="form-floating col">
                     <select id="CountryId" name="CountryId" class="form-control" asp-items="ViewBag.Countries"></select>
@@ -63,10 +65,8 @@
                 </div>
             </div>
         </div>
-
         <br>
-
-        <div class="col-xl-12">
+        <div class="col-xl-12 profile-form">
             <div class="row">
                 <div class="form-floating col-xl-9 col-sm-8 col-7">
                     <input type="text" class="form-control twoc" id="Address" asp-for="Address">
@@ -80,10 +80,8 @@
         </div>
 
         <div class="form-group forget-remember form-chec p-3 d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary m-1"
-                style="background-color: #0066A7; color: white; border: 1px solid #0066A7;">Update</button>
-            <button asp-controller="Home" asp-action="AdminDashboard" class="btn btn-primary m-1"
-                style="background-color: white; color: #0066A7; border: 1px solid #0066A7;">Cancel</button>
+            <button type="submit" class="btn update-button m-1">Update</button>
+            <button asp-controller="Home" asp-action="AdminDashboard" class="btn cancel-button m-1">Cancel</button>
         </div>
     </form>
 </div>
@@ -95,57 +93,57 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
-    $("#CountryId").change(function () {
-        var countryId = $(this).val();
-        console.log("Selected Country ID:", countryId);
+            $("#CountryId").change(function () {
+                var countryId = $(this).val();
+                console.log("Selected Country ID:", countryId);
 
-        if (countryId) {
-            $.ajax({
-                url: '/User/GetStates',
-                type: 'GET',
-                data: { countryId: countryId },
-                dataType: 'json',
-                success: function (states) {
-                    console.log("Fetched States:", states);
-                    var stateDropdown = $("#StateId");
-                    stateDropdown.empty().append('<option value="">Select State</option>');
-                    $.each(states, function (index, state) {
-                        stateDropdown.append('<option value="' + state.id + '">' + state.name + '</option>');
+                if (countryId) {
+                    $.ajax({
+                        url: '/User/GetStates',
+                        type: 'GET',
+                        data: { countryId: countryId },
+                        dataType: 'json',
+                        success: function (states) {
+                            console.log("Fetched States:", states);
+                            var stateDropdown = $("#StateId");
+                            stateDropdown.empty().append('<option value="">Select State</option>');
+                            $.each(states, function (index, state) {
+                                stateDropdown.append('<option value="' + state.id + '">' + state.name + '</option>');
+                            });
+
+                            $("#CityId").empty().append('<option value="">Select City</option>');
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error fetching states:", xhr.responseText);
+                        }
                     });
-
-                    $("#CityId").empty().append('<option value="">Select City</option>'); 
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error fetching states:", xhr.responseText);
                 }
             });
-        }
-    });
 
-    $("#StateId").change(function () {
-        var stateId = $(this).val();
-        console.log("Selected State ID:", stateId);
+            $("#StateId").change(function () {
+                var stateId = $(this).val();
+                console.log("Selected State ID:", stateId);
 
-        if (stateId) {
-            $.ajax({
-                url: '/User/GetCities',
-                type: 'GET',
-                data: { stateId: stateId },
-                dataType: 'json',
-                success: function (cities) {
-                    console.log("Fetched Cities:", cities);
-                    var cityDropdown = $("#CityId");
-                    cityDropdown.empty().append('<option value="">Select City</option>');
-                    $.each(cities, function (index, city) {
-                        cityDropdown.append('<option value="' + city.id + '">' + city.name + '</option>');
+                if (stateId) {
+                    $.ajax({
+                        url: '/User/GetCities',
+                        type: 'GET',
+                        data: { stateId: stateId },
+                        dataType: 'json',
+                        success: function (cities) {
+                            console.log("Fetched Cities:", cities);
+                            var cityDropdown = $("#CityId");
+                            cityDropdown.empty().append('<option value="">Select City</option>');
+                            $.each(cities, function (index, city) {
+                                cityDropdown.append('<option value="' + city.id + '">' + city.name + '</option>');
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error fetching cities:", xhr.responseText);
+                        }
                     });
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error fetching cities:", xhr.responseText);
                 }
             });
-        }
-    });
-});
+        });
     </script>
 }

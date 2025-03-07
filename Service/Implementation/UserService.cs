@@ -149,6 +149,7 @@ namespace Pizzashop.Service.Implementation
         {
             return null;
         }
+    var roleName = await _userRepository.GetRoleNameById(user.RoleId);
 
         return new UserViewModel
         {
@@ -157,6 +158,8 @@ namespace Pizzashop.Service.Implementation
             Username = user.Username,
             Phone = user.Phone,
             RoleId = user.RoleId,
+            RoleName = roleName, 
+            Email = user.Email,
             CountryId = user.CountryId,
             StateId = user.StateId,
             CityId = user.CityId,

@@ -22,89 +22,82 @@
                 </button>
             </div>
         </form>
-        <a href="@Url.Action("AddUser", "User")" class="btn btn-primary m-2"><i class="fa-solid fa-plus"></i> Add User</a>
+        <a href="@Url.Action("AddUser", "User")" class="btn btn-primary m-2"><i class="fa-solid fa-plus"></i> Add
+            User</a>
     </div>
 </div>
-<div class=" bg-light rounded shadow mt-2 ">
-    <table class="table  table-responsive  ml-3 p-3 pl-3">
-        <thead>
-            <tr>
-                <th scope="col" style="color:#5f5e5e" class="thead">Name
-                    <a asp-action="UserList" asp-route-sortOrder="@ViewData["UsernameSortParam"]" asp-route-offset="1"
-                        asp-route-pagesize="@pageSize" style="text-decoration: none;color: inherit;">
-                        <i class="fa-solid fa-arrow-up"></i>
-                        <i class="fa-solid fa-arrow-down"></i>
-                    </a>
-                </th>
-                <th scope="col" style="color:#5f5e5e" class="thead">Email</th>
-                <th scope="col" style="color:#5f5e5e" class="thead">Phone</th>
-                <th scope="col" style="color:#5f5e5e" class="thead">Role
-                    <a asp-action="UserList" asp-route-sortOrder="@ViewData["RoleSortParam"]" asp-route-offset="1"
-                        asp-route-pagesize="@pageSize" style="text-decoration: none;color: inherit;">
-                        <i class="fa-solid fa-arrow-up"></i>
-                        <i class="fa-solid fa-arrow-down"></i>
-                    </a>
-                </th>
-                <th scope="col" style="color:#5f5e5e" class="thead">Status</th>
-                <th scope="col" style="color:#5f5e5e" class="thead">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <p>@ErrorMessage</p>
-            @foreach (var user in ViewBag.UserList)
-            {
-                <tr id="@user.Id">
-                    <td>
-                        <div class="d-flex gap-3 align-items-center">
-                            <img class="user-profile-img" src="@Url.Content("~/assets/Default_pfp.svg.png")" alt="">
-                            @user.FirstName @user.LastName
-                        </div>
-                    </td>
-                    <td>@user.Email</td>
-                    <td>@user.Phone</td>
-                    <td>
-                        @switch (@user.RoleId)
-                        {
-                            case 1:
-                                <div>Super Admin</div>
-                                break;
-                            case 2:
-                                <div>Account Manager</div>
-                                break;
-                            case 3:
-                                <div>Chef</div>
-                                break;
-                        }
-                    </td>
-                    <td>
-                        @if (@user.IsActive)
-                        {
-                            <button class="active-status p-1"><b>Active</b></button>
-                        }
-                        else
-                        {
-                            <button class="status-value p-1"><b>Inctive</b></button>
-                        }
-                    </td>
-                    <td>
-                        <div class="d-flex align-items-center">
-                            @if (user.IsActive)
-                            {
-                                <a asp-action="EditUser" asp-controller="User" asp-route-id="@user.Id">
-                                    <i class="bi bi-pen m-1"></i>
-                                </a>
-                            }
-                            <a class="bi bi-trash m-1" href="javascript:void(0)" onclick="confirmDelete(@user.Id)"></a>
-                            <form id="deleteForm-@user.Id" method="post"
-                                action="@Url.Action("DeleteUser", "User", new { id = user.Id })" style="display:none;">
-                                @Html.AntiForgeryToken()
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="bg-light rounded shadow mt-2">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col" style="color:#5f5e5e" class="thead">Name</th>
+                        <th scope="col" style="color:#5f5e5e" class="thead">Email</th>
+                        <th scope="col" style="color:#5f5e5e" class="thead">Phone</th>
+                        <th scope="col" style="color:#5f5e5e" class="thead">Role</th>
+                        <th scope="col" style="color:#5f5e5e" class="thead">Status</th>
+                        <th scope="col" style="color:#5f5e5e" class="thead">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <p>@ErrorMessage</p>
+                    @foreach (var user in ViewBag.UserList)
+                    {
+                        <tr id="@user.Id">
+                            <td>
+                                <div class="d-flex gap-3 align-items-center">
+                                    <img class="user-profile-img" src="@Url.Content("~/assets/Default_pfp.svg.png")" alt="">
+                                    @user.FirstName @user.LastName
+                                </div>
+                            </td>
+                            <td>@user.Email</td>
+                            <td>@user.Phone</td>
+                            <td>
+                                @switch (@user.RoleId)
+                                {
+                                    case 1:
+                                        <div>Super Admin</div>
+                                        break;
+                                    case 2:
+                                        <div>Account Manager</div>
+                                        break;
+                                    case 3:
+                                        <div>Chef</div>
+                                        break;
+                                }
+                            </td>
+                            <td>
+                                @if (@user.IsActive)
+                                {
+                                    <button class="active-status p-1"><b>Active</b></button>
+                                }
+                                else
+                                {
+                                    <button class="status-value p-1"><b>Inactive</b></button>
+                                }
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    @if (user.IsActive)
+                                    {
+                                        <a asp-action="EditUser" asp-controller="User" asp-route-id="@user.Id">
+                                            <i class="bi bi-pen m-1"></i>
+                                        </a>
+                                    }
+                                    <a class="bi bi-trash m-1" href="javascript:void(0)"
+                                        onclick="confirmDelete(@user.Id)"></a>
+                                    <form id="deleteForm-@user.Id" method="post"
+                                        action="@Url.Action("DeleteUser", "User", new { id = user.Id })"
+                                        style="display:none;">
+                                        @Html.AntiForgeryToken()
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     <div class="d-flex flex-row justify-content-end align-item-center mt-4">
         <form method="get" class="d-flex flex-row justify-content-end align-item-center">
             <label for="form-select" class="mx-2">Items per Page</label>

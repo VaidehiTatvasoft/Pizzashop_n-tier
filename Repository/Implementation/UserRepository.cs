@@ -29,7 +29,11 @@ namespace Pizzashop.Repository.Implementation
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
-
+        public async Task<string> GetRoleNameById(int roleId)
+        {
+            var role = await _context.Roles.FirstOrDefaultAsync(r => r.Id == roleId);
+            return role?.Name;
+        }
         public async Task ResetPassword(string email, string newPassword)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
