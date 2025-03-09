@@ -13,6 +13,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] Pizzashop</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -34,14 +35,13 @@
                         <img src="~/assets/pizzashop_logo.png" alt="PizzaShop Logo" class="pizza-logo">
                         <div class="heading p-1"><b>PIZZASHOP</b></div>
                     </div>
-                    <form asp-controller="Accounts" asp-action="Login" method="post" class="auth-form col-md-8">
+                    <form asp-controller="Accounts" asp-action="Login" method="post" id="loginForm" class="auth-form col-md-8">
                         <h3><b>Welcome,</b></h3><br>
                         <div class="mb-3 d-flex">
                             <input asp-for="Email" type="email" class="form-control ps-4" id="email"
                                 placeholder="Email*">
                             <i class="fa fa-user input-icon"></i>
                         </div>
-                        <span asp-validation-for="Email" class="text-danger"></span>
                         <div class="mb-3 d-flex">
                             <input asp-for="PasswordHash" type="password" class="form-control ps-4" id="password"
                                 placeholder="Password*">
@@ -67,7 +67,34 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+    <!-- Include jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- Include jQuery Validation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <!-- Include jQuery Validation Unobtrusive -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <!-- Include Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+ <script>
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+    </script>
     <script>
         $(function () {
             $('#email').on("change", function () {
