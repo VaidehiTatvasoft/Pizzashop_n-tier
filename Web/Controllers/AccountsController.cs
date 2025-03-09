@@ -94,8 +94,8 @@ namespace Pizzashop.Web.Controllers
                 return View(model);
             }
 
-            string resetLink = $"http://localhost:5274/Accounts/ResetPassword?token={_tokenService.GenerateToken(user, TimeSpan.FromHours(1))}";
-            string body = $"<div><b>PIZZASHOP</b></div><div><p>Please click <a href='{resetLink}'><b>here</b></a> to reset your account Password.<br>If you encounter any issues or have any question, please do not hesitate to contact our support team.<br><em>Important Note:</em> For security reasons, the link will expire in 24 hours. If you did not request a password reset, please ignore this email or contact our support team immediately.</p></div>";
+            string resetLink = Url.Action("ResetPassword", "Accounts", new { token = _tokenService.GenerateResetPasswordToken(user, TimeSpan.FromHours(1)) }, Request.Scheme);
+            string body = $"<div><b>PIZZASHOP</b></div><div><p>Please click <a href='{resetLink}'><b>here</b></a> to reset your account Password.<br>If you encounter any issues or have any question, please do not hesitate to contact our support team.<br><em>Important Note:</em> For security reasons, the link will expire in 1 hour. If you did not request a password reset, please ignore this email or contact our support team immediately.</p></div>";
 
             await _accountService.SendForgotPasswordEmail(user.Email, body);
 
@@ -104,12 +104,13 @@ namespace Pizzashop.Web.Controllers
         }
         public IActionResult ResetPassword(string token)
         {
-            var userClaims = _tokenService.ValidateToken(token);
+            var userClaims = _tokenService.ValidateResetPasswordToken(token);
             if (userClaims == null)
             {
                 TempData["ErrorMessage"] = "Invalid or expired token.";
                 return RedirectToAction("Index");
             }
+
             var email = userClaims.FindFirst(ClaimTypes.Email)?.Value;
             if (string.IsNullOrEmpty(email))
             {
@@ -121,16 +122,31 @@ namespace Pizzashop.Web.Controllers
             return View(model);
         }
 
-        [HttpPost]
+[HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
+        public async Task<IActionResult> ResetPassword(ResetPasswordModel model, string token)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
+            var userClaims = _tokenService.ValidateResetPasswordToken(token);
+            if (userClaims == null)
+            {
+                TempData["ErrorMessage"] = "Invalid or expired token.";
+                return RedirectToAction("Index");
+            }
+
+            var email = userClaims.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(email) || email != model.Email)
+            {
+                TempData["ErrorMessage"] = "Invalid token.";
+                return RedirectToAction("Index");
+            }
+
             await _accountService.ResetPassword(model.Email, model.NewPassword);
+            _tokenService.MarkTokenAsUsed(token);
 
             TempData["Message"] = "Password has been reset. You can now login.";
             return RedirectToAction("Index");
