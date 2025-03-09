@@ -50,11 +50,16 @@ namespace pizzashop.Controllers
                 var result = await _userService.AddUserAsync(model, User);
                 if (result)
                 {
+                    TempData["SuccessMessage"] = "User added successfully.";
                     return RedirectToAction("UserList");
                 }
+                else
+                {
+                    TempData["ErrorMessage"] = "Error adding user.";
+                }
             }
-            ViewBag.Roles = new SelectList(_context.Roles);
-            ViewBag.Countries = new SelectList(_context.Countries);
+            ViewBag.Roles = new SelectList(_context.Roles, "Id", "Name");
+            ViewBag.Countries = new SelectList(_context.Countries, "Id", "Name");
             return View(model);
         }
 
@@ -82,6 +87,10 @@ namespace pizzashop.Controllers
                 {
                     TempData["SuccessMessage"] = "User updated successfully.";
                     return RedirectToAction("UserList");
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Error updating user.";
                 }
             }
             await LoadDropdowns(model);
@@ -117,7 +126,7 @@ namespace pizzashop.Controllers
 
             if (users == null || !users.Any())
             {
-                ViewBag.ErrorMessage = "UserList is Empty";
+                ViewBag.ErrorMessage = "User list is empty.";
                 return View();
             }
 
@@ -147,6 +156,10 @@ namespace pizzashop.Controllers
                 {
                     TempData["SuccessMessage"] = "Profile updated successfully.";
                     return RedirectToAction("Profile");
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Error updating profile.";
                 }
             }
             await LoadDropdowns(model);
@@ -185,6 +198,9 @@ namespace pizzashop.Controllers
                 }).ToList();
             return Json(cities);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
         {
             if (ModelState.IsValid)
@@ -192,11 +208,15 @@ namespace pizzashop.Controllers
                 var result = await _userService.ChangePasswordAsync(model, User);
                 if (result)
                 {
+                    TempData["SuccessMessage"] = "Password changed successfully.";
                     return RedirectToAction("AdminDashboard", "Home");
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Error changing password.";
                 }
             }
             return View(model);
         }
-
     }
 }
