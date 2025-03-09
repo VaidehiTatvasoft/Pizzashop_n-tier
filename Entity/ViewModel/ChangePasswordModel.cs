@@ -4,7 +4,7 @@ namespace Entity.ViewModel;
 
 public class ChangePasswordModel
 {
-    [Required(ErrorMessage = "Current Password is Required")]
+[Required(ErrorMessage = "Current Password is Required")]
     public string CurrentPassword { set; get; } = null!;
 
     [Required(ErrorMessage = "New Password is Required")]
@@ -14,5 +14,6 @@ public class ChangePasswordModel
     [Required(ErrorMessage = "Confirm New Password is Required")]
     [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
     public string ConfirmNewPassword { set; get; } = null!;
+
 }
 
