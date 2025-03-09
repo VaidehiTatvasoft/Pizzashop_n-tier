@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using System;
+
 
 namespace Pizzashop.Web.Controllers
 {
@@ -12,7 +14,6 @@ namespace Pizzashop.Web.Controllers
     {
         private readonly IAccountService _accountService;
         private readonly ITokenService _tokenService;
-
         private readonly ILogger<AccountsController> _logger;
 
         public AccountsController(IAccountService accountService, ITokenService tokenService, ILogger<AccountsController> logger)
@@ -44,21 +45,22 @@ namespace Pizzashop.Web.Controllers
             }
             return View();
         }
+        [HttpPost]
         public async Task<IActionResult> Login([FromForm] LoginModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
-
             var user = await _accountService.AuthenticateUser(model.Email, model.PasswordHash);
             if (user == null)
             {
-                return Unauthorized(new { Message = "Invalid email or password." });
+                TempData["ErrorMessage"] = "Invalid email or password.";
+                return View(model);
             }
-
             var tokenString = _tokenService.GenerateToken(user, TimeSpan.FromHours(24));
             _accountService.SetCookies(HttpContext, tokenString, model.RememberMe);
+            TempData["Message"] = "Login successful!";
 
             if (user.RoleId == 1)
             {
@@ -69,6 +71,7 @@ namespace Pizzashop.Web.Controllers
                 return RedirectToAction("Dashboard", "Home");
             }
         }
+        
         public IActionResult ForgotPassword(string? email)
         {
             var model = new ForgotPassword { Email = email ?? "" };
@@ -104,11 +107,13 @@ namespace Pizzashop.Web.Controllers
             var userClaims = _tokenService.ValidateToken(token);
             if (userClaims == null)
             {
+                TempData["ErrorMessage"] = "Invalid or expired token.";
                 return RedirectToAction("Index");
             }
             var email = userClaims.FindFirst(ClaimTypes.Email)?.Value;
             if (string.IsNullOrEmpty(email))
             {
+                TempData["ErrorMessage"] = "Invalid token.";
                 return RedirectToAction("Index");
             }
 
@@ -134,6 +139,7 @@ namespace Pizzashop.Web.Controllers
         public IActionResult Logout()
         {
             _accountService.Logout(HttpContext);
+            TempData["Message"] = "You have been logged out.";
             return RedirectToAction("Index", "Accounts");
         }
     }
