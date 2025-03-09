@@ -5,7 +5,10 @@ namespace Pizzashop.Service.Interfaces
 {
     public interface ITokenService
 {
-    string GenerateToken(User user, TimeSpan validFor);
-    ClaimsPrincipal ValidateToken(string token);
+        string GenerateAuthToken(User user, TimeSpan validFor);
+        string GenerateResetPasswordToken(User user, TimeSpan validFor);
+        ClaimsPrincipal ValidateAuthToken(string token);
+        ClaimsPrincipal ValidateResetPasswordToken(string token);
+        void MarkTokenAsUsed(string token);
 }
     }
