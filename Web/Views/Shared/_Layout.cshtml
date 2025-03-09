@@ -150,6 +150,37 @@
             "hideMethod": "fadeOut"
         };
     </script>
+  <script>
+        $(document).ready(function () {
+            @if (TempData["Message"] != null)
+            {
+                <text>
+                    toastr.success('@TempData["Message"]');
+                </text>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <text>
+                    toastr.error('@TempData["ErrorMessage"]');
+                </text>
+            }
+
+            @if (TempData["WarningMessage"] != null)
+            {
+                <text>
+                    toastr.warning('@TempData["WarningMessage"]');
+                </text>
+            }
+
+            @if (TempData["InfoMessage"] != null)
+            {
+                <text>
+                    toastr.info('@TempData["InfoMessage"]');
+                </text>
+            }
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 
