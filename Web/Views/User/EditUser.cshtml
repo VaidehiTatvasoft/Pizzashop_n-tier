@@ -129,7 +129,7 @@
 </div>
 
 @section Scripts {
-        $(document).ready(function () {
+$(document).ready(function () {
             $("#CountryId").change(function () {
                 $.getJSON('/User/GetStates', { countryId: $(this).val() }, function (data) {
                     var stateDropdown = $("#StateId");
@@ -162,6 +162,20 @@
                     });
                 }
             });
+
+            // Display Toastr notifications based on TempData
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <text>
+                    toastr.success('@TempData["SuccessMessage"]');
+                </text>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <text>
+                    toastr.error('@TempData["ErrorMessage"]');
+                </text>
+            }
         });
     </script>
 }
