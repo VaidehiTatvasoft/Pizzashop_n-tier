@@ -5,15 +5,15 @@ namespace Entity.ViewModel;
 public class UserViewModel
 {
     public int Id { get; set; }
-      [EmailAddress(ErrorMessage = "Please Enter a Valid Email Address")]
+    [EmailAddress(ErrorMessage = "Please Enter a Valid Email Address")]
     [Required(ErrorMessage = "Please Enter an Email Address")]
     public string? Email { get; set; }
-      [Required(ErrorMessage = "Please Select a Role")]
+    [Required(ErrorMessage = "Please Select a Role")]
     public int RoleId { get; set; } 
   
     [StringLength(100)]
- [Required(ErrorMessage = "First name is required.")]
-        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "First name can only contain letters.")]
+     [Required(ErrorMessage = "First name is required.")]
+    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "First name can only contain letters.")]
     public string? FirstName { get; set; }
   
     [StringLength(100)]
