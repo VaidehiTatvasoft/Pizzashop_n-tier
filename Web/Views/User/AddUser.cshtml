@@ -3,18 +3,18 @@
 @{
     ViewData["Title"] = "Add User";
 }
-<div class="d-flex justify-content-between align-items-center m-3 ">
+<div class="d-flex justify-content-between align-items-center m-3">
     <div>
         <h2 class="dt p-2">Add New User</h2>
     </div>
     <div>
         <a asp-controller="User" asp-action="UserList" class="btn cancel-button" style="background:transparent;">
-            < Back</a>
+            &lt; Back</a>
     </div>
 </div>
 
 <div class="form mt-3">
-    <form asp-controller="User" asp-action="AddUser" method="post" enctype="multipart/form-data">
+    <form asp-controller="User" asp-action="AddUser" method="post" enctype="multipart/form-data" id="addUserForm">
         <div class="row">
             <div class="form-floating col-md-6">
                 <input type="text" class="form-control twoc" id="FirstName" asp-for="FirstName">
@@ -39,6 +39,7 @@
                     <option value="">Select Role</option>
                 </select>
                 <label for="RoleId" class="float">Role</label>
+                <span asp-validation-for="RoleId" class="text-danger"></span>
             </div>
         </div>
         <br>
@@ -49,21 +50,16 @@
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-floating col-md-6">
-                <input type="password" class="form-control twoc" id="password" asp-for="passwordHash">
-                <label for="passwordHash" class="float">Password</label>
-                <span asp-validation-for="passwordHash" class="text-danger"></span>
+                <input type="password" class="form-control twoc" id="password" asp-for="PasswordHash">
+                <label for="PasswordHash" class="float">Password</label>
+                <span asp-validation-for="PasswordHash" class="text-danger"></span>
             </div>
         </div>
         <br>
         <div class="row">
-            <div
-                class="form-floating mb-3 upload-container col d-flex flex-column align-items-center justify-content-center">
-                <label for="ProfileImage" class="upload-label">
-                    <img src="~/assets/cloud-upload.png" alt="upload-icon" class="upload-icon" />
-                    <br />
-                    <span>Browse File</span>
-                </label>
-                <input id="ProfileImage" type="file" class="input-file" asp-for="ProfileImage" />
+            <div class="form-floating col-md-6">
+                <input type="file" class="form-control" id="ProfileImage" asp-for="ProfileImage">
+                <label for="ProfileImage" class="float">Profile Image</label>
                 <span asp-validation-for="ProfileImage" class="text-danger"></span>
             </div>
         </div>
@@ -74,36 +70,41 @@
                     <option value="">Select Country</option>
                 </select>
                 <label for="CountryId" class="float">Country</label>
+                <span asp-validation-for="CountryId" class="text-danger"></span>
             </div>
             <div class="form-floating col-md-4">
                 <select id="StateId" name="StateId" class="form-control">
                     <option value="">Select State</option>
                 </select>
                 <label for="StateId" class="float">State</label>
+                <span asp-validation-for="StateId" class="text-danger"></span>
             </div>
             <div class="form-floating col-md-4">
                 <select id="CityId" name="CityId" class="form-control">
                     <option value="">Select City</option>
                 </select>
                 <label for="CityId" class="float">City</label>
+                <span asp-validation-for="CityId" class="text-danger"></span>
             </div>
         </div>
         <br>
-            <div class="row">
-                <div class="form-floating col-md-4">
-                    <input type="text" class="form-control twoc" id="Zipcode" asp-for="Zipcode">
-                    <label for="Zipcode" class="float">ZipCode</label>
-                </div>
-                <div class="form-floating col-md-4">
-                    <input type="text" class="form-control twoc" id="Address" asp-for="Address">
-                    <label for="Address" class="float">Address</label>
-                </div>
-                <div class="form-floating col-md-4">
-                    <input type="text" class="form-control twoc" id="Phone" asp-for="Phone">
-                    <label for="Phone" class="float">Phone</label>
-                    <span asp-validation-for="Phone" class="text-danger"></span>
-                </div>
+        <div class="row">
+            <div class="form-floating col-md-4">
+                <input type="text" class="form-control twoc" id="Zipcode" asp-for="Zipcode">
+                <label for="Zipcode" class="float">ZipCode</label>
+                <span asp-validation-for="Zipcode" class="text-danger"></span>
             </div>
+            <div class="form-floating col-md-4">
+                <input type="text" class="form-control twoc" id="Address" asp-for="Address">
+                <label for="Address" class="float">Address</label>
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-floating col-md-4">
+                <input type="text" class="form-control twoc" id="Phone" asp-for="Phone">
+                <label for="Phone" class="float">Phone</label>
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+        </div>
         <br>
         <div class="form-group p-3 d-flex justify-content-start">
             <button type="submit" class="btn update-button m-1">Create User</button>
@@ -113,7 +114,6 @@
 </div>
 
 @section Scripts {
-    <script>
         $(document).ready(function () {
             $("#CountryId").change(function () {
                 $.getJSON('/User/GetStates', { countryId: $(this).val() }, function (data) {
@@ -133,6 +133,19 @@
                         cityDropdown.append('<option value="' + city.id + '">' + city.name + '</option>');
                     });
                 });
+            });
+
+            $('#addUserForm').submit(function (e) {
+                if (!$(this).valid()) {
+                    e.preventDefault(); // Prevent form submission if validation fails
+
+                    // Loop through validation error messages and display them using Toastr
+                    $('.text-danger').each(function () {
+                        if ($(this).text() !== '') {
+                            toastr.error($(this).text());
+                        }
+                    });
+                }
             });
         });
     </script>
