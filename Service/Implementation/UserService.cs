@@ -66,7 +66,7 @@ namespace Pizzashop.Service.Implementation
                 Address = user.Address,
                 Zipcode = user.Zipcode,
                 RoleId = user.RoleId,
-                Status = user.IsDeleted.HasValue && user.IsDeleted.Value ? "Inactive" : "Active",
+                Status = user.IsActive,
                 Email = user.Email,
                 ProfileImage = user.ProfileImage
             };
@@ -90,7 +90,7 @@ namespace Pizzashop.Service.Implementation
             user.Address = model.Address;
             user.Zipcode = model.Zipcode;
             user.RoleId = model.RoleId;
-            user.IsDeleted = model.Status == "Inactive";
+            user.IsActive = model.Status;
             user.ProfileImage = model.ProfileImage;
 
             return await _userRepository.UpdateUserAsync(user);

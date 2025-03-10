@@ -106,7 +106,10 @@ namespace pizzashop.Controllers
                     TempData["ErrorMessage"] = "Error updating user.";
                 }
             }
-            await LoadDropdowns(model);
+            ViewBag.Roles = new SelectList(_context.Roles, "Id", "Name", model.RoleId);
+            ViewBag.Countries = new SelectList(_context.Countries, "Id", "Name", model.CountryId);
+            ViewBag.States = new SelectList(_context.States.Where(s => s.CountryId == model.CountryId).ToList(), "Id", "Name", model.StateId);
+            ViewBag.Cities = new SelectList(_context.Cities.Where(c => c.StateId == model.StateId).ToList(), "Id", "Name", model.CityId);
             return View(model);
         }
 
