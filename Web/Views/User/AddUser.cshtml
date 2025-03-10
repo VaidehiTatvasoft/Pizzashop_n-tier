@@ -35,7 +35,7 @@
                 <span asp-validation-for="Username" class="text-danger"></span>
             </div>
             <div class="form-floating col-md-6">
-                <select id="RoleId" name="RoleId" class="form-control" asp-items="ViewBag.Roles">
+                <select id="RoleId" name="RoleId" class="form-select" asp-items="ViewBag.Roles">
                     <option value="">Select Role</option>
                 </select>
                 <label for="RoleId" class="float">Role</label>
@@ -57,30 +57,30 @@
         </div>
         <br>
         <div class="row">
-            <div class="form-floating col-md-6">
-                <input type="file" class="form-control" id="ProfileImage" asp-for="ProfileImage">
-                <label for="ProfileImage" class="float">Profile Image</label>
-                <span asp-validation-for="ProfileImage" class="text-danger"></span>
-            </div>
+        <div class="form-floating col">
+            <input type="file" class="form-control" id="ProfileImage" asp-for="ProfileImage">
+            <label for="ProfileImage" class="float">Profile Image</label>
+            <span asp-validation-for="ProfileImage" class="text-danger"></span>
         </div>
+    </div>
         <br>
         <div class="row">
             <div class="form-floating col-md-4">
-                <select id="CountryId" name="CountryId" class="form-control" asp-items="ViewBag.Countries">
+                <select id="CountryId" name="CountryId" class="form-select" asp-items="ViewBag.Countries">
                     <option value="">Select Country</option>
                 </select>
                 <label for="CountryId" class="float">Country</label>
                 <span asp-validation-for="CountryId" class="text-danger"></span>
             </div>
             <div class="form-floating col-md-4">
-                <select id="StateId" name="StateId" class="form-control">
+                <select id="StateId" name="StateId" class="form-select">
                     <option value="">Select State</option>
                 </select>
                 <label for="StateId" class="float">State</label>
                 <span asp-validation-for="StateId" class="text-danger"></span>
             </div>
             <div class="form-floating col-md-4">
-                <select id="CityId" name="CityId" class="form-control">
+                <select id="CityId" name="CityId" class="form-select">
                     <option value="">Select City</option>
                 </select>
                 <label for="CityId" class="float">City</label>
@@ -114,6 +114,7 @@
 </div>
 
 @section Scripts {
+    <script>
         $(document).ready(function () {
             $("#CountryId").change(function () {
                 $.getJSON('/User/GetStates', { countryId: $(this).val() }, function (data) {
@@ -137,9 +138,8 @@
 
             $('#addUserForm').submit(function (e) {
                 if (!$(this).valid()) {
-                    e.preventDefault(); // Prevent form submission if validation fails
+                    e.preventDefault(); 
 
-                    // Loop through validation error messages and display them using Toastr
                     $('.text-danger').each(function () {
                         if ($(this).text() !== '') {
                             toastr.error($(this).text());
@@ -147,6 +147,19 @@
                     });
                 }
             });
+        });
+         @if (TempData["SuccessMessage"] != null)
+            {
+                <text>
+                    toastr.success('@TempData["SuccessMessage"]');
+                </text>
+        }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <text>
+                    toastr.error('@TempData["ErrorMessage"]');
+                </text>
+        }
         });
     </script>
 }

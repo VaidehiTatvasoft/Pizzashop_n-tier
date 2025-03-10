@@ -78,10 +78,23 @@ namespace pizzashop.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditUser(UserViewModel model)
+        public async Task<IActionResult> EditUser(UserViewModel model, IFormFile ProfileImage)
         {
             if (ModelState.IsValid)
             {
+                if (ProfileImage != null && ProfileImage.Length > 0)
+                {
+                    var fileName = Path.GetFileName(ProfileImage.FileName);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await ProfileImage.CopyToAsync(stream);
+                    }
+
+                    model.ProfileImage = "/uploads/" + fileName;
+                }
+
                 var result = await _userService.EditUserAsync(model);
                 if (result)
                 {

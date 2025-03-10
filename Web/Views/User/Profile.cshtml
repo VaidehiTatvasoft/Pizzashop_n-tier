@@ -5,94 +5,121 @@
 @model Entity.ViewModel.UserViewModel;
 
 <h2 class="dt p-2">My Profile</h2>
-<div class="form">
-    <form asp-controller="User" asp-action="Profile" method="post" id="profileForm">
-        <div class="profile-bg">
-            <img class="img-1" src="@Url.Content("~/assets/profile_div_bg.jpg")" alt="">
-            <div class="d-flex justify-content-between">
-                <div class="user-container">
-                    <img class="img-2" src="@Url.Content("~/assets/Default_pfp.svg.png")" alt="">
-                    <div class="m-0 pt-2">
-                        <h5 class="m-0">@Model.FirstName @Model.LastName</h5>
-                        <span class="m-0">@Model.RoleName</span>
+    <div class="shadow card container-fluid profile-card shadow p-0">
+        <div>
+            <img class="profile-bg" src="~/assets/profile_div_bg.jpg" alt="profile-bg">
+        </div>
+        <form asp-controller="User" asp-action="Profile" class="row needs-validation mt-1 mb-3 mx-2" enctype="multipart/form-data">
+            <div class="row mx-2">
+                <div class="col-md-2 d-flex justify-content-center p-0">
+                    <img src="~/images/@(Model?.ProfileImage ?? "Default_pfp.svg.png")"
+                        class="profile-img profile-photo rounded-circle" alt="profile-img">
+                    <input type="file" asp-for="ProfileImage" name="ProfileImagePath" id="imageInput"
+                        accept="image/*" style="display: none;">
+                    <input type="hidden" asp-for="ProfileImage" name="ProfileImage">
+                    <label id="changeImageButton" for="imageInput"
+                        class="position-absolute bg-white camera-position z-3 rounded-circle border z-2 shadow-sm">
+                        <i class="fa fa-camera p-2 " aria-hidden="true"></i>
+                    </label>
+                </div>
+                <div class="col-md-7 p-0 mt-3">
+                    <h5>@Model.FirstName @Model.LastName</h5>
+                    <p>@Model.RoleName</p>
+                </div>
+                <div class="col-md-3">
+                    @Model.Email
+                </div>
+            </div>
+            <div>
+                <div class="">
+                    <input type="text" asp-for="Email" hidden>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="firstName" class="form-control" id="firstName" placeholder="firstName"
+                                    name="FirstName" asp-for="FirstName" />
+                                <label for="firstName">First Name</label>
+                            </div>
+                            <span class="text-danger fs-6 ms-2" asp-validation-for="FirstName"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="lastName" placeholder="lastName"
+                                    name="LastName" asp-for="LastName" />
+                                <label for="LastName">Last Name</label>
+                            </div>
+                            <span class="text-danger fs-6 ms-2" asp-validation-for="LastName"></span>
+                        </div>
                     </div>
                 </div>
-                <div class="ms-auto">
-                    <p class="profile-email">@Model.Email</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="userName" placeholder="name" name="Username"
+                                asp-for="Username" />
+                            <label for="userName">User Name</label>
+                        </div>
+                        <span class="text-danger fs-6 ms-2" asp-validation-for="Username"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="number" id="phone" class="form-control" asp-for="Phone" pattern="[0-9]{10}"
+                                maxlength="10" required>
+                            <label for="phone">Phone</label>
+                        </div>
+                        <span class="text-danger fs-6 ms-2" asp-validation-for="Phone"></span>
+                    </div>
+                </div>
+                <div>
+                    <div class="row">
+                        <div class="form-floating col-md-4 mb-3">
+                            <select id="CountryId" name="CountryId" class="form-select" asp-for="CountryId"
+                                asp-items="ViewBag.Countries"></select>
+                            <label for="CountryId" class="float">Country</label>
+                            <span asp-validation-for="CountryId" style="color: red;"></span>
+                        </div>
+                        <div class="form-floating col-md-4 mb-3">
+                            <select id="StateId" name="StateId" class="form-select" asp-for="StateId"
+                                asp-items="ViewBag.States"></select>
+                            <label for="StateId" class="float">State</label>
+                            <span asp-validation-for="StateId" style="color: red;"></span>
+                        </div>
+                        <div class="form-floating col-md-4 mb-3">
+                            <select id="CityId" name="CityId" class="form-select" asp-for="CityId"
+                                asp-items="ViewBag.Cities"></select>
+                            <label for="CityId" class="float">City</label>
+                            <span asp-validation-for="CityId" style="color: red;"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="form-floating">
+                            <input type="text" asp-for="Address" class="form-control" id="Address"
+                                placeholder="Address" />
+                            <label for="Address">Address</label>
+                        </div>
+                        <span asp-validation-for="Address" class="text-danger fs-6 ms-2"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="form-floating">
+                            <input type="number" class="form-control" maxlength="6" minlength="6" id="ZipCode"
+                                placeholder="ZipCode" asp-for="Zipcode" />
+                            <label for="ZipCode">ZipCode</label>
+                        </div>
+                        <span class="text-danger fs-6 ms-2" asp-validation-for="Zipcode"></span>
+                    </div>
+                </div>
+                <div>
+                    <div class="mt-2 gap-3 d-flex justify-content-end">
+                        <button class="fill-btn" type="submit">Update</button>
+                        <button class="outline-btn" type="button" id="Cancel" onclick="location.href='@Url.Action("AdminDashboard", "Home")'">Cancel</button>
+                    </div>
+                    <span class="text-success">@ViewData["ProfileSuccessMessage"]</span>
                 </div>
             </div>
-        </div>
-        <br>
-        <div class="col-xl-12 profile-form" style="padding-top: 30px;">
-            <div class=" row " style="margin-top: 50px;">
-                <div class="form-floating col">
-                    <input type="text" class="form-control twoc" id="FirstName" asp-for="FirstName">
-                    <label for="FirstName" class="float">First Name</label>
-                    <span asp-validation-for="FirstName" class="text-danger"></span>
-                </div>
-                <div class="form-floating col">
-                    <input type="text" class="form-control twoc" id="LastName" asp-for="LastName">
-                    <label for="LastName" class="float">Last Name</label>
-                    <span asp-validation-for="LastName" class="text-danger"></span>
-                </div>
-            </div>
-        </div>
-        <br>
-        <div class="col-xl-12 profile-form">
-            <div class="row">
-                <div class="form-floating col">
-                    <input type="text" class="form-control twoc" id="Username" asp-for="Username">
-                    <label for="Username" class="float">User Name</label>
-                    <span asp-validation-for="Username" class="text-danger"></span>
-                </div>
-                <div class="form-floating col">
-                    <input type="text" class="form-control twoc" id="Phone" asp-for="Phone">
-                    <label for="Phone" class="float">Phone</label>
-                    <span asp-validation-for="Phone" class="text-danger"></span>
-                </div>
-            </div>
-        </div>
-        <br>
-        <div class="col-xl-12 profile-form">
-            <div class="row">
-                <div class="form-floating col">
-                    <select id="CountryId" name="CountryId" class="form-control" asp-items="ViewBag.Countries"></select>
-                    <label for="CountryId" class="float">Country</label>
-                    <span asp-validation-for="CountryId" class="text-danger"></span>
-                </div>
-                <div class="form-floating col">
-                    <select id="StateId" name="StateId" class="form-control" asp-items="ViewBag.States"></select>
-                    <label for="StateId" class="float">State</label>
-                    <span asp-validation-for="StateId" class="text-danger"></span>
-                </div>
-                <div class="form-floating col">
-                    <select id="CityId" name="CityId" class="form-control" asp-items="ViewBag.Cities"></select>
-                    <label for="CityId" class="float">City</label>
-                    <span asp-validation-for="CityId" class="text-danger"></span>
-                </div>
-            </div>
-        </div>
-        <br>
-        <div class="col-xl-12 profile-form">
-            <div class="row">
-                <div class="form-floating col-xl-9 col-sm-8 col-7">
-                    <input type="text" class="form-control twoc" id="Address" asp-for="Address">
-                    <label for="Address" class="float">Address</label>
-                    <span asp-validation-for="Address" class="text-danger"></span>
-                </div>
-                <div class="form-floating col">
-                    <input type="text" class="form-control twoc" id="Zipcode" asp-for="Zipcode">
-                    <label for="Zipcode" class="float">ZipCode</label>
-                    <span asp-validation-for="Zipcode" class="text-danger"></span>
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group p-3 d-flex justify-content-end">
-            <button type="submit" class="btn update-button m-1">Update</button>
-            <button asp-controller="Home" asp-action="AdminDashboard" class="btn cancel-button m-1">Cancel</button>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
 
 @section Scripts {

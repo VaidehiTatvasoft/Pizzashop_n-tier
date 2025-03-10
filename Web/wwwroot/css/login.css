@@ -64,6 +64,15 @@ body {
     width:18px;
     margin: 0;
 }
+.toast-success {
+    background-color: green;
+}
+.toast-error {
+    background-color: red;
+}
+.toast-warning {
+    background-color: yellow;
+}
 @media (max-width: 767px) {
     .left-section {
         display:none;
@@ -87,5 +96,4 @@ body {
     p{
         color:white;
     }
-
   }

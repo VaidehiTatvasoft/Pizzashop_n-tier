@@ -39,7 +39,7 @@
                     <span asp-validation-for="Username" class="text-danger"></span>
                 </div>
                 <div class="form-floating col">
-                    <select id="RoleId" name="RoleId" class="form-control" asp-items="ViewBag.Roles"></select>
+                    <select id="RoleId" name="RoleId" class="form-select" asp-items="ViewBag.Roles"></select>
                     <label for="RoleId" class="float">Role</label>
                     <span asp-validation-for="RoleId" class="text-danger"></span>
                 </div>
@@ -70,8 +70,8 @@
         <div class="col-xl-12">
             <div class="row">
                 <div class="form-floating col">
-                    <input type="file" class="form-control" id="ProfilePicture" name="ProfilePicture">
-                    <label for="ProfilePicture" class="float">Profile Picture</label>
+                    <input type="file" class="form-control" id="ProfileImage" name="ProfileImage">
+                    <label for="ProfileImage" class="float">ProfileImage</label>
                 </div>
             </div>
         </div>
@@ -81,17 +81,17 @@
         <div class="col-xl-12">
             <div class="row">
                 <div class="form-floating col">
-                    <select id="CountryId" name="CountryId" class="form-control" asp-items="ViewBag.Countries"></select>
+                    <select id="CountryId" name="CountryId" class="form-select" asp-items="ViewBag.Countries"></select>
                     <label for="CountryId" class="float">Country</label>
                     <span asp-validation-for="CountryId" class="text-danger"></span>
                 </div>
                 <div class="form-floating col">
-                    <select id="StateId" name="StateId" class="form-control" asp-items="ViewBag.States"></select>
+                    <select id="StateId" name="StateId" class="form-select" asp-items="ViewBag.States"></select>
                     <label for="StateId" class="float">State</label>
                     <span asp-validation-for="StateId" class="text-danger"></span>
                 </div>
                 <div class="form-floating col">
-                    <select id="CityId" name="CityId" class="form-control" asp-items="ViewBag.Cities"></select>
+                    <select id="CityId" name="CityId" class="form-select" asp-items="ViewBag.Cities"></select>
                     <label for="CityId" class="float">City</label>
                     <span asp-validation-for="CityId" class="text-danger"></span>
                 </div>
@@ -129,11 +129,12 @@
 </div>
 
 @section Scripts {
+    <script>
         $(document).ready(function () {
             $("#CountryId").change(function () {
                 $.getJSON('/User/GetStates', { countryId: $(this).val() }, function (data) {
                     var stateDropdown = $("#StateId");
-                    stateDropdown.empty().append('<option>Select State</option>');
+                    stateDropdown.empty().append('<option value="">Select State</option>');
                     $.each(data, function (i, state) {
                         stateDropdown.append('<option value="' + state.id + '">' + state.name + '</option>');
                     });
@@ -143,7 +144,7 @@
             $("#StateId").change(function () {
                 $.getJSON('/User/GetCities', { stateId: $(this).val() }, function (data) {
                     var cityDropdown = $("#CityId");
-                    cityDropdown.empty().append('<option>Select City</option>');
+                    cityDropdown.empty().append('<option value="">Select City</option>');
                     $.each(data, function (i, city) {
                         cityDropdown.append('<option value="' + city.id + '">' + city.name + '</option>');
                     });
@@ -152,9 +153,8 @@
 
             $('#editUserForm').submit(function (e) {
                 if (!$(this).valid()) {
-                    e.preventDefault(); // Prevent form submission if validation fails
+                    e.preventDefault();
 
-                    // Loop through validation error messages and display them using Toastr
                     $('.text-danger').each(function () {
                         if ($(this).text() !== '') {
                             toastr.error($(this).text());
@@ -162,20 +162,19 @@
                     });
                 }
             });
-
-            // Display Toastr notifications based on TempData
-            @if (TempData["SuccessMessage"] != null)
+        });
+        @if (TempData["SuccessMessage"] != null)
             {
                 <text>
                     toastr.success('@TempData["SuccessMessage"]');
                 </text>
-            }
+        }
             @if (TempData["ErrorMessage"] != null)
             {
                 <text>
                     toastr.error('@TempData["ErrorMessage"]');
                 </text>
-            }
+        }
         });
     </script>
 }

@@ -38,7 +38,7 @@ namespace Pizzashop.Service.Implementation
                 RoleId = model.RoleId,
                 ProfileImage = model.ProfileImage,
                 Email = model.Email,
-                PasswordHash = model.passwordHash,
+                PasswordHash = model.PasswordHash,
                 CreatedBy = userId
             };
 
@@ -110,7 +110,6 @@ namespace Pizzashop.Service.Implementation
             {
                 return false;
             }
-
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.Username = model.Username;

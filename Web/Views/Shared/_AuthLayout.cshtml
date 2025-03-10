@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] Pizzashop</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="main">
+    <div class="container-fluid">
+        <main>
+            <div class="d-flex row">
+                <div class="left-section col-md-6 col-lg-6 justify-content-center align-items-center">
+                    <img src="~/assets/dominos_background.jpg" alt="PizzaShop Background">
+                </div>
+                <div class="right-section col-md-6 col-lg-6 justify-content-center align-items-center d-flex">
+                    <div class="brand">
+                        <img src="~/assets/pizzashop_logo.png" alt="PizzaShop Logo" class="pizza-logo">
+                        <div class="heading p-1"><b>PIZZASHOP</b></div>
+                    </div>
+                    <div class="auth-content col-md-8">
+                        @RenderBody()
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        $(document).ready(function () {
+            @if (TempData["Message"] != null)
+                {
+                    <text>
+                        toastr.success('@TempData["Message"]');
+                    </text>
+            }
+
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <text>
+                        toastr.error('@TempData["ErrorMessage"]');
+                    </text>
+            }
+
+                @if (TempData["WarningMessage"] != null)
+                {
+                    <text>
+                        toastr.warning('@TempData["WarningMessage"]');
+                    </text>
+            }
+
+                @if (TempData["InfoMessage"] != null)
+                {
+                    <text>
+                        toastr.info('@TempData["InfoMessage"]');
+                    </text>
+            }
+    });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

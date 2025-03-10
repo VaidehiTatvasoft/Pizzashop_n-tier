@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using Entity.Data;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Pizzashop.Service.Interfaces;
 
@@ -15,10 +16,14 @@ namespace Pizzashop.Service.Implementation
     {
         private readonly IConfiguration _configuration;
         private readonly ConcurrentDictionary<string, DateTime> _usedTokens = new ConcurrentDictionary<string, DateTime>();
+        private readonly ILogger<TokenService> _logger;
 
-        public TokenService(IConfiguration configuration)
+
+        public TokenService(IConfiguration configuration, ILogger<TokenService> logger)
         {
             _configuration = configuration;
+            _logger = logger;
+
         }
 
         public string GenerateAuthToken(User user, TimeSpan validFor)
@@ -69,9 +74,10 @@ namespace Pizzashop.Service.Implementation
 
         private ClaimsPrincipal ValidateToken(string token, string expectedTokenType)
         {
-            if (_usedTokens.ContainsKey(token))
+            if (string.IsNullOrEmpty(token) || _usedTokens.ContainsKey(token))
             {
-                return null; // Token has been used
+                _logger.LogWarning("Token is null or has been used: {Token}", token);
+                return null;
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -96,20 +102,23 @@ namespace Pizzashop.Service.Implementation
 
                 if (jwtToken.ValidTo < DateTime.UtcNow)
                 {
-                    return null; // Token has expired
+                    _logger.LogWarning("Token has expired: {Token}", token);
+                    return null;
                 }
 
                 var tokenType = jwtToken.Claims.FirstOrDefault(c => c.Type == "TokenType")?.Value;
                 if (tokenType != expectedTokenType)
                 {
-                    return null; // Token type mismatch
+                    _logger.LogWarning("Token type mismatch: {Token}", token);
+                    return null;
                 }
 
                 return principal;
             }
-            catch
+            catch (Exception ex)
             {
-                return null; // Token is invalid
+                _logger.LogError(ex, "Token validation failed: {Token}", token);
+                return null;
             }
         }
 

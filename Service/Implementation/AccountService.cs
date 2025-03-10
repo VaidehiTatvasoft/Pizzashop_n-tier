@@ -63,22 +63,22 @@ namespace Pizzashop.Service.Implementation
             context.Response.Cookies.Append("AuthToken", token, cookieOptions);
         }
 
-        public async Task<User?> GetUserFromToken(HttpContext context)
-        {
-            var token = context.Request.Cookies["AuthToken"];
-            if (token == null)
-            {
-                return null;
-            }
+public async Task<User?> GetUserFromToken(HttpContext context)
+   {
+       var token = context.Request.Cookies["AuthToken"];
+       if (token == null)
+       {
+           return null;
+       }
 
-            var principal = _tokenService.ValidateToken(token);
-            if (principal == null)
-            {
-                return null;
-            }
+       var principal = _tokenService.ValidateAuthToken(token);
+       if (principal == null)
+       {
+           return null;
+       }
 
-            var userId = int.Parse(principal.FindFirst("UserId").Value);
-            return await _userRepository.GetUserById(userId);
-        }
+       var userId = int.Parse(principal.FindFirst("UserId").Value);
+       return await _userRepository.GetUserById(userId);
+   }
     }
 }
