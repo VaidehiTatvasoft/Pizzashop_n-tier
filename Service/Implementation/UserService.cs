@@ -15,7 +15,7 @@ namespace Pizzashop.Service.Implementation
             _userRepository = userRepository;
         }
 
-        public async Task<bool> AddUserAsync(UserViewModel model, ClaimsPrincipal userClaims)
+        public async Task<bool> AddUserAsync(AddUserModel model, ClaimsPrincipal userClaims)
         {
             var userIdClaim = userClaims.FindFirst("UserId");
             if (userIdClaim == null)
@@ -129,44 +129,63 @@ namespace Pizzashop.Service.Implementation
             return await _userRepository.DeleteUserAsync(id);
         }
 
-       public IEnumerable<User> GetUsersList(string searchString, string sortOrder, int pageIndex, int pageSize, out int count)
-    {
-        return _userRepository.GetUserList(searchString, sortOrder, pageIndex, pageSize, out count);
-    }
+        public IEnumerable<User> GetUsersList(string searchString, string sortOrder, int pageIndex, int pageSize, out int count)
+        {
+            return _userRepository.GetUserList(searchString, sortOrder, pageIndex, pageSize, out count);
+        }
+        public async Task<UserProfile> GetUserProfile(ClaimsPrincipal userClaims)
+        {
+            var userEmailClaim = userClaims.FindFirst(ClaimTypes.Email);
+            if (userEmailClaim == null)
+            {
+                return null;
+            }
 
+            string userEmail = userEmailClaim.Value;
+            var user = await _userRepository.GetUserByEmail(userEmail);
+            if (user == null)
+            {
+                return null;
+            }
+            return new UserProfile
+            {
+                Email = user.Email,
+                ProfileImage = user.ProfileImage
+            };
+        }
         public async Task<UserViewModel> GetUserProfileAsync(ClaimsPrincipal userClaims)
-    {
-        var userEmailClaim = userClaims.FindFirst(ClaimTypes.Email);
-        if (userEmailClaim == null)
         {
-            return null;
-        }
+            var userEmailClaim = userClaims.FindFirst(ClaimTypes.Email);
+            if (userEmailClaim == null)
+            {
+                return null;
+            }
 
-        string userEmail = userEmailClaim.Value;
-        var user = await _userRepository.GetUserByEmail(userEmail);
-        if (user == null)
-        {
-            return null;
-        }
-        var roleName = await _userRepository.GetRoleNameById(user.RoleId);
+            string userEmail = userEmailClaim.Value;
+            var user = await _userRepository.GetUserByEmail(userEmail);
+            if (user == null)
+            {
+                return null;
+            }
+            var roleName = await _userRepository.GetRoleNameById(user.RoleId);
 
-        return new UserViewModel
-        {
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Username = user.Username,
-            Phone = user.Phone,
-            RoleId = user.RoleId,
-            RoleName = roleName, 
-            Email = user.Email,
-            CountryId = user.CountryId,
-            StateId = user.StateId,
-            CityId = user.CityId,
-            Zipcode = user.Zipcode,
-            Address = user.Address,
-            ProfileImage = user.ProfileImage
-        };
-    }
+            return new UserViewModel
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Username = user.Username,
+                Phone = user.Phone,
+                RoleId = user.RoleId,
+                RoleName = roleName,
+                Email = user.Email,
+                CountryId = user.CountryId,
+                StateId = user.StateId,
+                CityId = user.CityId,
+                Zipcode = user.Zipcode,
+                Address = user.Address,
+                ProfileImage = user.ProfileImage
+            };
+        }
 
         public async Task<bool> ChangePasswordAsync(ChangePasswordModel model, ClaimsPrincipal userClaims)
         {

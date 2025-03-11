@@ -20,7 +20,11 @@ namespace pizzashop.Controllers
             _context = context;
             _userService = userService;
         }
-
+        public IActionResult Index()
+        {
+            var user = _userService.GetUserProfile(User);
+            return View(user);
+        }
         public IActionResult AddUser()
         {
             ViewBag.Countries = new SelectList(_context.Countries, "Id", "Name");
@@ -30,7 +34,7 @@ namespace pizzashop.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddUserAsync(UserViewModel model, IFormFile ProfileImage)
+        public async Task<IActionResult> AddUserAsync(AddUserModel model, IFormFile ProfileImage)
         {
             if (ModelState.IsValid)
             {
@@ -76,7 +80,7 @@ namespace pizzashop.Controllers
             return View(user);
         }
 
-         [HttpPost]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditUser(UserViewModel model, IFormFile? ProfileImage)
         {
@@ -164,11 +168,11 @@ namespace pizzashop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Profile(UserViewModel model,IFormFile? ProfileImage)
+        public async Task<IActionResult> Profile(UserViewModel model, IFormFile? ProfileImage)
         {
             if (ModelState.IsValid)
             {
-                 if (ProfileImage != null && ProfileImage.Length > 0)
+                if (ProfileImage != null && ProfileImage.Length > 0)
                 {
                     var fileName = Path.GetFileName(ProfileImage.FileName);
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
@@ -184,7 +188,7 @@ namespace pizzashop.Controllers
                 if (result)
                 {
                     TempData["SuccessMessage"] = "Profile updated successfully.";
-                    return RedirectToAction("AdminDashboard","Home");
+                    return RedirectToAction("AdminDashboard", "Home");
                 }
                 else
                 {
