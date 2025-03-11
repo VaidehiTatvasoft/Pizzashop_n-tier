@@ -44,7 +44,7 @@ namespace pizzashop.Controllers
                         await ProfileImage.CopyToAsync(stream);
                     }
 
-                    model.ProfileImage = "/uploads/" + fileName;
+                    model.ProfileImage = fileName;
                 }
 
                 var result = await _userService.AddUserAsync(model, User);
@@ -92,7 +92,7 @@ namespace pizzashop.Controllers
                         await ProfileImage.CopyToAsync(stream);
                     }
 
-                    model.ProfileImage = "/uploads/" + fileName;
+                    model.ProfileImage = fileName;
                 }
 
                 var result = await _userService.EditUserAsync(model);
@@ -171,7 +171,7 @@ namespace pizzashop.Controllers
                 if (result)
                 {
                     TempData["SuccessMessage"] = "Profile updated successfully.";
-                    return RedirectToAction("Profile");
+                    return RedirectToAction("AdminDashboard","Home");
                 }
                 else
                 {

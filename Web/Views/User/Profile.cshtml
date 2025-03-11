@@ -7,26 +7,26 @@
 <h2 class="dt p-2">My Profile</h2>
     <div class="shadow card container-fluid profile-card shadow p-0">
         <div>
-            <img class="profile-bg" src="~/assets/profile_div_bg.jpg" alt="profile-bg">
+            <img class="profile-bg img-1" src="~/assets/profile_div_bg.jpg" alt="profile-bg">
         </div>
-        <form asp-controller="User" asp-action="Profile" class="row needs-validation mt-1 mb-3 mx-2" enctype="multipart/form-data">
+        <form asp-controller="User" asp-action="Profile"  method="post" class="row needs-validation mt-1 mb-3 mx-2" enctype="multipart/form-data">
             <div class="row mx-2">
-                <div class="col-md-2 d-flex justify-content-center p-0">
-                    <img src="~/images/@(Model?.ProfileImage ?? "Default_pfp.svg.png")"
+                <div class="col-md-1 d-flex justify-content-center p-0">
+                    <img src="~/uploads/@(Model?.ProfileImage)"
                         class="profile-img profile-photo rounded-circle" alt="profile-img">
                     <input type="file" asp-for="ProfileImage" name="ProfileImagePath" id="imageInput"
-                        accept="image/*" style="display: none;">
+                        accept="~/uploads/*" style="display: none;">
                     <input type="hidden" asp-for="ProfileImage" name="ProfileImage">
                     <label id="changeImageButton" for="imageInput"
                         class="position-absolute bg-white camera-position z-3 rounded-circle border z-2 shadow-sm">
                         <i class="fa fa-camera p-2 " aria-hidden="true"></i>
                     </label>
                 </div>
-                <div class="col-md-7 p-0 mt-3">
+                <div class="col-md-8 p-0 mt-3">
                     <h5>@Model.FirstName @Model.LastName</h5>
                     <p>@Model.RoleName</p>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     @Model.Email
                 </div>
             </div>
@@ -112,8 +112,8 @@
                 </div>
                 <div>
                     <div class="mt-2 gap-3 d-flex justify-content-end">
-                        <button class="fill-btn" type="submit">Update</button>
-                        <button class="outline-btn" type="button" id="Cancel" onclick="location.href='@Url.Action("AdminDashboard", "Home")'">Cancel</button>
+                        <button class="btn update-button" type="submit">Update</button>
+                        <button class="btn cancel-button" type="button" id="Cancel" onclick="location.href='@Url.Action("AdminDashboard", "Home")'">Cancel</button>
                     </div>
                     <span class="text-success">@ViewData["ProfileSuccessMessage"]</span>
                 </div>
@@ -127,7 +127,7 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        $(document).ready(function () {
+      <script> $(document).ready(function () {
             $("#CountryId").change(function () {
                 var countryId = $(this).val();
                 console.log("Selected Country ID:", countryId);
@@ -182,9 +182,8 @@
 
             $('#profileForm').submit(function (e) {
                 if (!$(this).valid()) {
-                    e.preventDefault(); // Prevent form submission if validation fails
+                    e.preventDefault(); 
 
-                    // Loop through validation error messages and display them using Toastr
                     $('.text-danger').each(function () {
                         if ($(this).text() !== '') {
                             toastr.error($(this).text());

@@ -8,6 +8,15 @@
 h2 {
   color: #0066a6;
 }
+.toast-success {
+  background-color: green;
+}
+.toast-error {
+  background-color: red;
+}
+.toast-warning {
+  background-color: yellow;
+}
 .tab {
   background-color: white;
   padding: 10px 20px;
@@ -92,7 +101,6 @@ txt {
 .navbar-toggler {
   display: none;
 }
-
 .sidebar a {
   display: flex;
   align-items: center;
@@ -180,17 +188,19 @@ body {
   width: 100%;
 }
 
-.profile-bg .img-1 {
+.img-1 {
   height: 50px;
   width: 100%;
   object-fit: cover;
 }
-
-.profile-bg .img-2 {
-  width: 85px;
-  height: 85px;
-
+.profile-img {
+  position: absolute;
+  height: 90px;
+  width: 90px;
+  margin-top: -22px;
+  object-fit: cover;
 }
+
 .profile-email {
   margin: 15px;
 }

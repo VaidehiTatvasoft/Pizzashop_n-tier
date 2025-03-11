@@ -25,6 +25,9 @@
         <main>
             <div class="row">
                 <div class="sidebar col-auto" id="sidebar">
+                    <button class="btn d-md-none" class="close-sidebar" id="close-sidebar" type="button">
+                        <i class="fa fa-times"></i>
+                    </button>
                     <a class="navbar-brand">
                         <img src="@Url.Content("~/assets/pizzashop_logo.png")" alt="" width="65" height="65"
                             class="d-inline-block align-top">
@@ -75,7 +78,7 @@
                                                 class="modal-body d-flex flex-column justify-content-center align-items-center">
                                                 <img src="@Url.Content("~/assets/warning.png")" alt="" height="40px"
                                                     width="40px">
-                                               <br> Are you sure you want to logout?
+                                                <br> Are you sure you want to logout?
                                                 <div class="d-flex justify-content-center align-items-center mt-3">
                                                     <form asp-controller="Accounts" asp-action="Logout" method="post">
                                                         <button type="submit" class="btn update-button m-1"
@@ -105,18 +108,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
     <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.2.2/js/dataTables.bootstrap5.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const toggleButton = document.getElementById('toggle-sidebar');
+            const closeButton = document.getElementById('close-sidebar');
             const sidebar = document.getElementById('sidebar');
 
             toggleButton.addEventListener('click', () => {
                 sidebar.classList.toggle('active');
+            });
+            closeButton.addEventListener('click', () => {
+                sidebar.classList.remove('active');
             });
 
             const currentPath = window.location.pathname;
@@ -131,7 +139,7 @@
             });
         });
     </script>
-<script>
+    <script>
         toastr.options = {
             "closeButton": true,
             "debug": false,
@@ -150,34 +158,34 @@
             "hideMethod": "fadeOut"
         };
     </script>
-  <script>
+    <script>
         $(document).ready(function () {
             @if (TempData["Message"] != null)
-            {
-                <text>
-                    toastr.success('@TempData["Message"]');
-                </text>
+                {
+                    <text>
+                        toastr.success('@TempData["Message"]');
+                    </text>
             }
 
-            @if (TempData["ErrorMessage"] != null)
-            {
-                <text>
-                    toastr.error('@TempData["ErrorMessage"]');
-                </text>
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <text>
+                        toastr.error('@TempData["ErrorMessage"]');
+                    </text>
             }
 
-            @if (TempData["WarningMessage"] != null)
-            {
-                <text>
-                    toastr.warning('@TempData["WarningMessage"]');
-                </text>
+                @if (TempData["WarningMessage"] != null)
+                {
+                    <text>
+                        toastr.warning('@TempData["WarningMessage"]');
+                    </text>
             }
 
-            @if (TempData["InfoMessage"] != null)
-            {
-                <text>
-                    toastr.info('@TempData["InfoMessage"]');
-                </text>
+                @if (TempData["InfoMessage"] != null)
+                {
+                    <text>
+                        toastr.info('@TempData["InfoMessage"]');
+                    </text>
             }
         });
     </script>

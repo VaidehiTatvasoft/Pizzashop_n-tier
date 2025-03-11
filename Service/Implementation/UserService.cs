@@ -163,7 +163,8 @@ namespace Pizzashop.Service.Implementation
             StateId = user.StateId,
             CityId = user.CityId,
             Zipcode = user.Zipcode,
-            Address = user.Address
+            Address = user.Address,
+            ProfileImage = user.ProfileImage
         };
     }
 

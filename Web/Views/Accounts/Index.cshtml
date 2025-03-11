@@ -8,12 +8,12 @@
 
 <form asp-controller="Accounts" asp-action="Login" method="post" id="loginForm" class="auth-form">
     <h3><b>Welcome,</b></h3><br>
-    <div class="mb-3 d-flex">
+    <div class="d-flex">
         <input asp-for="Email" type="email" class="form-control ps-4" id="email" placeholder="Email*">
         <i class="fa fa-user input-icon"></i>
     </div>
-        <span asp-validation-for="Email" class="text-danger"></span>
-    <div class="mb-3 d-flex">
+    <span asp-validation-for="Email" class="text-danger"></span>
+    <div class="mt-3 d-flex">
         <input asp-for="PasswordHash" type="password" class="form-control ps-4" id="password" placeholder="Password*">
         <i class="fa fa-eye eye-icon" onclick="togglePassword()"></i>
     </div>
@@ -57,10 +57,6 @@
             $('#loginForm').submit(function (e) {
                 if (!$(this).valid()) {
                     e.preventDefault();
-                    $('.text-danger').each(function () {
-                        if ($(this).text() !== '') {
-                            toastr.error($(this).text());
-                        }
                     });
                 }
             });

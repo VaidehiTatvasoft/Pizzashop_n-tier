@@ -47,7 +47,7 @@
                         <tr id="@user.Id">
                             <td>
                                 <div class="d-flex gap-3 align-items-center" style="color:#5f5e5e">
-                                    <img class="user-profile-img" src="@Url.Content("~/assets/Default_pfp.svg.png")" alt="">
+                                    <img class="user-profile-img" src="~/uploads/@(user?.ProfileImage)" alt="">
                                     @user.FirstName @user.LastName
                                 </div>
                             </td>
