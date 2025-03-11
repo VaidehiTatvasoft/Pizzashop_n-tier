@@ -74,17 +74,15 @@
                                 }
                                 else
                                 {
-                                    <button class="status-value p-1"><b>Inactive</b></button>
+                                    <button class="inActive-status p-1"><b>Inactive</b></button>
                                 }
                             </td>
                             <td>
                                 <div class="d-flex align-items-center">
-                                    @if (user.IsActive)
-                                    {
                                         <a asp-action="EditUser" asp-controller="User" asp-route-id="@user.Id">
                                             <i class="bi bi-pen m-2" style="color:#5f5e5e"></i>
                                         </a>
-                                    }
+                                    
                                     <a class="bi bi-trash m-2" href="javascript:void(0)" onclick="confirmDelete(@user.Id)"
                                         style="color:#5f5e5e"></a>
                                     <form id="deleteForm-@user.Id" method="post"

@@ -276,8 +276,8 @@ left:auto;
 }
 
 .user-profile-img {
-  height: 30px;
-  width: 30px;
+  height: 40px;
+  width: 40px;
 }
 
 .utable td th {
@@ -320,10 +320,11 @@ left:auto;
 }
 
 .inActive-status {
-
+  width: 90px;
   background: #dc3545;
   font: normal normal normal 15px/20px Roboto;
   color: white;
+  letter-spacing: 0px;
   border-radius: 22px;
   border: none;
 

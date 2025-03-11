@@ -70,7 +70,7 @@ namespace Pizzashop.Repository.Implementation
                 return false;
             }
 
-            user.IsDeleted = true;
+            user.IsActive = false;
             _context.Users.Update(user);
             return await _context.SaveChangesAsync() > 0;
         }

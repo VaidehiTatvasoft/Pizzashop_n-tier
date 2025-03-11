@@ -76,7 +76,7 @@ namespace pizzashop.Controllers
             return View(user);
         }
 
-        [HttpPost]
+         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditUser(UserViewModel model, IFormFile ProfileImage)
         {
@@ -163,10 +163,23 @@ namespace pizzashop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Profile(UserViewModel model)
+        public async Task<IActionResult> Profile(UserViewModel model,IFormFile ProfileImage)
         {
             if (ModelState.IsValid)
             {
+                 if (ProfileImage != null && ProfileImage.Length > 0)
+                {
+                    var fileName = Path.GetFileName(ProfileImage.FileName);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await ProfileImage.CopyToAsync(stream);
+                    }
+
+                    model.ProfileImage = fileName;
+                }
+
                 var result = await _userService.UpdateProfileAsync(model, User);
                 if (result)
                 {
