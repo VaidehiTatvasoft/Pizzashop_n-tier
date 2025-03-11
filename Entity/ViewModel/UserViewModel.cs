@@ -34,8 +34,7 @@ public class UserViewModel
     public string? ProfileImage { get; set; }
     
     [StringLength(100)]
-    [Required(ErrorMessage = "Please Enter a Valid Password")]
-    public string? PasswordHash { get; set; }
+        public string? PasswordHash { get; set; }
     
     [Required(ErrorMessage = "Please Select a Country")]
     public int? CountryId { get; set; }

@@ -8,124 +8,116 @@
         <h2 class="dt p-2">Edit User</h2>
     </div>
     <div>
-        <a asp-controller="User" asp-action="UserList" class="btn cancel-button">
-            Back</a>
+        <a asp-controller="User" asp-action="UserList" class="btn bg-light cancel-button">
+           < Back</a>
     </div>
 </div>
-<div class="form">
-    <form asp-controller="User" asp-action="EditUser" method="post" enctype="multipart/form-data" id="editUserForm">
-        <div class="col-xl-12">
-            <div class="row">
-                <div class="form-floating col">
-                    <input type="text" class="form-control twoc" id="FirstName" asp-for="FirstName">
-                    <label for="FirstName" class="float">First Name</label>
-                    <span asp-validation-for="FirstName" class="text-danger"></span>
-                </div>
-                <div class="form-floating col">
-                    <input type="text" class="form-control twoc" id="LastName" asp-for="LastName">
-                    <label for="LastName" class="float">Last Name</label>
-                    <span asp-validation-for="LastName" class="text-danger"></span>
-                </div>
+<div class="shadow card container-fluid bg-light shadow pt-4">
+<form asp-controller="User" asp-action="EditUser" method="post" class="row needs-validation mt-1 mb-3 mx-2"
+    enctype="multipart/form-data" id="editUserForm">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-floating">
+                <input type="text" class="form-control " id="FirstName"  asp-for="FirstName">
+                <label for="FirstName">First Name</label>
             </div>
+            <span class="text-danger fs-6 ms-2" asp-validation-for="FirstName" class="text-danger"></span>
         </div>
-
-        <br>
-
-        <div class="col-xl-12">
-            <div class="row">
-                <div class="form-floating col">
-                    <input type="text" class="form-control twoc" id="Username" asp-for="Username">
-                    <label for="Username" class="float">User Name</label>
-                    <span asp-validation-for="Username" class="text-danger"></span>
-                </div>
-                <div class="form-floating col">
-                    <select id="RoleId" name="RoleId" class="form-select" asp-items="ViewBag.Roles"></select>
-                    <label for="RoleId" class="float">Role</label>
-                    <span asp-validation-for="RoleId" class="text-danger"></span>
-                </div>
+        <div class="col-md-6">
+            <div class="form-floating">
+                <input type="text" class="form-control " id="LastName" asp-for="LastName">
+                <label for="LastName" >Last Name</label>
             </div>
+            <span class="text-danger fs-6 ms-2" asp-validation-for="LastName" class="text-danger"></span>
         </div>
-
-        <br>
-
-        <div class="col-xl-12">
-            <div class="row">
-                <div class="form-floating col">
-                    <input type="text" class="form-control twoc" id="Email" asp-for="Email" readonly>
-                    <label for="Email" class="float">Email</label>
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-                <div class="form-floating col">
-                    <select id="Status" class="form-control" asp-for="IsActive">
-                        <option value="true">Active</option>
-                        <option value="false">Inactive</option>
-                    </select>
-                    <label for="Status" class="float">Status</label>
-                    <span asp-validation-for="IsActive" class="text-danger"></span>
-                </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-floating">
+                <input type="text" class="form-control " id="Username" asp-for="Username">
+                <label for="Username" >User Name</label>
             </div>
+            <span class="text-danger fs-6 ms-2" asp-validation-for="Username" class="text-danger"></span>
         </div>
-
-        <br>
-        <div class="col-xl-12">
-            <div class="row">
-                <div class="form-floating col">
-                    <input type="file" class="form-control" id="ProfileImage" name="ProfileImage">
-                    <label for="ProfileImage" class="float">ProfileImage</label>
-                </div>
+        <div class="col-md-6">
+            <div class="form-floating">
+                <select id="RoleId" name="RoleId" class="form-select" asp-items="ViewBag.Roles"></select>
+                <label for="RoleId" >Role</label>
             </div>
+            <span class="text-danger fs-6 ms-2" asp-validation-for="RoleId" class="text-danger"></span>
         </div>
-
-        <br>
-
-        <div class="col-xl-12">
-            <div class="row">
-                <div class="form-floating col">
-                    <select id="CountryId" name="CountryId" class="form-select" asp-items="ViewBag.Countries"></select>
-                    <label for="CountryId" class="float">Country</label>
-                    <span asp-validation-for="CountryId" class="text-danger"></span>
-                </div>
-                <div class="form-floating col">
-                    <select id="StateId" name="StateId" class="form-select" asp-items="ViewBag.States"></select>
-                    <label for="StateId" class="float">State</label>
-                    <span asp-validation-for="StateId" class="text-danger"></span>
-                </div>
-                <div class="form-floating col">
-                    <select id="CityId" name="CityId" class="form-select" asp-items="ViewBag.Cities"></select>
-                    <label for="CityId" class="float">City</label>
-                    <span asp-validation-for="CityId" class="text-danger"></span>
-                </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="Email" asp-for="Email" readonly>
+                <label for="Email" >Email</label>
             </div>
+            <span class="text-danger fs-6 ms-2" asp-validation-for="Email" class="text-danger"></span>
         </div>
-
-        <br>
-        <div class="col-xl-12">
-            <div class="row">
-                <div class="form-floating col">
-                    <input type="text" class="form-control twoc" id="Zipcode" asp-for="Zipcode">
-                    <label for="Zipcode" class="float">ZipCode</label>
-                    <span asp-validation-for="Zipcode" class="text-danger"></span>
-                </div>
-                <div class="form-floating col">
-                    <input type="text" class="form-control twoc" id="Address" asp-for="Address">
-                    <label for="Address" class="float">Address</label>
-                    <span asp-validation-for="Address" class="text-danger"></span>
-                </div>
-                <div class="form-floating col">
-                    <input type="text" class="form-control twoc" id="Phone" asp-for="Phone">
-                    <label for="Phone" class="float">Phone</label>
-                    <span asp-validation-for="Phone" class="text-danger"></span>
-                </div>
+        <div class="col-md-6">
+            <div class="form-floating">
+                <select id="Status" class="form-control" asp-for="IsActive">
+                    <option value="true">Active</option>
+                    <option value="false">Inactive</option>
+                </select>
+                <label for="Status" >Status</label>
             </div>
+            <span class="text-danger fs-6 ms-2" asp-validation-for="IsActive" class="text-danger"></span>
         </div>
+    </div>
 
-        <br>
-
-        <div class="form-group p-3 d-flex justify-content-start">
-            <button type="submit" class="btn update-button m-1">Update User</button>
-            <button asp-controller="User" asp-action="UserList" class="btn cancel-button m-1">Cancel</button>
+    <br>
+    <div class="row">
+        <div class="form-floating col mb-3">
+            <input type="file" class="form-control" id="ProfileImage" name="ProfileImage">
+            <label for="ProfileImage" class="float">ProfileImage</label>
         </div>
-    </form>
+    </div>
+    <br>
+    <div class="row">
+        <div class="form-floating col-md-4 mb-3">
+            <select id="CountryId" name="CountryId" class="form-select" asp-items="ViewBag.Countries"></select>
+            <label for="CountryId" class="float">Country</label>
+            <span asp-validation-for="CountryId" class="text-danger"></span>
+        </div>
+        <div class="form-floating col-md-4 mb-3">
+            <select id="StateId" name="StateId" class="form-select" asp-items="ViewBag.States"></select>
+            <label for="StateId" class="float">State</label>
+            <span asp-validation-for="StateId" class="text-danger"></span>
+        </div>
+        <div class="form-floating col-md-4 mb-3">
+            <select id="CityId" name="CityId" class="form-select" asp-items="ViewBag.Cities"></select>
+            <label for="CityId" class="float">City</label>
+            <span asp-validation-for="CityId" class="text-danger"></span>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="form-floating col-md-4 mb-3">
+            <input type="text" class="form-control" id="Zipcode" asp-for="Zipcode">
+            <label for="Zipcode" class="float">ZipCode</label>
+            <span asp-validation-for="Zipcode" class="text-danger"></span>
+        </div>
+        <div class="form-floating col-md-4 mb-3">
+            <input type="text" class="form-control" id="Address" asp-for="Address">
+            <label for="Address" class="float">Address</label>
+            <span asp-validation-for="Address" class="text-danger"></span>
+        </div>
+        <div class="form-floating col-md-4 mb-3">
+            <input type="text" class="form-control twoc" id="Phone" asp-for="Phone">
+            <label for="Phone" class="float">Phone</label>
+            <span asp-validation-for="Phone" class="text-danger"></span>
+        </div>
+    </div>
+    <br>
+    <div class="form-group p-3 d-flex justify-content-start">
+        <button type="submit" class="btn update-button m-1">Update User</button>
+        <button asp-controller="User" asp-action="UserList" class="btn cancel-button m-1">Cancel</button>
+    </div>
+</form>
 </div>
 
 @section Scripts {

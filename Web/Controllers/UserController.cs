@@ -78,7 +78,7 @@ namespace pizzashop.Controllers
 
          [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditUser(UserViewModel model, IFormFile ProfileImage)
+        public async Task<IActionResult> EditUser(UserViewModel model, IFormFile? ProfileImage)
         {
             if (ModelState.IsValid)
             {
@@ -94,6 +94,7 @@ namespace pizzashop.Controllers
 
                     model.ProfileImage = fileName;
                 }
+
 
                 var result = await _userService.EditUserAsync(model);
                 if (result)
@@ -163,7 +164,7 @@ namespace pizzashop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Profile(UserViewModel model,IFormFile ProfileImage)
+        public async Task<IActionResult> Profile(UserViewModel model,IFormFile? ProfileImage)
         {
             if (ModelState.IsValid)
             {
@@ -176,7 +177,6 @@ namespace pizzashop.Controllers
                     {
                         await ProfileImage.CopyToAsync(stream);
                     }
-
                     model.ProfileImage = fileName;
                 }
 
