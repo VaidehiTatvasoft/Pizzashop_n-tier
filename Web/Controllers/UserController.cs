@@ -20,10 +20,13 @@ namespace pizzashop.Controllers
             _context = context;
             _userService = userService;
         }
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> GetProfileImage()
         {
-            var user = _userService.GetUserProfile(User);
-            return View(user);
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            var profileImagePath = await _userService.GetUserProfileImageAsync(email)
+;
+            return Json(new { profileImgPath = profileImagePath ?? "Default_pfp.svg.png" });
         }
         public IActionResult AddUser()
         {

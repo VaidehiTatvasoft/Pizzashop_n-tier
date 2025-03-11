@@ -9,12 +9,18 @@ namespace Pizzashop.Service.Implementation
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly PizzaShopContext _context;
 
-        public UserService(IUserRepository userRepository)
+
+        public UserService(IUserRepository userRepository, PizzaShopContext context)
         {
             _userRepository = userRepository;
+            _context = context;
         }
-
+        public async Task<string> GetUserProfileImageAsync(string email)
+        {
+            return await _userRepository.GetUserProfileImageAsync(email);
+        }
         public async Task<bool> AddUserAsync(AddUserModel model, ClaimsPrincipal userClaims)
         {
             var userIdClaim = userClaims.FindFirst("UserId");
@@ -133,26 +139,7 @@ namespace Pizzashop.Service.Implementation
         {
             return _userRepository.GetUserList(searchString, sortOrder, pageIndex, pageSize, out count);
         }
-        public async Task<UserProfile> GetUserProfile(ClaimsPrincipal userClaims)
-        {
-            var userEmailClaim = userClaims.FindFirst(ClaimTypes.Email);
-            if (userEmailClaim == null)
-            {
-                return null;
-            }
-
-            string userEmail = userEmailClaim.Value;
-            var user = await _userRepository.GetUserByEmail(userEmail);
-            if (user == null)
-            {
-                return null;
-            }
-            return new UserProfile
-            {
-                Email = user.Email,
-                ProfileImage = user.ProfileImage
-            };
-        }
+        
         public async Task<UserViewModel> GetUserProfileAsync(ClaimsPrincipal userClaims)
         {
             var userEmailClaim = userClaims.FindFirst(ClaimTypes.Email);
