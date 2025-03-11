@@ -13,7 +13,6 @@ namespace Pizzashop.Repository.Interfaces
         Task ResetPassword(string email, string newPassword);
         Task<bool> AddUserAsync(User user);
         Task<bool> UpdateUserAsync(User user);
-        Task<string> GetUserProfileImageAsync(string email);
         Task<bool> DeleteUserAsync(int id);
         IEnumerable<User> GetUserList(string searchString, string sortOrder, int pageIndex, int pageSize, out int count);
     }

@@ -24,7 +24,6 @@ body {
 .right-section {
     flex-direction: column;
     margin:0;
-    padding:0;
     background-color: #d7eff7;
 }
 .heading{

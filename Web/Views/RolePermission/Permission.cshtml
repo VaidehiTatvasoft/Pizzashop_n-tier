@@ -44,28 +44,28 @@
                         <input type="hidden" asp-for="@Model[i].PermissionName" />
                         <input type="hidden" asp-for="@Model[i].RoleName" />
 
-                        <input type="checkbox" class="form-check-input permission-checkbox switch-btn mt-0"
+                        <input type="checkbox" class="form-check-input align-items-center permission-checkbox switch-btn mt-0"
                                name="selectedPermissions" value="@Model[i].Id" data-index="@i"
                                @(Model[i].CanView || Model[i].CanEdit || Model[i].CanDelete ? "checked" : "") />
                         @Model[i].PermissionName
                     </td>
                     <td>
                         <div class="form-check form-switch mb-0">
-                            <input type="checkbox" asp-for="@Model[i].CanView" class="form-check-input permission-field can-view mt-0"
+                            <input type="checkbox" asp-for="@Model[i].CanView" class="form-check-input align-items-center permission-field can-view "
                                    data-index="@i" value="true" checked="@Model[i].CanView" />
                             <input type="hidden" name="[@i].Canview" value="false" />
                         </div>
                     </td>
                     <td>
-                        <div class="form-check form-switch mb-0">
-                            <input type="checkbox" asp-for="@Model[i].CanEdit" class="form-check-input permission-field can-addedit"
+                        <div class="form-check form-switch  mb-0">
+                            <input type="checkbox" asp-for="@Model[i].CanEdit" class="form-check-input align-items-center permission-field can-addedit"
                                    data-index="@i" value="true" checked="@Model[i].CanEdit" />
                             <input type="hidden" name="[@i].Canaddedit" value="false" />
                         </div>
                     </td>
                     <td>
-                        <div class="form-check form-switch mb-0">
-                            <input type="checkbox" asp-for="@Model[i].CanDelete" class="form-check-input permission-field can-delete"
+                        <div class="form-check form-switch  mb-0">
+                            <input type="checkbox" asp-for="@Model[i].CanDelete" class="form-check-input align-items-center permission-field can-delete"
                                    data-index="@i" value="true"checked="@Model[i].CanDelete" />
                             <input type="hidden" name="[@i].Candelete" value="false" />
                         </div>
@@ -84,6 +84,7 @@
     </div>
 </form>
 </div>
+@section Scripts {
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const permissionCheckboxes = document.querySelectorAll(".permission-checkbox");
@@ -129,17 +130,19 @@
                 }
             });
         });
-
-        $(function () {
-            var successMessage = '@Html.Raw(TempData["SuccessUpdate"])';
-            if (successMessage.trim() !== '') {
-                toastr.success(successMessage, "Success", {
-                    closeButton: true,
-                    progressBar: true,
-                    timeOut: 2000,
-                    positionClass: "toast-bottom-right"
-                });
-            }
-        });
     });
 </script>
+<script>
+        $(document).ready(function () {
+            var successUpdate = '@TempData["SuccessUpdate"]';
+            var errorUpdate = '@TempData["ErrorUpdate"]';
+
+            if (successUpdate) {
+                toastr.success(successUpdate);
+            }
+            if (errorUpdate) {
+                toastr.error(errorUpdate);
+            }
+        });
+    </script>
+    }

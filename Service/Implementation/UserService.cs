@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Entity.Data;
 using Entity.ViewModel;
 using Pizzashop.Repository.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Pizzashop.Service.Implementation
 {
@@ -19,7 +20,8 @@ namespace Pizzashop.Service.Implementation
         }
         public async Task<string> GetUserProfileImageAsync(string email)
         {
-            return await _userRepository.GetUserProfileImageAsync(email);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            return user?.ProfileImage ?? "~/assets/Default_pfp.svg.png";
         }
         public async Task<bool> AddUserAsync(AddUserModel model, ClaimsPrincipal userClaims)
         {
@@ -139,7 +141,7 @@ namespace Pizzashop.Service.Implementation
         {
             return _userRepository.GetUserList(searchString, sortOrder, pageIndex, pageSize, out count);
         }
-        
+
         public async Task<UserViewModel> GetUserProfileAsync(ClaimsPrincipal userClaims)
         {
             var userEmailClaim = userClaims.FindFirst(ClaimTypes.Email);

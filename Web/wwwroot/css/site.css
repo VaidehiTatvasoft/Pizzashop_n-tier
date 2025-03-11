@@ -61,7 +61,7 @@ txt {
   font-size: 22px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 769px) {
   .navbar-toggler {
     display: inline-block;
   }
@@ -155,7 +155,9 @@ body {
   height: 60px;
   align-self: center;
 }
-
+.drop{
+  color: grey;
+}
 .form {
   min-height: 100px;
   overflow: hidden;
@@ -209,6 +211,8 @@ body {
   align-items: center;
   margin-top:18px;
   margin-left: -32px;
+  cursor: pointer;
+
 }
 .user-container {
   position: absolute;
@@ -243,6 +247,12 @@ body {
 .dropdown-menu[data-bs-popper]{
 right:2%;
 left:auto;
+}
+@media screen and (max-width: 730px) {
+  .dropdown-menu[data-bs-popper]{
+    right:5%;
+    left:auto;
+    }
 }
 @media screen and (max-width: 992px) {
   li a span {
@@ -495,4 +505,28 @@ a i {
 
 .text-danger {
   margin-top: 10px;
+}
+.file-upload-container {
+  position: relative;
+  width: 100%;
+}
+
+.file-upload-label {
+  width: 100%;
+  background-color: #F8F9FA;
+  border: 1px solid #B3B3B7;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.file-upload-input {
+  display: none;
+}
+
+.file-upload-name {
+  display: none;
+  width: 100%;
+  margin-top: 10px;
+  text-align: center;
 }

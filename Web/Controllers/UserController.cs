@@ -24,8 +24,12 @@ namespace pizzashop.Controllers
         public async Task<IActionResult> GetProfileImage()
         {
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            var profileImagePath = await _userService.GetUserProfileImageAsync(email)
-;
+            if (string.IsNullOrEmpty(email))
+            {
+                return NotFound("User not found");
+            }
+
+            var profileImagePath = await _userService.GetUserProfileImageAsync(email);
             return Json(new { profileImgPath = profileImagePath ?? "Default_pfp.svg.png" });
         }
         public IActionResult AddUser()
@@ -78,7 +82,7 @@ namespace pizzashop.Controllers
             {
                 return NotFound();
             }
-            ViewBag.Roles = new SelectList(_context.Roles, "Id", "Name");
+            ViewBag.Roles = new SelectList(_context.Roles, "Id", "Name", user.RoleId);
             await LoadDropdowns(user);
             return View(user);
         }
@@ -101,7 +105,14 @@ namespace pizzashop.Controllers
 
                     model.ProfileImage = fileName;
                 }
-
+                else
+                {
+                    var existingUser = await _userService.GetUserViewModelByIdAsync(model.Id);
+                    if (existingUser != null)
+                    {
+                        model.ProfileImage = existingUser.ProfileImage;
+                    }
+                }
 
                 var result = await _userService.EditUserAsync(model);
                 if (result)
@@ -135,28 +146,29 @@ namespace pizzashop.Controllers
             return RedirectToAction("UserList");
         }
 
-        public IActionResult UserList(string searchString, int pageIndex = 1, int pageSize = 5, string sortOrder = "")
-        {
-            var users = _userService.GetUsersList(searchString, sortOrder, pageIndex, pageSize, out int count);
+public IActionResult UserList(string searchString, int pageIndex = 1, int pageSize = 5, string sortOrder = "")
+{
+    var users = _userService.GetUsersList(searchString, sortOrder, pageIndex, pageSize, out int count);
 
-            ViewData["UsernameSortParam"] = sortOrder == "username_asc" ? "username_desc" : "username_asc";
-            ViewData["RoleSortParam"] = sortOrder == "role_asc" ? "role_desc" : "role_asc";
+    ViewData["UsernameSortParam"] = sortOrder == "username_asc" ? "username_desc" : "username_asc";
+    ViewData["RoleSortParam"] = sortOrder == "role_asc" ? "role_desc" : "role_asc";
 
-            ViewBag.count = count;
-            ViewBag.pageIndex = pageIndex;
-            ViewBag.pageSize = pageSize;
-            ViewBag.totalPage = (int)Math.Ceiling(count / (double)pageSize);
-            ViewBag.searchString = searchString;
+    ViewBag.count = count;
+    ViewBag.pageIndex = pageIndex;
+    ViewBag.pageSize = pageSize;
+    ViewBag.totalPage = (int)Math.Ceiling(count / (double)pageSize);
+    ViewBag.searchString = searchString;
 
-            if (users == null || !users.Any())
-            {
-                ViewBag.ErrorMessage = "User list is empty.";
-                return View();
-            }
+    if (users == null || !users.Any())
+    {
+        ViewBag.ErrorMessage = "User list is empty.";
+        return View();
+    }
 
-            ViewBag.UserList = users;
-            return View();
-        }
+    ViewBag.UserList = users;
+    return View();
+}
+
 
         [HttpGet]
         public async Task<IActionResult> Profile()
@@ -233,6 +245,11 @@ namespace pizzashop.Controllers
                     name = c.Name
                 }).ToList();
             return Json(cities);
+        }
+        [HttpGet]
+        public async Task<IActionResult> ChangePassword()
+        {
+            return View();
         }
 
         [HttpPost]

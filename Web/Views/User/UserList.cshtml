@@ -32,12 +32,12 @@
             <table class="table utable p-2">
                 <thead>
                     <tr>
-                        <th scope="col" style="color:#5f5e5e" class="thead">Name</th>
-                        <th scope="col" style="color:#5f5e5e" class="thead">Email</th>
-                        <th scope="col" style="color:#5f5e5e" class="thead">Phone</th>
-                        <th scope="col" style="color:#5f5e5e" class="thead">Role</th>
-                        <th scope="col" style="color:#5f5e5e" class="thead">Status</th>
-                        <th scope="col" style="color:#5f5e5e" class="thead">Action</th>
+                        <th scope="col" style="color:#5f5e5e" class="thead" onclick="sortTable('Name', 'username')">Name <span id="sortIconName">↑↓</span></th>
+        <th scope="col" style="color:#5f5e5e" class="thead">Email</th>
+        <th scope="col" style="color:#5f5e5e" class="thead">Phone</th>
+        <th scope="col" style="color:#5f5e5e" class="thead" onclick="sortTable('Role', 'role')">Role <span id="sortIconRole">↑↓</span></th>
+        <th scope="col" style="color:#5f5e5e" class="thead">Status</th>
+        <th scope="col" style="color:#5f5e5e" class="thead">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -51,38 +51,48 @@
                                     @user.FirstName @user.LastName
                                 </div>
                             </td>
-                            <td style="color:#5f5e5e">@user.Email</td>
-                            <td style="color:#5f5e5e">@user.Phone</td>
                             <td style="color:#5f5e5e">
-                                @switch (@user.RoleId)
-                                {
-                                    case 1:
-                                        <div>Super Admin</div>
-                                        break;
-                                    case 2:
-                                        <div>Account Manager</div>
-                                        break;
-                                    case 3:
-                                        <div>Chef</div>
-                                        break;
-                                }
+                                <div class="d-flex align-items-center p-2">@user.Email</div>
                             </td>
                             <td style="color:#5f5e5e">
-                                @if (@user.IsActive)
-                                {
-                                    <button class="active-status p-1"><b>Active</b></button>
-                                }
-                                else
-                                {
-                                    <button class="inActive-status p-1"><b>Inactive</b></button>
-                                }
+                                <div class="d-flex align-items-center p-2">@user.Phone</div>
+                            </td>
+                            <td style="color:#5f5e5e">
+                                <div class="d-flex align-items-center p-2">
+                                    @switch (@user.RoleId)
+                                    {
+                                        case 1:
+                                            <div>Super Admin</div>
+                                            break;
+                                        case 2:
+                                            <div>Account Manager</div>
+                                            break;
+                                        case 3:
+                                            <div>Chef</div>
+                                            break;
+                                    }
+                                </div>
+                            </td>
+                            <td style="color:#5f5e5e">
+                                <div class="d-flex align-items-center p-2">
+                                    @if (@user.IsActive)
+                                    {
+                                        <button class="active-status p-1"><b>Active</b></button>
+                                    }
+                                    else
+                                    {
+                                        <button class="inActive-status p-1"><b>Inactive</b></button>
+                                    }
+                                </div>
                             </td>
                             <td>
                                 <div class="d-flex align-items-center">
+                                    @if (user.IsActive)
+                                    {
                                         <a asp-action="EditUser" asp-controller="User" asp-route-id="@user.Id">
                                             <i class="bi bi-pen m-2" style="color:#5f5e5e"></i>
                                         </a>
-                                    
+                                    }
                                     <a class="bi bi-trash m-2" href="javascript:void(0)" onclick="confirmDelete(@user.Id)"
                                         style="color:#5f5e5e"></a>
                                     <form id="deleteForm-@user.Id" method="post"
@@ -127,7 +137,7 @@
                         <option value="15">15</option>
                     }
                 </select>
-            <span>Showing @pageIndex out of <span>@totalPage</span></span>
+                <span>Showing @pageIndex out of <span>@totalPage</span></span>
                 @if (pageIndex > 1)
                 {
                     <a href="?pageIndex=@(pageIndex-1)&pageSize=@pageSize&searchString=@searchString"
@@ -176,8 +186,11 @@
 
                 </div>
                 <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-primary" style="background-color: #0066A7; width: 70px; border-radius: 5px;" id="confirmDeleteButton">Yes</button>
-                    <button type="button" class="btn btn-outline-primary" style="color: #0066A7; width: 70px; border-radius: 5px;" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary"
+                        style="background-color: #0066A7; width: 70px; border-radius: 5px;"
+                        id="confirmDeleteButton">Yes</button>
+                    <button type="button" class="btn btn-outline-primary"
+                        style="color: #0066A7; width: 70px; border-radius: 5px;" data-bs-dismiss="modal">No</button>
                 </div>
             </div>
         </div>
@@ -191,6 +204,30 @@
                 document.getElementById(`deleteForm-${userId}`).submit();
             };
             modal.show();
+        }
+
+        $(document).ready(function () {
+            var successMessage = '@TempData["SuccessMessage"]';
+            var errorMessage = '@TempData["ErrorMessage"]';
+
+            if (successMessage) {
+                toastr.success(successMessage);
+            }
+            if (errorMessage) {
+                toastr.error(errorMessage);
+            }
+        });
+
+        let currentSortOrder = {
+            Name: '@(ViewData["UsernameSortParam"] == "username_asc" ? "asc" : "desc")',
+            Role: '@(ViewData["RoleSortParam"] == "role_asc" ? "asc" : "desc")'
+        };
+
+        function sortTable(columnName, sortParam) {
+            let sortOrder = currentSortOrder[columnName] === 'asc' ? 'desc' : 'asc';
+            currentSortOrder[columnName] = sortOrder;
+            let url = `?sortOrder=${sortParam}_${sortOrder}&searchString=@searchString&pageIndex=@pageIndex&pageSize=@pageSize`;
+            window.location.href = url;
         }
     </script>
 }

@@ -39,15 +39,14 @@
                             class="fa-solid fa-table-cells-large me-2"></i><b>Dashboard</b></a>
                     <a class="btn" asp-controller="User" asp-action="UserList"><i
                             class="fa-solid fa-users me-2"></i><b>Users</b></a>
-                    <a class="btn" asp-controller="RolePermission" asp-action="Role"><b>Roles and Permission</b></a>
+                    <a class="btn" asp-controller="RolePermission" asp-action="Role"><i class="fas fa-user-cog me-2"></i><b>Roles and Permission</b></a>
                     <a class="btn" asp-controller="Menu" asp-action="Items"><i
                             class="fa-solid fa-monument me-2"></i><b>Menu</b></a>
                     <a class="btn" asp-controller="Home" asp-action="AdminDasboard"><i
                             class="fa-solid fa-square"></i><b>Tables and Sections</b></a>
                     <a class="btn" asp-controller="Home" asp-action="AdminDashoard"><i
                             class="fa-solid fa-money-check-dollar"></i><b>Taxes and Fees</b></a>
-                    <a class="btn" asp-controller="Home" asp-action="AdminDasboard"><i
-                            class="fa-solid fa-cart-plus"></i><b>Orders</b></a>
+                    <a class="btn" asp-controller="Home" asp-action="AdminDasboard"><i class="fas fa-clipboard-check"></i><b>Orders</b></a>
                     <a class="btn" asp-controller="Home" asp-action="AdminDashoard"><i
                             class="fa-solid fa-users-rectangle"></i><b>Customers</b></a>
                 </div>
@@ -64,14 +63,20 @@
                                         alt="">
                                 </a>
                                 <ul class="dropdown-menu justify-content-end">
-                                    <li><img id="profileImageDropdown" src="@Url.Content("~/assets/Default_pfp.svg.png")" alt="" height="30px" style="border-radius: 50%;">
-                                    @User.FindFirst(ClaimTypes.Email)?.Value</li>
-                                    <li><a class="dropdown-item" asp-controller="User" asp-action="Profile">My
+                                    <li class="drop"><img id="profileImageDropdown"
+                                            src="@Url.Content("~/assets/Default_pfp.svg.png")" alt="" height="30px"
+                                            style="border-radius: 50%;">
+                                        @User.FindFirst(ClaimTypes.Email)?.Value</li>
+                                    <li class="dropdown-divider"></li>
+                                    <li class="drop"><a class="dropdown-item" asp-controller="User"
+                                            asp-action="Profile"><i class="fa fa-user-circle" style="color:grey"></i> My
                                             Profile</a></li>
-                                    <li><a class="dropdown-item" asp-controller="User"
-                                            asp-action="ChangePassword">Change Password</a></li>
-                                    <li><a class="dropdown-item" type="button" data-bs-toggle="modal"
-                                            data-bs-target="#staticBackdrop">Logout</a></li>
+                                    <li class="drop"><a class="dropdown-item" asp-controller="User"
+                                            asp-action="ChangePassword"><i class="fas fa-redo-alt"
+                                                style="color:grey"></i> Change Password</a></li>
+                                    <li class="drop"><a class="dropdown-item" type="button" data-bs-toggle="modal"
+                                            data-bs-target="#staticBackdrop"><i class="fa fa-sign-out"
+                                                style="color:grey"></i> Logout</a></li>
                                 </ul>
                                 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static"
                                     data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
@@ -98,7 +103,7 @@
                             </div>
                         </nav>
                     </div>
-                    <div class="md-10 m-1 p-3 justify-content-center align-items-center flex-wrap">
+                    <div class="md-10 m-1 p-3 justify-content-center align-items-center flex-wrap" >
                         @RenderBody()
                     </div>
                 </div>
@@ -195,14 +200,15 @@
     </script>
     <script>
         $(document).ready(function () {
-                $.ajax({
-                    url: '/user/get-profile-image',
-                    type: 'GET',
-                    success: function (data) {
-                        $('#profileImage').attr('src', '@Url.Content("~/uploads/")' + data.profileImagePath);
-                        $('#profileImageDropdown').attr('src', '@Url.Content("~/uploads/")' + data.profileImagePath);
-                    }
-                });
+        $.ajax({
+            url: '/User/GetProfileImage',
+            type: 'GET',
+            success: function (data) {
+                $('#profileImage').attr('src', '~/uploads/' + data.profileImgPath);
+                $('#profileImageDropdown').attr('src', '~/uploads/' + data.profileImgPath);
+            }
+        });
+    });
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
