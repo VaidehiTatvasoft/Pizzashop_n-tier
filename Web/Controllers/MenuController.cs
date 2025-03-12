@@ -23,11 +23,13 @@ namespace Web.Controllers
             _modifierService = modifierService;
             _modifierGroupService = modifierGroupService;
         }
+[Route ("/menu")]
 
         public async Task<IActionResult> Index()
         {
             return View();
         }
+[Route ("/menu/items")]
 
         public async Task<IActionResult> Items(int? categoryId)
         {
@@ -40,7 +42,7 @@ namespace Web.Controllers
             ViewBag.Items = await _itemService.GetItemsByCategoryAsync(categoryId.Value);
             return View(categories);
         }
-
+[Route ("/menu/modifiers")]
         public async Task<IActionResult> Modifiers(int? groupId)
         {
             var modifierGroups = await _modifierGroupService.GetAllModifierGroupsAsync();

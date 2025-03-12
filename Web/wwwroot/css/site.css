@@ -530,3 +530,22 @@ a i {
   margin-top: 10px;
   text-align: center;
 }
+@media (max-width: 1064px) and (min-width: 770px) {
+  .utable td, .utable th {
+    font-size: 14px;
+    padding: 8px;
+  }
+  .user-container {
+    flex-direction: row;
+    justify-content: center;
+  }
+  .table-responsive {
+    overflow-x: auto;
+  }
+  .container-fluid {
+    padding: 10px;
+  }
+  .content {
+    padding: 10px;
+  }
+}

@@ -8,7 +8,7 @@ public class ChangePasswordModel
     public string CurrentPassword { set; get; } = null!;
 
     [Required(ErrorMessage = "New Password is Required")]
-    [StringLength(100, MinimumLength = 6, ErrorMessage = "New Password must be between 6 and 100 characters.")]
+    [StringLength(50, MinimumLength = 6, ErrorMessage = "New Password must be between 6 and 50 characters.")]
     public string NewPassword { set; get; } = null!;
 
     [Required(ErrorMessage = "Confirm New Password is Required")]

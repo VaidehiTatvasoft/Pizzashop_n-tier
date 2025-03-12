@@ -33,13 +33,7 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            $('#email').on("change", function () {
-                var email = $(this).val();
-                $('#forgotPasswordLink').attr('href', '@Url.Action("ForgotPassword", "Accounts")?email=' + encodeURIComponent(email));
-            });
-
-            function togglePassword() {
+        function togglePassword() {
                 var passwordField = document.getElementById("password");
                 var eyeIcon = document.querySelector(".eye-icon");
 
@@ -53,11 +47,14 @@
                     eyeIcon.classList.add("fa-eye");
                 }
             }
-
+        $(document).ready(function () {
+            $('#email').on("change", function () {
+                var email = $(this).val();
+                $('#forgotPasswordLink').attr('href', '@Url.Action("ForgotPassword", "Accounts")?email=' + encodeURIComponent(email));
+            });
             $('#loginForm').submit(function (e) {
                 if (!$(this).valid()) {
                     e.preventDefault();
-                    });
                 }
             });
         });

@@ -10,7 +10,7 @@ namespace Entity.ViewModel
 
         [Required(ErrorMessage = "New Password is required.")]
         [DataType(DataType.Password)]
-        [StringLength(100, MinimumLength = 6, ErrorMessage = "New Password must be between 6 and 100 characters.")]
+        [StringLength(50, MinimumLength = 6, ErrorMessage = "New Password must be between 6 and 50 characters.")]
         public string NewPassword { get; set; } = null!; 
 
         [Required(ErrorMessage = "Confirm Password is required.")]

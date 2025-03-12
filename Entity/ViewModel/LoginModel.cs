@@ -6,7 +6,7 @@ namespace Entity.ViewModel
     public class LoginModel
     {
         [Required(ErrorMessage = "Email is required.")]
-        [EmailAddress(ErrorMessage = "Invalid email format.")]
+        [EmailAddress(ErrorMessage = "This is not a valid email format.")]
         public string Email { get; set; } = null!;
 
         [Required(ErrorMessage = "Password is required.")]

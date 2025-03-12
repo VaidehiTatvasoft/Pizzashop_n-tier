@@ -12,7 +12,7 @@ public class HomeController : Controller
     {
         _logger = logger;
     }
-    
+
     public IActionResult Index()
     {
         return View();
@@ -22,8 +22,8 @@ public class HomeController : Controller
     {
         return View();
     }
-    [Authorize(Roles = "1")] 
-    [Route ("/[controller]/admindashboard")]
+    [Authorize(Roles = "1")]
+    [Route("/home/admindashboard")]
     public IActionResult AdminDashboard()
     {
         return View();
@@ -32,7 +32,10 @@ public class HomeController : Controller
     {
         return View();
     }
-
+    public IActionResult NotFound()
+    {
+        return View("404");
+    }
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

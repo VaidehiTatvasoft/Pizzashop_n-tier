@@ -76,43 +76,43 @@ namespace Pizzashop.Repository.Implementation
         }
 
         public IEnumerable<User> GetUserList(string searchString, string sortOrder, int pageIndex, int pageSize, out int count)
-{
-    var userQuery = _context.Users.Where(u => u.IsDeleted == false);
+        {
+            var userQuery = _context.Users.Where(u => u.IsDeleted == false);
 
-    switch (sortOrder)
-    {
-        case "username_asc":
-            userQuery = userQuery.OrderBy(u => u.FirstName);
-            break;
+            switch (sortOrder)
+            {
+                case "username_asc":
+                    userQuery = userQuery.OrderBy(u => u.FirstName);
+                    break;
 
-        case "username_desc":
-            userQuery = userQuery.OrderByDescending(u => u.FirstName);
-            break;
+                case "username_desc":
+                    userQuery = userQuery.OrderByDescending(u => u.FirstName);
+                    break;
 
-        case "role_asc":
-            userQuery = userQuery.OrderBy(u => u.Role.Name);
-            break;
+                case "role_asc":
+                    userQuery = userQuery.OrderBy(u => u.Role.Name);
+                    break;
 
-        case "role_desc":
-            userQuery = userQuery.OrderByDescending(u => u.Role.Name);
-            break;
+                case "role_desc":
+                    userQuery = userQuery.OrderByDescending(u => u.Role.Name);
+                    break;
 
-        default:
-            userQuery = userQuery.OrderBy(u => u.Id);
-            break;
-    }
+                default:
+                    userQuery = userQuery.OrderBy(u => u.Id);
+                    break;
+            }
 
-    if (!string.IsNullOrEmpty(searchString))
-    {
-        userQuery = userQuery.Where(u => u.FirstName.ToLower().Contains(searchString.ToLower()) || u.LastName.Contains(searchString));
-    }
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                userQuery = userQuery.Where(u => u.FirstName.ToLower().Contains(searchString.ToLower()) || u.LastName.Contains(searchString));
+            }
 
-    count = userQuery.Count();
+            count = userQuery.Count();
 
-    return userQuery
-        .Skip((pageIndex - 1) * pageSize)
-        .Take(pageSize)
-        .ToList();
-}
+            return userQuery
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+        }
     }
 }

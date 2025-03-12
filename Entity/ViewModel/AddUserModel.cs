@@ -6,26 +6,26 @@ public class AddUserModel
 {
     public int Id { get; set; }
 
-    [EmailAddress(ErrorMessage = "Please Enter a Valid Email Address")]
+    [EmailAddress(ErrorMessage = "Please enter a valid email address")]
     [Required(ErrorMessage = "Please Enter an Email Address")]
     public string? Email { get; set; }
 
-    [Required(ErrorMessage = "Please Select a Role")]
+    [Required(ErrorMessage = "Please select a Role")]
     public int RoleId { get; set; }
 
     [StringLength(100)]
     [Required(ErrorMessage = "First name is required.")]
-    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "First name can only contain letters.")]
+    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "First name can only contain alphabets.")]
     public string? FirstName { get; set; }
 
     [StringLength(100)]
-    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Last name can only contain letters.")]
+    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Last name can only contain alphabets.")]
     [Required(ErrorMessage = "Please Enter a Valid Last Name")]
     public string? LastName { get; set; }
 
     [StringLength(100)]
     [Required(ErrorMessage = "Please Enter a Valid Username")]
-    [RegularExpression(@"^[a-zA-Z0-9_]+$", ErrorMessage = "User name can only contain letters, numbers, and underscores.")]
+    [RegularExpression(@"^[a-zA-Z0-9_]+$", ErrorMessage = "User name can only contain alphabets, numbers, and underscores.")]
     public string Username { get; set; } = null!;
 
     [Required]
@@ -35,7 +35,7 @@ public class AddUserModel
 
     [Required(ErrorMessage = "Password is required.")]
     [DataType(DataType.Password)]
-    [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be between 6 and 100 characters.")]
+    [StringLength(50, MinimumLength = 6, ErrorMessage = "Password must be between 6 and 50 characters.")]
     public string? PasswordHash { get; set; }
 
     [Required(ErrorMessage = "Please Select a Country")]

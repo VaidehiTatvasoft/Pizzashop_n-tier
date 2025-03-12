@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Entity.ViewModel;
 using Entity.Data;
 using Microsoft.EntityFrameworkCore;
+using Pizzashop.Service.Interfaces;
 
 namespace pizzashop.Controllers
 {
@@ -14,11 +15,13 @@ namespace pizzashop.Controllers
     {
         private readonly PizzaShopContext _context;
         private readonly IUserService _userService;
+        private readonly IEmailService _emailService;
 
-        public UserController(PizzaShopContext context, IUserService userService)
+        public UserController(PizzaShopContext context, IUserService userService, IEmailService emailService)
         {
             _context = context;
             _userService = userService;
+            _emailService = emailService;
         }
         [HttpGet]
         public async Task<IActionResult> GetProfileImage()
@@ -32,6 +35,8 @@ namespace pizzashop.Controllers
             var profileImagePath = await _userService.GetUserProfileImageAsync(email);
             return Json(new { profileImgPath = profileImagePath ?? "Default_pfp.svg.png" });
         }
+        [Route("/adduser")]
+
         public IActionResult AddUser()
         {
             ViewBag.Countries = new SelectList(_context.Countries, "Id", "Name");
@@ -39,6 +44,7 @@ namespace pizzashop.Controllers
             return View();
         }
 
+        [Route("/adduser")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddUserAsync(AddUserModel model, IFormFile ProfileImage)
@@ -61,8 +67,28 @@ namespace pizzashop.Controllers
                 var result = await _userService.AddUserAsync(model, User);
                 if (result)
                 {
+                    string subject = "User Credentials";
+                    string body = $@"<div style='font-family: sans-serif;'>
+                            <div style='background-color: #0066A7; padding: 10px; display: flex; justify-content: center; align-items: center; gap: 2rem;'>
+                                <img src='http://localhost:5222/images/pizzashop_logo.png' alt='' style='width:60px; background-color:white; border-radius:50%;'>
+                                <h1 style='color: white;'>PIZZASHOP</h1>
+                            </div>
+                            <p>
+                                Welcome to Pizza Shop, <br><br>
+                                Please find the details below for login to your account. <br>
+                                <div style='border: 1px solid black; padding: 0.5rem; font-weight: bold;'>
+                                    <h3>Login Details:</h3>
+                                    Username: {model.Email} <br>
+                                    Password: {model.PasswordHash}
+                                </div><br>
+                                If you encounter any issues or have any questions, please do not hesitate to contact our support team. <br><br>
+                            </p>
+                        </div>";
+
+                    await _emailService.SendEmailAsync(model.Email, subject, body);
+
                     TempData["SuccessMessage"] = "User added successfully.";
-                    return RedirectToAction("UserList");
+                    return RedirectToAction("/list");
                 }
                 else
                 {
@@ -73,7 +99,7 @@ namespace pizzashop.Controllers
             ViewBag.Countries = new SelectList(_context.Countries, "Id", "Name");
             return View(model);
         }
-
+        [Route("/user/edituser")]
         [HttpGet]
         public async Task<IActionResult> EditUser(int id)
         {
@@ -86,7 +112,7 @@ namespace pizzashop.Controllers
             await LoadDropdowns(user);
             return View(user);
         }
-
+        [Route("/user/edituser")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditUser(UserViewModel model, IFormFile? ProfileImage)
@@ -131,7 +157,7 @@ namespace pizzashop.Controllers
             ViewBag.Cities = new SelectList(_context.Cities.Where(c => c.StateId == model.StateId).ToList(), "Id", "Name", model.CityId);
             return View(model);
         }
-
+        [Route("/user/deleteuser")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteUser(int id)
@@ -145,31 +171,32 @@ namespace pizzashop.Controllers
             TempData["ErrorMessage"] = "Error deleting user.";
             return RedirectToAction("UserList");
         }
+        [Route("/user/list")]
 
-public IActionResult UserList(string searchString, int pageIndex = 1, int pageSize = 5, string sortOrder = "")
-{
-    var users = _userService.GetUsersList(searchString, sortOrder, pageIndex, pageSize, out int count);
+        public IActionResult UserList(string searchString, int pageIndex = 1, int pageSize = 5, string sortOrder = "")
+        {
+            var users = _userService.GetUsersList(searchString, sortOrder, pageIndex, pageSize, out int count);
 
-    ViewData["UsernameSortParam"] = sortOrder == "username_asc" ? "username_desc" : "username_asc";
-    ViewData["RoleSortParam"] = sortOrder == "role_asc" ? "role_desc" : "role_asc";
+            ViewData["UsernameSortParam"] = sortOrder == "username_asc" ? "username_desc" : "username_asc";
+            ViewData["RoleSortParam"] = sortOrder == "role_asc" ? "role_desc" : "role_asc";
 
-    ViewBag.count = count;
-    ViewBag.pageIndex = pageIndex;
-    ViewBag.pageSize = pageSize;
-    ViewBag.totalPage = (int)Math.Ceiling(count / (double)pageSize);
-    ViewBag.searchString = searchString;
+            ViewBag.count = count;
+            ViewBag.pageIndex = pageIndex;
+            ViewBag.pageSize = pageSize;
+            ViewBag.totalPage = (int)Math.Ceiling(count / (double)pageSize);
+            ViewBag.searchString = searchString;
 
-    if (users == null || !users.Any())
-    {
-        ViewBag.ErrorMessage = "User list is empty.";
-        return View();
-    }
+            if (users == null || !users.Any())
+            {
+                ViewBag.ErrorMessage = "User list is empty.";
+                return View();
+            }
 
-    ViewBag.UserList = users;
-    return View();
-}
+            ViewBag.UserList = users;
+            return View();
+        }
 
-
+        [Route("/user/profile")]
         [HttpGet]
         public async Task<IActionResult> Profile()
         {
@@ -181,7 +208,7 @@ public IActionResult UserList(string searchString, int pageIndex = 1, int pageSi
             await LoadDropdowns(user);
             return View(user);
         }
-
+        [Route("/user/profile")]
         [HttpPost]
         public async Task<IActionResult> Profile(UserViewModel model, IFormFile? ProfileImage)
         {
@@ -246,12 +273,13 @@ public IActionResult UserList(string searchString, int pageIndex = 1, int pageSi
                 }).ToList();
             return Json(cities);
         }
+        [Route("/user/changepassword")]
         [HttpGet]
         public async Task<IActionResult> ChangePassword()
         {
             return View();
         }
-
+        [Route("/user/changepassword")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordModel model)

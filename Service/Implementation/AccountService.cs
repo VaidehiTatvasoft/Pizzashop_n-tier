@@ -31,7 +31,7 @@ namespace Pizzashop.Service.Implementation
 
         public async Task SendForgotPasswordEmail(string email, string resetLink)
         {
-            await _emailService.SendEmailAsync(email, "Password Reset", $"Click here to reset your password: {resetLink}");
+            await _emailService.SendEmailAsync(email, "Password Reset",  resetLink);
         }
 
         public async Task<User?> GetUserByEmail(string email)

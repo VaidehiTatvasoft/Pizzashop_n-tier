@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Entity.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using pizzashop.Services.Interfaces;
@@ -15,6 +16,7 @@ public class RolePermissionController : Controller
         _user = user;
         _rolePermission = rolePermission;
     }
+    [Route("/roles")]
 
     [HttpGet]
     public async Task<IActionResult> Role()
@@ -22,6 +24,7 @@ public class RolePermissionController : Controller
         var roles = await _rolePermission.GetAllRoles();
         return View(roles);
     }
+    [Route("/permission")]
 
     [HttpGet]
     public IActionResult Permission(int id)
@@ -36,14 +39,16 @@ public class RolePermissionController : Controller
             return View(model);
         return RedirectToAction("Permission");
     }
+    [Route("/permission")]
 
     [HttpPost]
     public async Task<IActionResult> Permission(List<RolePermissionViewModel> model)
     {
         if (ModelState.IsValid)
         {
-            var email = Request.Cookies["email"];
-            var AuthToken = Request.Cookies["Token"];
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            var AuthToken = Request.Cookies["AuthToken"];
+
             if (String.IsNullOrEmpty(AuthToken))
             {
                 return RedirectToAction("Index", "Accounts");
@@ -55,7 +60,7 @@ public class RolePermissionController : Controller
                 TempData["SuccessUpdate"] = "Role And Permissions Updated Successfully";
                 return View(model);
             }
-            TempData["ErrorUpdate"] = "Something went wrong Pls Try Again";
+            TempData["ErrorUpdate"] = "Something went wrong Please Try Again";
             return View(model);
         }
         else
