@@ -6,10 +6,12 @@ namespace Service.Interface
 {
     public interface IItemService
     {
-        Task<IEnumerable<MenuItemViewModel>> GetItemsByCategoryAsync(int categoryId);
-        Task<MenuItemViewModel> GetItemDetailsByIdAsync(int id);
-        Task<bool> AddItemAsync(MenuItemViewModel model);
-        Task<bool> UpdateItemAsync(MenuItemViewModel model);
-        Task<bool> DeleteItemByIdAsync(int id);
+        Task<List<MenuItem>> GetItemsByCategory(int categoryId);
+        Task<MenuCategory> GetCategoryDetailById(int id);
+        Task<bool> EditCategory(MenuCategory model, int categoryId);
+        Task<bool> AddNewItem(MenuItemViewModel model);
+        Task<IEnumerable<ModifierGroupViewModel>> GetModifiersById(int groupId);
+        Task<MenuItemViewModel> GetItemDetailsById(int id);
+        Task<bool> EditItemAsync(MenuItemViewModel model);
     }
 }
