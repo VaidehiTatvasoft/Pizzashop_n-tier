@@ -4,8 +4,8 @@
 @model Entity.Data.Account
 
 <div class="d-flex justify-content-between m-2 p-2">
-<h2 class="page-title ">Dashboard</h2>
-<div class="month-dropdown ">
+    <h2 class="page-title ">Dashboard</h2>
+    <div class="month-dropdown ">
         <select id="monthDropdown" onchange="updateMonth()">
             <option value="January">January</option>
             <option value="February">February</option>
@@ -21,7 +21,7 @@
             <option value="December">December</option>
         </select>
     </div>
-    </div>
+</div>
 
 <div class="dashboard-container row  high">
     <div class="dashboard-card col-lg-3 col-md-6 col-sm-12 mb-3">
@@ -61,7 +61,8 @@
     </div>
     <div class="dashboard-card col-lg-6 col-md-12 mb-3">
         <h4 class="card-heading">Customer Growth</h4>
-        <img src="@Url.Content("~/assets/graph2.png")" alt="Customer Growth Graph" class="img-fluid customer-growth-graph">
+        <img src="@Url.Content("~/assets/graph2.png")" alt="Customer Growth Graph"
+            class="img-fluid customer-growth-graph">
     </div>
 </div>
 
@@ -127,16 +128,30 @@
 
 @section Scripts {
     <script>
-        function updateMonth() {
-        var dropdown = document.getElementById("monthDropdown");
-        var selectedMonth = dropdown.options[dropdown.selectedIndex].value;
-        console.log("Selected month: " + selectedMonth);
-    }
+        $(document).ready(function () {
+            var successMessage = '@TempData["SuccessMessage"]';
+            var errorMessage = '@TempData["ErrorMessage"]';
 
-    window.onload = function() {
-        var dropdown = document.getElementById("monthDropdown");
-        var currentMonth = new Date().toLocaleString('default', { month: 'long' });
-        dropdown.value = currentMonth;
-    }
+            if (successMessage) {
+                toastr.success(successMessage);
+            }
+            if (errorMessage) {
+                toastr.error(errorMessage);
+            }
+        });
     </script>
+    <script>
+        function updateMonth() {
+            var dropdown = document.getElementById("monthDropdown");
+            var selectedMonth = dropdown.options[dropdown.selectedIndex].value;
+            console.log("Selected month: " + selectedMonth);
+        }
+
+        window.onload = function () {
+            var dropdown = document.getElementById("monthDropdown");
+            var currentMonth = new Date().toLocaleString('default', { month: 'long' });
+            dropdown.value = currentMonth;
+        }
+    </script>
+
 }
