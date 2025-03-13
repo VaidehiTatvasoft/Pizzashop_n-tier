@@ -14,4 +14,8 @@ public interface IItemRepository
         Task<MappingMenuItemsWithModifier?> GetItemModifierMappingAsync(int menuItemId, int modifierGroupId);
         Task RemoveItemModifierAsync(MappingMenuItemsWithModifier mapping);
         Task<bool> DeleteItemByIdAsync(int id);
+         Task<bool> UpdateCategoryBy(MenuCategory category);
+        Task<bool> AddItemAsync(MenuItem menuItem);
+        Task<IEnumerable<MenuItem>> GetItemsByCategoryAsync(int categoryId);
+        Task<bool> UpdateItemAsync(MenuItem item);
 }

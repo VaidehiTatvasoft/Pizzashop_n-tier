@@ -39,20 +39,20 @@ namespace Service.Implementation
 }
 
         public async Task SoftDeleteCategoryAsync(int id)
-        {
-            var category = await _categoryRepository.GetCategoryByIdAsync(id);
-            if (category != null)
-            {
-                category.IsDeleted = true;
-                await _categoryRepository.UpdateCategoryAsync(category);
+{
+    var category = await _categoryRepository.GetCategoryByIdAsync(id);
+    if (category != null)
+    {
+        category.IsDeleted = true;
+        await _categoryRepository.UpdateCategoryAsync(category);
 
-                var menuItems = await _itemRepository.GetItemsByCategoryAsync(id);
-                foreach (var item in menuItems)
-                {
-                    item.IsDeleted = true;
-                    await _itemRepository.UpdateItemAsync(item);
-                }
-            }
+        var menuItems = await _itemRepository.GetItemsByCategoryAsync(id);
+        foreach (var item in menuItems)
+        {
+            item.IsDeleted = true;
+            await _itemRepository.UpdateItemAsync(item);
         }
+    }
+}
     }
 }
