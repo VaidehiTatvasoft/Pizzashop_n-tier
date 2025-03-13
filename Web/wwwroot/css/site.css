@@ -272,7 +272,6 @@ left:auto;
 }
 
 @media screen and (max-width: 768px) {
-
   .user-container {
     position: absolute;
     transform: translateX(-50%);
@@ -284,7 +283,11 @@ left:auto;
     flex-direction: row;
   }
 }
-
+@media (max-width: 768px) {
+.rtable {
+  width: 100%;
+}
+}
 .user-profile-img {
   height: 40px;
   width: 40px;

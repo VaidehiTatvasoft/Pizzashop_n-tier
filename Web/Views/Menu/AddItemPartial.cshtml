@@ -1,0 +1,203 @@
+@* @using Entity.ViewModel;
+@model MenuItemViewModel
+
+<style>
+    .row {
+        --bs-gutter-x: 0.5rem;
+        --bs-gutter-y: 0.5rem;
+    }
+</style>
+
+<div class="modal-header">
+    <h5 class="modal-title">Add New Menu Item</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <form id="addItemForm" method="post" asp-action="AddItem" asp-controller="Menu">
+        <div class="row form-gap">
+            <div class="col-xl-9">
+                <div class="col-xl-12">
+                    <div class="row g-2">
+                        <div class="form-floating col-lg-6 col-12">
+                            <select id="Category" name="CategoryId" class="form-control" asp-items="ViewBag.Categories"
+                                asp-for="CategoryId">
+                                <option value="" hidden>Select a Category</option>
+                            </select>
+                            <label for="Category" class="float">Category*</label>
+                            <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating col-lg-6 col-12">
+                            <input type="text" class="form-control" id="Name" asp-for="Name">
+                            <label for="Name" class="float">Name*</label>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-12 mt-3">
+                    <div class="row g-2">
+                        <div class="form-floating col-xl-3 col-lg-6 col-12">
+                            <select id="Type" name="Type" class="form-control" asp-for="Type">
+                                <option value="" hidden>Select a Type</option>
+                                <option value="true">Veg</option>
+                                <option value="false">Non-Veg</option>
+                            </select>
+                            <label for="Type" class="float">Type*</label>
+                        </div>
+                        <div class="form-floating col-xl-3 col-lg-6 col-12">
+                            <input type="text" class="form-control" id="Rate" asp-for="Rate" value="0">
+                            <label for="Rate" class="float">Rate*</label>
+                            <span asp-validation-for="Rate" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating col-xl-3 col-lg-6 col-12">
+                            <input type="text" class="form-control" id="Quantity" asp-for="Quantity" value="0">
+                            <label for="Quantity" class="float">Quantity*</label>
+                            <span asp-validation-for="Quantity" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating col-xl-3 col-lg-6 col-12">
+                            <select id="UnitId" name="UnitId" class="form-control" asp-items="ViewBag.Units"
+                                asp-for="UnitId">
+                                <option value="" hidden>Select a Unit</option>
+                            </select>
+                            <label for="UnitId" class="float">Unit*</label>
+                            <span asp-validation-for="UnitId" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-12 mt-3">
+                    <div class="row g-2">
+                        <div class="col-lg-3 col-6 mb-3 align-content-center">
+                            <div class="form-check form-switch text-center">
+                                <input asp-for="IsAvailable" class="form-check-input" type="checkbox" id="available">
+                                <label class="" asp-for="IsAvailable">Available</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-6 mb-3 align-content-center">
+                            <div class="form-check form-switch text-center">
+                                <input asp-for="IsDefaultTax" class="form-check-input" type="checkbox" id="defaultTax">
+                                <label asp-for="IsDefaultTax" class="defaultTax">Default
+                                    Tax</label>
+                            </div>
+                        </div>
+                        <div class="form-floating col-xl-3 col-lg-6 col-12">
+                            <input type="text" class="form-control" id="TaxPercentage" asp-for="TaxPercentage">
+                            <label for="TaxPercentage" class="float">Tax Percentage</label>
+                            <span asp-validation-for="TaxPercentage" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating col-xl-3 col-lg-6 col-12">
+                            <input type="text" class="form-control" id="ShortCode" asp-for="ShortCode">
+                            <label for="ShortCode" class="float">Short Code</label>
+                            <span asp-validation-for="ShortCode" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-12 mt-3">
+                    <div class="row g-2">
+                        <div class="form-floating col">
+                            <input type="text" class="form-control" id="Description" asp-for="Description">
+                            <label for="Description" class="float">Description*</label>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 mt-3">
+                    <h6 class="text-start">Upload Image</h6>
+                    <div class="rounded mb-3 upload-container" style="border: 1px solid #dee2e6; padding: 1rem;">
+                        <input type="file" id="file-item-add" name="file" class="border-0" hidden>
+                        <label for="file-item-add" id="file-item-add-label"
+                            class="h-100 w-100 text-center d-flex justify-content-center align-items-center"
+                            style="cursor: pointer;">
+                            <span class="icon-upload" style="color: #333; font-size: 1.25rem;">
+                                <i class="fa-solid fa-cloud-arrow-up" style="margin-right: 0.5rem;"></i>
+                                Browse files
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                <input type="hidden" asp-for="Id" />
+            </div>
+
+            <div class="col-xl-3">
+                <div class="bg-light rounded p-3">
+                    <select data-placeholder="Select Modifier Groups(s)" id="ModifierGroups" name="ModifierGroupIds"
+                        class="chosen-select form-control" asp-items="ViewBag.ModifierGroups" multiple>
+                    </select>
+                    <span asp-validation-for="ModifierGroupIds" class="text-danger"></span>
+                    <div class="modifier-items">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer mt-3">
+            <button type="submit" class="btn btn-primary" style="height: 40px; width: 80px;">Save</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                style="height: 40px; width: 80px;">Cancel</button>
+        </div>
+    </form>
+</div>
+
+<link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".chosen-select").chosen({
+            no_results_text: "Oops, nothing found!",
+            width: "100%"
+        });
+    });
+
+    $('#ModifierGroups').change(function () {
+        var selectedGroupIds = $(this).val();
+        var lastSelectedGroupId = selectedGroupIds[selectedGroupIds.length - 1];
+
+        if (lastSelectedGroupId) {
+            $.ajax({
+                url: '@Url.Action("SelectedModifiers", "Menu")',
+                type: 'GET',
+                data: { groupId: lastSelectedGroupId },
+                success: function (result) {
+                    console.log('AJAX Success:', result);
+
+                    // Ensure we don't add duplicate entries by removing existing ones with the same group ID
+                    $('.modifier-items').find(`.group-id-${lastSelectedGroupId}`).remove();
+
+                    // Append the result to the container
+                    $('.modifier-items').append(`<div class="group-id-${lastSelectedGroupId}">${result}</div>`);
+
+                    // Update hidden fields for MinSelectionRequired and MaxSelectionAllowed
+                    var minSelectionRequired = $(result).find('[name="MinSelectionRequired"]').val();
+                    var maxSelectionAllowed = $(result).find('[name="MaxSelectionAllowed"]').val();
+
+                    $(`input.min-selection-required[data-group-id='${lastSelectedGroupId}']`).val(minSelectionRequired);
+                    $(`input.max-selection-allowed[data-group-id='${lastSelectedGroupId}']`).val(maxSelectionAllowed);
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX Error:', status, error);
+                }
+            });
+        }
+    });
+
+    function deleteModifierGroup(groupId) {
+        // Remove from UI
+        $(`.modifier-group[data-group-id='${groupId}']`).remove();
+
+        // Remove from selected groups
+        var selectedGroupIds = $('#ModifierGroups').val();
+        var index = selectedGroupIds.indexOf(groupId.toString());
+        if (index > -1) {
+            selectedGroupIds.splice(index, 1);
+            $('#ModifierGroups').val(selectedGroupIds).trigger("chosen:updated");
+        }
+
+        // Add to removed groups
+        var removedGroups = $('#removedGroups').val();
+        removedGroups += groupId + ",";
+        $('#removedGroups').val(removedGroups);
+    }
+</script> *@

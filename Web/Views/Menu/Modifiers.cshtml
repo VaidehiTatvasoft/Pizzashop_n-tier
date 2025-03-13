@@ -41,7 +41,7 @@
                         <button><i class="bi bi-trash m-1" data-toggle="modal" data-target="#deleteModal"></i></button>
                     </div>
                     <div class="p-2">
-                        <a href="add_modifier.html" class="btn btn-primary">+ New Modifier</a>
+                        <a href="@Url.Action("AddModifier", "Menu")" class="btn btn-primary">+ New Modifier</a>
                     </div>
                 </div>
                 <div id="modifier-list">
@@ -52,37 +52,36 @@
             @Html.Partial("_AddModifierGroupModal")
             <!-- Edit ModifierGroup Modal -->
             <div class="modal fade" id="editModifierGroupModal" tabindex="-1" role="dialog" aria-labelledby="editModifierGroupModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header d-flex justify-content-between">
-                <h5 class="modal-title" id="editModifierGroupModalLongTitle">Edit Modifier Group</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header d-flex justify-content-between">
+                            <h5 class="modal-title" id="editModifierGroupModalLongTitle">Edit Modifier Group</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body justify-content-center align-items-center">
+                            <form id="editModifierGroupForm" method="post" action="/ModifierGroup/EditModifierGroup">
+                                <input type="hidden" name="Id" id="editModifierGroupId">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="Name" id="editModifierGroupName" placeholder="Name*" required>
+                                    <label for="Name">Name*</label>
+                                </div>
+                                <div class="form-floating">
+                                    <textarea class="form-control" name="Description" id="editModifierGroupDescription" placeholder="Description"></textarea>
+                                    <label for="Description">Description</label>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="modal-body justify-content-center align-items-center">
-                <form id="editModifierGroupForm" method="post" action="/ModifierGroup/EditModifierGroup">
-                    <input type="hidden" name="Id" id="editModifierGroupId">
-                    <div class="form-floating">
-                        <input type="text" class="form-control" name="Name" id="editModifierGroupName" placeholder="Name*" required>
-                        <label for="Name">Name*</label>
-                    </div>
-                    <div class="form-floating">
-                        <textarea class="form-control" name="Description" id="editModifierGroupDescription" placeholder="Description"></textarea>
-                        <label for="Description">Description</label>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Save</button>
-                        <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
             <!-- Delete Confirmation Modal Partial -->
             @Html.Partial("_DeleteConfirmationModal")
-
         </div>
     </div>
 </div>

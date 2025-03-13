@@ -5,8 +5,8 @@ namespace Repository.Interface;
 public interface IItemRepository
 {
     Task<IEnumerable<MenuItem>> GetItemsByCategoryAsync(int categoryId);
-    Task<IEnumerable<MenuItem>> GetAllItemsAsync();
-    Task AddItemAsync(MenuItem item);
-    Task UpdateItemAsync(MenuItem item);
-    Task DeleteItemAsync(int itemId);
+    Task<MenuItem> GetItemDetailsByIdAsync(int id);
+    Task<bool> AddItemAsync(MenuItem item);
+    Task<bool> UpdateItemAsync(MenuItem item);
+    Task<bool> DeleteItemByIdAsync(int id);
 }

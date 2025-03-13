@@ -54,5 +54,55 @@ namespace Web.Controllers
             ViewBag.Items = await _modifierService.GetModifiersByGroupAsync(groupId.Value);
             return View(modifierGroups);
         }
+        [HttpGet]
+        [Route("/menu/items/add")]
+        public IActionResult AddItem()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Route("/menu/items/add")]
+        public async Task<IActionResult> AddItem(MenuItemViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                await _itemService.AddItemAsync(model);
+                return RedirectToAction("Items");
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        [Route("/menu/items/edit/{id}")]
+        public async Task<IActionResult> EditItem(int id)
+        {
+            var item = await _itemService.GetItemDetailsByIdAsync(id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+            return View(item);
+        }
+
+        [HttpPost]
+        [Route("/menu/items/edit/{id}")]
+        public async Task<IActionResult> EditItem(MenuItemViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                await _itemService.UpdateItemAsync(model);
+                return RedirectToAction("Items");
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("/menu/items/delete/{id}")]
+        public async Task<IActionResult> DeleteItem(int id)
+        {
+            await _itemService.DeleteItemByIdAsync(id);
+            return RedirectToAction("Items");
+        }
     }
 }
