@@ -5,9 +5,12 @@
     <table class="table table-responsive align-items-center">
         <thead>
             <tr>
-                <th style="color:#ADADAD" class="thead"> <input type="checkbox"> NAME</th>
+                <th style="color:#ADADAD" class="thead"> <input type="checkbox" class="d-flex justify-content-center align-items-center" style="height: 17px;width: 17px;"></th>
                 <th style="color:#ADADAD" class="thead">
-                    <div class="d-flex justify-content-center align-items-center">Item Type</div>
+                    <div class="d-flex  align-items-center m-1">Name</div>
+                </th>
+                <th style="color:#ADADAD" class="thead">
+                    <div class="d-flex justify-content-center align-items-center">ItemType</div>
                 </th>
                 <th style="color:#ADADAD" class="thead">
                     <div class="d-flex justify-content-center align-items-center">Rate</div>
@@ -19,7 +22,7 @@
                     <div class="d-flex justify-content-center align-items-center">Available</div>
                 </th>
                 <th style="color:#ADADAD" class="thead">
-                    <div class="d-flex justify-content-center align-items-center">ACTION</div>
+                    <div class="d-flex justify-content-center align-items-center">Action</div>
                 </th>
             </tr>
         </thead>
@@ -27,7 +30,10 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td> <input type="checkbox"> <img src="~/assets/dining-menu.png" width="30" height="30"> @item.Name</td>
+                    <td> <input type="checkbox" class="d-flex justify-content-center align-items-center" style="height: 17px;width: 17px;"></td>
+                    <td>
+                        <div class="d-flex align-items-center"><img src="~/assets/dining-menu.png" class="m-1"width="30" height="30">@item.Name</div>
+                    </td>
                     <td>
                         <div class="d-flex justify-content-center align-items-center">
                             @if(item.Type)
