@@ -1,4 +1,5 @@
 using Entity.Data;
+using Entity.ViewModel;
 using Repository.Interface;
 using Service.Interface;
 using System.Collections.Generic;
@@ -15,29 +16,83 @@ namespace Service.Implementation
         _modifierRepository = modifierRepository;
     }
 
-    public Task<IEnumerable<Modifier>> GetModifiersByGroupAsync(int groupId)
-    {
-        return _modifierRepository.GetModifiersByGroupAsync(groupId);
-    }
+    public async Task<bool> AddNewModifier(string category, ModifierViewModel model)
+        {
+            var cat = await _modifierRepository.GetModifierByName(category);
 
-    public Task<IEnumerable<Modifier>> GetAllModifiersAsync()
-    {
-        return _modifierRepository.GetAllModifiersAsync();
-    }
+            if (cat == null)
+            {
+                cat = new ModifierGroup
+                {
+                    Name = model.Name,
+                    Description = model.Description,
+                    CreatedBy = 1,
+                    CreatedAt = DateTime.Now
+                };
 
-    public Task AddModifierAsync(Modifier modifier)
-    {
-        return _modifierRepository.AddModifierAsync(modifier);
-    }
+                return await _modifierRepository.AddModifierAsync(cat);
+            }
+            return false;
+        }
 
-    public Task UpdateModifierAsync(Modifier modifier)
-    {
-        return _modifierRepository.UpdateModifierAsync(modifier);
-    }
+        public async Task<bool> DeleteModifierById(int id)
+        {
+            var category = await _modifierRepository.GetModifierByIdAsync(id);
 
-    public Task DeleteModifierAsync(int modifierId)
-    {
-        return _modifierRepository.DeleteModifierAsync(modifierId);
-    }
+            if (category != null)
+            {
+                category.IsDeleted = true;
+
+                return await _modifierRepository.UpdateModifierBy(category);
+            }
+
+            return false;
+        }
+
+        public async Task<bool> UpdateCategoryBy(ModifierGroup modifierGroup)
+        {
+            return await _modifierRepository.UpdateModifierBy(modifierGroup);
+        }
+
+        public async Task<List<ModifierGroup>> GetAllModifiers()
+        {
+            return await _modifierRepository.GetAllModifiers();
+        }
+
+        public async Task<List<Modifier>> GetItemsByModifiers(int modifierId)
+        {
+            return await _modifierRepository.GetItemsByModifier(modifierId);
+        }
+
+        public async Task<ModifierViewModel> GetModifierDetailById(int id)
+        {
+            var category = await _modifierRepository.GetModifierByIdAsync(id);
+            if (category == null)
+            {
+                return null;
+            }
+
+            return new ModifierViewModel
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Description = category.Description
+            };
+        }
+
+        public async Task<bool> EditModifier(ModifierViewModel model, int id)
+        {
+            var category = await _modifierRepository.GetModifierByIdAsync(id);
+
+            if (category == null)
+            {
+                return false;
+            }
+
+            category.Name = model.Name;
+            category.Description = model.Description;
+
+            return await _modifierRepository.UpdateModifierBy(category);
+        }
     }
 }

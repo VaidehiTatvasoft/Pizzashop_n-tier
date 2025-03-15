@@ -44,7 +44,7 @@
                         <button><i class="bi bi-trash m-1" data-toggle="modal" data-target="#deleteModal"></i></button>
                     </div>
                     <div class="p-2">
-                        <a href="@Url.Action("AddItem", "Menu")" class="btn btn-primary">+ New Item</a>
+                        <button class="btn btn-primary"data-toggle="modal" data-target="#addItemModal">+ New Item</button>
                     </div>
                 </div>
                 <div id="item-list">
@@ -53,6 +53,11 @@
             </div>
             <!-- Add Category Modal -->
             @Html.Partial("_AddCategoryModal")
+            <!-- Add Item Modal -->
+        @Html.Partial("AddItemPartial")
+
+        <!-- Edit Item Modal -->
+        @Html.Partial("EditItemPartial")
 
             <!-- Edit Category Modal -->
             <div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog"

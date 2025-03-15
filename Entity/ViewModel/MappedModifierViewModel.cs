@@ -1,6 +1,14 @@
 public class MappedModifierViewModel
     {
-        public int ModifierId { get; set; }
-        public string ModifierName { get; set; }
-        public decimal Price { get; set; }
+        public int Id { get; set; }
+
+    public string Name { get; set; } 
+
+    public int? MinSelectionRequired { get; set; }
+
+    public int? MaxSelectionAllowed { get; set; }
+
+    public string? Description { get; set; }
+
+    public bool? IsDeleted { get; set; }
     }

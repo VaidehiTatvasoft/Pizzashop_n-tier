@@ -4,9 +4,17 @@ namespace Repository.Interface;
 
 public interface IModifierRepository
 {
-    Task<IEnumerable<Modifier>> GetModifiersByGroupAsync(int groupId);
-    Task<IEnumerable<Modifier>> GetAllModifiersAsync();
-    Task AddModifierAsync(Modifier modifier);
-    Task UpdateModifierAsync(Modifier modifier);
-    Task DeleteModifierAsync(int modifierId);
+    Task<List<ModifierGroup>> GetAllModifiers();
+
+    Task<List<Modifier>> GetItemsByModifier(int modifierId);
+
+    Task<ModifierGroup> GetModifierByName(string category);
+
+    Task<bool> AddModifierAsync(ModifierGroup modifierGroup);
+
+    Task<bool> UpdateModifierBy(ModifierGroup modifierGroup);
+
+    Task<ModifierGroup> GetModifierByIdAsync(int id);
+
+    Task<IEnumerable<ModifierGroup>> GetModifierGroupsByIds(int[] modifierGroupIds);
 }

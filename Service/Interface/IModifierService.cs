@@ -1,13 +1,20 @@
 using Entity.Data;
+using Entity.ViewModel;
 
 namespace Service.Interface
 {
     public interface IModifierService
     {
-       Task<IEnumerable<Modifier>> GetModifiersByGroupAsync(int groupId);
-        Task<IEnumerable<Modifier>> GetAllModifiersAsync();
-        Task AddModifierAsync(Modifier modifier);
-        Task UpdateModifierAsync(Modifier modifier);
-        Task DeleteModifierAsync(int modifierId);
-    }
+       Task<List<ModifierGroup>> GetAllModifiers();
+
+    Task<List<Modifier>> GetItemsByModifiers(int modifierId);
+
+    Task<bool> AddNewModifier(string category, ModifierViewModel model);
+
+    Task<bool> DeleteModifierById(int id);
+
+    Task<ModifierViewModel> GetModifierDetailById(int id);
+
+    Task<bool> EditModifier(ModifierViewModel model, int id);
+}
 }

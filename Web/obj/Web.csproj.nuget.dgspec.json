@@ -1,7 +1,7 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\web\\Web.csproj": {}
+    "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Web\\Web.csproj": {}
   },
   "projects": {
     "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Entity\\Entity.csproj": {
@@ -226,14 +226,14 @@
         }
       }
     },
-    "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\web\\Web.csproj": {
+    "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Web\\Web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\web\\Web.csproj",
+        "projectUniqueName": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Web\\Web.csproj",
         "projectName": "Web",
-        "projectPath": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\web\\Web.csproj",
+        "projectPath": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Web\\Web.csproj",
         "packagesPath": "C:\\Users\\patel\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\web\\obj\\",
+        "outputPath": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Web\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\patel\\AppData\\Roaming\\NuGet\\NuGet.Config",

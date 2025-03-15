@@ -8,43 +8,55 @@ namespace Repository.Implementation
 {
     public class ModifierRepository : IModifierRepository
     {
-        private readonly  PizzaShopContext _context;
+        private readonly PizzaShopContext _context;
 
         public ModifierRepository(PizzaShopContext context)
         {
             _context = context;
         }
 
-        public async Task<IEnumerable<Modifier>> GetModifiersByGroupAsync(int groupId)
+        public async Task<bool> AddModifierAsync(ModifierGroup modifierGroup)
         {
-            return await _context.Modifiers.Where(m => m.ModifierGroupId == groupId).ToListAsync();
+            _context.Set<ModifierGroup>().Add(modifierGroup);
+            return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<IEnumerable<Modifier>> GetAllModifiersAsync()
+        public async Task<bool> UpdateModifierBy(ModifierGroup modifierGroup)
         {
-            return await _context.Modifiers.Where(i => i.IsDeleted == false).ToListAsync();
+            _context.Set<ModifierGroup>().Update(modifierGroup);
+            return await _context.SaveChangesAsync() > 0;
+
         }
 
-        public async Task AddModifierAsync(Modifier modifier)
+        public async Task<List<ModifierGroup>> GetAllModifiers()
         {
-            _context.Modifiers.Add(modifier);
-            await _context.SaveChangesAsync();
+            return await _context.ModifierGroups.Where(mg => mg.IsDeleted != true).ToListAsync();
         }
 
-        public async Task UpdateModifierAsync(Modifier modifier)
+        public async Task<ModifierGroup> GetModifierByName(string category)
         {
-            _context.Modifiers.Update(modifier);
-            await _context.SaveChangesAsync();
+            return await _context.ModifierGroups.FirstOrDefaultAsync(mg => mg.Name == category);
         }
 
-        public async Task DeleteModifierAsync(int modifierId)
+        public async Task<List<Modifier>> GetItemsByModifier(int modifierId)
         {
-            var modifier = await _context.Modifiers.FindAsync(modifierId);
-            if (modifier != null)
-            {
-                _context.Modifiers.Remove(modifier);
-                await _context.SaveChangesAsync();
-            }
+            return await _context.Modifiers
+                .Where(m => m.ModifierGroupId == modifierId)
+                .Include(m => m.Unit)
+                .ToListAsync();
+        }
+
+        public async Task<ModifierGroup> GetModifierByIdAsync(int id)
+        {
+            return await _context.ModifierGroups.FirstOrDefaultAsync(mg => mg.Id == id);
+        }
+
+        public async Task<IEnumerable<ModifierGroup>> GetModifierGroupsByIds(int[] modifierGroupIds)
+        {
+            return await _context.ModifierGroups
+                .Include(mg => mg.Modifiers)
+                .Where(mg => modifierGroupIds.Contains(mg.Id))
+                .ToListAsync();
         }
     }
 }

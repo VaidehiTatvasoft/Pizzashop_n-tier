@@ -1,0 +1,50 @@
+
+<div class="modal-header">
+    <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <form id="editCategoryForm" method="post" action="/menu/editcategory">
+        <input type="hidden" name="Id" value="@Model.Id" />
+        <div class="form-group">
+            <input type="text" class="form-control" name="Name" value="@Model.Name" required />
+        </div>
+        <br />
+        <div class="form-group"> 
+            <textarea class="form-control" name="Description" placeholder="Description">@Model.Description</textarea>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn"
+                style="height: 40px; width: 80px; background-color: #0066A7; color: white;">Save</button>
+            <button type="button" class="btn" data-bs-dismiss="modal"
+                style="height: 40px; width: 80px; color: #0066A7; background-color: white; border: 1px solid #0066A7;">Cancel</button>
+        </div>
+    </form>
+    <div id="formErrors" class="text-danger"></div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#editCategoryForm').on('submit', function (e) {
+            e.preventDefault(); 
+            $.ajax({
+                type: "POST",
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('#editCategoryModal').modal('hide');
+                        window.location.href = response.redirectUrl; 
+                    } else {
+                        toastr.error(response.message);
+                        $('#formErrors').html(response.errors); 
+                    }
+                },
+                error: function () {
+                    toastr.error("An error occurred while updating the category.");
+                }
+            });
+        });
+    });
+</script>

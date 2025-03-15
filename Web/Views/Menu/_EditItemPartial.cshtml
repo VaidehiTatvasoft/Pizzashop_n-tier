@@ -1,5 +1,4 @@
-@using Entity.ViewModel;
-@model MenuItemViewModel
+
 
 <style>
     .row {
@@ -13,8 +12,8 @@
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
-    <form id="editItemForm" method="post" asp-action="EditItem" asp-controller="Menu">
-<div class="row">
+    <form id="editCategoryForm" method="post" asp-action="EditItem" asp-controller="Menu">
+        <div class="row">
             <div class="col-xl-9">
                 <div class="col-xl-12">
                     <div class="row" style="row-gap: 10px;">
@@ -115,7 +114,7 @@
                     <select data-placeholder="Select Modifier Groups(s)" id="ModifierGroups" name="ModifierGroupIds"
                         class="chosen-select" asp-items="ViewBag.ModifierGroups" multiple>
                     </select>
-                    <span asp-validation-for="ModifierGroupId" style="color: red;"></span>
+                    <span asp-validation-for="ModifierGroupIds" style="color: red;"></span>
                     <div id="existing-modifier-groups">
                         @foreach (var group in Model.ModifierGroups)
                         {
@@ -129,7 +128,7 @@
                                         <select name="ModifierGroups[@group.Id].MinSelectionRequired" class="form-select">
                                             @for (int i = 0; i <= 10; i++)
                                             {
-                                                <option value="@i" >@i</option>
+                                                <option value="@i">@i</option>
                                             }
                                         </select>
                                     </div>
@@ -147,7 +146,7 @@
                                     {
                                         <div class="d-flex justify-content-between">
                                             <li>@modifier.Name </li>
-                                            <li>@modifier.Rate.ToString("C")</li>
+                                            <li>@modifier.Price.ToString("C")</li>
                                         </div>
                                     }
                                 </ul>
@@ -167,8 +166,9 @@
     </form>
 </div>
 
-<link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
 <script>
     $(document).ready(function () {
@@ -180,19 +180,19 @@
         $('#ModifierGroups').change(function () {
             var selectedGroupIds = $(this).val();
             var lastSelectedGroupId = selectedGroupIds[selectedGroupIds.length - 1];
+            console.log('Selected Group IDs:', selectedGroupIds);
+            console.log('Last Selected Group ID:', lastSelectedGroupId);
 
             if (lastSelectedGroupId && $('#existing-modifier-groups').find(`.modifier-group[data-group-id='${lastSelectedGroupId}']`).length == 0) {
                 $.ajax({
-                    url: '@Url.Action("SelectedModifiers", "Menu")',
+                    url: '/menu/selectedmodifiers/' + lastSelectedGroupId,
                     type: 'GET',
-                    data: { groupId: lastSelectedGroupId },
                     success: function (result) {
                         console.log('AJAX Success:', result);
 
-                        // Append the result to the container
-                        $('#existing-modifier-groups').append(result);
+                        $('#existing-modifier-groups').find(`.group-id-${lastSelectedGroupId}`).remove();
+                        $('#existing-modifier-groups').append(`<div class="group-id-${lastSelectedGroupId}">${result}</div>`);
 
-                        // Reinitialize Chosen
                         $(".chosen-select").chosen({
                             no_results_text: "Oops, nothing found!",
                             width: "100%"
@@ -202,23 +202,33 @@
                         console.log('AJAX Error:', status, error);
                     }
                 });
+            } else {
+                console.log('Modifier group already exists.');
             }
         });
     });
 
     function deleteModifierGroup(groupId) {
-        // Remove from UI
         $(`.modifier-group[data-group-id='${groupId}']`).remove();
-        // Remove from selected groups
+
         var selectedGroupIds = $('#ModifierGroups').val();
-        var index = selectedGroupIds.indexOf(groupId.toString());
-        if (index > -1) {
-            selectedGroupIds.splice(index, 1);
-            $('#ModifierGroups').val(selectedGroupIds).trigger("chosen:updated");
+        if (selectedGroupIds) {
+            var index = selectedGroupIds.indexOf(groupId.toString());
+            if (index > -1) {
+                selectedGroupIds.splice(index, 1);
+                $('#ModifierGroups').val(selectedGroupIds).trigger("chosen:updated");
+            }
+        } else {
+            selectedGroupIds = [];
         }
-        // Add to removed groups
+
         var removedGroups = $('#removedGroups').val();
-        removedGroups += groupId + ",";
+        if (removedGroups) {
+            removedGroups += groupId + ",";
+            console.log(removedGroups);
+        } else {
+            removedGroups = groupId + ",";
+        }
         $('#removedGroups').val(removedGroups);
     }
 </script>
