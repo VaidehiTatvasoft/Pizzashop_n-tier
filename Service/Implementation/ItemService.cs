@@ -11,74 +11,205 @@ namespace Service.Implementation
     public class ItemService : IItemService
     {
         private readonly IItemRepository _itemRepository;
+        private readonly IModifierGroupRepository _modifierGroupRepository;
 
-        public ItemService(IItemRepository itemRepository)
+        public ItemService(IItemRepository itemRepository, IModifierGroupRepository modifierGroupRepository)
         {
             _itemRepository = itemRepository;
+            _modifierGroupRepository = modifierGroupRepository;
         }
 
-        public async Task<IEnumerable<ItemViewModel>> GetAllItems()
+        public async Task<List<MenuItem>> GetItemsByCategory(int categoryId)
+{
+    return (await _itemRepository.GetItemsByCategory(categoryId)).ToList();
+}
+
+
+        public async Task<MenuCategory> GetCategoryDetailById(int id)
         {
-            var items = await _itemRepository.GetAllItems();
-            return items.Select(item => new ItemViewModel
+            var category = await _itemRepository.GetCategoryByIdAsync(id);
+            if (category == null)
+            {
+                return null;
+            }
+
+            return new MenuCategory
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Description = category.Description
+            };
+        }
+
+        public async Task<bool> EditCategory(MenuCategory model, int categoryId)
+{
+    var category = await _itemRepository.GetCategoryByIdAsync(categoryId);
+    if (category == null)
+    {
+        return false;
+    }
+
+    category.Name = model.Name;
+    category.Description = model.Description;
+
+    return await _itemRepository.UpdateCategoryBy(category);
+}
+
+        public async Task<bool> AddNewItem(MenuItemViewModel model)
+{
+    var menuItem = new MenuItem
+    {
+        CategoryId = model.CategoryId,
+        Name = model.Name,
+        Type = model.Type,
+        Rate = model.Rate,
+        Quantity = model.Quantity,
+        UnitId = model.UnitId,
+        IsAvailable = model.IsAvailable,
+        IsDefaultTax = model.IsDefaultTax,
+        ShortCode = model.ShortCode,
+        Description = model.Description,
+        CreatedBy = 1,
+        CreatedAt = DateTime.Now
+    };
+
+    var isMenuItemAdded = await _itemRepository.AddItemAsync(menuItem);
+
+    if (!isMenuItemAdded)
+    {
+        return false;
+    }
+
+    foreach (var groupId in model.ModifierGroupId)
+    {
+        var itemModifier = new MappingMenuItemsWithModifier
+        {
+            MenuItemId = menuItem.Id,
+            ModifierGroupId = groupId,
+            CreatedBy = 1,
+            CreatedAt = DateTime.Now
+        };
+
+        await _itemRepository.AddItemModifierAsync(itemModifier);
+    }
+
+    return true;
+}
+
+public async Task<IEnumerable<ModifierGroupViewModel>> GetModifiersById(int groupId)
+{
+    var modifierGroups = await _modifierGroupRepository.GetModifierGroupByIdAsync(groupId);
+
+    var modifierGroupViewModels = modifierGroups?.Modifiers
+        .Select(mod => new ModifierViewModel
+        {
+            Id = mod.Id,
+            Name = mod.Name,
+            Rate = mod.Rate
+        })
+        .ToList();
+
+    return new List<ModifierGroupViewModel>
+    {
+        new ModifierGroupViewModel
+        {
+            Id = modifierGroups.Id,
+            Name = modifierGroups.Name,
+            Modifiers = modifierGroupViewModels ?? new List<ModifierViewModel>()
+        }
+    };
+}
+
+
+        public async Task<MenuItemViewModel> GetItemDetailsById(int id)
+        {
+            var item = await _itemRepository.GetItemDetailsById(id);
+            var selectedModifiers = await _itemRepository.GetModifierGroupsByItemId(id);
+
+            var modifierGroups = selectedModifiers?
+                .Where(m => m != null && m.ModifierGroup != null)
+                .Select(m => new ModifierGroupViewModel
+                {
+                    Id = m.ModifierGroupId,
+                    Name = m.ModifierGroup.Name,
+                    MinSelectionRequired = m.MinSelectionRequired,
+                    MaxSelectionAllowed = m.MaxSelectionAllowed,
+                    Modifiers = m.ModifierGroup.Modifiers.Select(mod => new ModifierViewModel
+                    {
+                        Id = mod.Id,
+                        Name = mod.Name,
+                        Rate = mod.Rate
+                    }).ToList()
+                })
+                .ToList();
+
+            return new MenuItemViewModel
             {
                 Id = item.Id,
+                CategoryId = item.CategoryId,
                 Name = item.Name,
                 Type = item.Type,
                 Rate = item.Rate,
                 Quantity = item.Quantity,
-                IsAvailable = item.IsAvailable
-            });
-        }
-
-        public async Task<ItemViewModel> GetItemById(int id)
-        {
-            var item = await _itemRepository.GetItemById(id);
-            if (item == null) return null;
-
-            return new ItemViewModel
-            {
-                Id = item.Id,
-                Name = item.Name,
-                Type = item.Type,
-                Rate = item.Rate,
-                Quantity = item.Quantity,
-                IsAvailable = item.IsAvailable
+                IsAvailable = item.IsAvailable,
+                Description = item.Description,
+                TaxPercentage = item.TaxPercentage,
+                IsFavourite = item.IsFavourite,
+                ShortCode = item.ShortCode,
+                IsDefaultTax = item.IsDefaultTax,
+                IsDeleted = item.IsDeleted,
+                UnitId = item.UnitId,
+                ModifierGroups = modifierGroups ?? new List<ModifierGroupViewModel>()
             };
         }
 
-        public async Task AddItem(ItemViewModel model)
+        public async Task<bool> EditItemAsync(MenuItemViewModel model)
         {
-            var item = new MenuItem
+            var item = await _itemRepository.GetItemDetailsById(model.Id);
+
+            item.CategoryId = model.CategoryId;
+            item.Name = model.Name;
+            item.Type = model.Type;
+            item.Rate = model.Rate;
+            item.Quantity = model.Quantity;
+            item.IsAvailable = model.IsAvailable;
+            item.Description = model.Description;
+            item.ShortCode = model.ShortCode;
+            item.IsFavourite = model.IsFavourite;
+            item.IsDefaultTax = model.IsDefaultTax;
+            item.UnitId = model.UnitId;
+
+            if (!string.IsNullOrEmpty(model.RemovedGroups))
             {
-                Name = model.Name,
-                Type = model.Type,
-                Rate = model.Rate,
-                Quantity = model.Quantity,
-                IsAvailable = model.IsAvailable
-            };
+                var removedGroupIds = model.RemovedGroups.Split(',').Where(id => !string.IsNullOrEmpty(id)).Select(int.Parse).ToList();
+                foreach (var groupId in removedGroupIds)
+                {
+                    var existingMapping = await _itemRepository.GetItemModifierMappingAsync(item.Id, groupId);
+                    if (existingMapping != null)
+                    {
+                        await _itemRepository.RemoveItemModifierAsync(existingMapping);
+                    }
+                }
+            }
 
-            await _itemRepository.AddItem(item);
-        }
-
-        public async Task UpdateItem(ItemViewModel model)
-        {
-            var item = new MenuItem
+            foreach (var modifierGroupId in model.ModifierGroupId)
             {
-                Id = model.Id,
-                Name = model.Name,
-                Type = model.Type,
-                Rate = model.Rate,
-                Quantity = model.Quantity,
-                IsAvailable = model.IsAvailable
-            };
+                var existingMapping = await _itemRepository.GetItemModifierMappingAsync(item.Id, modifierGroupId);
+                if (existingMapping == null)
+                {
+                    var itemModifier = new MappingMenuItemsWithModifier
+                    {
+                        MenuItemId = item.Id,
+                        ModifierGroupId = modifierGroupId,
+                        CreatedBy = 1,
+                        CreatedAt = DateTime.Now
+                    };
 
-            await _itemRepository.UpdateItem(item);
-        }
+                    await _itemRepository.AddItemModifierAsync(itemModifier);
+                }
+            }
 
-        public async Task DeleteItem(int id)
-        {
-            await _itemRepository.DeleteItem(id);
+            return await _itemRepository.UpdateItem(item);
         }
     }
 }
