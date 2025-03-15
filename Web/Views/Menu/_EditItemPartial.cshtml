@@ -1,4 +1,5 @@
-
+@using Entity.ViewModel
+@model MenuItemViewModel
 
 <style>
     .row {
@@ -146,7 +147,7 @@
                                     {
                                         <div class="d-flex justify-content-between">
                                             <li>@modifier.Name </li>
-                                            <li>@modifier.Price.ToString("C")</li>
+                                            <li>@modifier.Rate.ToString("C")</li>
                                         </div>
                                     }
                                 </ul>
