@@ -115,7 +115,7 @@
                     <select data-placeholder="Select Modifier Groups(s)" id="ModifierGroups" name="ModifierGroupIds"
                         class="chosen-select" asp-items="ViewBag.ModifierGroups" multiple>
                     </select>
-                    <span asp-validation-for="ModifierGroupIds" style="color: red;"></span>
+                    <span asp-validation-for="ModifierGroupId" style="color: red;"></span>
                     <div id="existing-modifier-groups">
                         @foreach (var group in Model.ModifierGroups)
                         {
@@ -147,7 +147,7 @@
                                     {
                                         <div class="d-flex justify-content-between">
                                             <li>@modifier.Name </li>
-                                            <li>@modifier.Price.ToString("C")</li>
+                                            <li>@modifier.Rate.ToString("C")</li>
                                         </div>
                                     }
                                 </ul>
