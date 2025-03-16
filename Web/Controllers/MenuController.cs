@@ -126,13 +126,14 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AddItem()
-        {
-            ViewBag.Categories = new SelectList(await _menuService.GetAllCategories(), "Id", "Name");
-            ViewBag.Units = new SelectList(await _unitService.GetAllUnits(), "Id", "Name");
-            ViewBag.ModifierGroups = new SelectList(await _modifierService.GetAllModifiers(), "Id", "Name");
-            return PartialView("_AddItemPartial");
-        }
+public async Task<IActionResult> AddItem()
+{
+    ViewBag.Categories = new SelectList(await _menuService.GetAllCategories(), "Id", "Name");
+    ViewBag.Units = new SelectList(await _unitService.GetAllUnits(), "Id", "Name");
+    ViewBag.ModifierGroups = new SelectList(await _modifierService.GetAllModifiers(), "Id", "Name");
+    return PartialView("_AddItemPartial");
+}
+
 
         [HttpPost]
         public async Task<IActionResult> AddItem(MenuItemViewModel model)
@@ -156,26 +157,26 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditItem(int id)
-        {
-            var item = await _menuService.GetItemDetailsById(id);
+public async Task<IActionResult> EditItem(int id)
+{
+    var item = await _menuService.GetItemDetailsById(id);
 
-            if (item == null)
-            {
-                return NotFound();
-            }
+    if (item == null)
+    {
+        return NotFound();
+    }
 
-            ViewBag.Categories = new SelectList(await _menuService.GetAllCategories(), "Id", "Name", item.CategoryId);
-            ViewBag.Units = new SelectList(await _unitService.GetAllUnits(), "Id", "Name", item.UnitId);
-            ViewBag.ModifierGroups = new SelectList(await _modifierService.GetAllModifiers(), "Id", "Name");
+    ViewBag.Categories = new SelectList(await _menuService.GetAllCategories(), "Id", "Name", item.CategoryId);
+    ViewBag.Units = new SelectList(await _unitService.GetAllUnits(), "Id", "Name", item.UnitId);
+    ViewBag.ModifierGroups = new SelectList(await _modifierService.GetAllModifiers(), "Id", "Name");
 
-            return PartialView("_EditItemPartial", item);
-        }
+    return PartialView("_EditItemPartial", item);
+}
 
         [HttpGet]
         public async Task<IActionResult> SelectedModifiers(int groupId)
         {
-            var modifiers = await _menuService.GetMofiersById(groupId);
+            var modifiers = await _menuService.GetModifiersById(groupId);
             return PartialView("_ModifierGroupsPartial", modifiers);
         }
 

@@ -59,9 +59,9 @@ namespace Repository.Implementation
         }
 
         public async Task<MenuItem> GetItemDetailsById(int? id)
-        {
-            return await _context.MenuItems.Where(mi => mi.Id == id).FirstOrDefaultAsync();
-        }
+{
+    return await _context.MenuItems.Where(mi => mi.Id == id).FirstOrDefaultAsync();
+}
 
         public async Task<List<MappingMenuItemsWithModifier>> GetModifierGroupsByItemId(int id)
         {
