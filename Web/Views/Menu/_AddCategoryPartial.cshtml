@@ -1,6 +1,5 @@
 @using Entity.ViewModel
-@model MenuItemViewModel
-
+@model MenuCategoryViewModel
 <div class="modal-header">
     <h5 class="modal-title" id="addCategoryModalLabel">Add Category</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -15,14 +14,11 @@
             <textarea class="form-control" name="Description" placeholder="Description"></textarea>
         </div>
         <div class="modal-footer">
-            <button type="submit" class="btn update-btn"
-                style="height: 40px; width: 80px;">Save</button>
-            <button type="button" class="btn cancel-btn" data-bs-dismiss="modal"
-                style="height: 40px; width: 80px;">Cancel</button>
+            <button type="submit" class="btn update-btn" style="height: 40px; width: 80px;">Save</button>
+            <button type="button" class="btn cancel-btn" data-bs-dismiss="modal" style="height: 40px; width: 80px;">Cancel</button>
         </div>
     </form>
 </div>
-
 
 <script>
     $(document).ready(function () {

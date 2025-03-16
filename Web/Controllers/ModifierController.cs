@@ -1,12 +1,12 @@
-
 using Entity.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interface;
 using System.Linq;
 using System.Threading.Tasks;
-namespace Web.Controllers;
 
-public class ModifierController: Controller
+namespace Web.Controllers
+{
+    public class ModifierController : Controller
     {
         private readonly IModifierService _modifierService;
 
@@ -27,7 +27,7 @@ public class ModifierController: Controller
             ViewBag.SelectedCategory = modifierId.Value;
             ViewBag.ModifierItems = await _modifierService.GetItemsByModifiers(modifierId.Value);
 
-            return View("~/Views/Menu/ModifiersList.cshtml", modifiers); 
+            return View("~/Views/Menu/ModifiersList.cshtml", modifiers);
         }
 
         [HttpPost]
@@ -35,12 +35,12 @@ public class ModifierController: Controller
         {
             if (ModelState.IsValid)
             {
-                var category = await _modifierService.AddNewModifier(model.Name, model,User);
+                var modifier = await _modifierService.AddNewModifier(model.Name, model, User);
 
-                if (category)
+                if (modifier)
                 {
                     TempData["SuccessMessage"] = "Modifier created successfully.";
-                    return RedirectToAction(nameof(ModifiersList));
+                    return Json(new { success = true, redirectUrl = Url.Action(nameof(ModifiersList)) });
                 }
                 else
                 {
@@ -50,7 +50,7 @@ public class ModifierController: Controller
 
             var modifiers = await _modifierService.GetAllModifiers();
             ViewBag.ModifierItems = await _modifierService.GetItemsByModifiers(model.Id);
-            return View("~/Views/Menu/ModifiersList.cshtml", modifiers); 
+            return View("~/Views/Menu/ModifiersList.cshtml", modifiers);
         }
 
         [HttpGet]
@@ -75,7 +75,7 @@ public class ModifierController: Controller
                 if (result)
                 {
                     TempData["SuccessMessage"] = "Modifier updated successfully.";
-                    return RedirectToAction(nameof(ModifiersList));
+                    return Json(new { success = true, redirectUrl = Url.Action(nameof(ModifiersList)) });
                 }
                 else
                 {
@@ -83,7 +83,7 @@ public class ModifierController: Controller
                 }
             }
 
-            return View(model);
+            return Json(new { success = false, message = "Invalid data." });
         }
 
         [HttpPost]
@@ -95,12 +95,13 @@ public class ModifierController: Controller
             if (result)
             {
                 TempData["SuccessMessage"] = "Modifier deleted successfully.";
-                return RedirectToAction(nameof(ModifiersList));
+                return Json(new { success = true, redirectUrl = Url.Action(nameof(ModifiersList)) });
             }
             else
             {
                 TempData["ErrorMessage"] = "Error deleting modifier or modifier not found.";
-                return RedirectToAction(nameof(ModifiersList));
+                return Json(new { success = false });
             }
         }
     }
+}

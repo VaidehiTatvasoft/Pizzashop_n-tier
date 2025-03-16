@@ -13,14 +13,13 @@
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
-    <form id="editCategoryForm" method="post" asp-action="EditItem" asp-controller="Menu">
+    <form id="editItemForm" method="post" asp-action="EditItem" asp-controller="Menu">
         <div class="row">
             <div class="col-xl-9">
                 <div class="col-xl-12">
                     <div class="row" style="row-gap: 10px;">
                         <div class="form-floating col-lg-6 col-12">
-                            <select id="Category" name="CategoryId" class="form-control" asp-items="ViewBag.Categories"
-                                asp-for="CategoryId">
+                            <select id="Category" name="CategoryId" class="form-control" asp-items="ViewBag.Categories" asp-for="CategoryId">
                                 <option value="" hidden>Select a Category</option>
                             </select>
                             <label for="Category" class="float">Category*</label>
@@ -57,8 +56,7 @@
                             <span asp-validation-for="Quantity" style="color: red;"></span>
                         </div>
                         <div class="form-floating col col-xl-3 col-lg-6 col-12">
-                            <select id="UnitId" name="UnitId" class="form-control" asp-items="ViewBag.Units"
-                                asp-for="UnitId">
+                            <select id="UnitId" name="UnitId" class="form-control" asp-items="ViewBag.Units" asp-for="UnitId">
                                 <option value="" hidden>Select a Unit</option>
                             </select>
                             <label for="UnitId" class="float">Unit*</label>
@@ -72,13 +70,11 @@
                 <div class="col-xl-12">
                     <div class="row" style="row-gap: 10px;">
                         <div class="form-check form-switch col-xl-3 col-lg-6 col-12">
-                            <input class="form-check-input larger-checkbox" type="checkbox" id="IsAvailable"
-                                asp-for="IsAvailable">
+                            <input class="form-check-input larger-checkbox" type="checkbox" id="IsAvailable" asp-for="IsAvailable">
                             <label class="form-check-label" for="IsAvailable">Available</label>
                         </div>
                         <div class="form-check form-switch col-xl-3 col-lg-6 col-12">
-                            <input class="form-check-input larger-checkbox" type="checkbox" id="IsDefaultTax"
-                                asp-for="IsDefaultTax">
+                            <input class="form-check-input larger-checkbox" type="checkbox" id="IsDefaultTax" asp-for="IsDefaultTax">
                             <label class="form-check-label" for="IsDefaultTax">Default Tax</label>
                         </div>
                         <div class="form-floating col-xl-3 col-lg-6 col-12">
@@ -112,8 +108,7 @@
 
             <div class="col-xl-3">
                 <div style="background-color: #FDF5E6; height: 100%; width: auto; border-radius: 5px; padding: 10px;">
-                    <select data-placeholder="Select Modifier Groups(s)" id="ModifierGroups" name="ModifierGroupIds"
-                        class="chosen-select" asp-items="ViewBag.ModifierGroups" multiple>
+                    <select data-placeholder="Select Modifier Groups(s)" id="ModifierGroups" name="ModifierGroupIds" class="chosen-select" asp-items="ViewBag.ModifierGroups" multiple>
                     </select>
                     <span asp-validation-for="ModifierGroupIds" style="color: red;"></span>
                     <div id="existing-modifier-groups">
@@ -159,10 +154,8 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="submit" class="btn"
-                style="height: 40px; width: 80px; background-color: #0066A7; color: white;">Save</button>
-            <button type="button" class="btn" data-bs-dismiss="modal"
-                style="height: 40px; width: 80px; color: #0066A7; background-color: white; border: 1px solid #0066A7;">Cancel</button>
+            <button type="submit" class="btn" style="height: 40px; width: 80px; background-color: #0066A7; color: white;">Save</button>
+            <button type="button" class="btn" data-bs-dismiss="modal" style="height: 40px; width: 80px; color: #0066A7; background-color: white; border: 1px solid #0066A7;">Cancel</button>
         </div>
     </form>
 </div>
@@ -206,6 +199,27 @@
             } else {
                 console.log('Modifier group already exists.');
             }
+        });
+
+        $('#editItemForm').on('submit', function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('#editItemModal').modal('hide');
+                        window.location.href = response.redirectUrl;
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function () {
+                    toastr.error("An error occurred while updating the item.");
+                }
+            });
         });
     });
 

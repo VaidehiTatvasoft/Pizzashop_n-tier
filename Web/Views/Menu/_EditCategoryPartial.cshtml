@@ -1,5 +1,5 @@
 @using Entity.ViewModel
-@model MenuItemViewModel
+@model MenuCategoryViewModel
 <div class="modal-header">
     <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -15,10 +15,8 @@
             <textarea class="form-control" name="Description" placeholder="Description">@Model.Description</textarea>
         </div>
         <div class="modal-footer">
-            <button type="submit" class="btn"
-                style="height: 40px; width: 80px; background-color: #0066A7; color: white;">Save</button>
-            <button type="button" class="btn" data-bs-dismiss="modal"
-                style="height: 40px; width: 80px; color: #0066A7; background-color: white; border: 1px solid #0066A7;">Cancel</button>
+            <button type="submit" class="btn" style="height: 40px; width: 80px; background-color: #0066A7; color: white;">Save</button>
+            <button type="button" class="btn" data-bs-dismiss="modal" style="height: 40px; width: 80px; color: #0066A7; background-color: white; border: 1px solid #0066A7;">Cancel</button>
         </div>
     </form>
     <div id="formErrors" class="text-danger"></div>

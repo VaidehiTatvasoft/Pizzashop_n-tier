@@ -2,8 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Service.Interface;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
-
 using Entity.ViewModel;
+using System.Linq;
+using System;
 
 namespace Web.Controllers
 {
@@ -47,33 +48,28 @@ namespace Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
-                {
-                    var category = await _menuService.AddNewCategory(model.Name, model,User);
+                var category = await _menuService.AddNewCategory(model.Name, model, User);
 
-                    if (category)
-                    {
-                        TempData["SuccessMessage"] = "Category created successfully.";
-                        return Json(new { success = true, redirectUrl = Url.Action("MenuList") });
-                    }
-                }
-                catch (Exception ex)
+                if (category)
                 {
-                    return Json(new { success = false, message = ex.Message });
+                    TempData["SuccessMessage"] = "Category created successfully.";
+                    return Json(new { success = true, redirectUrl = Url.Action("MenuList") });
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "A category with this name already exists.";
                 }
             }
 
-            var errors = string.Join("; ", ModelState.Values
-                                        .SelectMany(v => v.Errors)
-                                        .Select(e => e.ErrorMessage));
-
-            return Json(new { success = false, message = "Invalid data.", errors = errors });
+            var categories = await _menuService.GetAllCategories();
+            ViewBag.MenuItems = await _menuService.GetItemsByCategory(model.Id);
+            return View("MenuList");
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditCategory(int id)
+        public async Task<IActionResult> EditCategory(int Id)
         {
-            var category = await _menuService.GetCategoryDetailById(id);
+            var category = await _menuService.GetCategoryDetailById(Id);
             if (category == null)
             {
                 return NotFound();
@@ -99,6 +95,7 @@ namespace Web.Controllers
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine(ex.Message);
                     return Json(new { success = false, message = ex.Message });
                 }
             }
@@ -154,7 +151,7 @@ namespace Web.Controllers
                 return PartialView("_AddItemPartial", model);
             }
 
-            await _menuService.AddNewItem(model,User);
+            await _menuService.AddNewItem(model, User);
             return RedirectToAction("MenuList");
         }
 
@@ -187,7 +184,7 @@ namespace Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _menuService.EditItemAsync(menuItemViewModel,User);
+                var result = await _menuService.EditItemAsync(menuItemViewModel, User);
 
                 if (result)
                 {
