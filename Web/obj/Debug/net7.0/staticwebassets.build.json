@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "FBQAeOXXRGXTJIYdz/lRkRFBzMU4WvVyy7IeekBOD8w=",
+  "Hash": "0T7m3PXU8bTd1RTgEvUyS/qsbWqhI0IRGCJjdVKRcJk=",
   "Source": "Web",
   "BasePath": "_content/Web",
   "Mode": "Default",
@@ -1545,6 +1545,40 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\lib\\jquery\\LICENSE.txt"
+    },
+    {
+      "Identity": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Web\\wwwroot\\uploads\\1610611083547.jpg",
+      "SourceId": "Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Web\\wwwroot\\",
+      "BasePath": "_content/Web",
+      "RelativePath": "uploads/1610611083547.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\1610611083547.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Web\\wwwroot\\uploads\\1610611202964.jpg",
+      "SourceId": "Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Web\\wwwroot\\",
+      "BasePath": "_content/Web",
+      "RelativePath": "uploads/1610611202964.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\1610611202964.jpg"
     },
     {
       "Identity": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Web\\wwwroot\\uploads\\female-2.png",

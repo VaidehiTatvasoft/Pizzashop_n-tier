@@ -1,5 +1,6 @@
 @using Entity.ViewModel
 @model MenuItemViewModel
+
 <style>
     .row {
         --bs-gutter-x: 0.5rem;
@@ -12,17 +13,17 @@
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
-    <form id="addItemForm" method="post" asp-action="AddItem" asp-controller="Menu">
+    <form id="addItemForm" method="post" enctype="multipart/form-data" asp-action="AddItem" asp-controller="Menu">
         <div class="row form-gap">
             <div class="col-xl-9">
                 <div class="col-xl-12">
                     <div class="row g-2">
                         <div class="form-floating col-lg-6 col-12">
-                            <select id="Category" name="CategoryId" class="form-control" asp-items="ViewBag.Categories" asp-for="Id">
+                            <select id="Category" name="CategoryId" class="form-control" asp-items="ViewBag.Categories" asp-for="CategoryId">
                                 <option value="" hidden>Select a Category</option>
                             </select>
                             <label for="Category" class="float">Category*</label>
-                            <span asp-validation-for="Id" class="text-danger"></span>
+                            <span asp-validation-for="CategoryId" class="text-danger"></span>
                         </div>
                         <div class="form-floating col-lg-6 col-12">
                             <input type="text" class="form-control" id="Name" asp-for="Name">
@@ -43,12 +44,12 @@
                             <label for="Type" class="float">Type*</label>
                         </div>
                         <div class="form-floating col-xl-3 col-lg-6 col-12">
-                            <input type="text" class="form-control" id="Rate" asp-for="Rate" value="0">
+                            <input type="number" class="form-control" id="Rate" asp-for="Rate" value="0">
                             <label for="Rate" class="float">Rate*</label>
                             <span asp-validation-for="Rate" class="text-danger"></span>
                         </div>
                         <div class="form-floating col-xl-3 col-lg-6 col-12">
-                            <input type="text" class="form-control" id="Quantity" asp-for="Quantity" value="0">
+                            <input type="number" class="form-control" id="Quantity" asp-for="Quantity" value="0">
                             <label for="Quantity" class="float">Quantity*</label>
                             <span asp-validation-for="Quantity" class="text-danger"></span>
                         </div>
@@ -77,7 +78,7 @@
                             </div>
                         </div>
                         <div class="form-floating col-xl-3 col-lg-6 col-12">
-                            <input type="text" class="form-control" id="TaxPercentage" asp-for="TaxPercentage">
+                            <input type="number" step="0.01" class="form-control" id="TaxPercentage" asp-for="TaxPercentage">
                             <label for="TaxPercentage" class="float">Tax Percentage</label>
                             <span asp-validation-for="TaxPercentage" class="text-danger"></span>
                         </div>
@@ -130,6 +131,8 @@
     </form>
 </div>
 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
@@ -145,25 +148,28 @@
             var selectedGroupIds = $(this).val();
             var lastSelectedGroupId = selectedGroupIds[selectedGroupIds.length - 1];
 
-            if (lastSelectedGroupId) {
+            if (lastSelectedGroupId && $('#existing-modifier-groups').find(`.modifier-group[data-group-id='${lastSelectedGroupId}']`).length == 0) {
                 $.ajax({
                     url: '/menu/selectedmodifiers/' + lastSelectedGroupId,
                     type: 'GET',
                     success: function (result) {
-                        $('.modifier-items').find(`.group-id-${lastSelectedGroupId}`).remove();
-                        $('.modifier-items').append(`<div class="group-id-${lastSelectedGroupId}">${result}</div>`);
+                        console.log('AJAX Success:', result);
 
-                        var minSelectionRequired = $(result).find('[name="MinSelectionRequired"]').val();
-                        var maxSelectionAllowed = $(result).find('[name="MaxSelectionAllowed"]').val();
+                        $('#existing-modifier-groups').find(`.group-id-${lastSelectedGroupId}`).remove();
+                        $('#existing-modifier-groups').append(`<div class="group-id-${lastSelectedGroupId}">${result}</div>`);
 
-                        $(`input.min-selection-required[data-group-id='${lastSelectedGroupId}']`).val(minSelectionRequired);
-                        $(`input.max-selection-allowed[data-group-id='${lastSelectedGroupId}']`).val(maxSelectionAllowed);
+                        $(".chosen-select").chosen({
+                            no_results_text: "Oops, nothing found!",
+                            width: "100%"
+                        });
                     },
                     error: function (xhr, status, error) {
                         console.log('AJAX Error:', status, error);
                         alert("An error occurred while fetching modifiers. Please try again.");
                     }
                 });
+            } else {
+                console.log('Modifier group already exists.');
             }
         });
 
@@ -180,12 +186,13 @@
                     if (response.success) {
                         toastr.success(response.message);
                         $('#addModal').modal('hide');
-                        window.location.href = response.redirectUrl;
+                        // Optionally, refresh the page or update the table
                     } else {
                         toastr.error(response.message);
                     }
                 },
-                error: function () {
+                error: function (xhr, status, error) {
+                    console.error("Error while adding the item:", status, error);
                     toastr.error("An error occurred while adding the item.");
                 }
             });

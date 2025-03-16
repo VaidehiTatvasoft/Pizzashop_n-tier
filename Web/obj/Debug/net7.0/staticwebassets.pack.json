@@ -357,6 +357,14 @@
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
     },
     {
+      "Id": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Web\\wwwroot\\uploads\\1610611083547.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1610611083547.jpg"
+    },
+    {
+      "Id": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Web\\wwwroot\\uploads\\1610611202964.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1610611202964.jpg"
+    },
+    {
       "Id": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Web\\wwwroot\\uploads\\female-2.png",
       "PackagePath": "staticwebassets\\uploads\\female-2.png"
     },

@@ -12,12 +12,12 @@ namespace Service.Implementation
     {
         private readonly IModifierRepository _modifierRepository;
 
-    public ModifierService(IModifierRepository modifierRepository)
-    {
-        _modifierRepository = modifierRepository;
-    }
+        public ModifierService(IModifierRepository modifierRepository)
+        {
+            _modifierRepository = modifierRepository;
+        }
 
-    public async Task<bool> AddNewModifier(string category, ModifierViewModel model,ClaimsPrincipal userClaims)
+        public async Task<bool> AddNewModifier(string category, ModifierViewModel model, ClaimsPrincipal userClaims)
         {
             var userIdClaim = userClaims.FindFirst("UserId");
             if (userIdClaim == null)
@@ -35,7 +35,6 @@ namespace Service.Implementation
                     Name = model.Name,
                     Description = model.Description,
                     CreatedBy = userId
-                    
                 };
 
                 return await _modifierRepository.AddModifierAsync(cat);
@@ -101,6 +100,16 @@ namespace Service.Implementation
             category.Description = model.Description;
 
             return await _modifierRepository.UpdateModifierBy(category);
+        }
+
+        public async Task<List<ModifierGroup>> GetAllModifierGroups()
+        {
+            return await _modifierRepository.GetAllModifiers();
+        }
+
+        public async Task<List<Modifier>> GetModifiersByGroupIdAsync(int groupId)
+        {
+            return await _modifierRepository.GetItemsByModifier(groupId);
         }
     }
 }

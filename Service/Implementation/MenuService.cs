@@ -200,10 +200,10 @@ public class MenuService : IMenuService
             IsAvailable = item.IsAvailable,
             Description = item.Description,
             TaxPercentage = item.TaxPercentage,
-            IsFavourite = item.IsFavourite,
+            IsFavourite = item.IsFavourite ?? false,
             ShortCode = item.ShortCode,
-            IsDefaultTax = item.IsDefaultTax,
-            IsDeleted = item.IsDeleted,
+            IsDefaultTax = item.IsDefaultTax ?? true,
+            IsDeleted = item.IsDeleted ?? false,
             UnitId = item.UnitId,
             ModifierGroups = modifierGroups ?? new List<ModifierGroupViewModel>()
         };

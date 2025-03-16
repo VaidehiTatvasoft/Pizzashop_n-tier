@@ -1,10 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
-using Service.Interface;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Entity.ViewModel;
-using System.Linq;
-using System;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Service.Interface;
+
 
 namespace Web.Controllers
 {
@@ -13,14 +11,17 @@ namespace Web.Controllers
         private readonly IMenuService _menuService;
         private readonly IUnitService _unitService;
         private readonly IModifierService _modifierService;
+        private readonly ILogger<MenuController> _logger;
 
-        public MenuController(IMenuService menuService, IUnitService unitService, IModifierService modifierService)
+        public MenuController(IMenuService menuService, IUnitService unitService, IModifierService modifierService, ILogger<MenuController> logger)
         {
             _menuService = menuService;
             _unitService = unitService;
             _modifierService = modifierService;
+            _logger = logger;
         }
 
+        // Menu List
         [HttpGet]
         public async Task<IActionResult> MenuList(int? categoryId)
         {
@@ -37,33 +38,42 @@ namespace Web.Controllers
             return View(categories);
         }
 
+        // Add Category
         [HttpGet]
-        public IActionResult AddCategory()
+public IActionResult AddCategory()
+{
+    return PartialView("_AddCategoryPartial", new MenuCategoryViewModel());
+}
+
+[HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> AddCategory(MenuCategoryViewModel model)
+{
+    if (!ModelState.IsValid)
+    {
+        return PartialView("_AddCategoryPartial", model);
+    }
+
+    try
+    {
+        var category = await _menuService.AddNewCategory(model.Name, model, User);
+        if (category)
         {
-            return PartialView("_AddCategoryPartial", new MenuCategoryViewModel());
+            TempData["SuccessMessage"] = "Category created successfully.";
+            return Json(new { success = true, redirectUrl = Url.Action("MenuList") });
         }
-
-        [HttpPost]
-        public async Task<IActionResult> AddCategory(MenuCategoryViewModel model)
+        else
         {
-            if (ModelState.IsValid)
-            {
-                var category = await _menuService.AddNewCategory(model.Name, model, User);
-
-                if (category)
-                {
-                    TempData["SuccessMessage"] = "Category created successfully.";
-                    return Json(new { success = true, redirectUrl = Url.Action("MenuList") });
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "A category with this name already exists.";
-                }
-            }
-
-            var categories = await _menuService.GetAllCategories();
-            ViewBag.MenuItems = await _menuService.GetItemsByCategory(model.Id);
-            return View("MenuList");
+            TempData["ErrorMessage"] = "A category with this name already exists.";
+            return PartialView("_AddCategoryPartial", model);
+        }
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error adding category");
+        TempData["ErrorMessage"] = "An error occurred while adding the category. Please try again.";
+        return PartialView("_AddCategoryPartial", model);
+    }
         }
 
         [HttpGet]
@@ -126,76 +136,104 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-public async Task<IActionResult> AddItem()
-{
-    ViewBag.Categories = new SelectList(await _menuService.GetAllCategories(), "Id", "Name");
-    ViewBag.Units = new SelectList(await _unitService.GetAllUnits(), "Id", "Name");
-    ViewBag.ModifierGroups = new SelectList(await _modifierService.GetAllModifiers(), "Id", "Name");
-    return PartialView("_AddItemPartial");
-}
-
+        public async Task<IActionResult> AddItem()
+        {
+            try
+            {
+                ViewBag.Categories = new SelectList(await _menuService.GetAllCategories(), "Id", "Name");
+                ViewBag.Units = new SelectList(await _unitService.GetAllUnits(), "Id", "Name");
+                ViewBag.ModifierGroups = new SelectList(await _modifierService.GetAllModifiers(), "Id", "Name");
+                return PartialView("_AddItemPartial", new MenuItemViewModel());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading add item form");
+                return StatusCode(500, "Internal server error");
+            }
+        }
 
         [HttpPost]
-        public async Task<IActionResult> AddItem(MenuItemViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddItem(MenuItemViewModel model, IFormFile file)
         {
             if (!ModelState.IsValid)
             {
-                var errors = ModelState.Values.SelectMany(v => v.Errors);
-                foreach (var error in errors)
-                {
-                    Console.WriteLine(error.ErrorMessage);
-                }
-
                 ViewBag.Categories = new SelectList(await _menuService.GetAllCategories(), "Id", "Name");
                 ViewBag.Units = new SelectList(await _unitService.GetAllUnits(), "Id", "Name");
                 ViewBag.ModifierGroups = new SelectList(await _modifierService.GetAllModifiers(), "Id", "Name");
                 return PartialView("_AddItemPartial", model);
             }
 
-            await _menuService.AddNewItem(model, User);
-            return RedirectToAction("MenuList");
+            try
+            {
+                if (file != null && file.Length > 0)
+                {
+                    var filePath = Path.Combine("wwwroot/uploads", file.FileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+                    model.Image = filePath;
+                }
+
+                await _menuService.AddNewItem(model, User);
+                return Json(new { success = true, redirectUrl = Url.Action("MenuList") });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding item");
+                return Json(new { success = false, message = ex.Message });
+            }
         }
 
+        // Edit Item
         [HttpGet]
-public async Task<IActionResult> EditItem(int id)
-{
-    var item = await _menuService.GetItemDetailsById(id);
-
-    if (item == null)
-    {
-        return NotFound();
-    }
-
-    ViewBag.Categories = new SelectList(await _menuService.GetAllCategories(), "Id", "Name", item.CategoryId);
-    ViewBag.Units = new SelectList(await _unitService.GetAllUnits(), "Id", "Name", item.UnitId);
-    ViewBag.ModifierGroups = new SelectList(await _modifierService.GetAllModifiers(), "Id", "Name");
-
-    return PartialView("_EditItemPartial", item);
-}
-
-        [HttpGet]
-        public async Task<IActionResult> SelectedModifiers(int groupId)
+        public async Task<IActionResult> EditItem(int id)
         {
-            var modifiers = await _menuService.GetModifiersById(groupId);
-            return PartialView("_ModifierGroupsPartial", modifiers);
+            var item = await _menuService.GetItemDetailsById(id);
+
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.Categories = new SelectList(await _menuService.GetAllCategories(), "Id", "Name", item.CategoryId);
+            ViewBag.Units = new SelectList(await _unitService.GetAllUnits(), "Id", "Name", item.UnitId);
+            ViewBag.ModifierGroups = new SelectList(await _modifierService.GetAllModifiers(), "Id", "Name");
+
+            return PartialView("_EditItemPartial", item);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditItem(MenuItemViewModel menuItemViewModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Categories = new SelectList(await _menuService.GetAllCategories(), "Id", "Name", menuItemViewModel.CategoryId);
+                ViewBag.Units = new SelectList(await _unitService.GetAllUnits(), "Id", "Name", menuItemViewModel.UnitId);
+                ViewBag.ModifierGroups = new SelectList(await _modifierService.GetAllModifiers(), "Id", "Name");
+                return PartialView("_EditItemPartial", menuItemViewModel);
+            }
+
+            try
             {
                 var result = await _menuService.EditItemAsync(menuItemViewModel, User);
 
                 if (result)
                 {
                     TempData["SuccessMessage"] = "Item updated successfully.";
-                    return RedirectToAction("MenuList");
+                    return Json(new { success = true, redirectUrl = Url.Action("MenuList") });
                 }
                 else
                 {
                     ModelState.AddModelError("", "Failed to update item.");
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error editing item");
+                ModelState.AddModelError("", "Error editing item.");
             }
 
             ViewBag.Categories = new SelectList(await _menuService.GetAllCategories(), "Id", "Name", menuItemViewModel.CategoryId);
@@ -205,21 +243,74 @@ public async Task<IActionResult> EditItem(int id)
             return PartialView("_EditItemPartial", menuItemViewModel);
         }
 
+        // Delete Item
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteItem(int id)
         {
-            var result = await _menuService.DeleteItemById(id);
+            try
+            {
+                var result = await _menuService.DeleteItemById(id);
 
-            if (result)
-            {
-                TempData["SuccessMessage"] = "Item deleted successfully.";
-                return RedirectToAction("MenuList");
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "Item deleted successfully.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Error deleting item or item not found.";
+                }
             }
-            else
+            catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Error deleting item or item not found.";
-                return RedirectToAction("MenuList");
+                _logger.LogError(ex, "Error deleting item");
+                TempData["ErrorMessage"] = "Error deleting item.";
+            }
+
+            return RedirectToAction("MenuList");
+        }
+// Mass Delete Items
+[HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> DeleteMultipleItems([FromBody] List<int> itemIds)
+{
+    if (itemIds == null || !itemIds.Any())
+    {
+        return BadRequest("No items selected for deletion.");
+    }
+
+    try
+    {
+        foreach (var itemId in itemIds)
+        {
+            await _menuService.DeleteItemById(itemId);
+        }
+
+        TempData["SuccessMessage"] = "Selected items deleted successfully.";
+        return Ok(new { success = true });
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error deleting multiple items");
+        return StatusCode(500, new { success = false, message = "Error deleting items." });
+    }
+}
+        [HttpGet]
+        public async Task<IActionResult> SelectedModifiers(int groupId)
+        {
+            try
+            {
+                var modifiers = await _modifierService.GetModifiersByGroupIdAsync(groupId);
+                if (modifiers == null)
+                {
+                    return BadRequest("An error occurred while fetching modifiers. Please try again.");
+                }
+                return PartialView("_ModifierGroupPartial", modifiers);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching modifiers");
+                return StatusCode(500, "Internal server error");
             }
         }
     }

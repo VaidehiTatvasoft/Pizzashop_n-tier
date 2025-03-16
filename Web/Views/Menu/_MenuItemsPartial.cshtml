@@ -5,17 +5,14 @@
     <div class="upper-div d-flex justify-content-end">
         <div class="d-flex">
             <div class="search-box" style="margin-right: 13px;">
-                <input type="text" name="search" id="searchInput" placeholder="Search"
-                    style="height: 50px; width: 250px; border: 1px solid #adadad; border-radius: 5%;">
+                <input type="text" name="search" id="searchInput" placeholder="Search" style="height: 50px; width: 250px; border: 1px solid #adadad; border-radius: 5%;">
                 <i class="fa-solid fa-magnifying-glass search-btn"></i>
             </div>
-            <button id="deleteSelectedButton" style="width: 50px; border: 1px solid #adadad; margin-right: 10px;">
+            <button id="deleteSelectedButton" style="width: 50px; border: 1px solid #adadad; margin-right: 10px;" disabled>
                 <i class="fa-solid fa-trash" style="cursor: pointer; color: #adadad;"></i>
             </button>
-
             <a href="javascript:void(0);" class="edit-btn add-item" style="text-decoration: none; color: inherit;">
-                <button data-bs-toggle="modal" data-bs-target="#addModal" class="add-user-btn"
-                    style="border: 1px solid #adadad; border-radius: 5%; background-color:#0066A7; color: white;">
+                <button data-bs-toggle="modal" data-bs-target="#addModal" class="add-user-btn" style="border: 1px solid #adadad; border-radius: 5%; background-color: #0066A7; color: white;">
                     <span class="span1">Add Item</span>
                     <span class="span2">+</span>
                 </button>
@@ -47,7 +44,7 @@
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="menuItemsTableBody">
                 @foreach (var item in Model)
                 {
                     <tr>
@@ -70,24 +67,17 @@
                         <td>@item.Quantity</td>
                         <td>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked"
-                                    @(item.IsAvailable == true ? "checked" : "")>
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" @(item.IsAvailable == true ? "checked" : "")>
                             </div>
                         </td>
                         <td>
-                            <a href="javascript:void(0);" class="edit-item" data-id="@item.Id" data-bs-toggle="modal"
-                                data-bs-target="#editItemModal"
-                                style="text-decoration: none; color: inherit; opacity: 0.7; cursor: pointer; margin-right: 5px;">
+                            <a href="javascript:void(0);" class="edit-item" data-id="@item.Id" data-bs-toggle="modal" data-bs-target="#editItemModal" style="text-decoration: none; color: inherit; opacity: 0.7; cursor: pointer; margin-right: 5px;">
                                 <i class="bi-pen bi-pen"></i>
                             </a>
-                            <a href="javascript:void(0)" onclick="confirmDeleteItem(@item.Id)"
-                                style="text-decoration: none; color: inherit;" class="dlt-btn">
+                            <a href="javascript:void(0)" onclick="confirmDeleteItem(@item.Id)" style="text-decoration: none; color: inherit;" class="dlt-btn">
                                 <i class="bi bi-trash m-1"></i>
                             </a>
-
-                            <form id="deleteitemform-@item.Id" method="post"
-                                action="@Url.Action("DeleteItem", "Menu", new { id = @item.Id })"
-                                style="display: none;">
+                            <form id="deleteitemform-@item.Id" method="post" action="@Url.Action("DeleteItem", "Menu", new { id = @item.Id })" style="display: none;">
                                 @Html.AntiForgeryToken()
                             </form>
                         </td>
@@ -101,7 +91,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Deletion Confirmation</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body d-flex flex-column justify-content-center align-items-center">
@@ -109,10 +99,8 @@
                     Are you sure you want to delete these items?
                 </div>
                 <div class="d-flex justify-content-center align-items-center" style="gap: 10px; margin-bottom: 20px;">
-                    <button type="button" class="btn" id="confirmDeleteItemsButton"
-                        style="height: 40px; width: 100px; background-color: #006098; color: white;">Yes</button>
-                    <button type="button" class="btn" data-bs-dismiss="modal"
-                        style="height: 40px; width: 100px; background-color: white; border: 1px solid #006098;">No</button>
+                    <button type="button" class="btn" id="confirmDeleteItemsButton" style="height: 40px; width: 100px; background-color: #006098; color: white;">Yes</button>
+                    <button type="button" class="btn" data-bs-dismiss="modal" style="height: 40px; width: 100px; background-color: white; border: 1px solid #006098;">No</button>
                 </div>
             </div>
         </div>
@@ -127,127 +115,158 @@
         </div>
     </div>
 </div>
+
 @section Scripts {
-<script>
-    $(document).ready(function () {
-        // Search functionality
-        $("#searchInput").on("keyup", function () {
-            var value = $(this).val().toLowerCase();
-            $("#tbl tbody tr").filter(function () {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    <script>
+        function initializeEventListeners() {
+            // Ensure elements exist before adding event listeners
+            var selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            if (selectAllCheckbox) {
+                selectAllCheckbox.addEventListener('change', function () {
+                    const checkboxes = document.querySelectorAll('.item-checkbox');
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = this.checked;
+                    });
+                    toggleDeleteButton();
+                });
+            }
+
+            var deleteSelectedButton = document.getElementById('deleteSelectedButton');
+            if (deleteSelectedButton) {
+                deleteSelectedButton.addEventListener('click', function () {
+                    const selectedItems = Array.from(document.querySelectorAll('.item-checkbox:checked')).map(checkbox => checkbox.dataset.itemId);
+                    if (selectedItems.length > 0) {
+                        const modalElement = document.getElementById('deleteItemModal');
+                        const modal = new bootstrap.Modal(modalElement);
+                        modal.show();
+                    } else {
+                        alert("No items selected for deletion.");
+                    }
+                });
+            }
+
+            var confirmDeleteItemsButton = document.getElementById('confirmDeleteItemsButton');
+            if (confirmDeleteItemsButton) {
+                confirmDeleteItemsButton.addEventListener('click', function () {
+                    const selectedItems = Array.from(document.querySelectorAll('.item-checkbox:checked')).map(checkbox => checkbox.dataset.itemId);
+                    if (selectedItems.length > 0) {
+                        fetch('@Url.Action("DeleteMultipleItems", "Menu")', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                            },
+                            body: JSON.stringify(selectedItems)
+                        }).then(response => {
+                            if (response.ok) {
+                                return response.json();
+                            } else {
+                                throw new Error('Network response was not ok.');
+                            }
+                        }).then(responseData => {
+                            if (responseData.success) {
+                                location.reload();
+                            } else {
+                                alert("Failed to delete items: " + responseData.message);
+                            }
+                        }).catch(error => {
+                            console.error('Error:', error);
+                            alert("Failed to delete items.");
+                        });
+                    }
+                });
+            }
+
+            function toggleDeleteButton() {
+                var anyChecked = document.querySelectorAll('.item-checkbox:checked').length > 0;
+                document.getElementById('deleteSelectedButton').disabled = !anyChecked;
+            }
+
+            // Search functionality
+            $('#searchInput').on('keyup', function () {
+                var value = $(this).val().toLowerCase();
+                $('#tbl tbody tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            });
+
+            // Toggle delete button based on checkbox selection
+            $('.item-checkbox').change(function () {
+                toggleDeleteButton();
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeEventListeners();
+
+            // Ensure the document is ready before running jQuery code
+            $(document).ready(function () {
+                // Load Add Item modal content
+                $(document).on('click', '.add-item', function () {
+                    $.ajax({
+                        type: "GET",
+                        url: "/menu/additem",
+                        dataType: "html",
+                        success: function (data) {
+                            console.log("Add item modal content loaded");
+                            $("#addModal").find('.modal-content').html(data);
+                            $('#addModal').modal('show');
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error loading Add Item modal content:", status, error);
+                            alert("Failed to load Add Item modal content.");
+                        }
+                    });
+                });
+
+                // Load Edit Item modal content
+                $(document).on('click', '.edit-item', function () {
+                    var id = $(this).data('id');
+                    $.ajax({
+                        type: "GET",
+                        url: "/menu/edititem/" + id,
+                        dataType: "html",
+                        success: function (data) {
+                            console.log("Edit item modal content loaded");
+                            $('#editItemModal .modal-content').html(data);
+                            $('#editItemModal').modal('show');
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error loading Edit Item modal content:", status, error);
+                            alert("Failed to load Edit Item modal content.");
+                        }
+                    });
+                });
+
+                // Clear modal content when hidden
+                $('#editItemModal').on('hidden.bs.modal', function () {
+                    $(this).find('.modal-content').html('');
+                });
+
+                $('#addModal').on('hidden.bs.modal', function () {
+                    $(this).find('.modal-content').html('');
+                });
             });
         });
 
-        // Select all checkboxes
-        $('#selectAllCheckbox').click(function () {
-            $('.item-checkbox').prop('checked', this.checked);
-        });
-
-        let selectedItems = [];
-
-        $(document).on('change', '.item-checkbox', function () {
-            let itemId = $(this).data('item-id');
-            if ($(this).is(':checked')) {
-                selectedItems.push(itemId);
-            } else {
-                selectedItems = selectedItems.filter(id => id !== itemId);
-            }
-        });
-
-        // Mass delete functionality
-        $('#deleteSelectedButton').click(function () {
-            if (selectedItems.length === 0) {
-                alert("Please select at least one item to delete.");
-                return;
-            }
-
+        function confirmDeleteItem(itemId) {
             const modalElement = document.getElementById('deleteItemModal');
             const modal = new bootstrap.Modal(modalElement);
 
+            // Update the ID of the confirm delete button in the function
             document.getElementById("confirmDeleteItemsButton").onclick = function () {
-                selectedItems.forEach(function (itemId) {
-                    document.getElementById(`deleteitemform-${itemId}`).submit();
-                });
-
-                // Hide the modal after form submission
+                // Submit the form
+                document.getElementById(`deleteitemform-${itemId}`).submit();
                 modal.hide();
             };
 
             // Show the modal
             modal.show();
-        });
-
-        // Load Add Item modal content
-        $(document).on('click', '.add-item', function () {
-            $.ajax({
-                type: "GET",
-                url: "/menu/additem",
-                dataType: "html",
-                success: function (data) {
-                    $("#addModal").find('.modal-content').html(data);
-                    $('#addModal').modal('show');
-                },
-                error: function (xhr, status, error) {
-                    toastr.error("Failed to load item details.");
-                }
-            });
-        });
-
-        // Load Edit Item modal content
-        $(document).on('click', '.edit-item', function () {
-            var id = $(this).data('id');
-            $.ajax({
-                type: "GET",
-                url: "/menu/edititem/" + id,
-                dataType: "html",
-                success: function (data) {
-                    $('#editItemModal .modal-content').html(data);
-                    $('#editItemModal').modal('show');
-                },
-                error: function (xhr, status, error) {
-                    toastr.error("Failed to load item details.");
-                }
-            });
-        });
-
-        // Clear modal content when hidden
-        $('#editItemModal').on('hidden.bs.modal', function () {
-            $(this).find('.modal-content').html('');
-        });
-
-        $('#addModal').on('hidden.bs.modal', function () {
-            $(this).find('.modal-content').html('');
-        });
-
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <text>
-                toastr.success("@TempData["SuccessMessage"]");
-            </text>
         }
 
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <text>
-                toastr.error("@TempData["ErrorMessage"]");
-            </text>
-        }
-    });
-
-    function confirmDeleteItem(itemId) {
-        const modalElement = document.getElementById('deleteItemModal');
-        const modal = new bootstrap.Modal(modalElement);
-
-        // Update the ID of the confirm delete button in the function
-        document.getElementById("confirmDeleteItemsButton").onclick = function () {
-            // Submit the form
-            document.getElementById(`deleteitemform-${itemId}`).submit();
-
-            modal.hide();
-        };
-
-        // Show the modal
-        modal.show();
-    }
-</script>
+        // Reinitialize event listeners after AJAX content load
+        $(document).ajaxComplete(function () {
+            initializeEventListeners();
+        });
+    </script>
 }

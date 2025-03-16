@@ -17,5 +17,7 @@ namespace Service.Interface
     Task<ModifierViewModel> GetModifierDetailById(int id);
 
     Task<bool> EditModifier(ModifierViewModel model, int id);
+    Task<List<ModifierGroup>> GetAllModifierGroups(); 
+        Task<List<Modifier>> GetModifiersByGroupIdAsync(int groupId);
 }
 }

@@ -1,11 +1,13 @@
 @using Entity.ViewModel
 @model MenuCategoryViewModel
+
 <div class="modal-header">
     <h5 class="modal-title" id="addCategoryModalLabel">Add Category</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
     <form id="addCategoryForm" method="post" action="/menu/addcategory">
+        @Html.AntiForgeryToken()
         <div class="form-group">
             <input type="text" class="form-control" name="Name" placeholder="Name*" required>
         </div>
@@ -28,6 +30,9 @@
                 type: "POST",
                 url: $(this).attr('action'),
                 data: $(this).serialize(),
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
                 success: function (response) {
                     if (response.success) {
                         toastr.success(response.message);

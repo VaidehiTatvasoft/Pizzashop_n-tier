@@ -109,12 +109,16 @@
             };
             modal.show();
         }
+
         $(document).ready(function () {
             $(document).on('click', '.add-category', function () {
                 $.ajax({
                     type: "GET",
                     url: "/menu/addcategory",
                     dataType: "html",
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
                     success: function (data) {
                         $("#addCategoryModal").find('.modal-content').html(data);
                         $('#addCategoryModal').modal('show');
@@ -149,6 +153,9 @@
                     type: "GET",
                     url: "/menu/editcategory/" + id,
                     dataType: "html",
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
                     success: function (data) {
                         $("#editCategoryModal").find('.modal-content').html(data);
                         $('#editCategoryModal').modal('show');
