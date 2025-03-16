@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Entity.Data;
 using Entity.ViewModel;
 using Repository.Interface;
@@ -14,7 +15,7 @@ public class MenuService : IMenuService
             _menuRepository = menuRepository;
         }
 
-        public async Task<bool> AddNewCategory(string category, MenuCategoryViewModel model)
+        public async Task<bool> AddNewCategory(string category, MenuCategoryViewModel model, ClaimsPrincipal userClaims)
         {
             var existingCategory = await _menuRepository.GetCategoryByName(category);
 
@@ -22,13 +23,18 @@ public class MenuService : IMenuService
             {
                 throw new Exception("A category with this name already exists.");
             }
+    var      userIdClaim = userClaims.FindFirst("UserId");
+            if (userIdClaim == null)
+            {
+                return false;
+            }
 
+            var userId = int.Parse(userIdClaim.Value);
             var newCategory = new MenuCategory
             {
                 Name = model.Name,
                 Description = model.Description,
-                CreatedBy = 1,
-                CreatedAt = DateTime.Now
+                CreatedBy = userId
             };
 
             return await _menuRepository.AddCategoryAsync(newCategory);
@@ -94,9 +100,15 @@ public class MenuService : IMenuService
             return await _menuRepository.UpdateCategoryBy(category);
         }
 
-        public async Task<bool> AddNewItem(MenuItemViewModel model)
+        public async Task<bool> AddNewItem(MenuItemViewModel model, ClaimsPrincipal userClaims)
         {
-            var menuItem = new MenuItem
+            var userIdClaim = userClaims.FindFirst("UserId");
+            if (userIdClaim == null)
+            {
+                return false;
+            }
+
+            var userId = int.Parse(userIdClaim.Value);            var menuItem = new MenuItem
             {
                 CategoryId = model.CategoryId,
                 Name = model.Name,
@@ -108,8 +120,7 @@ public class MenuService : IMenuService
                 IsDefaultTax = model.IsDefaultTax,
                 ShortCode = model.ShortCode,
                 Description = model.Description,
-                CreatedBy = 1,
-                CreatedAt = DateTime.Now
+                CreatedBy = userId
             };
 
             var isMenuItemAdded = await _menuRepository.AddItemAsync(menuItem);
@@ -125,8 +136,7 @@ public class MenuService : IMenuService
                 {
                     MenuItemId = menuItem.Id,
                     ModifierGroupId = groupId,
-                    CreatedBy = 1,
-                    CreatedAt = DateTime.Now,
+                    CreatedBy = userId
                     // MaxSelectionAllowed = group.MaxSelectionAllowed,
                     // MinSelectionRequired = group.MinSelectionRequired
                 };
@@ -201,8 +211,15 @@ public class MenuService : IMenuService
             };
         }
 
-        public async Task<bool> EditItemAsync(MenuItemViewModel model)
+        public async Task<bool> EditItemAsync(MenuItemViewModel model, ClaimsPrincipal userClaims)
         {
+            var userIdClaim = userClaims.FindFirst("UserId");
+            if (userIdClaim == null)
+            {
+                return false;
+            }
+
+            var userId = int.Parse(userIdClaim.Value);
             var item = await _menuRepository.GetItemDetailsById(model.Id);
 
             item.CategoryId = model.CategoryId;
@@ -234,6 +251,7 @@ public class MenuService : IMenuService
             // Handle added groups
             foreach (var modifierGroupId in model.ModifierGroupIds)
             {
+
                 var existingMapping = await _menuRepository.GetItemModifierMappingAsync(item.Id, modifierGroupId);
                 if (existingMapping == null)
                 {
@@ -241,8 +259,7 @@ public class MenuService : IMenuService
                     {
                         MenuItemId = item.Id,
                         ModifierGroupId = modifierGroupId,
-                        CreatedBy = 1,
-                        CreatedAt = DateTime.Now
+                        CreatedBy = userId
                     };
 
                     await _menuRepository.AddItemModifierAsync(itemModifier);

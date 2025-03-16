@@ -3,6 +3,7 @@ using Entity.ViewModel;
 using Repository.Interface;
 using Service.Interface;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Service.Implementation
@@ -16,8 +17,15 @@ namespace Service.Implementation
         _modifierRepository = modifierRepository;
     }
 
-    public async Task<bool> AddNewModifier(string category, ModifierViewModel model)
+    public async Task<bool> AddNewModifier(string category, ModifierViewModel model,ClaimsPrincipal userClaims)
         {
+            var userIdClaim = userClaims.FindFirst("UserId");
+            if (userIdClaim == null)
+            {
+                return false;
+            }
+
+            var userId = int.Parse(userIdClaim.Value);
             var cat = await _modifierRepository.GetModifierByName(category);
 
             if (cat == null)
@@ -26,8 +34,8 @@ namespace Service.Implementation
                 {
                     Name = model.Name,
                     Description = model.Description,
-                    CreatedBy = 1,
-                    CreatedAt = DateTime.Now
+                    CreatedBy = userId
+                    
                 };
 
                 return await _modifierRepository.AddModifierAsync(cat);

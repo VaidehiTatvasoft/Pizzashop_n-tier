@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Entity.Data;
 using Entity.ViewModel;
 
@@ -9,7 +10,7 @@ namespace Service.Interface
 
     Task<List<Modifier>> GetItemsByModifiers(int modifierId);
 
-    Task<bool> AddNewModifier(string category, ModifierViewModel model);
+    Task<bool> AddNewModifier(string category, ModifierViewModel model,ClaimsPrincipal userClaims);
 
     Task<bool> DeleteModifierById(int id);
 

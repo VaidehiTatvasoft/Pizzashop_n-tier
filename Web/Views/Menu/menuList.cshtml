@@ -1,150 +1,12 @@
 @using Entity.Data
 @model List<MenuCategory>
 
-
-
-<style>
-    * {
-        padding: 0;
-        margin: 0;
-        
-    }
-
-    html,body {
-        background-color: #F2F2F2;
-    }
-
-    .main {
-        background-color: #F2F2F2;
-    }
-
-    .container-fluid {
-        padding: 0;
-    }
-
-    .items {
-        color: #0066A7;
-        margin-right: 10px;
-        margin-left: 10px;
-        gap: 5px;
-    }
-
-    .fa-square-plus {
-        font-size: 30px;
-    }
-
-    .add-user {
-        background-color: #0066A7;
-        color: white;
-        height: 50px;
-        width: 150px;
-        border: none;
-        border-radius: 5%;
-    }
-
-    .search-box {
-        margin-right: 20px;
-    }
-
-    .search-btn {
-        margin-left: -30px;
-    }
-
-    #search {
-        height: 50px;
-        width: 200px;
-        padding: 5px;
-        margin-left: 10px;
-    }
-
-    #tbl {
-        background-color: white;
-    }
-
-    .nav-link {
-        margin-top: 5px;
-    }
-
-    .sidebarr {
-        padding: 10px;
-    }
-
-    .actv {
-        color: #0066A7;
-    }
-
-    .normal {
-        color: black;
-    }
-
-    .nav-link-action {
-        display: none;
-    }
-
-    .nav-item:hover .nav-link-action {
-        display: flex;
-    }
-
-    .form-switch .form-check-input {
-        background-color: #d6d3d3;
-        border: #006098;
-        background-image: url(../Images/toggle-icon.svg) !important;
-    }
-
-    .form-switch .form-check-input:checked {
-        background-color: #006098;
-    }
-
-    .cat-list {
-        overflow-y: scroll;
-    }
-
-    .category-wrapper {
-        position: relative;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 0px 10px 0px;
-    }
-
-    .category-link {
-        flex-grow: 1;
-        text-decoration: none;
-        color: inherit;
-    }
-
-    .nav-link-action {
-        display: none;
-    }
-
-    .category-wrapper:hover .nav-link-action {
-        display: flex;
-        gap: 10px;
-    }
-
-    .category-wrapper i {
-        cursor: pointer;
-    }
-</style>
-
-<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
 <div class="container-fluid p-2">
     <div class="menu">
         <h2 style="color: #0066A7;">Menu</h2>
         <div>
-            <div class="mini-navbar d-flex align-items-start" style="height: 50px; width: 100%; gap: 10px; background-color: #FFFFFF; margin-bottom: 8px;">
-                <a asp-controller="Menu" asp-action="MenuList" class="d-flex align-items-center justify-content-center"
-                    style="width: 80px; height: 40px; align-self: center; gap: 5px; border-bottom: 1px solid #0066A7; text-decoration: none; color: inherit;">
-                    <i class="fa-solid fa-list-ul"></i> Items
-                </a>
-                <a asp-controller="Modifier" asp-action="ModifiersList"
-                    class="d-flex align-items-center justify-content-center"
-                    style="width: 80px; height: 40px; align-self: center; gap: 5px; border-bottom: 1px solid #0066A7; text-decoration: none; color: inherit;">
-                    <i class="fa-solid fa-sliders"></i> Modifiers
-                </a>
+<div class="mb-4 justify-content-center align-items-center flex-wrap">
+                        @Html.Partial("_MenuTabs")
             </div>
             <div class="main-content row" style="margin-left: 0; margin-right: 0;">
                 <div class="sidebarr col-lg-2 text-dark"
@@ -158,7 +20,6 @@
                             aria-labelledby="addCategoryModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered" role="document">
                                 <div class="modal-content">
-                                    <!-- Content will be loaded here via AJAX -->
                                 </div>
                             </div>
                         </div>
@@ -176,12 +37,12 @@
                                 <div class="nav-link-action">
                                     <a href="javascript:void(0);" data-id="@category.Id" class="edit-btn edit-category"
                                         style="text-decoration: none; color: inherit;">
-                                        <i class="fa-solid fa-pencil m-1" data-bs-toggle="modal"
+                                        <i class="bi bi-pen m-1" data-bs-toggle="modal"
                                             data-bs-target="#editCategoryModal"></i>
                                     </a>
                                     <a href="javascript:void(0)" onclick="confirmDelete(@category.Id)"
                                         style="text-decoration: none; color: inherit;" class="dlt-btn">
-                                        <i class="fa-solid fa-trash m-1"></i>
+                                        <i class="bi bi-trash m-1"></i>
                                     </a>
                                 </div>
                                 <form id="deleteform-@category.Id" method="post"
@@ -196,7 +57,6 @@
                         aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
-                                <!-- Content will be loaded here via AJAX -->
                             </div>
                         </div>
                     </div>
@@ -206,7 +66,7 @@
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="deleteModalLabel">Deletion Confirmation</h5>
+                                    <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
@@ -247,8 +107,7 @@
                     </div>
 
                     <div id="item-list">
-                        @await Html.PartialAsync("~/Views/Menu/_MenuItemsPartial.cshtml", ViewBag.MenuItems as
-                        List<MenuItem>)
+                        @await Html.PartialAsync("_MenuItemsPartial", ViewBag.MenuItems as List<MenuItem>)
                     </div>
                 </div>
             </div>

@@ -20,7 +20,7 @@ namespace Web.Controllers
             _modifierService = modifierService;
         }
 
-        [HttpGet("menulist/{categoryId?}")]
+        [HttpGet]
         public async Task<IActionResult> MenuList(int? categoryId)
         {
             var categories = await _menuService.GetAllCategories();
@@ -36,20 +36,20 @@ namespace Web.Controllers
             return View(categories);
         }
 
-        [HttpGet("addcategory")]
+        [HttpGet]
         public IActionResult AddCategory()
         {
             return PartialView("_AddCategoryPartial", new MenuCategoryViewModel());
         }
 
-        [HttpPost("addcategory")]
+        [HttpPost]
         public async Task<IActionResult> AddCategory(MenuCategoryViewModel model)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var category = await _menuService.AddNewCategory(model.Name, model);
+                    var category = await _menuService.AddNewCategory(model.Name, model,User);
 
                     if (category)
                     {
@@ -70,7 +70,7 @@ namespace Web.Controllers
             return Json(new { success = false, message = "Invalid data.", errors = errors });
         }
 
-        [HttpGet("editcategory/{id}")]
+        [HttpGet]
         public async Task<IActionResult> EditCategory(int id)
         {
             var category = await _menuService.GetCategoryDetailById(id);
@@ -82,7 +82,7 @@ namespace Web.Controllers
             return PartialView("_EditCategoryPartial", category);
         }
 
-        [HttpPost("editcategory")]
+        [HttpPost]
         public async Task<IActionResult> EditCategory(MenuCategoryViewModel model)
         {
             if (ModelState.IsValid)
@@ -110,7 +110,7 @@ namespace Web.Controllers
             return Json(new { success = false, message = "Invalid data.", errors = errors });
         }
 
-        [HttpPost("deletecategory/{id}")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCategory(int id)
         {
@@ -128,7 +128,7 @@ namespace Web.Controllers
             }
         }
 
-        [HttpGet("additem")]
+        [HttpGet]
         public async Task<IActionResult> AddItem()
         {
             ViewBag.Categories = new SelectList(await _menuService.GetAllCategories(), "Id", "Name");
@@ -137,7 +137,7 @@ namespace Web.Controllers
             return PartialView("_AddItemPartial");
         }
 
-        [HttpPost("additem")]
+        [HttpPost]
         public async Task<IActionResult> AddItem(MenuItemViewModel model)
         {
             if (!ModelState.IsValid)
@@ -154,11 +154,11 @@ namespace Web.Controllers
                 return PartialView("_AddItemPartial", model);
             }
 
-            await _menuService.AddNewItem(model);
+            await _menuService.AddNewItem(model,User);
             return RedirectToAction("MenuList");
         }
 
-        [HttpGet("edititem/{id}")]
+        [HttpGet]
         public async Task<IActionResult> EditItem(int id)
         {
             var item = await _menuService.GetItemDetailsById(id);
@@ -175,19 +175,19 @@ namespace Web.Controllers
             return PartialView("_EditItemPartial", item);
         }
 
-        [HttpGet("selectedmodifiers/{groupId}")]
+        [HttpGet]
         public async Task<IActionResult> SelectedModifiers(int groupId)
         {
             var modifiers = await _menuService.GetMofiersById(groupId);
             return PartialView("_ModifierGroupsPartial", modifiers);
         }
 
-        [HttpPost("edititem/{id}")]
+        [HttpPost]
         public async Task<IActionResult> EditItem(MenuItemViewModel menuItemViewModel)
         {
             if (ModelState.IsValid)
             {
-                var result = await _menuService.EditItemAsync(menuItemViewModel);
+                var result = await _menuService.EditItemAsync(menuItemViewModel,User);
 
                 if (result)
                 {
@@ -207,7 +207,7 @@ namespace Web.Controllers
             return PartialView("_EditItemPartial", menuItemViewModel);
         }
 
-        [HttpPost("deleteitem/{id}")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteItem(int id)
         {

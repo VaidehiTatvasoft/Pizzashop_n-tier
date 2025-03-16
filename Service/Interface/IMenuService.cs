@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Entity.Data;
 using Entity.ViewModel;
 
@@ -9,7 +10,7 @@ public interface IMenuService
 
     Task<List<MenuItem>> GetItemsByCategory(int categoryId);
 
-    Task<bool> AddNewCategory(string category, MenuCategoryViewModel model);
+    Task<bool> AddNewCategory(string category, MenuCategoryViewModel model,ClaimsPrincipal userClaims);
 
     Task<bool> DeleteCategoryById(int id);
 
@@ -17,11 +18,11 @@ public interface IMenuService
 
     Task<bool> EditCategory(MenuCategoryViewModel model, int id);
 
-    Task<bool> AddNewItem(MenuItemViewModel model);
+    Task<bool> AddNewItem(MenuItemViewModel model,ClaimsPrincipal userClaims);
 
     Task<MenuItemViewModel> GetItemDetailsById(int id);
 
-    Task<bool> EditItemAsync(MenuItemViewModel menuItemViewModel);
+    Task<bool> EditItemAsync(MenuItemViewModel menuItemViewModel,ClaimsPrincipal userClaims);
 
     Task<IEnumerable<ModifierGroupViewModel>> GetMofiersById(int groupId);
 

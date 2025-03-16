@@ -35,7 +35,7 @@ public class ModifierController: Controller
         {
             if (ModelState.IsValid)
             {
-                var category = await _modifierService.AddNewModifier(model.Name, model);
+                var category = await _modifierService.AddNewModifier(model.Name, model,User);
 
                 if (category)
                 {
@@ -50,7 +50,7 @@ public class ModifierController: Controller
 
             var modifiers = await _modifierService.GetAllModifiers();
             ViewBag.ModifierItems = await _modifierService.GetItemsByModifiers(model.Id);
-            return View("ModifiersList", modifiers);
+            return View("~/Views/Menu/ModifiersList.cshtml", modifiers); 
         }
 
         [HttpGet]

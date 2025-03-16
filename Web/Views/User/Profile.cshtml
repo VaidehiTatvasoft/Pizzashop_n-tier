@@ -128,57 +128,44 @@
         crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
       <script> $(document).ready(function () {
-            $("#CountryId").change(function () {
-                var countryId = $(this).val();
-                console.log("Selected Country ID:", countryId);
+        $("#CountryId").change(function () {
+            var countryId = $(this).val();
+            if (countryId) {
+                $.ajax({
+                    url: '/User/GetStates',
+                    type: 'GET',
+                    data: { countryId: countryId },
+                    dataType: 'json',
+                    success: function (states) {
+                        var stateDropdown = $("#StateId");
+                        stateDropdown.empty().append('<option value="">Select State</option>');
+                        $.each(states, function (index, state) {
+                            stateDropdown.append('<option value="' + state.id + '">' + state.name + '</option>');
+                        });
+                        $("#CityId").empty().append('<option value="">Select City</option>');
+                    }
+                });
+            }
+        });
 
-                if (countryId) {
-                    $.ajax({
-                        url: '/User/GetStates',
-                        type: 'GET',
-                        data: { countryId: countryId },
-                        dataType: 'json',
-                        success: function (states) {
-                            console.log("Fetched States:", states);
-                            var stateDropdown = $("#StateId");
-                            stateDropdown.empty().append('<option value="">Select State</option>');
-                            $.each(states, function (index, state) {
-                                stateDropdown.append('<option value="' + state.id + '">' + state.name + '</option>');
-                            });
-
-                            $("#CityId").empty().append('<option value="">Select City</option>');
-                        },
-                        error: function (xhr, status, error) {
-                            console.error("Error fetching states:", xhr.responseText);
-                        }
-                    });
-                }
-            });
-
-            $("#StateId").change(function () {
-                var stateId = $(this).val();
-                console.log("Selected State ID:", stateId);
-
-                if (stateId) {
-                    $.ajax({
-                        url: '/User/GetCities',
-                        type: 'GET',
-                        data: { stateId: stateId },
-                        dataType: 'json',
-                        success: function (cities) {
-                            console.log("Fetched Cities:", cities);
-                            var cityDropdown = $("#CityId");
-                            cityDropdown.empty().append('<option value="">Select City</option>');
-                            $.each(cities, function (index, city) {
-                                cityDropdown.append('<option value="' + city.id + '">' + city.name + '</option>');
-                            });
-                        },
-                        error: function (xhr, status, error) {
-                            console.error("Error fetching cities:", xhr.responseText);
-                        }
-                    });
-                }
-            });
+        $("#StateId").change(function () {
+            var stateId = $(this).val();
+            if (stateId) {
+                $.ajax({
+                    url: '/User/GetCities',
+                    type: 'GET',
+                    data: { stateId: stateId },
+                    dataType: 'json',
+                    success: function (cities) {
+                        var cityDropdown = $("#CityId");
+                        cityDropdown.empty().append('<option value="">Select City</option>');
+                        $.each(cities, function (index, city) {
+                            cityDropdown.append('<option value="' + city.id + '">' + city.name + '</option>');
+                        });
+                    }
+                });
+            }
+        });
 
             $('#profileForm').submit(function (e) {
                 if (!$(this).valid()) {
