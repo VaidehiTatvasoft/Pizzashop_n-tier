@@ -3,20 +3,17 @@
 
 <div class="container-fluid">
     <div class="upper-div d-flex justify-content-end">
-        <div class="d-flex">
+        <div class="d-flex justify-content-center align-items-center">
             <div class="search-box" style="margin-right: 13px;">
-                <input type="text" name="search" id="searchInput" placeholder="Search"
-                    style="height: 50px; width: 250px; border: 1px solid #adadad; border-radius: 5%;">
+                <input type="text" name="search" id="searchInput" placeholder="Search">
                 <i class="fa-solid fa-magnifying-glass search-btn"></i>
             </div>
-            <button id="deleteSelectedButton" style="width: 50px; border: 1px solid #adadad; margin-right: 10px;"
-                disabled>
-                <i class="fa-solid fa-trash" style="cursor: pointer; color: #adadad;"></i>
+            <button id="deleteSelectedButton">
+                <i class="bi bi-trash m-1 massdelete" style="cursor: pointer; color: #adadad;"></i>
             </button>
             <a href="javascript:void(0);" class="edit-btn add-item" style="text-decoration: none; color: inherit;">
-                <button data-bs-toggle="modal" data-bs-target="#addModal" class="add-user-btn"
-                    style="border: 1px solid #adadad; border-radius: 5%; background-color: #0066A7; color: white;">
-                    <span class="span1">+ Add Item</span>
+                <button data-bs-toggle="modal" data-bs-target="#addModal" class="btn btn-primary" style="border-radius: 5px;  margin:5px;">
+                    + New Item
                 </button>
             </a>
         </div>

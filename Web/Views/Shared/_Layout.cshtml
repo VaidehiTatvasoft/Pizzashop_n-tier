@@ -60,8 +60,8 @@
                             </div>
                             <div class="d-flex align-items-center justify-content-end flex-grow-1">
                                 <a class="navbar-brand" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img src="@Url.Content("~/assets/Default_pfp.svg.png")" width="30" height="30"
-                                        alt="">
+                                    <img  id="profileImage" src="@Url.Content("~/assets/Default_pfp.svg.png")" width="40" height="40"
+                                        alt="" style="border-radius: 50%;">
                                 </a>
                                 <ul class="dropdown-menu justify-content-end">
                                     <li class="drop"><img id="profileImageDropdown"
@@ -199,17 +199,23 @@
         });
     </script>
     <script>
-        $(document).ready(function () {
+    $(document).ready(function () {
         $.ajax({
             url: '/User/GetProfileImage',
             type: 'GET',
             success: function (data) {
-                $('#profileImage').attr('src', '~/uploads/' + data.profileImgPath);
-                $('#profileImageDropdown').attr('src', '~/uploads/' + data.profileImgPath);
+                const profileImgPath = data.profileImgPath;
+                if (profileImgPath) {
+                    $('#profileImage').attr('src', '/uploads/' + profileImgPath);
+                    $('#profileImageDropdown').attr('src', '/uploads/' + profileImgPath);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error fetching profile image:', status, error);
             }
         });
     });
-    </script>
+</script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 

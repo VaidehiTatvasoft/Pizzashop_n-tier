@@ -209,6 +209,13 @@ body {
 .profile-email {
   margin: 15px;
 }
+.search-btn{
+  color:grey;
+  align-items: center;
+  margin-top:18px;
+  margin-left: -32px;
+  cursor: pointer;
+}
 .eye-icon{
   color:grey;
   align-items: center;
@@ -561,4 +568,21 @@ a i {
   .content {
     padding: 10px;
   }
+}
+#deleteSelectedButton{
+  width: 40px;
+  height:40px;
+  margin:5px;
+  background-color: white; 
+  border: 1px solid #bbbbbb;
+  border-radius: 5px;
+}
+
+#searchInput{
+    height: 43px;
+   width: 200px; 
+   border: 1px solid #adadad; 
+   border-radius: 5px;
+   margin:5px;
+
 }
