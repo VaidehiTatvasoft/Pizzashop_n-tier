@@ -45,6 +45,6 @@ public class MenuItemViewModel
     public List<ModifierGroupViewModel> ModifierGroups { get; set; } = new List<ModifierGroupViewModel>();
 
     public string? RemovedGroups { get; set; }
-        public string Image { get; set; } 
+    public string? Image { get; set; }
 
 }

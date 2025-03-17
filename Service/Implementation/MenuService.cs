@@ -194,7 +194,7 @@ public class MenuService : IMenuService
             Id = item.Id,
             CategoryId = item.CategoryId,
             Name = item.Name,
-            Type = item.Type,
+            Type = item.Type ,
             Rate = item.Rate,
             Quantity = item.Quantity,
             IsAvailable = item.IsAvailable,

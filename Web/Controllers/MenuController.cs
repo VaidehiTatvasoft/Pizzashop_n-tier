@@ -154,7 +154,7 @@ public async Task<IActionResult> AddCategory(MenuCategoryViewModel model)
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddItem(MenuItemViewModel model, IFormFile file)
+        public async Task<IActionResult> AddItem(MenuItemViewModel model, IFormFile? Image)
         {
             if (!ModelState.IsValid)
             {
@@ -165,25 +165,26 @@ public async Task<IActionResult> AddCategory(MenuCategoryViewModel model)
             }
 
             try
+    {
+        if (Image != null && Image.Length > 0)
+        {
+            var fileName = Path.GetFileName(Image.FileName);
+            var filePath = Path.Combine("wwwroot/uploads", fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                if (file != null && file.Length > 0)
-                {
-                    var filePath = Path.Combine("wwwroot/uploads", file.FileName);
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await file.CopyToAsync(stream);
-                    }
-                    model.Image = filePath;
-                }
+                await Image.CopyToAsync(stream);
+            }
+            model.Image = fileName;
+        }
 
-                await _menuService.AddNewItem(model, User);
-                return Json(new { success = true, redirectUrl = Url.Action("MenuList") });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error adding item");
-                return Json(new { success = false, message = ex.Message });
-            }
+        await _menuService.AddNewItem(model, User);
+        return Json(new { success = true, redirectUrl = Url.Action("MenuList") });
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error adding item");
+        return Json(new { success = false, message = ex.Message });
+    }
         }
 
         // Edit Item

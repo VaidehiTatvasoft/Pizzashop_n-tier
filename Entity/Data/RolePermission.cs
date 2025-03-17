@@ -17,7 +17,7 @@ public partial class RolePermission
 
     public bool CanDelete { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
     public int CreatedBy { get; set; }
 

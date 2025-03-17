@@ -13,7 +13,7 @@ public partial class Customer
 
     public long Phone { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
     public int CreatedBy { get; set; }
 

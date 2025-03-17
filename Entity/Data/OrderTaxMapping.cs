@@ -15,7 +15,7 @@ public partial class OrderTaxMapping
 
     public bool? IsDeleted { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
     public int CreatedBy { get; set; }
 

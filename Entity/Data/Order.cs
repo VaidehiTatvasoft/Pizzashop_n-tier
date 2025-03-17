@@ -27,7 +27,7 @@ public partial class Order
 
     public bool? IsSgstSelected { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
     public int CreatedBy { get; set; }
 

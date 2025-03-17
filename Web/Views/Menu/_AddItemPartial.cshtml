@@ -19,7 +19,8 @@
                 <div class="col-xl-12">
                     <div class="row g-2">
                         <div class="form-floating col-lg-6 col-12">
-                            <select id="Category" name="CategoryId" class="form-control" asp-items="ViewBag.Categories" asp-for="CategoryId">
+                            <select id="Category" name="CategoryId" class="form-control" asp-items="ViewBag.Categories"
+                                asp-for="CategoryId">
                                 <option value="" hidden>Select a Category</option>
                             </select>
                             <label for="Category" class="float">Category*</label>
@@ -54,7 +55,8 @@
                             <span asp-validation-for="Quantity" class="text-danger"></span>
                         </div>
                         <div class="form-floating col-xl-3 col-lg-6 col-12">
-                            <select id="UnitId" name="UnitId" class="form-control" asp-items="ViewBag.Units" asp-for="UnitId">
+                            <select id="UnitId" name="UnitId" class="form-control" asp-items="ViewBag.Units"
+                                asp-for="UnitId">
                                 <option value="" hidden>Select a Unit</option>
                             </select>
                             <label for="UnitId" class="float">Unit*</label>
@@ -78,7 +80,8 @@
                             </div>
                         </div>
                         <div class="form-floating col-xl-3 col-lg-6 col-12">
-                            <input type="number" step="0.01" class="form-control" id="TaxPercentage" asp-for="TaxPercentage">
+                            <input type="number" step="0.01" class="form-control" id="TaxPercentage"
+                                asp-for="TaxPercentage">
                             <label for="TaxPercentage" class="float">Tax Percentage</label>
                             <span asp-validation-for="TaxPercentage" class="text-danger"></span>
                         </div>
@@ -103,8 +106,10 @@
                 <div class="col-12 mt-3">
                     <h6 class="text-start">Upload Image</h6>
                     <div class="rounded mb-3 upload-container" style="border: 1px solid #dee2e6; padding: 1rem;">
-                        <input type="file" id="file-item-add" name="file" class="border-0" hidden>
-                        <label for="file-item-add" id="file-item-add-label" class="h-100 w-100 text-center d-flex justify-content-center align-items-center" style="cursor: pointer;">
+                        <input type="file" id="Image-item-add" name="Image" class="border-0" hidden>
+                        <label for="Image-item-add" id="Image-item-add-label"
+                            class="h-100 w-100 text-center d-flex justify-content-center align-items-center"
+                            style="cursor: pointer;">
                             <span class="icon-upload" style="color: #333; font-size: 1.25rem;">
                                 <i class="fa-solid fa-cloud-arrow-up" style="margin-right: 0.5rem;"></i>
                                 Browse files
@@ -117,7 +122,8 @@
 
             <div class="col-xl-3">
                 <div class="bg-light rounded p-3">
-                    <select data-placeholder="Select Modifier Groups(s)" id="ModifierGroups" name="ModifierGroupIds" class="chosen-select form-control" asp-items="ViewBag.ModifierGroups" multiple>
+                    <select data-placeholder="Select Modifier Groups(s)" id="ModifierGroups" name="ModifierGroupIds"
+                        class="chosen-select form-control" asp-items="ViewBag.ModifierGroups" multiple>
                     </select>
                     <span asp-validation-for="ModifierGroupIds" class="text-danger"></span>
                     <div class="modifier-items"></div>
@@ -126,7 +132,8 @@
         </div>
         <div class="modal-footer mt-3">
             <button type="submit" class="btn btn-primary" style="height: 40px; width: 80px;">Save</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="height: 40px; width: 80px;">Cancel</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                style="height: 40px; width: 80px;">Cancel</button>
         </div>
     </form>
 </div>

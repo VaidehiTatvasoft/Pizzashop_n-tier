@@ -19,7 +19,7 @@ public partial class OrderedItemModifierMapping
 
     public bool? IsDeleted { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
     public int CreatedBy { get; set; }
 

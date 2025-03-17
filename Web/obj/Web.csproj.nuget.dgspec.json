@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\Web.csproj": {}
+    "d:\\Project_pce54\\Pizzashop_n-tier\\Web\\Web.csproj": {}
   },
   "projects": {
-    "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj": {
+    "d:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj",
+        "projectUniqueName": "d:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj",
         "projectName": "Entity",
-        "projectPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj",
+        "projectPath": "d:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj",
         "packagesPath": "C:\\Users\\pce54\\.nuget\\packages\\",
-        "outputPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\obj\\",
+        "outputPath": "d:\\Project_pce54\\Pizzashop_n-tier\\Entity\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\pce54\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -125,8 +125,8 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj": {
-                "projectPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj"
+              "d:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj": {
+                "projectPath": "d:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj"
               }
             }
           }
@@ -182,8 +182,8 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj": {
-                "projectPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj"
+              "d:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj": {
+                "projectPath": "d:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj"
               },
               "D:\\Project_pce54\\Pizzashop_n-tier\\Repository\\Repository.csproj": {
                 "projectPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Repository\\Repository.csproj"
@@ -220,14 +220,14 @@
         }
       }
     },
-    "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\Web.csproj": {
+    "d:\\Project_pce54\\Pizzashop_n-tier\\Web\\Web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\Web.csproj",
+        "projectUniqueName": "d:\\Project_pce54\\Pizzashop_n-tier\\Web\\Web.csproj",
         "projectName": "Web",
-        "projectPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\Web.csproj",
+        "projectPath": "d:\\Project_pce54\\Pizzashop_n-tier\\Web\\Web.csproj",
         "packagesPath": "C:\\Users\\pce54\\.nuget\\packages\\",
-        "outputPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\obj\\",
+        "outputPath": "d:\\Project_pce54\\Pizzashop_n-tier\\Web\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\pce54\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -242,8 +242,8 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj": {
-                "projectPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj"
+              "d:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj": {
+                "projectPath": "d:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj"
               },
               "D:\\Project_pce54\\Pizzashop_n-tier\\Service\\Service.csproj": {
                 "projectPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Service\\Service.csproj"

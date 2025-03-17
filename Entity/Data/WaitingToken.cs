@@ -19,7 +19,7 @@ public partial class WaitingToken
 
     public bool? IsAssigned { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
     public int CreatedBy { get; set; }
 

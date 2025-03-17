@@ -33,7 +33,7 @@ public partial class OrderedItem
 
     public int? ReadyItemQuantity { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
     public int CreatedBy { get; set; }
 

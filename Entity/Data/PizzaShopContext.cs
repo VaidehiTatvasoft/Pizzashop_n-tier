@@ -102,7 +102,9 @@ public partial class PizzaShopContext : DbContext
             entity.ToTable("customers");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
@@ -136,7 +138,9 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.Comments)
                 .HasMaxLength(200)
                 .HasColumnName("comments");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.Food).HasColumnName("food");
             entity.Property(e => e.ModifiedAt).HasColumnName("modified_at");
@@ -166,7 +170,9 @@ public partial class PizzaShopContext : DbContext
             entity.ToTable("invoices");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.ModifiedAt).HasColumnName("modified_at");
             entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
@@ -255,7 +261,9 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.Description)
                 .HasMaxLength(250)
                 .HasColumnName("description");
-            entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
+            entity.Property(e => e.IsDeleted)
+                .HasDefaultValueSql("false")
+                .HasColumnName("is_deleted");
             entity.Property(e => e.ModifiedAt).HasColumnName("modified_at");
             entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
             entity.Property(e => e.Name)
@@ -288,7 +296,6 @@ public partial class PizzaShopContext : DbContext
                 .HasColumnName("description");
             entity.Property(e => e.Image).HasColumnName("image");
             entity.Property(e => e.IsAvailable)
-                .IsRequired()
                 .HasDefaultValueSql("true")
                 .HasColumnName("is_available");
             entity.Property(e => e.IsDefaultTax)
@@ -371,6 +378,7 @@ public partial class PizzaShopContext : DbContext
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.ModifierCreatedByNavigations)
                 .HasForeignKey(d => d.CreatedBy)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("created_by");
 
             entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.ModifierModifiedByNavigations)
@@ -402,7 +410,9 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.Description)
                 .HasMaxLength(250)
                 .HasColumnName("description");
-            entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
+            entity.Property(e => e.IsDeleted)
+                .HasDefaultValueSql("false")
+                .HasColumnName("is_deleted");
             entity.Property(e => e.ModifiedAt).HasColumnName("modified_at");
             entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
             entity.Property(e => e.Name)
@@ -411,6 +421,7 @@ public partial class PizzaShopContext : DbContext
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.ModifierGroupCreatedByNavigations)
                 .HasForeignKey(d => d.CreatedBy)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("created_by");
 
             entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.ModifierGroupModifiedByNavigations)
@@ -425,7 +436,9 @@ public partial class PizzaShopContext : DbContext
             entity.ToTable("orders");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CustomerId).HasColumnName("customer_id");
             entity.Property(e => e.Discount)
@@ -474,7 +487,9 @@ public partial class PizzaShopContext : DbContext
             entity.ToTable("order_tax_mapping");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.IsDeleted)
                 .HasDefaultValueSql("false")
@@ -515,7 +530,9 @@ public partial class PizzaShopContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Amount).HasColumnName("amount");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.Instruction).HasColumnName("instruction");
             entity.Property(e => e.IsDeleted)
@@ -563,7 +580,9 @@ public partial class PizzaShopContext : DbContext
             entity.ToTable("ordered_item_modifier_mapping");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.IsDeleted)
                 .HasDefaultValueSql("false")
@@ -607,8 +626,12 @@ public partial class PizzaShopContext : DbContext
             entity.ToTable("payments");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Amount).HasColumnName("amount");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.Amount)
+                .HasPrecision(18, 2)
+                .HasColumnName("amount");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.InvoiceId).HasColumnName("invoice_id");
             entity.Property(e => e.ModifiedAt).HasColumnName("modified_at");
@@ -716,7 +739,9 @@ public partial class PizzaShopContext : DbContext
             entity.ToTable("sections");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.Description)
                 .HasMaxLength(250)
@@ -766,7 +791,9 @@ public partial class PizzaShopContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Capacity).HasColumnName("capacity");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.IsAvailable)
                 .HasDefaultValueSql("true")
@@ -803,7 +830,9 @@ public partial class PizzaShopContext : DbContext
             entity.ToTable("table_order_mapping");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.IsDeleted)
                 .HasDefaultValueSql("false")
@@ -841,7 +870,9 @@ public partial class PizzaShopContext : DbContext
             entity.ToTable("taxes_and_fees");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.FlatAmount)
                 .HasPrecision(18, 2)
@@ -983,7 +1014,9 @@ public partial class PizzaShopContext : DbContext
             entity.ToTable("waiting_tokens");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.CustomerId).HasColumnName("customer_id");
             entity.Property(e => e.IsAssigned)
