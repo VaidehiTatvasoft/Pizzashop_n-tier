@@ -61,11 +61,11 @@
                 </div>
                 <span class="text-danger fs-6 ms-2" asp-validation-for="Email" class="text-danger"></span>
             </div>
-            <div class="col-md-6">
-                <div class="form-floating">
-                    <input asp-for="PasswordHash" type="password" class="form-control ps-4" id="password"
+             <div class="col-md-6">
+                <div class="form-floating position-relative">
+                    <input asp-for="PasswordHash" type="password" class="form-control ps-4" id="PasswordHash"
                         placeholder="Password*">
-                    <i class="fa fa-eye eye-icon" onclick="togglePassword()"></i>
+                    <i class="fa fa-eye eye-icon2" onclick="togglePasswordVisibility(this, 'PasswordHash')"></i>
                     <label for="PasswordHash">Password</label>
                     <span class="text-danger fs-6 ms-2" asp-validation-for="PasswordHash" class="text-danger"></span>
                 </div>
@@ -146,7 +146,15 @@
                     });
                 });
             });
+            var successMessage = '@TempData["SuccessMessage"]';
+            var errorMessage = '@TempData["ErrorMessage"]';
 
+            if (successMessage) {
+                toastr.success(successMessage);
+            }
+            if (errorMessage) {
+                toastr.error(errorMessage);
+            }
             $("#StateId").change(function () {
                 $.getJSON('/User/GetCities', { stateId: $(this).val() }, function (data) {
                     var cityDropdown = $("#CityId");
@@ -188,5 +196,6 @@
                 toggleEye.classList.add("fa-eye");
             }
         }
+        
     </script>
 }

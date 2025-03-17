@@ -5,23 +5,25 @@
     <div class="upper-div d-flex justify-content-end">
         <div class="d-flex">
             <div class="search-box" style="margin-right: 13px;">
-                <input type="text" name="search" id="searchInput" placeholder="Search" style="height: 50px; width: 250px; border: 1px solid #adadad; border-radius: 5%;">
+                <input type="text" name="search" id="searchInput" placeholder="Search"
+                    style="height: 50px; width: 250px; border: 1px solid #adadad; border-radius: 5%;">
                 <i class="fa-solid fa-magnifying-glass search-btn"></i>
             </div>
-            <button id="deleteSelectedButton" style="width: 50px; border: 1px solid #adadad; margin-right: 10px;" disabled>
+            <button id="deleteSelectedButton" style="width: 50px; border: 1px solid #adadad; margin-right: 10px;"
+                disabled>
                 <i class="fa-solid fa-trash" style="cursor: pointer; color: #adadad;"></i>
             </button>
             <a href="javascript:void(0);" class="edit-btn add-item" style="text-decoration: none; color: inherit;">
-                <button data-bs-toggle="modal" data-bs-target="#addModal" class="add-user-btn" style="border: 1px solid #adadad; border-radius: 5%; background-color: #0066A7; color: white;">
-                    <span class="span1">Add Item</span>
-                    <span class="span2">+</span>
+                <button data-bs-toggle="modal" data-bs-target="#addModal" class="add-user-btn"
+                    style="border: 1px solid #adadad; border-radius: 5%; background-color: #0066A7; color: white;">
+                    <span class="span1">+ Add Item</span>
                 </button>
             </a>
         </div>
     </div>
 
     <!-- Add Item Modal -->
-    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="undefined">
         <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
             <div class="modal-content">
                 <!-- Content will be loaded here via AJAX -->
@@ -48,7 +50,7 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td class="d-flex align-items-center" style="gap: 10px;">
+                        <td style="gap: 10px;">
                             <input type="checkbox" class="item-checkbox" data-item-id="@item.Id">
                             <img src="@Url.Content("~/assets/dining-menu.png")" style="height: 25px;">
                             @item.Name
@@ -67,17 +69,22 @@
                         <td>@item.Quantity</td>
                         <td>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" @(item.IsAvailable == true ? "checked" : "")>
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked"
+                                    @(item.IsAvailable == true ? "checked" : "")>
                             </div>
                         </td>
                         <td>
-                            <a href="javascript:void(0);" class="edit-item" data-id="@item.Id" data-bs-toggle="modal" data-bs-target="#editItemModal" style="text-decoration: none; color: inherit; opacity: 0.7; cursor: pointer; margin-right: 5px;">
+                            <a href="javascript:void(0);" class="edit-item" data-id="@item.Id" data-bs-toggle="modal"
+                                data-bs-target="#editItemModal"
+                                style="text-decoration: none; color: inherit; opacity: 0.7; cursor: pointer; margin-right: 5px;">
                                 <i class="bi-pen bi-pen"></i>
                             </a>
-                            <a href="javascript:void(0)" onclick="confirmDeleteItem(@item.Id)" style="text-decoration: none; color: inherit;" class="dlt-btn">
+                            <a href="javascript:void(0)" onclick="confirmDeleteItem(@item.Id)"
+                                style="text-decoration: none; color: inherit;" class="dlt-btn">
                                 <i class="bi bi-trash m-1"></i>
                             </a>
-                            <form id="deleteitemform-@item.Id" method="post" action="@Url.Action("DeleteItem", "Menu", new { id = @item.Id })" style="display: none;">
+                            <form id="deleteitemform-@item.Id" method="post"
+                                action="@Url.Action("DeleteItem", "Menu", new { id = @item.Id })" style="display: none;">
                                 @Html.AntiForgeryToken()
                             </form>
                         </td>
@@ -99,15 +106,18 @@
                     Are you sure you want to delete these items?
                 </div>
                 <div class="d-flex justify-content-center align-items-center" style="gap: 10px; margin-bottom: 20px;">
-                    <button type="button" class="btn" id="confirmDeleteItemsButton" style="height: 40px; width: 100px; background-color: #006098; color: white;">Yes</button>
-                    <button type="button" class="btn" data-bs-dismiss="modal" style="height: 40px; width: 100px; background-color: white; border: 1px solid #006098;">No</button>
+                    <button type="button" class="btn" id="confirmDeleteItemsButton"
+                        style="height: 40px; width: 100px; background-color: #006098; color: white;">Yes</button>
+                    <button type="button" class="btn" data-bs-dismiss="modal"
+                        style="height: 40px; width: 100px; background-color: white; border: 1px solid #006098;">No</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Edit Item Modal -->
-    <div class="modal fade" id="editItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editItemModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="undefined">
         <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
             <div class="modal-content">
                 <!-- Content will be loaded here via AJAX -->
@@ -116,157 +126,143 @@
     </div>
 </div>
 
-@section Scripts {
-    <script>
-        function initializeEventListeners() {
-            // Ensure elements exist before adding event listeners
-            var selectAllCheckbox = document.getElementById('selectAllCheckbox');
-            if (selectAllCheckbox) {
-                selectAllCheckbox.addEventListener('change', function () {
-                    const checkboxes = document.querySelectorAll('.item-checkbox');
-                    checkboxes.forEach(checkbox => {
-                        checkbox.checked = this.checked;
-                    });
-                    toggleDeleteButton();
+
+<script>
+    function initializeEventListeners() {
+        var selectAllCheckbox = document.getElementById('selectAllCheckbox');
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function () {
+                const checkboxes = document.querySelectorAll('.item-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
                 });
-            }
-
-            var deleteSelectedButton = document.getElementById('deleteSelectedButton');
-            if (deleteSelectedButton) {
-                deleteSelectedButton.addEventListener('click', function () {
-                    const selectedItems = Array.from(document.querySelectorAll('.item-checkbox:checked')).map(checkbox => checkbox.dataset.itemId);
-                    if (selectedItems.length > 0) {
-                        const modalElement = document.getElementById('deleteItemModal');
-                        const modal = new bootstrap.Modal(modalElement);
-                        modal.show();
-                    } else {
-                        alert("No items selected for deletion.");
-                    }
-                });
-            }
-
-            var confirmDeleteItemsButton = document.getElementById('confirmDeleteItemsButton');
-            if (confirmDeleteItemsButton) {
-                confirmDeleteItemsButton.addEventListener('click', function () {
-                    const selectedItems = Array.from(document.querySelectorAll('.item-checkbox:checked')).map(checkbox => checkbox.dataset.itemId);
-                    if (selectedItems.length > 0) {
-                        fetch('@Url.Action("DeleteMultipleItems", "Menu")', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-                            },
-                            body: JSON.stringify(selectedItems)
-                        }).then(response => {
-                            if (response.ok) {
-                                return response.json();
-                            } else {
-                                throw new Error('Network response was not ok.');
-                            }
-                        }).then(responseData => {
-                            if (responseData.success) {
-                                location.reload();
-                            } else {
-                                alert("Failed to delete items: " + responseData.message);
-                            }
-                        }).catch(error => {
-                            console.error('Error:', error);
-                            alert("Failed to delete items.");
-                        });
-                    }
-                });
-            }
-
-            function toggleDeleteButton() {
-                var anyChecked = document.querySelectorAll('.item-checkbox:checked').length > 0;
-                document.getElementById('deleteSelectedButton').disabled = !anyChecked;
-            }
-
-            // Search functionality
-            $('#searchInput').on('keyup', function () {
-                var value = $(this).val().toLowerCase();
-                $('#tbl tbody tr').filter(function () {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-                });
-            });
-
-            // Toggle delete button based on checkbox selection
-            $('.item-checkbox').change(function () {
                 toggleDeleteButton();
             });
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            initializeEventListeners();
+        var deleteSelectedButton = document.getElementById('deleteSelectedButton');
+        if (deleteSelectedButton) {
+            deleteSelectedButton.addEventListener('click', function () {
+                const selectedItems = Array.from(document.querySelectorAll('.item-checkbox:checked')).map(checkbox => checkbox.dataset.itemId);
+                if (selectedItems.length > 0) {
+                    const modalElement = document.getElementById('deleteItemModal');
+                    const modal = new bootstrap.Modal(modalElement);
+                    modal.show();
+                } else {
+                    alert("No items selected for deletion.");
+                }
+            });
+        }
 
-            // Ensure the document is ready before running jQuery code
-            $(document).ready(function () {
-                // Load Add Item modal content
-                $(document).on('click', '.add-item', function () {
-                    $.ajax({
-                        type: "GET",
-                        url: "/menu/additem",
-                        dataType: "html",
-                        success: function (data) {
-                            console.log("Add item modal content loaded");
-                            $("#addModal").find('.modal-content').html(data);
-                            $('#addModal').modal('show');
+        var confirmDeleteItemsButton = document.getElementById('confirmDeleteItemsButton');
+        if (confirmDeleteItemsButton) {
+            confirmDeleteItemsButton.addEventListener('click', function () {
+                const selectedItems = Array.from(document.querySelectorAll('.item-checkbox:checked')).map(checkbox => checkbox.dataset.itemId);
+                if (selectedItems.length > 0) {
+                    fetch('@Url.Action("DeleteMultipleItems", "Menu")', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
                         },
-                        error: function (xhr, status, error) {
-                            console.error("Error loading Add Item modal content:", status, error);
-                            alert("Failed to load Add Item modal content.");
+                        body: JSON.stringify(selectedItems)
+                    }).then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error('Network response was not ok.');
                         }
-                    });
-                });
-
-                // Load Edit Item modal content
-                $(document).on('click', '.edit-item', function () {
-                    var id = $(this).data('id');
-                    $.ajax({
-                        type: "GET",
-                        url: "/menu/edititem/" + id,
-                        dataType: "html",
-                        success: function (data) {
-                            console.log("Edit item modal content loaded");
-                            $('#editItemModal .modal-content').html(data);
-                            $('#editItemModal').modal('show');
-                        },
-                        error: function (xhr, status, error) {
-                            console.error("Error loading Edit Item modal content:", status, error);
-                            alert("Failed to load Edit Item modal content.");
+                    }).then(responseData => {
+                        if (responseData.success) {
+                            location.reload();
+                        } else {
+                            alert("Failed to delete items: " + responseData.message);
                         }
+                    }).catch(error => {
+                        console.error('Error:', error);
+                        alert("Failed to delete items.");
                     });
-                });
+                }
+            });
+        }
 
-                // Clear modal content when hidden
-                $('#editItemModal').on('hidden.bs.modal', function () {
-                    $(this).find('.modal-content').html('');
-                });
+        function toggleDeleteButton() {
+            var anyChecked = document.querySelectorAll('.item-checkbox:checked').length > 0;
+            document.getElementById('deleteSelectedButton').disabled = !anyChecked;
+        }
 
-                $('#addModal').on('hidden.bs.modal', function () {
-                    $(this).find('.modal-content').html('');
-                });
+        $('#searchInput').on('keyup', function () {
+            var value = $(this).val().toLowerCase();
+            $('#tbl tbody tr').filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
             });
         });
 
-        function confirmDeleteItem(itemId) {
-            const modalElement = document.getElementById('deleteItemModal');
-            const modal = new bootstrap.Modal(modalElement);
-
-            // Update the ID of the confirm delete button in the function
-            document.getElementById("confirmDeleteItemsButton").onclick = function () {
-                // Submit the form
-                document.getElementById(`deleteitemform-${itemId}`).submit();
-                modal.hide();
-            };
-
-            // Show the modal
-            modal.show();
-        }
-
-        // Reinitialize event listeners after AJAX content load
-        $(document).ajaxComplete(function () {
-            initializeEventListeners();
+        $('.item-checkbox').change(function () {
+            toggleDeleteButton();
         });
-    </script>
-}
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        initializeEventListeners();
+        $(document).ready(function () {
+            $(document).on('click', '.add-item', function () {
+                $.ajax({
+                    type: "GET",
+                    url: "/menu/additem",
+                    dataType: "html",
+                    success: function (data) {
+                        console.log("Add item modal content loaded");
+                        $("#addModal").find('.modal-content').html(data);
+                        $('#addModal').modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error loading Add Item modal content:", status, error);
+                        alert("Failed to load Add Item modal content.");
+                    }
+                });
+            });
+
+            $(document).on('click', '.edit-item', function () {
+                var id = $(this).data('id');
+                $.ajax({
+                    type: "GET",
+                    url: "/menu/edititem/" + id,
+                    dataType: "html",
+                    success: function (data) {
+                        console.log("Edit item modal content loaded");
+                        $('#editItemModal .modal-content').html(data);
+                        $('#editItemModal').modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error loading Edit Item modal content:", status, error);
+                        alert("Failed to load Edit Item modal content.");
+                    }
+                });
+            });
+
+            $('#editItemModal').on('hidden.bs.modal', function () {
+                $(this).find('.modal-content').html('');
+            });
+
+            $('#addModal').on('hidden.bs.modal', function () {
+                $(this).find('.modal-content').html('');
+            });
+        });
+    });
+
+    function confirmDeleteItem(itemId) {
+        const modalElement = document.getElementById('deleteItemModal');
+        const modal = new bootstrap.Modal(modalElement);
+        document.getElementById("confirmDeleteItemsButton").onclick = function () {
+            document.getElementById(`deleteitemform-${itemId}`).submit();
+            modal.hide();
+        };
+
+        modal.show();
+    }
+
+    $(document).ajaxComplete(function () {
+        initializeEventListeners();
+    });
+</script>

@@ -88,7 +88,7 @@ namespace pizzashop.Controllers
                     await _emailService.SendEmailAsync(model.Email, subject, body);
 
                     TempData["SuccessMessage"] = "User added successfully.";
-                    return RedirectToAction("/list");
+                    return RedirectToAction("UserList");
                 }
                 else
                 {

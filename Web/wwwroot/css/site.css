@@ -4,7 +4,10 @@
   justify-content: space-between;
   align-items: center;
 }
-
+.camera-position {
+  margin-left: 50px;
+  margin-top: 40px;
+}
 h2 {
   color: #0066a6;
 }
@@ -212,7 +215,14 @@ body {
   margin-top:18px;
   margin-left: -32px;
   cursor: pointer;
-
+}
+.eye-icon2{
+  color: grey;
+  position: absolute;
+  right: 15px;
+  top: 30%;
+  transform: translateY(-50%);
+  cursor: pointer;
 }
 .user-container {
   position: absolute;

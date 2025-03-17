@@ -176,6 +176,15 @@
                             toastr.error($(this).text());
                         }
                     });
+                     var successMessage = '@TempData["SuccessMessage"]';
+            var errorMessage = '@TempData["ErrorMessage"]';
+
+            if (successMessage) {
+                toastr.success(successMessage);
+            }
+            if (errorMessage) {
+                toastr.error(errorMessage);
+            }
                 }
             });
         });

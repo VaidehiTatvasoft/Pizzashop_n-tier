@@ -207,7 +207,9 @@ public partial class PizzaShopContext : DbContext
             entity.ToTable("mapping_menu_items_with_modifiers");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.IsDeleted)
                 .HasDefaultValueSql("false")
