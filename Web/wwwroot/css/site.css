@@ -100,7 +100,12 @@ txt {
     width: 100%;
   }
 }
+@media (max-width: 492px) {
 
+.part-2{
+  display: none;
+}
+}
 .navbar-toggler {
   display: none;
 }
@@ -584,5 +589,4 @@ a i {
    border: 1px solid #adadad; 
    border-radius: 5px;
    margin:5px;
-
 }

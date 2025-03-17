@@ -8,6 +8,7 @@ using Entity.ViewModel;
 using Entity.Data;
 using Microsoft.EntityFrameworkCore;
 using Pizzashop.Service.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 
 namespace pizzashop.Controllers
 {
@@ -16,12 +17,14 @@ namespace pizzashop.Controllers
         private readonly PizzaShopContext _context;
         private readonly IUserService _userService;
         private readonly IEmailService _emailService;
+        private readonly IAccountService _accountService;
 
-        public UserController(PizzaShopContext context, IUserService userService, IEmailService emailService)
+        public UserController(PizzaShopContext context, IUserService userService, IEmailService emailService,IAccountService accountService)
         {
             _context = context;
             _userService = userService;
             _emailService = emailService;
+            _accountService = accountService;
         }
         [HttpGet]
         public async Task<IActionResult> GetProfileImage()
@@ -223,7 +226,16 @@ namespace pizzashop.Controllers
                     {
                         await ProfileImage.CopyToAsync(stream);
                     }
+
                     model.ProfileImage = fileName;
+                }
+                else
+                {
+                    var existingUser = await _userService.GetUserViewModelByIdAsync(model.Id);
+                    if (existingUser != null)
+                    {
+                        model.ProfileImage = existingUser.ProfileImage;
+                    }
                 }
 
                 var result = await _userService.UpdateProfileAsync(model, User);
@@ -290,7 +302,8 @@ namespace pizzashop.Controllers
                 if (result)
                 {
                     TempData["SuccessMessage"] = "Password changed successfully.";
-                    return RedirectToAction("AdminDashboard", "Home");
+                    _accountService.Logout(HttpContext);
+                    return RedirectToAction("Index", "Accounts");
                 }
                 else
                 {

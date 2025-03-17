@@ -14,10 +14,10 @@
                 <div class="col-md-1 d-flex justify-content-center p-0">
                     <img src="~/uploads/@(Model?.ProfileImage)"
                         class="profile-img profile-photo rounded-circle" alt="profile-img">
-                    <input type="file" asp-for="ProfileImage" name="ProfileImagePath" id="imageInput"
+                    <input type="file" asp-for="ProfileImage" name="ProfileImage" id="ProfileImage"
                         accept="~/uploads/*" style="display: none;">
                     <input type="hidden" asp-for="ProfileImage" name="ProfileImage">
-                    <label id="changeImageButton" for="imageInput"
+                    <label id="changeImageButton" for="ProfileImage"
                         class="position-absolute bg-white camera-position z-3 rounded-circle border z-2 shadow-sm">
                         <i class="fa fa-camera p-2 " aria-hidden="true"></i>
                     </label>

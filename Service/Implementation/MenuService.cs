@@ -232,7 +232,6 @@ public class MenuService : IMenuService
         item.IsDefaultTax = model.IsDefaultTax;
         item.UnitId = model.UnitId;
 
-        // Handle removed groups
         if (!string.IsNullOrEmpty(model.RemovedGroups))
         {
             var removedGroupIds = model.RemovedGroups.Split(',').Where(id => !string.IsNullOrEmpty(id)).Select(int.Parse).ToList();
@@ -246,7 +245,6 @@ public class MenuService : IMenuService
             }
         }
 
-        // Handle added groups
         foreach (var modifierGroupId in model.ModifierGroupIds)
         {
             var existingMapping = await _menuRepository.GetItemModifierMappingAsync(item.Id, modifierGroupId);

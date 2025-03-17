@@ -9,12 +9,13 @@ namespace Entity.ViewModel
         public string Email { get; set; } = null!;
 
         [Required(ErrorMessage = "New Password is required.")]
-        [DataType(DataType.Password)]
-        [StringLength(50, MinimumLength = 6, ErrorMessage = "New Password must be between 6 and 50 characters.")]
+        [DataType(DataType.Password), MinLength(6)]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$",ErrorMessage = "Password must be at least 6 characters long and include uppercase, lowercase, number, and special character.")] 
         public string NewPassword { get; set; } = null!; 
 
         [Required(ErrorMessage = "Confirm Password is required.")]
-        [DataType(DataType.Password)]
+        [DataType(DataType.Password), MinLength(6)]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$",ErrorMessage = "Password must be at least 6 characters long and include uppercase, lowercase, number, and special character.")] 
         [Compare("NewPassword", ErrorMessage = "Passwords do not match.")]
         public string ConfirmPassword { get; set; } = null!;
     }

@@ -157,7 +157,6 @@
 
              $(document).on('click', '.edit-icon', function () {
             var id = $(this).data('id');
-            console.log("Edit category clicked with ID:", id); // Debug log
             $.ajax({
                 type: "GET",
                 url: "/menu/editcategory/" + id,
@@ -166,7 +165,6 @@
                     'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
                 },
                 success: function (data) {
-                    console.log("Category data loaded successfully:", data); // Debug log
                     $("#editCategoryModal").find('.modal-content').html(data);
                     $('#editCategoryModal').modal('show');
                 },

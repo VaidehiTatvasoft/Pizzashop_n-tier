@@ -32,10 +32,9 @@ public class AddUserModel
     public long Phone { get; set; }
 
     public string? ProfileImage { get; set; }
-
-    [Required(ErrorMessage = "Password is required.")]
-    [DataType(DataType.Password)]
-    [StringLength(50, MinimumLength = 6, ErrorMessage = "Password must be between 6 and 50 characters.")]
+    [Required(ErrorMessage = "Password is required")]
+    [DataType(DataType.Password), MinLength(6)]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$",ErrorMessage = "Password must be at least 6 characters long and include uppercase, lowercase, number, and special character.")]
     public string? PasswordHash { get; set; }
 
     [Required(ErrorMessage = "Please Select a Country")]
