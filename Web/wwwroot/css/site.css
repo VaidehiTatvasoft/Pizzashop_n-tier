@@ -210,7 +210,21 @@ body {
   margin-top: -22px;
   object-fit: cover;
 }
-
+@media (max-width: 1025px) {
+  .profile-img {
+    position: static;
+    margin: 0 auto;
+    display: block;
+  }
+  .name {
+    text-align: left;
+    margin-left:20px;
+  }
+  .mail {
+    text-align: center;
+    margin: 10px;
+  }
+}
 .profile-email {
   margin: 15px;
 }
@@ -368,10 +382,6 @@ left:auto;
   border-radius:0px !important;
   line-height: 2.5;
 
-}
-.search-bar {
-  max-width: 500px;
-  margin: auto auto;
 }
 
 .searh {

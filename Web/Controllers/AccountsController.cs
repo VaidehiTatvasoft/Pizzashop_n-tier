@@ -22,7 +22,8 @@ namespace Pizzashop.Web.Controllers
             _tokenService = tokenService;
             _logger = logger;
         }
-        public IActionResult Index()
+        [HttpGet]
+        public IActionResult Login()
         {
             if (HttpContext.Request.Cookies.TryGetValue("AuthToken", out string token))
             {
@@ -54,13 +55,11 @@ namespace Pizzashop.Web.Controllers
             var user = await _accountService.AuthenticateUser(model.Email, model.PasswordHash);
             if (user == null)
             {
-                TempData["ErrorMessage"] = "Invalid email or password.";
-                return View("Index");
+                ModelState.AddModelError("", "Invalid Email or password");
+                return View(model);
             }
             var tokenString = _tokenService.GenerateAuthToken(user, TimeSpan.FromHours(24));
             _accountService.SetCookies(HttpContext, tokenString, model.RememberMe);
-            TempData["Message"] = "Login successful!";
-
             if (user.RoleId == 1)
             {
                 return RedirectToAction("AdminDashboard", "Home");
@@ -89,6 +88,7 @@ namespace Pizzashop.Web.Controllers
             var user = await _accountService.GetUserByEmail(model.Email);
             if (user == null)
             {
+                TempData["ErrorMessage"] = "Email does not exist";
                 ModelState.AddModelError("", "Email not found.");
                 return View(model);
             }
@@ -103,12 +103,12 @@ namespace Pizzashop.Web.Controllers
                     <p style= 'margin:0; padding:10px;'>
                 
                     Pizza Shop, <br><br>
-                    Please click  <a href='{resetLink}'><b>here</b></a> for reset your account password.<br><br>If you encounter any issues or have any questions, please do not hesitate to contact our support team. <br><br><span style='color: #E5CAAB;'>Important Note:</span> For Security reasons, the link will expire in 24 hours. If you did not request a password reset, please ignore this email or contact our support team immediately.</p><br><br></div></div>";
+                    Please click  <a href='{resetLink}'><b style='color: #0066A7;'>here</b></a> for reset your account password.<br><br>If you encounter any issues or have any questions, please do not hesitate to contact our support team. <br><br><span style='color: #E5CAAB;'>Important Note:</span> For Security reasons, the link will expire in 24 hours. If you did not request a password reset, please ignore this email or contact our support team immediately.</p><br><br></div></div>";
 
             await _accountService.SendForgotPasswordEmail(user.Email, body);
 
             TempData["Message"] = "Password reset link has been sent to your email.";
-            return RedirectToAction("Index");
+            return RedirectToAction("Login");
         }
         [Route("/resetpassword")]
         public IActionResult ResetPassword(string token)
@@ -117,14 +117,14 @@ namespace Pizzashop.Web.Controllers
             if (userClaims == null)
             {
                 TempData["ErrorMessage"] = "Invalid or expired token.";
-                return RedirectToAction("Index");
+                return RedirectToAction("Login");
             }
 
             var email = userClaims.FindFirst(ClaimTypes.Email)?.Value;
             if (string.IsNullOrEmpty(email))
             {
                 TempData["ErrorMessage"] = "Invalid token.";
-                return RedirectToAction("Index");
+                return RedirectToAction("Login");
             }
 
             ViewBag.Token = token;
@@ -140,14 +140,14 @@ namespace Pizzashop.Web.Controllers
             if (userClaims == null)
             {
                 TempData["ErrorMessage"] = "Invalid or expired token.";
-                return RedirectToAction("Index");
+                return RedirectToAction("Login");
             }
 
             var email = userClaims.FindFirst(ClaimTypes.Email)?.Value;
             if (string.IsNullOrEmpty(email) || email != model.Email)
             {
                 TempData["ErrorMessage"] = "Invalid token.";
-                return RedirectToAction("Index");
+                return RedirectToAction("Login");
             }
 
             if (!ModelState.IsValid)
@@ -159,14 +159,13 @@ namespace Pizzashop.Web.Controllers
             _tokenService.MarkTokenAsUsed(token);
 
             TempData["Message"] = "Password has been reset. You can now login.";
-            return RedirectToAction("Index");
+            return RedirectToAction("Login");
         }
         [HttpPost]
         public IActionResult Logout()
         {
             _accountService.Logout(HttpContext);
-            TempData["Message"] = "You have been logged out.";
-            return RedirectToAction("Index", "Accounts");
+            return RedirectToAction("Login", "Accounts");
         }
     }
 }

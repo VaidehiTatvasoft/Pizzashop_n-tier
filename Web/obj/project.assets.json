@@ -11547,11 +11547,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "d:\\Project_pce54\\Pizzashop_n-tier\\Web\\Web.csproj",
+      "projectUniqueName": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\Web.csproj",
       "projectName": "Web",
-      "projectPath": "d:\\Project_pce54\\Pizzashop_n-tier\\Web\\Web.csproj",
+      "projectPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\Web.csproj",
       "packagesPath": "C:\\Users\\pce54\\.nuget\\packages\\",
-      "outputPath": "d:\\Project_pce54\\Pizzashop_n-tier\\Web\\obj\\",
+      "outputPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\pce54\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -11566,8 +11566,8 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "d:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj": {
-              "projectPath": "d:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj"
+            "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj": {
+              "projectPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj"
             },
             "D:\\Project_pce54\\Pizzashop_n-tier\\Service\\Service.csproj": {
               "projectPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Service\\Service.csproj"

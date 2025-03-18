@@ -119,6 +119,16 @@
         }
 
         $(document).ready(function () {
+            var successMessage = '@TempData["SuccessMessage"]';
+            var errorMessage = '@TempData["ErrorMessage"]';
+
+            if (successMessage) {
+                toastr.success(successMessage);
+            }
+            if (errorMessage) {
+                toastr.error(errorMessage);
+            }
+        
             $(document).on('click', '.add-category', function () {
                 $.ajax({
                     type: "GET",

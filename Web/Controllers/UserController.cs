@@ -19,7 +19,7 @@ namespace pizzashop.Controllers
         private readonly IEmailService _emailService;
         private readonly IAccountService _accountService;
 
-        public UserController(PizzaShopContext context, IUserService userService, IEmailService emailService,IAccountService accountService)
+        public UserController(PizzaShopContext context, IUserService userService, IEmailService emailService, IAccountService accountService)
         {
             _context = context;
             _userService = userService;
@@ -175,8 +175,7 @@ namespace pizzashop.Controllers
             return RedirectToAction("UserList");
         }
         [Route("/user/list")]
-
-        public IActionResult UserList(string searchString, int pageIndex = 1, int pageSize = 5, string sortOrder = "")
+        public IActionResult UserList(string searchString, int pageIndex = 1, int pageSize = 5, string sortOrder = "", bool isAjax = false)
         {
             var users = _userService.GetUsersList(searchString, sortOrder, pageIndex, pageSize, out int count);
 
@@ -188,15 +187,21 @@ namespace pizzashop.Controllers
             ViewBag.pageSize = pageSize;
             ViewBag.totalPage = (int)Math.Ceiling(count / (double)pageSize);
             ViewBag.searchString = searchString;
+            ViewBag.sortOrder = sortOrder;
 
             if (users == null || !users.Any())
             {
                 ViewBag.ErrorMessage = "User list is empty.";
-                return View();
             }
 
             ViewBag.UserList = users;
-            return View();
+
+            if (isAjax)
+            {
+                return PartialView("UserList", users);
+            }
+
+            return View(users);
         }
 
         [Route("/user/profile")]
@@ -211,47 +216,46 @@ namespace pizzashop.Controllers
             await LoadDropdowns(user);
             return View(user);
         }
-        [Route("/user/profile")]
-        [HttpPost]
-        public async Task<IActionResult> Profile(UserViewModel model, IFormFile? ProfileImage)
+       [Route("/user/profile")]
+[HttpPost]
+public async Task<IActionResult> Profile(UserViewModel model, IFormFile? ProfileImage)
+{
+    if (ModelState.IsValid)
+    {
+        if (ProfileImage != null && ProfileImage.Length > 0)
         {
-            if (ModelState.IsValid)
+            var fileName = Path.GetFileName(ProfileImage.FileName);
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                if (ProfileImage != null && ProfileImage.Length > 0)
-                {
-                    var fileName = Path.GetFileName(ProfileImage.FileName);
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
-
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await ProfileImage.CopyToAsync(stream);
-                    }
-
-                    model.ProfileImage = fileName;
-                }
-                else
-                {
-                    var existingUser = await _userService.GetUserViewModelByIdAsync(model.Id);
-                    if (existingUser != null)
-                    {
-                        model.ProfileImage = existingUser.ProfileImage;
-                    }
-                }
-
-                var result = await _userService.UpdateProfileAsync(model, User);
-                if (result)
-                {
-                    TempData["SuccessMessage"] = "Profile updated successfully.";
-                    return RedirectToAction("AdminDashboard", "Home");
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Error updating profile.";
-                }
+                await ProfileImage.CopyToAsync(stream);
             }
-            await LoadDropdowns(model);
-            return View(model);
+
+            model.ProfileImage = fileName;
         }
+        else
+        {
+            var existingUser = await _userService.GetUserViewModelByIdAsync(model.Id);
+            if (existingUser != null)
+            {
+                model.ProfileImage = existingUser.ProfileImage;
+            }
+        }
+        var result = await _userService.UpdateProfileAsync(model, User);
+        if (result)
+        {
+            TempData["SuccessMessage"] = "Profile updated successfully.";
+            return RedirectToAction("AdminDashboard", "Home");
+        }
+        else
+        {
+            TempData["ErrorMessage"] = "Error updating profile.";
+        }
+    }
+    await LoadDropdowns(model);
+    return View(model);
+}
 
         private async Task LoadDropdowns(UserViewModel model)
         {

@@ -49,7 +49,7 @@ public class UserViewModel
     
     [StringLength(200)]
     public string? Address { get; set; }
-  
+      [Required(ErrorMessage = "Please Select a Role")]
     public string? RoleName { get; set; }
     public string? CountryName { get; set; }
     public string? StateName { get; set; }

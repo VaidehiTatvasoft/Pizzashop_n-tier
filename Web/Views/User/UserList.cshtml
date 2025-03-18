@@ -1,4 +1,4 @@
-@model Entity.Data.User;
+@model IEnumerable<Entity.Data.User>
 @{
     ViewData["Title"] = "UserList";
     var count = ViewBag.Count;
@@ -6,6 +6,7 @@
     var pageSize = ViewBag.pageSize;
     var totalPage = ViewBag.TotalPage;
     var searchString = ViewBag.SearchString as string;
+    var sortOrder = ViewBag.sortOrder as string;
     var ErrorMessage = ViewBag.ErrorMessage;
 }
 <div class="p-3">
@@ -14,13 +15,10 @@
             <h2><b>Users</b></h2>
         </div>
         <div class="d-flex justify-content-end align-items-center ">
-            <form method="get" class="searh">
+            <form method="get" class="search">
                 <div class="input-group ">
-                    <input type="text" class="form-control" placeholder="Search..." name="searchString"
-                        value="@searchString" aria-label="Search" aria-describedby="search-addon" />
-                    <button class="btn bg-white " type="submit" id="search-addon">
-                        <i class="fas fa-search "></i>
-                    </button>
+                    <input type="text" class="form-control" placeholder="Search" id="searchInput" name="searchString" value="@searchString" aria-label="Search" aria-describedby="search-addon" />
+                    <i class="fa-solid fa-magnifying-glass search-btn"></i>
                 </div>
             </form>
             <a href="@Url.Action("AddUser", "User")" class="btn btn-primary m-2">
@@ -37,17 +35,14 @@
                 <thead>
                     <tr>
                         <th scope="col" class="name-column">Name
-                            <a asp-action="UserList" asp-route-sortOrder="@ViewData["UsernameSortParam"]"
-                                asp-route-offset="1" asp-route-pagesize="@pageSize"
-                                style="text-decoration: none;color: inherit;">
-                                <i class="fa-solid fa-sort"></i> </a>
+                            <a asp-action="UserList" asp-route-sortOrder="@ViewData["UsernameSortParam"]" asp-route-offset="1" asp-route-pagesize="@pageSize" style="text-decoration: none;color: inherit;">
+                                <i class="fa-solid fa-sort"></i>
+                            </a>
                         </th>
                         <th scope="col" style="color:#5f5e5e" class="thead">Email</th>
                         <th scope="col" style="color:#5f5e5e" class="thead">Phone</th>
                         <th scope="col" class="role-column">Role
-                            <a asp-action="UserList" asp-route-sortOrder="@ViewData["RoleSortParam"]"
-                                asp-route-offset="1" asp-route-pagesize="@pageSize"
-                                style="text-decoration: none;color: inherit;">
+                            <a asp-action="UserList" asp-route-sortOrder="@ViewData["RoleSortParam"]" asp-route-offset="1" asp-route-pagesize="@pageSize" style="text-decoration: none;color: inherit;">
                                 <i class="fa-solid fa-sort"></i></a>
                         </th>
                         <th scope="col" style="color:#5f5e5e" class="thead">Status</th>
@@ -89,7 +84,7 @@
                             </td>
                             <td style="color:#5f5e5e">
                                 <div class="d-flex align-items-center p-2">
-                                    @if (@user.IsActive)
+                                    @if (@user.IsActive == true)
                                     {
                                         <button class="active-status p-1"><b>Active</b></button>
                                     }
@@ -101,17 +96,14 @@
                             </td>
                             <td>
                                 <div class="d-flex align-items-center">
-                                    @if (user.IsActive)
+                                    @if (user.IsActive == true)
                                     {
                                         <a asp-action="EditUser" asp-controller="User" asp-route-id="@user.Id">
                                             <i class="bi bi-pen m-2" style="color:#5f5e5e"></i>
                                         </a>
                                     }
-                                    <a class="bi bi-trash m-2" href="javascript:void(0)" onclick="confirmDelete(@user.Id)"
-                                        style="color:#5f5e5e"></a>
-                                    <form id="deleteForm-@user.Id" method="post"
-                                        action="@Url.Action("DeleteUser", "User", new { id = user.Id })"
-                                        style="display:none;">
+                                    <a class="bi bi-trash m-2" href="javascript:void(0)" onclick="confirmDelete(@user.Id)" style="color:#5f5e5e"></a>
+                                    <form id="deleteForm-@user.Id" method="post" action="@Url.Action("DeleteUser", "User", new { id = user.Id })" style="display:none;">
                                         @Html.AntiForgeryToken()
                                     </form>
                                 </div>
@@ -122,10 +114,9 @@
             </table>
         </div>
         <div class="d-flex flex-row justify-content-end align-items-center p-2">
-            <form method="get" class="d-flex  align-items-center">
+            <form method="get" class="d-flex align-items-center">
                 <label for="form-select" class="mx-2">Items per Page:</label>
-                <select class="form-select w-auto mx-2" name="pageSize" onchange="this.form.submit()" id="Select"
-                    aria-label="Role" onchange="">
+                <select class="form-select w-auto mx-2" name="pageSize" onchange="this.form.submit()" id="Select" aria-label="Role">
                     @if (pageSize == 5)
                     {
                         <option selected value="5">5</option>
@@ -151,11 +142,12 @@
                         <option value="15">15</option>
                     }
                 </select>
+                <input type="hidden" name="searchString" value="@searchString" />
+                <input type="hidden" name="sortOrder" value="@sortOrder" />
                 <span>Showing @pageIndex out of <span>@totalPage</span></span>
                 @if (pageIndex > 1)
                 {
-                    <a href="?pageIndex=@(pageIndex-1)&pageSize=@pageSize&searchString=@searchString"
-                        class="bg-light border-1 mx-2 px-2 btn btn-outline-dark">
+                    <a href="@Url.Action("UserList", new { searchString = searchString, pageIndex = pageIndex - 1, pageSize = pageSize, sortOrder = sortOrder })" class="bg-light border-1 mx-2 px-2 btn btn-outline-dark">
                         <i class="fa-solid fa-less-than"></i>
                     </a>
                 }
@@ -168,8 +160,7 @@
 
                 @if (pageIndex < totalPage)
                 {
-                    <a href="?pageIndex=@(pageIndex+1)&pageSize=@pageSize&searchString=@searchString"
-                        class="bg-light border-1 px-2 btn btn-outline-dark">
+                    <a href="@Url.Action("UserList", new { searchString = searchString, pageIndex = pageIndex + 1, pageSize = pageSize, sortOrder = sortOrder })" class="bg-light border-1 px-2 btn btn-outline-dark">
                         <i class="fa-solid fa-greater-than"></i>
                     </a>
                 }
@@ -179,7 +170,6 @@
                         <i class="fa-solid fa-greater-than"></i>
                     </a>
                 }
-
             </form>
         </div>
     </div>
@@ -197,19 +187,16 @@
                         <img src="@Url.Content("~/assets/warning.png")" height="40" width="40">
                     </div>
                     <div><b>Are you sure you want to delete this user?</b></div>
-
                 </div>
                 <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-primary"
-                        style="background-color: #0066A7; width: 70px; border-radius: 5px;"
-                        id="confirmDeleteButton">Yes</button>
-                    <button type="button" class="btn btn-outline-primary"
-                        style="color: #0066A7; width: 70px; border-radius: 5px;" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary" style="background-color: #0066A7; width: 70px; border-radius: 5px;" id="confirmDeleteButton">Yes</button>
+                    <button type="button" class="btn btn-outline-primary" style="color: #0066A7; width: 70px; border-radius: 5px;" data-bs-dismiss="modal">No</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 @section Scripts {
     <script>
         function confirmDelete(userId) {
@@ -230,6 +217,29 @@
             if (errorMessage) {
                 toastr.error(errorMessage);
             }
+             $('#searchInput').on('input', function() {
+                var searchString = $(this).val().trim();
+                var pageSize = $('#Select').val() || 5; 
+                var sortOrder = '@ViewBag.sortOrder'; 
+
+                $.ajax({
+                    url: '@Url.Action("UserList", "User")',
+                    type: 'GET',
+                    data: {
+                        searchString: searchString,
+                        pageIndex: 1, 
+                        pageSize: pageSize,
+                        sortOrder: sortOrder,
+                        isAjax: true
+                    },
+                    success: function(result) {
+                        $('.bg-light.rounded.shadow').html($(result).find('.bg-light.rounded.shadow').html());
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            });
         });
     </script>
 }

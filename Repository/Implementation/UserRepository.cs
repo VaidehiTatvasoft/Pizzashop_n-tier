@@ -79,6 +79,11 @@ namespace Pizzashop.Repository.Implementation
         {
             var userQuery = _context.Users.Where(u => u.IsDeleted == false);
 
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                userQuery = userQuery.Where(u => u.FirstName.ToLower().Contains(searchString.ToLower()) || u.LastName.ToLower().Contains(searchString.ToLower()));
+            }
+
             switch (sortOrder)
             {
                 case "username_asc":
@@ -100,11 +105,6 @@ namespace Pizzashop.Repository.Implementation
                 default:
                     userQuery = userQuery.OrderBy(u => u.Id);
                     break;
-            }
-
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                userQuery = userQuery.Where(u => u.FirstName.ToLower().Contains(searchString.ToLower()) || u.LastName.Contains(searchString));
             }
 
             count = userQuery.Count();
