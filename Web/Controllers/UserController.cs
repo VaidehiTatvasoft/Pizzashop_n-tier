@@ -26,6 +26,7 @@ namespace pizzashop.Controllers
             _emailService = emailService;
             _accountService = accountService;
         }
+        [Authorize(Roles = "1")]
         [HttpGet]
         public async Task<IActionResult> GetProfileImage()
         {
@@ -38,8 +39,8 @@ namespace pizzashop.Controllers
             var profileImagePath = await _userService.GetUserProfileImageAsync(email);
             return Json(new { profileImgPath = profileImagePath ?? "Default_pfp.svg.png" });
         }
+        [Authorize(Roles = "1")]
         [Route("/adduser")]
-
         public IActionResult AddUser()
         {
             ViewBag.Countries = new SelectList(_context.Countries, "Id", "Name");
@@ -66,7 +67,7 @@ namespace pizzashop.Controllers
 
                     model.ProfileImage = fileName;
                 }
-
+                model.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.PasswordHash);
                 var result = await _userService.AddUserAsync(model, User);
                 if (result)
                 {
@@ -102,6 +103,7 @@ namespace pizzashop.Controllers
             ViewBag.Countries = new SelectList(_context.Countries, "Id", "Name");
             return View(model);
         }
+        [Authorize(Roles = "1")]
         [Route("/user/edituser")]
         [HttpGet]
         public async Task<IActionResult> EditUser(int id)
@@ -160,6 +162,7 @@ namespace pizzashop.Controllers
             ViewBag.Cities = new SelectList(_context.Cities.Where(c => c.StateId == model.StateId).ToList(), "Id", "Name", model.CityId);
             return View(model);
         }
+        [Authorize(Roles = "1")]
         [Route("/user/deleteuser")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -174,6 +177,7 @@ namespace pizzashop.Controllers
             TempData["ErrorMessage"] = "Error deleting user.";
             return RedirectToAction("UserList");
         }
+        [Authorize(Roles = "1")]
         [Route("/user/list")]
         public IActionResult UserList(string searchString, int pageIndex = 1, int pageSize = 5, string sortOrder = "", bool isAjax = false)
         {
@@ -204,6 +208,7 @@ namespace pizzashop.Controllers
             return View(users);
         }
 
+        [Authorize(Roles = "1")]
         [Route("/user/profile")]
         [HttpGet]
         public async Task<IActionResult> Profile()
@@ -216,46 +221,46 @@ namespace pizzashop.Controllers
             await LoadDropdowns(user);
             return View(user);
         }
-       [Route("/user/profile")]
-[HttpPost]
-public async Task<IActionResult> Profile(UserViewModel model, IFormFile? ProfileImage)
-{
-    if (ModelState.IsValid)
-    {
-        if (ProfileImage != null && ProfileImage.Length > 0)
+        [Route("/user/profile")]
+        [HttpPost]
+        public async Task<IActionResult> Profile(UserViewModel model, IFormFile? ProfileImage)
         {
-            var fileName = Path.GetFileName(ProfileImage.FileName);
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            if (ModelState.IsValid)
             {
-                await ProfileImage.CopyToAsync(stream);
-            }
+                if (ProfileImage != null && ProfileImage.Length > 0)
+                {
+                    var fileName = Path.GetFileName(ProfileImage.FileName);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
 
-            model.ProfileImage = fileName;
-        }
-        else
-        {
-            var existingUser = await _userService.GetUserViewModelByIdAsync(model.Id);
-            if (existingUser != null)
-            {
-                model.ProfileImage = existingUser.ProfileImage;
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await ProfileImage.CopyToAsync(stream);
+                    }
+
+                    model.ProfileImage = fileName;
+                }
+                else
+                {
+                    var existingUser = await _userService.GetUserViewModelByIdAsync(model.Id);
+                    if (existingUser != null)
+                    {
+                        model.ProfileImage = existingUser.ProfileImage;
+                    }
+                }
+                var result = await _userService.UpdateProfileAsync(model, User);
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "Profile updated successfully.";
+                    return RedirectToAction("AdminDashboard", "Home");
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Error updating profile.";
+                }
             }
+            await LoadDropdowns(model);
+            return View(model);
         }
-        var result = await _userService.UpdateProfileAsync(model, User);
-        if (result)
-        {
-            TempData["SuccessMessage"] = "Profile updated successfully.";
-            return RedirectToAction("AdminDashboard", "Home");
-        }
-        else
-        {
-            TempData["ErrorMessage"] = "Error updating profile.";
-        }
-    }
-    await LoadDropdowns(model);
-    return View(model);
-}
 
         private async Task LoadDropdowns(UserViewModel model)
         {
@@ -289,6 +294,7 @@ public async Task<IActionResult> Profile(UserViewModel model, IFormFile? Profile
                 }).ToList();
             return Json(cities);
         }
+        [Authorize(Roles = "1")]
         [Route("/user/changepassword")]
         [HttpGet]
         public async Task<IActionResult> ChangePassword()
@@ -307,11 +313,11 @@ public async Task<IActionResult> Profile(UserViewModel model, IFormFile? Profile
                 {
                     TempData["SuccessMessage"] = "Password changed successfully.";
                     _accountService.Logout(HttpContext);
-                    return RedirectToAction("Index", "Accounts");
+                    return RedirectToAction("Login", "Accounts");
                 }
                 else
                 {
-                    TempData["ErrorMessage"] = "Error changing password.";
+                    TempData["ErrorMessage"] = "Error changing password.Check if new password is same as current password";
                 }
             }
             return View(model);

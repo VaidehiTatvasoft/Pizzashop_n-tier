@@ -56,13 +56,17 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
- app.UseStatusCodePages(async context =>
-    {
-        if (context.HttpContext.Response.StatusCode == 404)
-        {
-            context.HttpContext.Response.Redirect("/Home/NotFound");
-        }
-    });
+app.UseStatusCodePages(async context =>
+   {
+       if (context.HttpContext.Response.StatusCode == 404)
+       {
+           context.HttpContext.Response.Redirect("/Home/NotFound");
+       }
+       else if (context.HttpContext.Response.StatusCode == 401)
+       {
+           context.HttpContext.Response.Redirect("/Home/Unauthorized");
+       }
+   });
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

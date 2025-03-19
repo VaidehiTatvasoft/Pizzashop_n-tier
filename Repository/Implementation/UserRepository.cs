@@ -70,7 +70,7 @@ namespace Pizzashop.Repository.Implementation
                 return false;
             }
 
-            user.IsActive = false;
+            user.IsDeleted = true;
             _context.Users.Update(user);
             return await _context.SaveChangesAsync() > 0;
         }
@@ -103,7 +103,7 @@ namespace Pizzashop.Repository.Implementation
                     break;
 
                 default:
-                    userQuery = userQuery.OrderBy(u => u.Id);
+                    userQuery = userQuery.OrderBy(u => u.FirstName);
                     break;
             }
 

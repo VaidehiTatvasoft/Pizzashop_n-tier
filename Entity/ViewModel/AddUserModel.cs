@@ -29,12 +29,12 @@ public class AddUserModel
     public string Username { get; set; } = null!;
 
     [Required]
+    [RegularExpression(@"^[1-9]\d{9}$", ErrorMessage = "Please enter a valid 10-digit phone number that does not start with zero.")]
     public long Phone { get; set; }
-
     public string? ProfileImage { get; set; }
     [Required(ErrorMessage = "Password is required")]
     [DataType(DataType.Password), MinLength(6)]
-    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$",ErrorMessage = "Password must be at least 6 characters long and include uppercase, lowercase, number, and special character.")]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$", ErrorMessage = "Password must be at least 6 characters long and include uppercase, lowercase, number, and special character.")]
     public string? PasswordHash { get; set; }
 
     [Required(ErrorMessage = "Please Select a Country")]
@@ -47,7 +47,7 @@ public class AddUserModel
     public int? CityId { get; set; }
 
     [StringLength(10)]
-    [RegularExpression(@"^\d+$", ErrorMessage = "Please Enter a Valid Zip Code")]
+    [RegularExpression(@"^[1-9]\d{5}$", ErrorMessage = "Please enter a valid 6-digit zip code that does not start with zero.")]
     public string? Zipcode { get; set; }
 
     [StringLength(200)]

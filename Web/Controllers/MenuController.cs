@@ -1,4 +1,5 @@
 using Entity.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Service.Interface;
@@ -21,7 +22,7 @@ namespace Web.Controllers
             _logger = logger;
         }
 
-        // Menu List
+        [Authorize(Roles = "1")]
         [HttpGet]
         public async Task<IActionResult> MenuList(int? categoryId)
         {
@@ -38,44 +39,44 @@ namespace Web.Controllers
             return View(categories);
         }
 
-        // Add Category
+        [Authorize(Roles = "1")]
         [HttpGet]
-public IActionResult AddCategory()
-{
-    return PartialView("_AddCategoryPartial", new MenuCategoryViewModel());
-}
-
-[HttpPost]
-[ValidateAntiForgeryToken]
-public async Task<IActionResult> AddCategory(MenuCategoryViewModel model)
-{
-    if (!ModelState.IsValid)
-    {
-        return PartialView("_AddCategoryPartial", model);
-    }
-
-    try
-    {
-        var category = await _menuService.AddNewCategory(model.Name, model, User);
-        if (category)
+        public IActionResult AddCategory()
         {
-            TempData["SuccessMessage"] = "Category created successfully.";
-            return Json(new { success = true, redirectUrl = Url.Action("MenuList") });
-        }
-        else
-        {
-            TempData["ErrorMessage"] = "A category with this name already exists.";
-            return PartialView("_AddCategoryPartial", model);
-        }
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Error adding category");
-        TempData["ErrorMessage"] = "An error occurred while adding the category. Please try again.";
-        return PartialView("_AddCategoryPartial", model);
-    }
+            return PartialView("_AddCategoryPartial", new MenuCategoryViewModel());
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddCategory(MenuCategoryViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return PartialView("_AddCategoryPartial", model);
+            }
+
+            try
+            {
+                var category = await _menuService.AddNewCategory(model.Name, model, User);
+                if (category)
+                {
+                    TempData["SuccessMessage"] = "Category created successfully.";
+                    return Json(new { success = true, redirectUrl = Url.Action("MenuList") });
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "A category with this name already exists.";
+                    return PartialView("_AddCategoryPartial", model);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding category");
+                TempData["ErrorMessage"] = "An error occurred while adding the category. Please try again.";
+                return PartialView("_AddCategoryPartial", model);
+            }
+        }
+        [Authorize(Roles = "1")]
         [HttpGet]
         public async Task<IActionResult> EditCategory(int Id)
         {
@@ -87,7 +88,6 @@ public async Task<IActionResult> AddCategory(MenuCategoryViewModel model)
 
             return PartialView("_EditCategoryPartial", category);
         }
-
         [HttpPost]
         public async Task<IActionResult> EditCategory(MenuCategoryViewModel model)
         {
@@ -116,7 +116,7 @@ public async Task<IActionResult> AddCategory(MenuCategoryViewModel model)
 
             return Json(new { success = false, message = "Invalid data.", errors = errors });
         }
-
+        [Authorize(Roles = "1")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCategory(int id)
@@ -135,6 +135,7 @@ public async Task<IActionResult> AddCategory(MenuCategoryViewModel model)
             }
         }
 
+        [Authorize(Roles = "1")]
         [HttpGet]
         public async Task<IActionResult> AddItem()
         {
@@ -165,29 +166,29 @@ public async Task<IActionResult> AddCategory(MenuCategoryViewModel model)
             }
 
             try
-    {
-        if (Image != null && Image.Length > 0)
-        {
-            var fileName = Path.GetFileName(Image.FileName);
-            var filePath = Path.Combine("wwwroot/uploads", fileName);
-            using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                await Image.CopyToAsync(stream);
+                if (Image != null && Image.Length > 0)
+                {
+                    var fileName = Path.GetFileName(Image.FileName);
+                    var filePath = Path.Combine("wwwroot/uploads", fileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await Image.CopyToAsync(stream);
+                    }
+                    model.Image = fileName;
+                }
+
+                await _menuService.AddNewItem(model, User);
+                return Json(new { success = true, redirectUrl = Url.Action("MenuList") });
             }
-            model.Image = fileName;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding item");
+                return Json(new { success = false, message = ex.Message });
+            }
         }
 
-        await _menuService.AddNewItem(model, User);
-        return Json(new { success = true, redirectUrl = Url.Action("MenuList") });
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Error adding item");
-        return Json(new { success = false, message = ex.Message });
-    }
-        }
-
-        // Edit Item
+        [Authorize(Roles = "1")]
         [HttpGet]
         public async Task<IActionResult> EditItem(int id)
         {
@@ -244,7 +245,7 @@ public async Task<IActionResult> AddCategory(MenuCategoryViewModel model)
             return PartialView("_EditItemPartial", menuItemViewModel);
         }
 
-        // Delete Item
+        [Authorize(Roles = "1")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteItem(int id)
@@ -270,32 +271,33 @@ public async Task<IActionResult> AddCategory(MenuCategoryViewModel model)
 
             return RedirectToAction("MenuList");
         }
-// Mass Delete Items
-[HttpPost]
-[ValidateAntiForgeryToken]
-public async Task<IActionResult> DeleteMultipleItems([FromBody] List<int> itemIds)
-{
-    if (itemIds == null || !itemIds.Any())
-    {
-        return BadRequest("No items selected for deletion.");
-    }
-
-    try
-    {
-        foreach (var itemId in itemIds)
+        [Authorize(Roles = "1")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteMultipleItems([FromBody] List<int> itemIds)
         {
-            await _menuService.DeleteItemById(itemId);
-        }
+            if (itemIds == null || !itemIds.Any())
+            {
+                return BadRequest("No items selected for deletion.");
+            }
 
-        TempData["SuccessMessage"] = "Selected items deleted successfully.";
-        return Ok(new { success = true });
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Error deleting multiple items");
-        return StatusCode(500, new { success = false, message = "Error deleting items." });
-    }
-}
+            try
+            {
+                foreach (var itemId in itemIds)
+                {
+                    await _menuService.DeleteItemById(itemId);
+                }
+
+                TempData["SuccessMessage"] = "Selected items deleted successfully.";
+                return Ok(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting multiple items");
+                return StatusCode(500, new { success = false, message = "Error deleting items." });
+            }
+        }
+        [Authorize(Roles = "1")]
         [HttpGet]
         public async Task<IActionResult> SelectedModifiers(int groupId)
         {

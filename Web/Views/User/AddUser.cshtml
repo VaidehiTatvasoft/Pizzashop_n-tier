@@ -24,14 +24,14 @@
                         placeholder="First Name">
                     <label for="FirstName">First Name*</label>
                 </div>
-                <span class="text-danger fs-6 ms-2" asp-validation-for="FirstName" class="text-danger"></span>
+                <span class="text-danger fs-6 ms-2" asp-validation-for="FirstName" ></span>
             </div>
             <div class="col-md-6">
                 <div class="form-floating">
                     <input type="text" class="form-control " id="LastName" asp-for="LastName" placeholder="LastName">
                     <label for="LastName">Last Name*</label>
                 </div>
-                <span class="text-danger fs-6 ms-2" asp-validation-for="LastName" class="text-danger"></span>
+                <span class="text-danger fs-6 ms-2" asp-validation-for="LastName" ></span>
             </div>
         </div>
         <br>
@@ -41,15 +41,15 @@
                     <input type="text" class="form-control " id="Username" asp-for="Username" placeholder="Username">
                     <label for="Username">User Name*</label>
                 </div>
-                <span class="text-danger fs-6 ms-2" asp-validation-for="Username" class="text-danger"></span>
+                <span class="text-danger fs-6 ms-2" asp-validation-for="Username" ></span>
             </div>
             <div class="col-md-6">
-                <div class="form-floating">
+                <div class="form-floating ">
                     <select id="RoleId" name="RoleId" class="form-select" asp-items="ViewBag.Roles">
                         <option value="">Select Role</option>
                     </select>
                     <label for="RoleId" class="float">Role*</label>
-                    <span asp-validation-for="RoleId" class="text-danger"></span>
+                    <span class="text-danger fs-6 ms-2"  asp-validation-for="RoleId" ></span>
                 </div>
             </div>
             <br>
@@ -59,16 +59,16 @@
                         <input type="text" class="form-control " id="Email" asp-for="Email" placeholder="Email">
                         <label for="Email">Email*</label>
                     </div>
-                    <span class="text-danger fs-6 ms-2" asp-validation-for="Email" class="text-danger"></span>
+                    <span class="text-danger fs-6 ms-2" asp-validation-for="Email" ></span>
                 </div>
                 <div class="col-md-6">
-                    <div class="form-floating position-relative">
+                    <div class="form-floating ">
                         <input asp-for="PasswordHash" type="password" class="form-control ps-4" id="PasswordHash"
                             placeholder="Password*">
                         <i class="fa fa-eye eye-icon2" onclick="togglePasswordVisibility(this, 'PasswordHash')"></i>
                         <label for="PasswordHash">Password</label>
                         <span class="text-danger fs-6 ms-2" asp-validation-for="PasswordHash"
-                            class="text-danger"></span>
+                            ></span>
                     </div>
                 </div>
                 <br>
@@ -81,8 +81,7 @@
                         <input asp-for="ProfileImage" type="file" id="ProfileImage" class="file-upload-input"
                             onchange="showFileName()">
                         <span class="file-upload-name" id="file-upload-name"></span>
-                        <span class="text-danger fs-6 ms-2" asp-validation-for="ProfileImage"
-                            class="text-danger"></span>
+                        <span class="text-danger fs-6 ms-2" asp-validation-for="ProfileImage"></span>
                     </div>
                 </div>
                 <br>

@@ -1,4 +1,5 @@
 using Entity.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interface;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Web.Controllers
         {
             _modifierService = modifierService;
         }
-
+        [Authorize(Roles = "1")]
         public async Task<IActionResult> ModifiersList(int? modifierId)
         {
             var modifiers = await _modifierService.GetAllModifiers();
@@ -30,6 +31,7 @@ namespace Web.Controllers
             return View("~/Views/Menu/ModifiersList.cshtml", modifiers);
         }
 
+        [Authorize(Roles = "1")]
         [HttpPost]
         public async Task<IActionResult> AddModifier(ModifierViewModel model)
         {
@@ -52,7 +54,7 @@ namespace Web.Controllers
             ViewBag.ModifierItems = await _modifierService.GetItemsByModifiers(model.Id);
             return View("~/Views/Menu/ModifiersList.cshtml", modifiers);
         }
-
+        [Authorize(Roles = "1")]
         [HttpGet]
         public async Task<IActionResult> EditModifier(int id)
         {
@@ -86,6 +88,7 @@ namespace Web.Controllers
             return Json(new { success = false, message = "Invalid data." });
         }
 
+        [Authorize(Roles = "1")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteModifier(int id)

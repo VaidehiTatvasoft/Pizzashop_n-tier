@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Entity.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using pizzashop.Services.Interfaces;
 using Service.Interface;
@@ -16,16 +17,16 @@ public class RolePermissionController : Controller
         _user = user;
         _rolePermission = rolePermission;
     }
+    [Authorize(Roles = "1")]
     [Route("/roles")]
-
     [HttpGet]
     public async Task<IActionResult> Role()
     {
         var roles = await _rolePermission.GetAllRoles();
         return View(roles);
     }
+    [Authorize(Roles = "1")]
     [Route("/permission")]
-
     [HttpGet]
     public IActionResult Permission(int id)
     {
