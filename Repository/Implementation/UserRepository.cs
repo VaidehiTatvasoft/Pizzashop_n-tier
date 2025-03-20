@@ -29,6 +29,11 @@ namespace Pizzashop.Repository.Implementation
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
+        public async Task<User?> GetUserByUsername(string username)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+        }
+
         public async Task<string> GetRoleNameById(int roleId)
         {
             var role = await _context.Roles.FirstOrDefaultAsync(r => r.Id == roleId);
@@ -113,6 +118,25 @@ namespace Pizzashop.Repository.Implementation
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
+        }
+        public async Task<List<Country>> GetAllCountriesAsync()
+        {
+            return await _context.Countries.OrderBy(c => c.Name).ToListAsync();
+        }
+
+        public async Task<List<State>> GetStatesByCountryIdAsync(int countryId)
+        {
+            return await _context.States.Where(s => s.CountryId == countryId).OrderBy(s => s.Name).ToListAsync();
+        }
+
+        public async Task<List<City>> GetCitiesByStateIdAsync(int stateId)
+        {
+            return await _context.Cities.Where(c => c.StateId == stateId).OrderBy(c => c.Name).ToListAsync();
+        }
+
+        public async Task<List<Role>> GetAllRolesAsync()
+        {
+            return await _context.Roles.OrderBy(r => r.Name).ToListAsync();
         }
     }
 }

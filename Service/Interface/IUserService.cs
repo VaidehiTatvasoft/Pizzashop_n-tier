@@ -7,6 +7,12 @@ namespace pizzashop.Services.Interfaces
 {
     public interface IUserService
     {
+        Task<List<Country>> GetAllCountriesAsync();
+        Task<List<object>> GetStatesJsonAsync(int countryId);
+        Task<List<object>> GetCitiesJsonAsync(int stateId);
+        Task<List<Role>> GetAllRolesAsync();
+        Task<User?> GetUserByEmail(string email);
+        Task<User?> GetUserByUsername(string username);
         Task<bool> AddUserAsync(AddUserModel model, ClaimsPrincipal userClaims);
         Task<UserViewModel> GetUserViewModelByIdAsync(int id);
         Task<bool> EditUserAsync(UserViewModel model);

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Entity.Data;
 
 namespace Entity.ViewModel;
 
@@ -10,7 +11,7 @@ public class AddUserModel
     [Required(ErrorMessage = "Please Enter an Email Address")]
     public string? Email { get; set; }
 
-    [Required(ErrorMessage = "Please select a Role")]
+    [Required(ErrorMessage = "Please Select a Role")]
     public int RoleId { get; set; }
 
     [StringLength(100)]
@@ -27,15 +28,15 @@ public class AddUserModel
     [Required(ErrorMessage = "Please Enter a Valid Username")]
     [RegularExpression(@"^[a-zA-Z0-9_]+$", ErrorMessage = "User name can only contain alphabets, numbers, and underscores.")]
     public string Username { get; set; } = null!;
+    [Required(ErrorMessage = "Password is required")]
+    [DataType(DataType.Password), MinLength(6)]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$", ErrorMessage = "Password must be at least 6 characters long and include uppercase, lowercase, number, and special character.")]
+    public string? PasswordHash { get; set; }
 
     [Required]
     [RegularExpression(@"^[1-9]\d{9}$", ErrorMessage = "Please enter a valid 10-digit phone number that does not start with zero.")]
     public long Phone { get; set; }
     public string? ProfileImage { get; set; }
-    [Required(ErrorMessage = "Password is required")]
-    [DataType(DataType.Password), MinLength(6)]
-    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$", ErrorMessage = "Password must be at least 6 characters long and include uppercase, lowercase, number, and special character.")]
-    public string? PasswordHash { get; set; }
 
     [Required(ErrorMessage = "Please Select a Country")]
     public int? CountryId { get; set; }
@@ -52,10 +53,11 @@ public class AddUserModel
 
     [StringLength(200)]
     public string? Address { get; set; }
-
     public string? RoleName { get; set; }
-    public string? CountryName { get; set; }
-    public string? StateName { get; set; }
-    public string? CityName { get; set; }
+    public bool? IsActive { get; set; }
+    public List<Country> Countries { get; set; } = new List<Country>();
+    public List<State> States { get; set; } = new List<State>();
+    public List<City> Cities { get; set; } = new List<City>();
+    public List<Role> Roles { get; set; } = new List<Role>();
 }
 

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Entity.Data;
 
 namespace Entity.ViewModel;
 
@@ -50,9 +51,9 @@ public class UserViewModel
   [StringLength(200)]
   public string? Address { get; set; }
   public string? RoleName { get; set; }
-  public string? CountryName { get; set; }
-  public string? StateName { get; set; }
-  public string? CityName { get; set; }
   public bool? IsActive { get; set; }
+  public List<Country> Countries { get; set; } = new List<Country>();
+  public List<State> States { get; set; } = new List<State>();
+  public List<City> Cities { get; set; } = new List<City>();
+  public List<Role> Roles { get; set; } = new List<Role>();
 }
-

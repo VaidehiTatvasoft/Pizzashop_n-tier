@@ -41,11 +41,14 @@ namespace pizzashop.Controllers
         }
         [Authorize(Roles = "1")]
         [Route("/adduser")]
-        public IActionResult AddUser()
+        public async Task<IActionResult> AddUser()
         {
-            ViewBag.Countries = new SelectList(_context.Countries, "Id", "Name");
-            ViewBag.Roles = new SelectList(_context.Roles, "Id", "Name");
-            return View();
+            var model = new AddUserModel
+            {
+                Countries = await _userService.GetAllCountriesAsync(),
+                Roles = await _userService.GetAllRolesAsync()
+            };
+            return View(model);
         }
 
         [Route("/adduser")]
@@ -55,6 +58,26 @@ namespace pizzashop.Controllers
         {
             if (ModelState.IsValid)
             {
+                var existingUserByEmail = await _userService.GetUserByEmail(model.Email);
+                if (existingUserByEmail != null)
+                {
+                    TempData["ErrorMessage"] = "Email already exists.";
+                    ModelState.AddModelError("", "Email already exists.");
+                    model.Countries = await _userService.GetAllCountriesAsync();
+                    model.Roles = await _userService.GetAllRolesAsync();
+                    return View(model);
+                }
+
+                var existingUserByUsername = await _userService.GetUserByUsername(model.Username);
+                if (existingUserByUsername != null)
+                {
+                    TempData["ErrorMessage"] = "Username already exists.";
+                    ModelState.AddModelError("", "Username already exists.");
+                    model.Countries = await _userService.GetAllCountriesAsync();
+                    model.Roles = await _userService.GetAllRolesAsync();
+                    return View(model);
+                }
+
                 if (ProfileImage != null && ProfileImage.Length > 0)
                 {
                     var fileName = Path.GetFileName(ProfileImage.FileName);
@@ -71,23 +94,23 @@ namespace pizzashop.Controllers
                 var result = await _userService.AddUserAsync(model, User);
                 if (result)
                 {
-                    string subject = "User Credentials";
+                    string subject = "Account Login Details";
                     string body = $@"<div style='font-family: sans-serif;'>
-                            <div style='background-color: #0066A7; padding: 10px; display: flex; justify-content: center; align-items: center; gap: 2rem;'>
-                                <img src='http://localhost:5222/images/pizzashop_logo.png' alt='' style='width:60px; background-color:white; border-radius:50%;'>
-                                <h1 style='color: white;'>PIZZASHOP</h1>
-                            </div>
-                            <p>
-                                Welcome to Pizza Shop, <br><br>
-                                Please find the details below for login to your account. <br>
-                                <div style='border: 1px solid black; padding: 0.5rem; font-weight: bold;'>
-                                    <h3>Login Details:</h3>
-                                    Username: {model.Email} <br>
-                                    Password: {model.PasswordHash}
-                                </div><br>
-                                If you encounter any issues or have any questions, please do not hesitate to contact our support team. <br><br>
-                            </p>
-                        </div>";
+                    <div style='background-color: #0066A7; padding: 10px; display: flex; justify-content: center; align-items: center; gap: 2rem;'>
+                        <img src='http://localhost:5222/images/pizzashop_logo.png' alt='' style='width:60px; background-color:white; border-radius:50%;'>
+                        <h1 style='color: white;'>PIZZASHOP</h1>
+                    </div>
+                    <p>
+                        Welcome to Pizza Shop, <br><br>
+                        Please find the details below for login to your account. <br>
+                        <div style='border: 1px solid black; padding: 0.5rem; font-weight: bold;'>
+                            <h3>Login Details:</h3>
+                            Username: {model.Email} <br>
+                            Password: {model.PasswordHash}
+                        </div><br>
+                        If you encounter any issues or have any questions, please do not hesitate to contact our support team. <br><br>
+                    </p>
+                </div>";
 
                     await _emailService.SendEmailAsync(model.Email, subject, body);
 
@@ -99,10 +122,11 @@ namespace pizzashop.Controllers
                     TempData["ErrorMessage"] = "Error adding user.";
                 }
             }
-            ViewBag.Roles = new SelectList(_context.Roles, "Id", "Name");
-            ViewBag.Countries = new SelectList(_context.Countries, "Id", "Name");
+            model.Countries = await _userService.GetAllCountriesAsync();
+            model.Roles = await _userService.GetAllRolesAsync();
             return View(model);
         }
+
         [Authorize(Roles = "1")]
         [Route("/user/edituser")]
         [HttpGet]
@@ -113,8 +137,8 @@ namespace pizzashop.Controllers
             {
                 return NotFound();
             }
-            ViewBag.Roles = new SelectList(_context.Roles, "Id", "Name", user.RoleId);
-            await LoadDropdowns(user);
+            user.Roles = await _userService.GetAllRolesAsync();
+            user.Countries = await _userService.GetAllCountriesAsync();
             return View(user);
         }
         [Route("/user/edituser")]
@@ -124,6 +148,25 @@ namespace pizzashop.Controllers
         {
             if (ModelState.IsValid)
             {
+                var existingUserByEmail = await _userService.GetUserByEmail(model.Email);
+                if (existingUserByEmail != null && existingUserByEmail.Id != model.Id)
+                {
+                    TempData["ErrorMessage"] = "Email already exists.";
+                    ModelState.AddModelError("", "Email already exists.");
+
+                    return View(model);
+                }
+
+                var existingUserByUsername = await _userService.GetUserByUsername(model.Username);
+                if (existingUserByUsername != null && existingUserByUsername.Id != model.Id)
+                {
+                    TempData["ErrorMessage"] = "Username already exists.";
+                    ModelState.AddModelError("", "Username already exists.");
+                    model.Roles = await _userService.GetAllRolesAsync();
+                    model.Countries = await _userService.GetAllCountriesAsync();
+                    return View(model);
+                }
+
                 if (ProfileImage != null && ProfileImage.Length > 0)
                 {
                     var fileName = Path.GetFileName(ProfileImage.FileName);
@@ -156,10 +199,8 @@ namespace pizzashop.Controllers
                     TempData["ErrorMessage"] = "Error updating user.";
                 }
             }
-            ViewBag.Roles = new SelectList(_context.Roles, "Id", "Name", model.RoleId);
-            ViewBag.Countries = new SelectList(_context.Countries, "Id", "Name", model.CountryId);
-            ViewBag.States = new SelectList(_context.States.Where(s => s.CountryId == model.CountryId).ToList(), "Id", "Name", model.StateId);
-            ViewBag.Cities = new SelectList(_context.Cities.Where(c => c.StateId == model.StateId).ToList(), "Id", "Name", model.CityId);
+            model.Roles = await _userService.GetAllRolesAsync();
+            model.Countries = await _userService.GetAllCountriesAsync();
             return View(model);
         }
         [Authorize(Roles = "1")]
@@ -218,7 +259,7 @@ namespace pizzashop.Controllers
             {
                 return Unauthorized("User not found");
             }
-            await LoadDropdowns(user);
+            user.Countries = await _userService.GetAllCountriesAsync();
             return View(user);
         }
         [Route("/user/profile")]
@@ -258,17 +299,37 @@ namespace pizzashop.Controllers
                     TempData["ErrorMessage"] = "Error updating profile.";
                 }
             }
-            await LoadDropdowns(model);
+            model.Countries = await _userService.GetAllCountriesAsync();
             return View(model);
         }
 
-        private async Task LoadDropdowns(UserViewModel model)
+        [Authorize(Roles = "1")]
+        [Route("/user/changepassword")]
+        [HttpGet]
+        public async Task<IActionResult> ChangePassword()
         {
-            ViewBag.Countries = new SelectList(await _context.Countries.ToListAsync(), "Id", "Name", model.CountryId);
-            ViewBag.States = new SelectList(await _context.States.Where(s => s.CountryId == model.CountryId).ToListAsync(), "Id", "Name", model.StateId);
-            ViewBag.Cities = new SelectList(await _context.Cities.Where(c => c.StateId == model.StateId).ToListAsync(), "Id", "Name", model.CityId);
+            return View();
         }
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _userService.ChangePasswordAsync(model, User);
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "Password changed successfully.";
+                    _accountService.Logout(HttpContext);
+                    return RedirectToAction("Login", "Accounts");
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Error changing password.Check if new password is same as current password";
+                }
+            }
+            return View(model);
+        }
         [HttpGet]
         public JsonResult GetStates(int countryId)
         {
@@ -293,34 +354,6 @@ namespace pizzashop.Controllers
                     name = c.Name
                 }).ToList();
             return Json(cities);
-        }
-        [Authorize(Roles = "1")]
-        [Route("/user/changepassword")]
-        [HttpGet]
-        public async Task<IActionResult> ChangePassword()
-        {
-            return View();
-        }
-        [Route("/user/changepassword")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _userService.ChangePasswordAsync(model, User);
-                if (result)
-                {
-                    TempData["SuccessMessage"] = "Password changed successfully.";
-                    _accountService.Logout(HttpContext);
-                    return RedirectToAction("Login", "Accounts");
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Error changing password.Check if new password is same as current password";
-                }
-            }
-            return View(model);
         }
     }
 }

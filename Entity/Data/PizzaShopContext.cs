@@ -757,7 +757,6 @@ public partial class PizzaShopContext : DbContext
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.SectionCreatedByNavigations)
                 .HasForeignKey(d => d.CreatedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("created_by");
 
             entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.SectionModifiedByNavigations)
@@ -810,7 +809,6 @@ public partial class PizzaShopContext : DbContext
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.TableCreatedByNavigations)
                 .HasForeignKey(d => d.CreatedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("created_by");
 
             entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.TableModifiedByNavigations)
@@ -936,6 +934,8 @@ public partial class PizzaShopContext : DbContext
             entity.ToTable("users");
 
             entity.HasIndex(e => e.Email, "unique").IsUnique();
+
+            entity.HasIndex(e => e.Username, "unique_username").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Address)

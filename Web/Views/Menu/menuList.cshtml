@@ -25,26 +25,26 @@
                             </div>
                         </div>
                     </div>
-                        <div class="overflow-auto" style="max-height: 500px;">
-                            @foreach (var category in Model)
-                            {
-                                <div class="category-wrapper">
-                                    <a class="nav-link menu-sidebar category-link" href="javascript:void(0);"
-                                        data-category-id="@category.Id">
-                                        <span class="category-item">
-                                            <i class="fa-solid fa-grip-vertical"></i> @category.Name
-                                            <i class="bi bi-pen m-1 edit-icon" data-id="@category.Id"></i>
-                                            <i class="bi bi-trash m-1 delete-icon" onclick="confirmDelete(@category.Id)"></i>
-                                        </span>
-                                    </a>
-                                    <form id="deleteform-@category.Id" method="post"
-                                        action="@Url.Action("DeleteCategory", "Menu", new { id = @category.Id })"
-                                        style="display: none;">
-                                        @Html.AntiForgeryToken()
-                                    </form>
-                                </div>
-                            }
-                        </div>
+                    <div class="overflow-auto" style="max-height: 500px;">
+                        @foreach (var category in Model)
+                        {
+                            <div class="category-wrapper">
+                                <a class="nav-link menu-sidebar category-link" href="javascript:void(0);"
+                                    data-category-id="@category.Id">
+                                    <span class="category-item">
+                                        <i class="fa-solid fa-grip-vertical"></i> @category.Name
+                                        <i class="bi bi-pen m-1 edit-icon" data-id="@category.Id"></i>
+                                        <i class="bi bi-trash m-1 delete-icon" onclick="confirmDelete(@category.Id)"></i>
+                                    </span>
+                                </a>
+                                <form id="deleteform-@category.Id" method="post"
+                                    action="@Url.Action("DeleteCategory", "Menu", new { id = @category.Id })"
+                                    style="display: none;">
+                                    @Html.AntiForgeryToken()
+                                </form>
+                            </div>
+                        }
+                    </div>
                     <div class="modal fade" id="editCategoryModal" tabindex="-1"
                         aria-labelledby="editCategoryModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -128,7 +128,7 @@
             if (errorMessage) {
                 toastr.error(errorMessage);
             }
-        
+
             $(document).on('click', '.add-category', function () {
                 $.ajax({
                     type: "GET",
@@ -165,25 +165,25 @@
                 });
             });
 
-             $(document).on('click', '.edit-icon', function () {
-            var id = $(this).data('id');
-            $.ajax({
-                type: "GET",
-                url: "/menu/editcategory/" + id,
-                dataType: "html",
-                headers: {
-                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                },
-                success: function (data) {
-                    $("#editCategoryModal").find('.modal-content').html(data);
-                    $('#editCategoryModal').modal('show');
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error loading category details:", status, error);
-                    alert("Failed to load category details.");
-                }
+            $(document).on('click', '.edit-icon', function () {
+                var id = $(this).data('id');
+                $.ajax({
+                    type: "GET",
+                    url: "/menu/editcategory/" + id,
+                    dataType: "html",
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (data) {
+                        $("#editCategoryModal").find('.modal-content').html(data);
+                        $('#editCategoryModal').modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error loading category details:", status, error);
+                        alert("Failed to load category details.");
+                    }
+                });
             });
-        });
 
             $('#categoryDropdown').change(function () {
                 var categoryId = $(this).val();

@@ -23,12 +23,14 @@ namespace Web
             services.AddScoped<IModifierService, ModifierService>(); 
             services.AddScoped<IRolePermissionService, RolePermissionService>(); 
             services.AddScoped<IUnitService, UnitService>();
+            services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IMenuRepository, MenuRepository>();
             services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
             services.AddScoped<IUnitRepository, UnitRepository>();
             services.AddScoped<IModifierRepository, ModifierRepository>();
+            services.AddScoped<ISectionRepository, SectionRepository>();
             services.AddSingleton<IConfiguration>(configuration);
         }
     }

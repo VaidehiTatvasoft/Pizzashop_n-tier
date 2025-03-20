@@ -14,7 +14,7 @@ public class MenuItemViewModel
     [Range(1, int.MaxValue, ErrorMessage = "Please select a valid category.")]
     public int CategoryId { get; set; }
 
-    public bool Type { get; set; }
+    public bool? Type { get; set; }
 
     [Range(0.01, double.MaxValue, ErrorMessage = "Rate must be greater than 0.")]
     public decimal Rate { get; set; }
@@ -24,7 +24,7 @@ public class MenuItemViewModel
 
     public int UnitId { get; set; }
 
-    public bool IsAvailable { get; set; }
+    public bool? IsAvailable { get; set; }
 
     public bool IsFavourite { get; set; } 
 

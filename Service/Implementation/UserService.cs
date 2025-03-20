@@ -18,6 +18,27 @@ namespace Pizzashop.Service.Implementation
             _userRepository = userRepository;
             _context = context;
         }
+        public async Task<List<Country>> GetAllCountriesAsync()
+        {
+            return await _userRepository.GetAllCountriesAsync();
+        }
+
+        public async Task<List<object>> GetStatesJsonAsync(int countryId)
+        {
+            var states = await _userRepository.GetStatesByCountryIdAsync(countryId);
+            return states.Select(s => new { id = s.Id, name = s.Name }).Cast<object>().ToList();
+        }
+
+        public async Task<List<object>> GetCitiesJsonAsync(int stateId)
+        {
+            var cities = await _userRepository.GetCitiesByStateIdAsync(stateId);
+            return cities.Select(c => new { id = c.Id, name = c.Name }).Cast<object>().ToList();
+        }
+
+        public async Task<List<Role>> GetAllRolesAsync()
+        {
+            return await _userRepository.GetAllRolesAsync();
+        }
         public async Task<string> GetUserProfileImageAsync(string email)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
@@ -60,6 +81,7 @@ namespace Pizzashop.Service.Implementation
             {
                 return null;
             }
+            var roleName = await _userRepository.GetRoleNameById(user.RoleId);
 
             return new UserViewModel
             {
@@ -68,6 +90,7 @@ namespace Pizzashop.Service.Implementation
                 LastName = user.LastName,
                 Username = user.Username,
                 Phone = user.Phone,
+                RoleName = roleName,
                 CountryId = user.CountryId,
                 StateId = user.StateId,
                 CityId = user.CityId,
@@ -151,6 +174,10 @@ namespace Pizzashop.Service.Implementation
             }
 
             string userEmail = userEmailClaim.Value;
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return null;
+            }
             var user = await _userRepository.GetUserByEmail(userEmail);
             if (user == null)
             {
@@ -196,8 +223,22 @@ namespace Pizzashop.Service.Implementation
                 return false;
             }
 
+            if (BCrypt.Net.BCrypt.Verify(model.NewPassword, user.PasswordHash))
+            {
+                return false;
+            }
+
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
             return await _userRepository.UpdateUserAsync(user);
+        }
+        public async Task<User?> GetUserByEmail(string email)
+        {
+            return await _userRepository.GetUserByEmail(email);
+        }
+
+        public async Task<User?> GetUserByUsername(string username)
+        {
+            return await _userRepository.GetUserByUsername(username);
         }
     }
 }

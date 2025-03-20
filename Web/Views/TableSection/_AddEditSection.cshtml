@@ -1,0 +1,58 @@
+@model Entity.ViewModel.SectionViewModel
+
+<div class="modal-header">
+    <h5 class="modal-title">@(Model.Id == 0 ? "Add Section" : "Edit Section")</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <form id="addEditSectionForm" asp-action="AddEditSection" method="post">
+        @if (Model.Id != 0)
+        {
+            <input type="hidden" asp-for="Id" />
+        }
+        <div class="form-group">
+            <label asp-for="Name" class="control-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Description" class="control-label"></label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#addEditSectionForm').submit(function (event) {
+            event.preventDefault();
+            var form = $(this);
+            $.ajax({
+                type: form.attr('method'),
+                url: form.attr('action'),
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        $('#sectionModal').modal('hide');
+                        showSuccessMessage(response.message);
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        $('#modalContent').html(response);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showErrorMessage("An error occurred. Please try again.");
+                }
+            });
+        });
+    });
+</script>
