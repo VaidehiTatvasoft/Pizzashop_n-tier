@@ -46,9 +46,8 @@ public class TableSectionController : Controller
         }
         catch (Exception ex)
         {
-            TempData["ErrorMessage"] = "Name already Exist";
             ModelState.AddModelError(string.Empty, ex.Message);
-            return PartialView("_AddEditSection", sectionViewModel);
+            return Json(new { success = false, message = ex.Message });
         }
     }
 

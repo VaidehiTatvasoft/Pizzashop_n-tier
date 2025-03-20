@@ -12,9 +12,10 @@ public class SectionRepository : ISectionRepository
     {
         _context = context;
     }
+
     public async Task<IEnumerable<Section>> GetAllSectionsAsync()
     {
-        return await _context.Sections.Where(s => s.IsDeleted == false ).ToListAsync();
+        return await _context.Sections.Where(s => s.IsDeleted == false).ToListAsync();
     }
 
     public async Task<Section?> GetSectionByIdAsync(int id)
@@ -24,22 +25,24 @@ public class SectionRepository : ISectionRepository
 
     public async Task<bool> AddSectionAsync(Section section)
     {
-        bool isNameUnique = !await _context.Sections.AnyAsync(s => s.Name == section.Name && s.IsDeleted == false);
+        bool isNameUnique = !await _context.Sections
+            .AnyAsync(s => s.Name.ToLower() == section.Name.ToLower() && s.IsDeleted == false);
         if (!isNameUnique)
             throw new Exception("Section name must be unique.");
 
         await _context.Sections.AddAsync(section);
-        return await _context.SaveChangesAsync()>0;
+        return await _context.SaveChangesAsync() > 0;
     }
 
     public async Task<bool> UpdateSectionAsync(Section section)
     {
-        bool isNameUnique = !await _context.Sections.AnyAsync(s => s.Name == section.Name && s.Id != section.Id && s.IsDeleted == false);
+        bool isNameUnique = !await _context.Sections
+            .AnyAsync(s => s.Name.ToLower() == section.Name.ToLower() && s.Id != section.Id && s.IsDeleted == false);
         if (!isNameUnique)
             throw new Exception("Section name must be unique.");
 
         _context.Sections.Update(section);
-        return await _context.SaveChangesAsync()>0;
+        return await _context.SaveChangesAsync() > 0;
     }
 
     public async Task DeleteSectionAsync(int id, bool softDelete)
@@ -67,5 +70,4 @@ public class SectionRepository : ISectionRepository
             await _context.SaveChangesAsync();
         }
     }
-
 }

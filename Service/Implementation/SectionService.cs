@@ -56,7 +56,14 @@ public class SectionService : ISectionService
             ModifiedBy = userId,
             ModifiedAt = DateTime.UtcNow,
         };
-        return await _sectionRepository.AddSectionAsync(section);
+        try
+        {
+            return await _sectionRepository.AddSectionAsync(section);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Section name must be unique.", ex);
+        }
     }
 
     public async Task<bool> UpdateSectionAsync(SectionViewModel model, ClaimsPrincipal userClaims)
@@ -78,7 +85,14 @@ public class SectionService : ISectionService
         existingSection.ModifiedBy = userId;
         existingSection.ModifiedAt = DateTime.UtcNow;
 
-        return await _sectionRepository.UpdateSectionAsync(existingSection);
+        try
+        {
+            return await _sectionRepository.UpdateSectionAsync(existingSection);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Section name must be unique.", ex);
+        }
     }
 
     public async Task DeleteSectionAsync(int id, bool softDelete, ClaimsPrincipal userClaims)

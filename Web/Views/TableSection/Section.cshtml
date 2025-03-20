@@ -51,13 +51,22 @@
                     if (response.success) {
                         $('#sectionModal').modal('hide');
                         showSuccessMessage(response.message);
+                        reloadSectionsList();
                     } else {
+                        showErrorMessage(response.message);
                         $('#modalContent').html(response.html);
                     }
                 },
                 error: function (xhr, status, error) {
                     showErrorMessage("An error occurred. Please try again.");
                 }
+            });
+        }
+
+        function reloadSectionsList() {
+            $.get('@Url.Action("Section", "TableSection")', function(data) {
+                var html = $(data).find('#sectionsList').html();
+                $('#sectionsList').html(html);
             });
         }
 
