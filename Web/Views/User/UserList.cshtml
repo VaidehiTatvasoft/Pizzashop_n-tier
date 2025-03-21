@@ -228,7 +228,7 @@
             if (errorMessage) {
                 toastr.error(errorMessage);
             }
-            $('#searchInput').on('input', function () {
+             $('#searchInput').on('input', function () {
                 var searchString = $(this).val().trim();
                 var pageSize = $('#Select').val() || 5;
                 var sortOrder = '@ViewBag.sortOrder';
