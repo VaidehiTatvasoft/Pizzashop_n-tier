@@ -960,6 +960,7 @@ public partial class PizzaShopContext : DbContext
                 .HasDefaultValueSql("false")
                 .HasColumnName("is_deleted");
             entity.Property(e => e.IsFirstlogin)
+                .IsRequired()
                 .HasDefaultValueSql("true")
                 .HasColumnName("is_firstlogin");
             entity.Property(e => e.LastName)

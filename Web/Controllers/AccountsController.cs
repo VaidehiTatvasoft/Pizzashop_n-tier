@@ -52,17 +52,30 @@ namespace Pizzashop.Web.Controllers
             {
                 return View(model);
             }
-            var user = await _accountService.AuthenticateUser(model.Email, model.PasswordHash);
+
+            var (user, isActive) = await _accountService.AuthenticateUser(model.Email, model.PasswordHash);
+
+            if (!isActive)
+            {
+                TempData["ErrorMessage"] = "User is not active.";
+                return RedirectToAction("Login");
+            }
+
             if (user == null)
             {
+                TempData["ErrorMessage"] = "Invalid Email or password";
                 ModelState.AddModelError("", "Invalid Email or password");
                 return View(model);
             }
+
             var tokenString = _tokenService.GenerateAuthToken(user, TimeSpan.FromHours(24));
             _accountService.SetCookies(HttpContext, tokenString, model.RememberMe);
-            if(user.IsFirstlogin == true){
+
+            if (user.IsFirstlogin == true)
+            {
                 return RedirectToAction("ChangePassword", "User");
             }
+
             if (user.RoleId == 1)
             {
                 return RedirectToAction("AdminDashboard", "Home");
@@ -71,6 +84,7 @@ namespace Pizzashop.Web.Controllers
             {
                 return RedirectToAction("Dashboard", "Home");
             }
+
         }
         [Route("/forgotpassword")]
         public IActionResult ForgotPassword(string? email)

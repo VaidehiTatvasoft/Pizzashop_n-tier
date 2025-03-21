@@ -132,6 +132,18 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFibGVTZWN0aW9uXF9UYWJsZUxpc3QuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/Project_pce54/Pizzashop_n-tier/Web/Views/Tax/TaxList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGF4XFRheExpc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Project_pce54/Pizzashop_n-tier/Web/Views/Tax/_TaxFormPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGF4XF9UYXhGb3JtUGFydGlhbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Project_pce54/Pizzashop_n-tier/Web/Views/Tax/_TaxTablePartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGF4XF9UYXhUYWJsZVBhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/Project_pce54/Pizzashop_n-tier/Web/Views/User/AddUser.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxBZGRVc2VyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 

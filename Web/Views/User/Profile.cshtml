@@ -111,6 +111,16 @@
 @section Scripts {
 <script>
        $(document).ready(function () {
+        document.getElementById('ProfileImage').addEventListener('change', function (event) {
+            var file = event.target.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.querySelector(".profile-img").src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
             $("#CountryId").change(function () {
                 var countryId = $(this).val();
                 if (countryId) {

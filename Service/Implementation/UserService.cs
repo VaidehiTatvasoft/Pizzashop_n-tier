@@ -221,9 +221,9 @@ namespace Pizzashop.Service.Implementation
             {
                 return false;
             }
-
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+            
             user.IsFirstlogin = false;
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
             return await _userRepository.UpdateUserAsync(user);
         }
         public async Task<User?> GetUserByEmail(string email)
@@ -235,6 +235,6 @@ namespace Pizzashop.Service.Implementation
         {
             return await _userRepository.GetUserByUsername(username);
         }
-        
+
     }
 }

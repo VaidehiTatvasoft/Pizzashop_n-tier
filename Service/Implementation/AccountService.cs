@@ -19,14 +19,18 @@ namespace Pizzashop.Service.Implementation
             _tokenService = tokenService;
         }
 
-        public async Task<User?> AuthenticateUser(string email, string password)
+        public async Task<(User?, bool isActive)> AuthenticateUser(string email, string password)
         {
             var user = await _userRepository.AuthenticateUser(email, password);
+            
             if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
             {
-                return user;
+                if(user.IsActive == false){
+                return (null, false);;
             }
-            return null;
+                return (user, true);
+            }
+            return (null, true);;
         }
 
         public async Task SendForgotPasswordEmail(string email, string resetLink)

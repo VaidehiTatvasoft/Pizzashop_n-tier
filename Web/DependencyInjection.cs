@@ -24,6 +24,7 @@ namespace Web
             services.AddScoped<IUnitService, UnitService>();
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ITableService, TableService>();
+            services.AddScoped<ITaxAndFeeService, TaxAndFeeService>(); 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IMenuRepository, MenuRepository>();
@@ -32,6 +33,7 @@ namespace Web
             services.AddScoped<IModifierRepository, ModifierRepository>();
             services.AddScoped<ISectionRepository, SectionRepository>();
             services.AddScoped<ITableRepository, TableRepository>();
+            services.AddScoped<ITaxAndFeeRepository, TaxAndFeeRepository>();
             services.AddSingleton<IConfiguration>(configuration);
         }
     }
