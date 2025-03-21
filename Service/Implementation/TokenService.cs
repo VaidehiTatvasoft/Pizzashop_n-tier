@@ -45,6 +45,7 @@ namespace Pizzashop.Service.Implementation
                 new Claim("UserId", user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.RoleId.ToString()),
+                new Claim("isFirstLogin", user.IsFirstlogin.ToString()),
                 new Claim("TokenType", tokenType)
             };
 

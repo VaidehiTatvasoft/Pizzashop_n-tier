@@ -47,10 +47,6 @@
                 <div class="form-floating ">
                     <select id="RoleId" asp-for="RoleId" asp-items="ViewBag.Roles" class="form-select">
                         <option value="">Select Role</option>
-                        @foreach (var role in ViewBag.Roles)
-                        {
-                            <option value="@role.Id">@role.Name</option>
-                        }
                     </select>
                     <label for="RoleId" class="float">Role*</label>
                     <span class="text-danger fs-6 ms-2" asp-validation-for="RoleId"></span>
@@ -83,7 +79,7 @@
                     <i class="fa-solid fa-cloud-arrow-up"></i>
                     <h5>Upload</h5>
                 </label>
-                <input asp-for="ProfileImage" type="file" id="ProfileImage" class="file-upload-input"
+                <input asp-for="ProfileImage" type="file" id="ProfileImage" accept="image/*"class="file-upload-input"
                     onchange="showFileName()">
                 <span class="file-upload-name" id="file-upload-name"></span>
                 <span class="text-danger fs-6 ms-2" asp-validation-for="ProfileImage"></span>
@@ -92,12 +88,8 @@
         <br>
         <div class="row">
             <div class="form-floating col-md-4  mb-3">
-                <select id="CountryId" asp-for="CountryId" class="form-select">
+                <select id="CountryId" asp-for="CountryId" asp-items="ViewBag.Countries"class="form-select">
                     <option value="">Select Country</option>
-                    @foreach (var country in ViewBag.Countries)
-                    {
-                        <option value="@country.Id">@country.Name</option>
-                    }
                 </select>
                 <label for="CountryId" class="float">Country*</label>
                 <span asp-validation-for="CountryId" class="text-danger"></span>

@@ -60,6 +60,9 @@ namespace Pizzashop.Web.Controllers
             }
             var tokenString = _tokenService.GenerateAuthToken(user, TimeSpan.FromHours(24));
             _accountService.SetCookies(HttpContext, tokenString, model.RememberMe);
+            if(user.IsFirstlogin == true){
+                return RedirectToAction("ChangePassword", "User");
+            }
             if (user.RoleId == 1)
             {
                 return RedirectToAction("AdminDashboard", "Home");
@@ -75,7 +78,6 @@ namespace Pizzashop.Web.Controllers
             var model = new ForgotPassword { Email = email ?? "" };
             return View(model);
         }
-        [Route("/forgotpassword")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPassword model)
@@ -131,7 +133,6 @@ namespace Pizzashop.Web.Controllers
             var model = new ResetPasswordModel { Email = email };
             return View(model);
         }
-        [Route("/resetpassword")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(ResetPasswordModel model, string token)
@@ -161,6 +162,7 @@ namespace Pizzashop.Web.Controllers
             TempData["Message"] = "Password has been reset. You can now login.";
             return RedirectToAction("Login");
         }
+        [Route("/logout")]
         [HttpPost]
         public IActionResult Logout()
         {

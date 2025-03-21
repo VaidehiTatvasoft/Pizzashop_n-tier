@@ -5,11 +5,9 @@
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
-    <form id="addEditSectionForm" asp-action="AddEditSection" method="post">
-        @if (Model.Id != 0)
-        {
-            <input type="hidden" asp-for="Id" />
-        }
+    <form id="addEditSectionForm" method="post" action="@Url.Action("AddEditSection", "TableSection")">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
         <div class="form-group">
             <label asp-for="Name" class="control-label"></label>
             <input asp-for="Name" class="form-control" />

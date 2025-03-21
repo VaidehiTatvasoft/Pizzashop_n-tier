@@ -120,14 +120,9 @@
                 canView.checked = isChecked;
 
                 canAddEdit.disabled = !isChecked;
-                if (!isChecked) {
-                    canAddEdit.checked = false;
-                }
-
+                    canAddEdit.checked = isChecked;
                 canDelete.disabled = !isChecked;
-                if (!isChecked) {
-                    canDelete.checked = false;
-                }
+                    canDelete.checked = isChecked;
 
                 canView.addEventListener("change", function () {
                     if (!this.checked) {

@@ -1,4 +1,5 @@
 using Entity.Data;
+using Entity.ViewModel;
 using Microsoft.EntityFrameworkCore;
 using Repository.Interface;
 
@@ -13,9 +14,17 @@ public class SectionRepository : ISectionRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Section>> GetAllSectionsAsync()
+    public List<SectionViewModel> GetAllSectionsAsync()
     {
-        return await _context.Sections.Where(s => s.IsDeleted == false).ToListAsync();
+        var sections = _context.Sections.Where(s => s.IsDeleted == false)
+        .Select(s => new SectionViewModel
+        {
+            Id = s.Id,
+            Name = s.Name,
+            Description = s.Description,
+        })
+        .OrderBy(s => s.Name).ToList();
+        return sections;
     }
 
     public async Task<Section?> GetSectionByIdAsync(int id)

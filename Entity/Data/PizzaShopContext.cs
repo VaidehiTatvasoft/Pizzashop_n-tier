@@ -959,6 +959,9 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.IsDeleted)
                 .HasDefaultValueSql("false")
                 .HasColumnName("is_deleted");
+            entity.Property(e => e.IsFirstlogin)
+                .HasDefaultValueSql("true")
+                .HasColumnName("is_firstlogin");
             entity.Property(e => e.LastName)
                 .HasMaxLength(50)
                 .HasColumnName("last_name");

@@ -14,15 +14,9 @@ public class SectionService : ISectionService
         _sectionRepository = sectionRepository;
     }
 
-    public async Task<IEnumerable<SectionViewModel>> GetAllSectionsAsync()
-    {
-        var sections = await _sectionRepository.GetAllSectionsAsync();
-        return sections.Select(s => new SectionViewModel
-        {
-            Id = s.Id,
-            Name = s.Name,
-            Description = s.Description,
-        }).ToList();
+public List<SectionViewModel> GetAllSections()    {
+        var sections =  _sectionRepository.GetAllSectionsAsync();
+        return sections;
     }
 
     public async Task<SectionViewModel?> GetSectionByIdAsync(int id)

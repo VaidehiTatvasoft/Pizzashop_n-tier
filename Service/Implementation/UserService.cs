@@ -127,16 +127,9 @@ namespace Pizzashop.Service.Implementation
             return await _userRepository.UpdateUserAsync(user);
         }
 
-        public async Task<bool> UpdateProfileAsync(UserViewModel model, ClaimsPrincipal userClaims)
+        public async Task<bool> UpdateProfileAsync(UserViewModel model)
         {
-            var userEmailClaim = userClaims.FindFirst(ClaimTypes.Email);
-            if (userEmailClaim == null)
-            {
-                return false;
-            }
-
-            string userEmail = userEmailClaim.Value;
-            var user = await _userRepository.GetUserByEmail(userEmail);
+            var user = await _userRepository.GetUserByEmail(model.Email);
             if (user == null)
             {
                 return false;
@@ -187,6 +180,7 @@ namespace Pizzashop.Service.Implementation
 
             return new UserViewModel
             {
+                Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Username = user.Username,
@@ -229,6 +223,7 @@ namespace Pizzashop.Service.Implementation
             }
 
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+            user.IsFirstlogin = false;
             return await _userRepository.UpdateUserAsync(user);
         }
         public async Task<User?> GetUserByEmail(string email)
@@ -240,5 +235,6 @@ namespace Pizzashop.Service.Implementation
         {
             return await _userRepository.GetUserByUsername(username);
         }
+        
     }
 }

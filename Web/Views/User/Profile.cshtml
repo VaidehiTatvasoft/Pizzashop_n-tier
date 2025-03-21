@@ -10,11 +10,11 @@
         <img class="profile-bg img-1" src="~/assets/profile_div_bg.jpg" alt="profile-bg">
     </div>
     <form asp-controller="User" asp-action="Profile" method="post" class="row needs-validation mt-1 mb-3 mx-2" enctype="multipart/form-data" id="profileForm">
+        <input type="int" asp-for="Id" value="@Model.Id" hidden>
         <div class="row mx-2">
             <div class="col-2 col-md-1 d-flex justify-content-center p-0">
                 <img src="~/uploads/@(Model?.ProfileImage)" class="profile-img profile-photo rounded-circle" alt="profile-img">
-                <input type="file" asp-for="ProfileImage" name="ProfileImage" id="ProfileImage" accept="~/uploads/*" style="display: none;">
-                <input type="hidden" asp-for="ProfileImage" name="ProfileImage">
+                <input type="file" asp-for="ProfileImage" name="ProfileImage" id="ProfileImage" accept="image/*" style="display: none;">
                 <label id="changeImageButton" for="ProfileImage" class="position-absolute bg-white camera-position z-3 rounded-circle border z-2 shadow-sm">
                     <i class="fa fa-camera p-2 " aria-hidden="true"></i>
                 </label>
@@ -29,7 +29,6 @@
         </div>
         <div>
             <div class="">
-                <input type="hidden" asp-for="Id" name="Id" />
                 <input type="text" asp-for="Email" hidden>
                 <div class="row">
                     <div class="col-md-6">
@@ -109,11 +108,9 @@
         </div>
     </form>
 </div>
-
 @section Scripts {
-<script> 
-                $(document).ready(function () {
-            
+<script>
+       $(document).ready(function () {
             $("#CountryId").change(function () {
                 var countryId = $(this).val();
                 if (countryId) {
@@ -161,6 +158,15 @@
                             toastr.error($(this).text());
                         }
                     });
+                    var successMessage = '@TempData["SuccessMessage"]';
+                    var errorMessage = '@TempData["ErrorMessage"]';
+
+                    if (successMessage) {
+                        toastr.success(successMessage);
+                    }
+                    if (errorMessage) {
+                        toastr.error(errorMessage);
+                    }
                 }
             });
         });

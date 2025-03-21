@@ -8,9 +8,10 @@
     <p>Are you sure you want to delete the section "<strong>@Model.Name</strong>"?</p>
 </div>
 <div class="modal-footer">
-    <form asp-action="DeleteSection" method="post">
+    <form id="deleteSectionForm" method="post" action="@Url.Action("DeleteSection", "TableSection")">
+        @Html.AntiForgeryToken()
         <input type="hidden" asp-for="Id" />
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
         <button type="submit" class="btn btn-danger">Yes, Delete</button>
     </form>
 </div>

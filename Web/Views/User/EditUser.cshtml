@@ -76,7 +76,7 @@
                     <i class="fa-solid fa-cloud-arrow-up"></i>
                     <h5>Upload</h5>
                 </label>
-                <input asp-for="ProfileImage" type="file" id="ProfileImage" class="file-upload-input" onchange="showFileName()">
+                <input asp-for="ProfileImage" type="file" id="ProfileImage" accept="image/*" class="file-upload-input" onchange="showFileName()">
                 <span class="file-upload-name" id="file-upload-name"></span>
                 <span class="text-danger fs-6 ms-2" asp-validation-for="ProfileImage" class="text-danger"></span>
             </div>

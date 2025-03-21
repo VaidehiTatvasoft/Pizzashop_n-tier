@@ -20,7 +20,8 @@ namespace pizzashop.Services.Interfaces
         Task<string> GetUserProfileImageAsync(string email);
         IEnumerable<User> GetUsersList(string searchString, string sortOrder, int pageIndex, int pageSize, out int count);
         Task<UserViewModel> GetUserProfileAsync(ClaimsPrincipal userClaims);
-        Task<bool> UpdateProfileAsync(UserViewModel model, ClaimsPrincipal userClaims);
+        Task<bool> UpdateProfileAsync(UserViewModel model);
         Task<bool> ChangePasswordAsync(ChangePasswordModel model, ClaimsPrincipal userClaims);
+
     }
 }

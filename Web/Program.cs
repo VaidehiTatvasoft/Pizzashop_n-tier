@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Web;
+using Web.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,7 +78,7 @@ app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseMiddleware<FirstLoginMiddleware>(); 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Accounts}/{action=Login}/{id?}");

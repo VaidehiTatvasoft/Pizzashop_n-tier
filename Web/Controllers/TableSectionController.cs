@@ -7,17 +7,29 @@ namespace Web.Controllers;
 public class TableSectionController : Controller
 {
     private readonly ISectionService _sectionService;
+    private readonly ITableService _tableService;
 
-    public TableSectionController(ISectionService sectionService)
+
+    public TableSectionController(ITableService tableService, ISectionService sectionService)
     {
+        _tableService = tableService;
         _sectionService = sectionService;
     }
-
-    public async Task<IActionResult> Section()
+    [HttpGet]
+    public IActionResult TableSection()
     {
-        var sections = await _sectionService.GetAllSectionsAsync();
-        return View("Section", sections.OrderBy(s => s.Name)); 
+        var sections = _sectionService.GetAllSections();
+        var tables = _tableService.GetAllTables();
+
+        var tableSection = new TableSectionViewModel
+        {
+            Tables = tables,
+            Sections = sections
+        };
+        return View(tableSection);
     }
+
+
 
     [HttpGet]
     public async Task<IActionResult> AddEditSection(int? id)
@@ -25,8 +37,8 @@ public class TableSectionController : Controller
         if (id == null || id == 0)
             return PartialView("_AddEditSection", new SectionViewModel());
 
-        var section = await _sectionService.GetSectionByIdAsync(id.Value);
-        return PartialView("_AddEditSection", section);
+        var tableSection = await _sectionService.GetSectionByIdAsync(id.Value);
+        return PartialView("_AddEditSection", tableSection);
     }
 
     [HttpPost]
@@ -55,17 +67,17 @@ public class TableSectionController : Controller
     public async Task<IActionResult> DeleteSection(int id, bool softDelete = true)
     {
         await _sectionService.DeleteSectionAsync(id, softDelete, User);
-        var sections = await _sectionService.GetAllSectionsAsync();
-        return View("Section", sections.OrderBy(s => s.Name)); 
+        var tableSection = await _sectionService.GetSectionByIdAsync(id);
+        return View("TableSection","TableSection");
     }
 
     [HttpGet]
     public async Task<IActionResult> ConfirmDeleteSection(int id)
     {
-        var section = await _sectionService.GetSectionByIdAsync(id);
-        if (section == null)
+        var tableSection = await _sectionService.GetSectionByIdAsync(id);
+        if (tableSection == null)
             return NotFound();
 
-        return PartialView("_DeleteSection", section);
+        return PartialView("_DeleteSection", tableSection);
     }
 }

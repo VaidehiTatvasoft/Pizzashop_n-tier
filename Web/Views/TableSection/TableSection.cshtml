@@ -1,0 +1,116 @@
+@model Entity.ViewModel.TableSectionViewModel;
+
+<div class="col-12">
+    <h1 class="title">Sections / Tables</h1>
+    <section>
+        <div class="row mx-0">
+            <aside class="col-md-3" style="background-color: #f5f5f5">
+                <!-- Sections header -->
+                <div class="d-flex flex-wrap justify-content-between align-items-center p-2">
+                    <h5 class="section-heading">Sections</h5>
+                    <button class="fill-btn py-1 px-2" data-bs-toggle="modal" data-bs-target="#sectionModal"
+                        onclick="openAddEditModal(0)">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
+                <!-- Category list -->
+                <div id="categoryList">
+                    <div id="sectionsList">
+                        <partial name="_SectionsList" model="Model.Sections" />
+                    </div>
+            </aside>
+            <div class="col-md-9 border-start border-primary bg-white">
+                <div>
+                    <!-- Tables header -->
+                    <h5 class="p-2 mb-0 section-heading">Tables</h5>
+                    <div class="d-flex justify-content-end align-items-center mb-3">
+                        <div class="form-input-div d-flex justify-content-between me-3 position-relative">
+                            <input type="text" placeholder="Search" class="form-control p-2 d-none d-sm-block "
+                                name="search" minlength="5" required id="searchString" />
+                            <span class="form-input-icon position-absolute search-icon"><i class="fa-solid fa-search"
+                                    id="eye-icon" style="color: gray"></i>
+                            </span>
+                        </div>
+                        <button class="btn btn-outline-secondary me-3" id="multiDeleteBtn">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                        <button class="fill-btn addItemBtn">
+                            <i class="fa-solid fa-plus"></i> New Table
+                        </button>
+                    </div>
+
+                    <!-- Table List -->
+                    <div id="TableList">
+                        <partial name="_TableList" model="Model.Tables" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="modal fade" id="sectionModal" tabindex="-1" aria-labelledby="sectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div id="modalContent"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div id="deleteModalContent"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openAddEditModal(id) {
+            $.get('@Url.Action("AddEditSection", "TableSection")' + '?id=' + id, function (data) {
+                $('#modalContent').html(data);
+                $('#sectionModal').modal('show');
+            });
+        }
+
+        function openDeleteModal(id) {
+            $.get('@Url.Action("ConfirmDeleteSection", "TableSection")' + '?id=' + id, function (data) {
+                $('#deleteModalContent').html(data);
+                $('#deleteModal').modal('show');
+            });
+        }
+
+        function submitAddEditSectionForm(event) {
+            event.preventDefault();
+            var form = $(event.target);
+            $.ajax({
+                type: form.attr('method'),
+                url: form.attr('action'),
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        $('#sectionModal').modal('hide');
+                        showSuccessMessage(response.message);
+                    } else {
+                        showErrorMessage(response.message);
+                        $('#modalContent').html(response.html);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showErrorMessage("An error occurred. Please try again.");
+                }
+            });
+        }
+
+        $(document).on('submit', '#addEditSectionForm', submitAddEditSectionForm);
+
+        function showSuccessMessage(message) {
+            toastr.success(message);
+        }
+
+        function showErrorMessage(message) {
+            toastr.error(message);
+        }
+    </script>
+}

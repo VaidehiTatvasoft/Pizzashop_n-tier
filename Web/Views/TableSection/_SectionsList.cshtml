@@ -1,24 +1,24 @@
-@model IEnumerable<Entity.ViewModel.SectionViewModel>
+@model List<Entity.ViewModel.SectionViewModel>;
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var sections in Model)
-        {
-            <tr>
-                <td>@sections.Name</td>
-                <td>@sections.Description</td>
-                <td>
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#sectionModal" onclick="openAddEditModal(@sections.Id)">Edit</button>
-                    <button class="btn btn-secondary" data-toggle="modal" data-target="#deleteModal" onclick="openDeleteModal(@sections.Id)">Delete</button>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="category-list">
+    @for (var i = 0; i < Model.Count(); i++)
+    {
+        <div class="d-flex flex-wrap justify-content-between align-items-center item-category-btn p-2 my-2 itemCategory"
+            data-id="@Model[i].Id">
+            <div class="category-btn border-0 bg-light">
+                <h6 class=" mb-0">
+                    <i class="fa-solid fa-grip-vertical"></i>
+                    @Model[i].Name
+                </h6>
+            </div>
+            <span class="edit-delete-icon">
+                <a href="javascript:void(0);" class="edit-btn edit-category"
+                    style="text-decoration: none; color: inherit;">
+                    <i class="fa-solid fa-pencil m-1" data-bs-toggle="modal" data-bs-target="#sectionModal"  onclick="openAddEditModal(@Model[i].Id)"></i>
+                </a>
+                <i class="fa-regular fa-trash-can mx-2 delete-category" data-bs-target="#deleteModal"
+                    data-bs-toggle="modal"  onclick="openDeleteModal(@Model[i].Id)"></i>
+            </span>
+        </div>
+    }
+</div>

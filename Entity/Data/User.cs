@@ -45,6 +45,8 @@ public partial class User
 
     public string? PasswordHash { get; set; }
 
+    public bool? IsFirstlogin { get; set; }
+
     public virtual City? City { get; set; }
 
     public virtual Country? Country { get; set; }

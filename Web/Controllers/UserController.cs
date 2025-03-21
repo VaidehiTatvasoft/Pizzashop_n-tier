@@ -46,9 +46,22 @@ namespace pizzashop.Controllers
         [HttpGet]
         public async Task<IActionResult> AddUser()
         {
-            await LoadDropdowns();
+            var countries = await _userService.GetAllCountriesAsync();
+            var roles = await _userService.GetAllRolesAsync();
+            ViewBag.Countries = countries.Select(country => new SelectListItem
+            {
+                Value = country.Id.ToString(),
+                Text = country.Name
+            });
+            ViewBag.Roles = roles.Select(role => new SelectListItem
+            {
+                Value = role.Id.ToString(),
+                Text = role.Name
+            });
+
             return View();
         }
+
 
         [Route("/adduser")]
         [HttpPost]
@@ -77,6 +90,13 @@ namespace pizzashop.Controllers
 
                 if (ProfileImage != null && ProfileImage.Length > 0)
                 {
+                    if (!IsImageFile(ProfileImage))
+                    {
+                        TempData["ErrorMessage"] = "Only image files are allowed.";
+                        ModelState.AddModelError("ProfileImage", "Only image files are allowed.");
+                        await LoadDropdowns();
+                        return View(model);
+                    }
                     var fileName = Path.GetFileName(ProfileImage.FileName);
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
 
@@ -93,21 +113,21 @@ namespace pizzashop.Controllers
                 {
                     string subject = "Account Login Details";
                     string body = $@"<div style='font-family: sans-serif;'>
-                    <div style='background-color: #0066A7; padding: 10px; display: flex; justify-content: center; align-items: center; gap: 2rem;'>
-                        <img src='http://localhost:5222/images/pizzashop_logo.png' alt='' style='width:60px; background-color:white; border-radius:50%;'>
-                        <h1 style='color: white;'>PIZZASHOP</h1>
-                    </div>
-                    <p>
-                        Welcome to Pizza Shop, <br><br>
-                        Please find the details below for login to your account. <br>
-                        <div style='border: 1px solid black; padding: 0.5rem; font-weight: bold;'>
-                            <h3>Login Details:</h3>
-                            Username: {model.Email} <br>
-                            Password: {model.PasswordHash}
-                        </div><br>
-                        If you encounter any issues or have any questions, please do not hesitate to contact our support team. <br><br>
-                    </p>
-                </div>";
+            <div style='background-color: #0066A7; padding: 10px; display: flex; justify-content: center; align-items: center; gap: 2rem;'>
+                <img src='http://localhost:5222/images/pizzashop_logo.png' alt='' style='width:60px; background-color:white; border-radius:50%;'>
+                <h1 style='color: white;'>PIZZASHOP</h1>
+            </div>
+            <p>
+                Welcome to Pizza Shop, <br><br>
+                Please find the details below for login to your account. <br>
+                <div style='border: 1px solid black; padding: 0.5rem; font-weight: bold;'>
+                    <h3>Login Details:</h3>
+                    Username: {model.Email} <br>
+                    Password: {model.PasswordHash}
+                </div><br>
+                If you encounter any issues or have any questions, please do not hesitate to contact our support team. <br><br>
+            </p>
+        </div>";
 
                     await _emailService.SendEmailAsync(model.Email, subject, body);
 
@@ -122,7 +142,6 @@ namespace pizzashop.Controllers
             await LoadDropdowns();
             return View(model);
         }
-
         [Authorize(Roles = "1")]
         [Route("/user/edituser")]
         [HttpGet]
@@ -164,6 +183,14 @@ namespace pizzashop.Controllers
 
                 if (ProfileImage != null && ProfileImage.Length > 0)
                 {
+                    if (!IsImageFile(ProfileImage))
+                    {
+                        TempData["ErrorMessage"] = "Only image files are allowed.";
+                        ModelState.AddModelError("ProfileImage", "Only image files are allowed.");
+                        await LoadDropdowns(model);
+                        return View(model);
+                    }
+
                     var fileName = Path.GetFileName(ProfileImage.FileName);
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
 
@@ -267,6 +294,14 @@ namespace pizzashop.Controllers
             {
                 if (ProfileImage != null && ProfileImage.Length > 0)
                 {
+                    if (!IsImageFile(ProfileImage))
+                    {
+                        TempData["ErrorMessage"] = "Only image files are allowed.";
+                        ModelState.AddModelError("ProfileImage", "Only image files are allowed.");
+                        await LoadDropdowns(model);
+                        return View(model);
+                    }
+
                     var fileName = Path.GetFileName(ProfileImage.FileName);
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
 
@@ -285,7 +320,7 @@ namespace pizzashop.Controllers
                         model.ProfileImage = existingUser.ProfileImage;
                     }
                 }
-                var result = await _userService.UpdateProfileAsync(model, User);
+                var result = await _userService.UpdateProfileAsync(model);
                 if (result)
                 {
                     TempData["SuccessMessage"] = "Profile updated successfully.";
@@ -299,7 +334,12 @@ namespace pizzashop.Controllers
             await LoadDropdowns(model);
             return View(model);
         }
-
+        private bool IsImageFile(IFormFile file)
+        {
+            string[] permittedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+            return !string.IsNullOrEmpty(extension) && permittedExtensions.Contains(extension);
+        }
         [Authorize(Roles = "1")]
         [Route("/user/changepassword")]
         [HttpGet]

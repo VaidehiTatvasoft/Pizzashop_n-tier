@@ -6,7 +6,7 @@ namespace Service.Interface;
 public interface ISectionService
 {
 
-    Task<IEnumerable<SectionViewModel>> GetAllSectionsAsync();
+    public List<SectionViewModel> GetAllSections();
     Task<SectionViewModel?> GetSectionByIdAsync(int id);
     Task<bool> AddSectionAsync(SectionViewModel model, ClaimsPrincipal userClaims);
     Task<bool> UpdateSectionAsync(SectionViewModel model, ClaimsPrincipal userClaims);
