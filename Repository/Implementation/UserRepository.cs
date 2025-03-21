@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Pizzashop.Repository.Interfaces;
+using Repository.Interfaces;
 using Entity.Data;
 using Entity.ViewModel;
 
-namespace Pizzashop.Repository.Implementation
-{
+namespace Repository.Implementation;
+
     public class UserRepository : IUserRepository
     {
         private readonly PizzaShopContext _context;
@@ -119,9 +119,18 @@ namespace Pizzashop.Repository.Implementation
                 .Take(pageSize)
                 .ToList();
         }
+        public async Task<Country> GetCountryByIdAsync(int countryId)
+        {
+            return await _context.Countries.FirstOrDefaultAsync(c => c.Id == countryId);
+        }
+
         public async Task<List<Country>> GetAllCountriesAsync()
         {
             return await _context.Countries.OrderBy(c => c.Name).ToListAsync();
+        }
+        public async Task<State> GetStateByIdAsync(int stateId)
+        {
+            return await _context.States.FirstOrDefaultAsync(s => s.Id == stateId);
         }
 
         public async Task<List<State>> GetStatesByCountryIdAsync(int countryId)
@@ -129,14 +138,13 @@ namespace Pizzashop.Repository.Implementation
             return await _context.States.Where(s => s.CountryId == countryId).OrderBy(s => s.Name).ToListAsync();
         }
 
+        public async Task<City> GetCityByIdAsync(int cityId)
+        {
+            return await _context.Cities.FirstOrDefaultAsync(c => c.Id == cityId);
+        }
+
         public async Task<List<City>> GetCitiesByStateIdAsync(int stateId)
         {
             return await _context.Cities.Where(c => c.StateId == stateId).OrderBy(c => c.Name).ToListAsync();
         }
-
-        public async Task<List<Role>> GetAllRolesAsync()
-        {
-            return await _context.Roles.OrderBy(r => r.Name).ToListAsync();
-        }
     }
-}

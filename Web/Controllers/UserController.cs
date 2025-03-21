@@ -26,6 +26,7 @@ namespace pizzashop.Controllers
             _emailService = emailService;
             _accountService = accountService;
         }
+
         [Authorize(Roles = "1")]
         [HttpGet]
         public async Task<IActionResult> GetProfileImage()
@@ -39,16 +40,14 @@ namespace pizzashop.Controllers
             var profileImagePath = await _userService.GetUserProfileImageAsync(email);
             return Json(new { profileImgPath = profileImagePath ?? "Default_pfp.svg.png" });
         }
+
         [Authorize(Roles = "1")]
         [Route("/adduser")]
+        [HttpGet]
         public async Task<IActionResult> AddUser()
         {
-            var model = new AddUserModel
-            {
-                Countries = await _userService.GetAllCountriesAsync(),
-                Roles = await _userService.GetAllRolesAsync()
-            };
-            return View(model);
+            await LoadDropdowns();
+            return View();
         }
 
         [Route("/adduser")]
@@ -63,8 +62,7 @@ namespace pizzashop.Controllers
                 {
                     TempData["ErrorMessage"] = "Email already exists.";
                     ModelState.AddModelError("", "Email already exists.");
-                    model.Countries = await _userService.GetAllCountriesAsync();
-                    model.Roles = await _userService.GetAllRolesAsync();
+                    await LoadDropdowns();
                     return View(model);
                 }
 
@@ -73,8 +71,7 @@ namespace pizzashop.Controllers
                 {
                     TempData["ErrorMessage"] = "Username already exists.";
                     ModelState.AddModelError("", "Username already exists.");
-                    model.Countries = await _userService.GetAllCountriesAsync();
-                    model.Roles = await _userService.GetAllRolesAsync();
+                    await LoadDropdowns();
                     return View(model);
                 }
 
@@ -122,8 +119,7 @@ namespace pizzashop.Controllers
                     TempData["ErrorMessage"] = "Error adding user.";
                 }
             }
-            model.Countries = await _userService.GetAllCountriesAsync();
-            model.Roles = await _userService.GetAllRolesAsync();
+            await LoadDropdowns();
             return View(model);
         }
 
@@ -137,10 +133,10 @@ namespace pizzashop.Controllers
             {
                 return NotFound();
             }
-            user.Roles = await _userService.GetAllRolesAsync();
-            user.Countries = await _userService.GetAllCountriesAsync();
+            await LoadDropdowns(user);
             return View(user);
         }
+
         [Route("/user/edituser")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -153,7 +149,7 @@ namespace pizzashop.Controllers
                 {
                     TempData["ErrorMessage"] = "Email already exists.";
                     ModelState.AddModelError("", "Email already exists.");
-
+                    await LoadDropdowns(model);
                     return View(model);
                 }
 
@@ -162,8 +158,7 @@ namespace pizzashop.Controllers
                 {
                     TempData["ErrorMessage"] = "Username already exists.";
                     ModelState.AddModelError("", "Username already exists.");
-                    model.Roles = await _userService.GetAllRolesAsync();
-                    model.Countries = await _userService.GetAllCountriesAsync();
+                    await LoadDropdowns(model);
                     return View(model);
                 }
 
@@ -199,10 +194,10 @@ namespace pizzashop.Controllers
                     TempData["ErrorMessage"] = "Error updating user.";
                 }
             }
-            model.Roles = await _userService.GetAllRolesAsync();
-            model.Countries = await _userService.GetAllCountriesAsync();
+            await LoadDropdowns(model);
             return View(model);
         }
+
         [Authorize(Roles = "1")]
         [Route("/user/deleteuser")]
         [HttpPost]
@@ -218,6 +213,7 @@ namespace pizzashop.Controllers
             TempData["ErrorMessage"] = "Error deleting user.";
             return RedirectToAction("UserList");
         }
+
         [Authorize(Roles = "1")]
         [Route("/user/list")]
         public IActionResult UserList(string searchString, int pageIndex = 1, int pageSize = 5, string sortOrder = "", bool isAjax = false)
@@ -259,9 +255,10 @@ namespace pizzashop.Controllers
             {
                 return Unauthorized("User not found");
             }
-            user.Countries = await _userService.GetAllCountriesAsync();
+            await LoadDropdowns(user);
             return View(user);
         }
+
         [Route("/user/profile")]
         [HttpPost]
         public async Task<IActionResult> Profile(UserViewModel model, IFormFile? ProfileImage)
@@ -299,7 +296,7 @@ namespace pizzashop.Controllers
                     TempData["ErrorMessage"] = "Error updating profile.";
                 }
             }
-            model.Countries = await _userService.GetAllCountriesAsync();
+            await LoadDropdowns(model);
             return View(model);
         }
 
@@ -310,6 +307,7 @@ namespace pizzashop.Controllers
         {
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
@@ -330,29 +328,34 @@ namespace pizzashop.Controllers
             }
             return View(model);
         }
-        [HttpGet]
-        public JsonResult GetStates(int countryId)
+
+        private async Task LoadDropdowns(UserViewModel model = null)
         {
-            var states = _context.States
-                .Where(s => s.CountryId == countryId)
-                .Select(s => new
-                {
-                    id = s.Id,
-                    name = s.Name
-                }).ToList();
+            var countries = await _userService.GetAllCountriesAsync();
+            var roles = await _userService.GetAllRolesAsync();
+
+            ViewBag.Countries = new SelectList(countries, "Id", "Name");
+            ViewBag.Roles = new SelectList(roles, "Id", "Name");
+
+            if (model != null)
+            {
+                ViewBag.States = new SelectList(await _userService.GetStatesByCountryIdAsync(model.CountryId ?? 0), "Id", "Name", model.StateId ?? 0);
+                ViewBag.Cities = new SelectList(await _userService.GetCitiesByStateIdAsync(model.StateId ?? 0), "Id", "Name", model.CityId ?? 0);
+            }
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetStates(int countryId)
+        {
+            var states = await _userService.GetStatesByCountryIdAsync(countryId);
             return Json(states);
         }
 
         [HttpGet]
-        public JsonResult GetCities(int stateId)
+        public async Task<IActionResult> GetCities(int stateId)
         {
-            var cities = _context.Cities
-                .Where(c => c.StateId == stateId)
-                .Select(c => new
-                {
-                    id = c.Id,
-                    name = c.Name
-                }).ToList();
+            var cities = await _userService.GetCitiesByStateIdAsync(stateId);
             return Json(cities);
         }
     }

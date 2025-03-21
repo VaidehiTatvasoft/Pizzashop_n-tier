@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Pizzashop.Repository.Interfaces;
+using Repository.Interfaces;
 using Pizzashop.Service.Interfaces;
 using Entity.Data;
 using Microsoft.AspNetCore.Http;

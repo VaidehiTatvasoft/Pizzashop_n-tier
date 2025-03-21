@@ -15,7 +15,7 @@
 </div>
 
 <div class="shadow card container-fluid bg-light shadow pt-4">
-    <form asp-controller="User" asp-action="Adduser" method="post" class="row needs-validation mt-1 mb-3 mx-2"
+    <form asp-controller="User" asp-action="AddUser" method="post" class="row needs-validation mt-1 mb-3 mx-2"
         enctype="multipart/form-data" id="addUserForm">
         <div class="row">
             <div class="col-md-6">
@@ -45,9 +45,9 @@
             </div>
             <div class="col-md-6">
                 <div class="form-floating ">
-                    <select id="Role" asp-for="RoleId" class="form-select">
+                    <select id="RoleId" asp-for="RoleId" asp-items="ViewBag.Roles" class="form-select">
                         <option value="">Select Role</option>
-                        @foreach (var role in Model.Roles)
+                        @foreach (var role in ViewBag.Roles)
                         {
                             <option value="@role.Id">@role.Name</option>
                         }
@@ -92,9 +92,9 @@
         <br>
         <div class="row">
             <div class="form-floating col-md-4  mb-3">
-                <select id="CountryId" asp-for="CountryId" class="form-control">
+                <select id="CountryId" asp-for="CountryId" class="form-select">
                     <option value="">Select Country</option>
-                    @foreach (var country in Model.Countries)
+                    @foreach (var country in ViewBag.Countries)
                     {
                         <option value="@country.Id">@country.Name</option>
                     }
@@ -148,25 +148,42 @@
     <script>
         $(document).ready(function () {
             $("#CountryId").change(function () {
-                $.getJSON('/User/GetStates', { countryId: $(this).val() }, function (data) {
-                    var stateDropdown = $("#StateId");
-                    stateDropdown.empty().append('<option value="">Select State</option>');
-                    $.each(data, function (i, state) {
-                        stateDropdown.append('<option value="' + state.id + '">' + state.name + '</option>');
+                var countryId = $(this).val();
+                if (countryId) {
+                    $.ajax({
+                        url: '/User/GetStates',
+                        type: 'GET',
+                        data: { countryId: countryId },
+                        dataType: 'json',
+                        success: function (data) {
+                            var stateDropdown = $("#StateId");
+                            stateDropdown.empty().append('<option value="">Select State</option>');
+                            $.each(data, function (i, state) {
+                                stateDropdown.append('<option value="' + state.id + '">' + state.name + '</option>');
+                            });
+                        }
                     });
-                });
+                }
             });
 
             $("#StateId").change(function () {
-                $.getJSON('/User/GetCities', { stateId: $(this).val() }, function (data) {
-                    var cityDropdown = $("#CityId");
-                    cityDropdown.empty().append('<option value="">Select City</option>');
-                    $.each(data, function (i, city) {
-                        cityDropdown.append('<option value="' + city.id + '">' + city.name + '</option>');
+                var stateId = $(this).val();
+                if (stateId) {
+                    $.ajax({
+                        url: '/User/GetCities',
+                        type: 'GET',
+                        data: { stateId: stateId },
+                        dataType: 'json',
+                        success: function (data) {
+                            var cityDropdown = $("#CityId");
+                            cityDropdown.empty().append('<option value="">Select City</option>');
+                            $.each(data, function (i, city) {
+                                cityDropdown.append('<option value="' + city.id + '">' + city.name + '</option>');
+                            });
+                        }
                     });
-                });
+                }
             });
-
             var successMessage = '@TempData["SuccessMessage"]';
             var errorMessage = '@TempData["ErrorMessage"]';
 
@@ -201,11 +218,11 @@
             if (passwordInput.type === "password") {
                 passwordInput.type = "text";
                 toggleEye.classList.remove("fa-eye");
-                toggleEye.classList.add("fa-eye-slash");
+                toggleEye.class.add("fa-eye-slash");
             } else {
                 passwordInput.type = "password";
                 toggleEye.classList.remove("fa-eye-slash");
-                toggleEye.classList.add("fa-eye");
+                toggleEye.class.add("fa-eye");
             }
         }
     </script>

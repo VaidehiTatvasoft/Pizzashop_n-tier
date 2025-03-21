@@ -2,7 +2,7 @@ using pizzashop.Services.Interfaces;
 using System.Security.Claims;
 using Entity.Data;
 using Entity.ViewModel;
-using Pizzashop.Repository.Interfaces;
+using Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Pizzashop.Service.Implementation
@@ -10,11 +10,13 @@ namespace Pizzashop.Service.Implementation
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IRoleRepository _roleRepository;
         private readonly PizzaShopContext _context;
 
 
-        public UserService(IUserRepository userRepository, PizzaShopContext context)
+        public UserService(IUserRepository userRepository, IRoleRepository roleRepository, PizzaShopContext context)
         {
+            _roleRepository = roleRepository;
             _userRepository = userRepository;
             _context = context;
         }
@@ -23,21 +25,19 @@ namespace Pizzashop.Service.Implementation
             return await _userRepository.GetAllCountriesAsync();
         }
 
-        public async Task<List<object>> GetStatesJsonAsync(int countryId)
+        public async Task<List<State>> GetStatesByCountryIdAsync(int countryId)
         {
-            var states = await _userRepository.GetStatesByCountryIdAsync(countryId);
-            return states.Select(s => new { id = s.Id, name = s.Name }).Cast<object>().ToList();
+            return await _userRepository.GetStatesByCountryIdAsync(countryId);
         }
 
-        public async Task<List<object>> GetCitiesJsonAsync(int stateId)
+        public async Task<List<City>> GetCitiesByStateIdAsync(int stateId)
         {
-            var cities = await _userRepository.GetCitiesByStateIdAsync(stateId);
-            return cities.Select(c => new { id = c.Id, name = c.Name }).Cast<object>().ToList();
+            return await _userRepository.GetCitiesByStateIdAsync(stateId);
         }
 
-        public async Task<List<Role>> GetAllRolesAsync()
+        public async Task<IEnumerable<Role>> GetAllRolesAsync()
         {
-            return await _userRepository.GetAllRolesAsync();
+            return await _roleRepository.GetAllRolesAsync();
         }
         public async Task<string> GetUserProfileImageAsync(string email)
         {
