@@ -1,95 +1,92 @@
 @model IEnumerable<Entity.Data.TaxesAndFee>
-    <div class="bg-light rounded shadow">
-<div class="table-responsive">
-    <table class="table utable p-2" id="tbl">
-        <thead>
-            <tr>
-                <th style="color: rgba(83, 79, 79, 0.829) !important; font-size: 19px;">Name</th>
-                <th style="color: rgba(83, 79, 79, 0.829) !important; font-size: 19px;">Type</th>
-                <th style="color: rgba(83, 79, 79, 0.829) !important; font-size: 19px;">IsEnabled</th>
-                <th style="color: rgba(83, 79, 79, 0.829) !important; font-size: 19px;">Default</th>
-                <th style="color: rgba(83, 79, 79, 0.829) !important; font-size: 19px;">TaxValue</th>
-                <th style="color: rgba(83, 79, 79, 0.829) !important; font-size: 19px;">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var tax in Model)
-            {
+<div class="bg-light rounded shadow">
+    <div class="table-responsive">
+        <table class="table utable p-2" id="tbl">
+            <thead>
                 <tr>
-                    <td style="font-size: 16px;"><b>@Html.DisplayFor(modelItem => tax.Name)</b></td>
-                    <td style="font-size: 16px;">
-                        <b>
-                        @if (tax.Type == true)
-                        {
-                            <p style="margin: 0;">Percentage</p>
-                        }
-                        else
-                        {
-                            <p style="margin: 0;">Flat Amount</p>
-                        }
-                        </b>
-                    </td>
-                    <td style="font-size: 16px;"> 
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" style="height: 30px; width: 50px;" id="flexSwitchCheckChecked"
-                                   @(tax.IsActive == true ? "checked" : "")>
-                        </div>
-                    </td>
-                    <td style="font-size: 16px;">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" style="height: 30px; width: 50px;" id="flexSwitchCheckChecked"
-                                   @(tax.IsDefault == true ? "checked" : "")>
-                        </div>
-                    </td>
-                    <td style="font-size: 16px;">
-                         <b>
-                        @if (tax.Type == true)
-                        {
-                            @Html.DisplayFor(modelItem => tax.TaxValue)
-                            <span>%</span>
-                            
-                        }
-                        else
-                        {
-                            <span>₹</span>
-                            @Html.DisplayFor(modelItem => tax.TaxValue)
-                            
-                        }
-                        </b>
-                    </td >
-                    <td style="font-size: 16px;">
-                        <a href="javascript:void(0);" style="text-decoration: none; color: inherit;"
-                           class="delete-btn edit-tax" data-id="@tax.Id">
-                            <i class="bi bi-pen m-2"></i>
-                        </a>
-                        <a href="javascript:void(0)" onclick="confirmDelete(@tax.Id)"
-                           style="text-decoration: none; color: inherit;">
-                            <i class="bi bi-trash m-2"></i>
-                        </a>
-                        <form id="deleteform-@tax.Id" method="post"
-                              action="@Url.Action("Delete", "Tax", new { id = @tax.Id })" style="display:none;">
-                            @Html.AntiForgeryToken()
-                        </form>
-                    </td>
+                    <th style="color: rgba(83, 79, 79, 0.829) !important; font-size: 19px;">Name</th>
+                    <th style="color: rgba(83, 79, 79, 0.829) !important; font-size: 19px;">Type</th>
+                    <th style="color: rgba(83, 79, 79, 0.829) !important; font-size: 19px;">IsEnabled</th>
+                    <th style="color: rgba(83, 79, 79, 0.829) !important; font-size: 19px;">Default</th>
+                    <th style="color: rgba(83, 79, 79, 0.829) !important; font-size: 19px;">TaxValue</th>
+                    <th style="color: rgba(83, 79, 79, 0.829) !important; font-size: 19px;">Action</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                @foreach (var tax in Model)
+                {
+                    <tr data-id="@tax.Id">
+                        <td style="font-size: 16px;"><b>@Html.DisplayFor(modelItem => tax.Name)</b></td>
+                        <td style="font-size: 16px;">
+                            <b>
+                            @if (tax.Type == true)
+                            {
+                                <p style="margin: 0;">Percentage</p>
+                            }
+                            else
+                            {
+                                <p style="margin: 0;">Flat Amount</p>
+                            }
+                            </b>
+                        </td>
+                        <td style="font-size: 16px;">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" style="height: 30px; width: 50px;" id="flexSwitchCheckChecked"
+                                       @(tax.IsActive == true ? "checked" : "")>
+                            </div>
+                        </td>
+                        <td style="font-size: 16px;">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" style="height: 30px; width: 50px;" id="flexSwitchCheckChecked"
+                                       @(tax.IsDefault == true ? "checked" : "")>
+                            </div>
+                        </td>
+                        <td style="font-size: 16px;">
+                             <b>
+                            @if (tax.Type == true)
+                            {
+                                @Html.DisplayFor(modelItem => tax.TaxValue)
+                                <span>%</span>
+                            }
+                            else
+                            {
+                                <span>₹</span>
+                                @Html.DisplayFor(modelItem => tax.TaxValue)
+                            }
+                            </b>
+                        </td>
+                        <td style="font-size: 16px;">
+                            <a href="javascript:void(0);" style="text-decoration: none; color: inherit;"
+                               class="edit-tax" data-id="@tax.Id">
+                                <i class="bi bi-pen m-2"></i>
+                            </a>
+                            <a href="javascript:void(0)" onclick="confirmDelete(@tax.Id)"
+                               style="text-decoration: none; color: inherit;">
+                                <i class="bi bi-trash m-2"></i>
+                            </a>
+                            <form id="deleteform-@tax.Id" method="post"
+                                  action="@Url.Action("Delete", "Tax", new { id = @tax.Id })" style="display:none;">
+                                @Html.AntiForgeryToken()
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
+</div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-   <script>
+<script>
     $(document).ready(function () {
         $(document).on('change', '.form-check-input', function () {
             var checkbox = $(this);
-            var taxId = checkbox.closest('tr').find('.edit-tax').data('id');
+            var taxId = checkbox.closest('tr').data('id');
+            if (!taxId) {
+                return; 
+            }
             var isActive = checkbox.closest('tr').find('input[type="checkbox"]').eq(0).is(':checked');
             var isDefault = checkbox.closest('tr').find('input[type="checkbox"]').eq(1).is(':checked');
             
-            console.log("Tax ID:", taxId);
-            console.log("Is Active:", isActive);
-            console.log("Is Default:", isDefault);
-
             $.ajax({
                 type: "POST",
                 url: "/tax/updateTaxStatus",

@@ -136,7 +136,8 @@
                         if (response.success) {
                             toastr.success(response.message);
                             $('#taxModal').modal('hide');
-                            location.reload();
+                             addTaxToTable(response.taxId, form.serializeArray());
+                            @* location.reload(); *@
                         } else {
                             $("#taxModal").find('.modal-content').html(response);
                         }
