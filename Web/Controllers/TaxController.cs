@@ -9,10 +9,12 @@ namespace Web.Controllers;
 public class TaxController : Controller
 {
     private readonly ITaxAndFeeService _taxAndFeeService;
+
     public TaxController(ITaxAndFeeService taxAndFeeService)
     {
         _taxAndFeeService = taxAndFeeService;
     }
+
     [Route("taxlist")]
     [HttpGet]
     public async Task<IActionResult> TaxList()
@@ -32,6 +34,7 @@ public class TaxController : Controller
         }
         return PartialView("_TaxFormPartial", new TaxandFeeViewModel());
     }
+
     [Route("addtax")]
     [HttpPost]
     public async Task<IActionResult> AddTax(TaxandFeeViewModel model)
@@ -73,6 +76,7 @@ public class TaxController : Controller
         Response.StatusCode = 400;
         return PartialView("_TaxFormPartial", model);
     }
+
     [Route("delete/{id}")]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -89,6 +93,7 @@ public class TaxController : Controller
         }
         return RedirectToAction(nameof(TaxList));
     }
+
     [Route("search")]
     [HttpGet]
     public async Task<IActionResult> Search(string query)
@@ -101,6 +106,7 @@ public class TaxController : Controller
         }
         return PartialView("_TaxTablePartial", taxes);
     }
+
     [Route("updateTaxStatus")]
     [HttpPost]
     public async Task<IActionResult> UpdateTaxStatus(int id, bool isActive, bool isDefault)
@@ -115,3 +121,4 @@ public class TaxController : Controller
         return Json(new { success = false, message = "Failed to update status." });
     }
 }
+
