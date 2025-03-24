@@ -875,12 +875,8 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.FlatAmount)
                 .HasPrecision(18, 2)
                 .HasColumnName("flat_amount");
-            entity.Property(e => e.IsActive)
-                .HasDefaultValueSql("false")
-                .HasColumnName("is_active");
-            entity.Property(e => e.IsDefault)
-                .HasDefaultValueSql("false")
-                .HasColumnName("is_default");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.IsDefault).HasColumnName("is_default");
             entity.Property(e => e.IsDeleted)
                 .HasDefaultValueSql("false")
                 .HasColumnName("is_deleted");
@@ -896,6 +892,7 @@ public partial class PizzaShopContext : DbContext
                 .HasPrecision(18, 2)
                 .HasColumnName("tax_value");
             entity.Property(e => e.Type)
+                .IsRequired()
                 .HasDefaultValueSql("true")
                 .HasColumnName("type");
 

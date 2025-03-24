@@ -32,7 +32,7 @@ public class TaxAndFeeRepository : ITaxAndFeeRepository
     public async Task<TaxesAndFee> GetTaxByName(string name)
     {
         return await _context.TaxesAndFees
-            .Where(tf => tf.Name.ToLower() == name.ToLower())
+            .Where(tf => tf.Name.ToLower() == name.ToLower() && tf.IsDeleted == false)
             .FirstOrDefaultAsync();
     }
 

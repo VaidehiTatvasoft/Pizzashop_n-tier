@@ -22,7 +22,7 @@
                         <span class="span2">+</span>
                     </button>
                 </a>
-
+ 
                 <div class="modal fade" id="taxModal" tabindex="-1" aria-labelledby="taxModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
@@ -140,7 +140,7 @@
                         if (response.success) {
                             toastr.success(response.message);
                             $('#taxModal').modal('hide');
-                            location.reload();
+                            location.reload(); 
                         } else {
                             $("#taxModal").find('.modal-content').html(response);
                         }

@@ -70,40 +70,39 @@
         </tbody>
     </table>
 </div>
-
-
-
-    <script>
-        $(document).ready(function () {
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <script>
+    $(document).ready(function () {
+        $(document).on('change', '.form-check-input', function () {
+            var checkbox = $(this);
+            var taxId = checkbox.closest('tr').find('.edit-tax').data('id');
+            var isActive = checkbox.closest('tr').find('input[type="checkbox"]').eq(0).is(':checked');
+            var isDefault = checkbox.closest('tr').find('input[type="checkbox"]').eq(1).is(':checked');
             
-            $(document).on('change', '.form-check-input', function () {
-                var checkbox = $(this);
-                var taxId = checkbox.closest('tr').find('.edit-tax').data('id');
-                var isActive = checkbox.is(':checked');
-                var isDefault = checkbox.closest('td').next().find('.form-check-input').is(':checked') || false;
+            console.log("Tax ID:", taxId);
+            console.log("Is Active:", isActive);
+            console.log("Is Default:", isDefault);
 
-                $.ajax({
-                    type: "POST",
-                    url: "/tax/updateStatus",
-                    data: {
-                        id: taxId,
-                        isActive: isActive,
-                        isDefault: isDefault
-                    },
-                    success: function (response) {
-                        if (response.success) {
-                            toastr.success(response.message);
-                        } else {
-                            toastr.error(response.message);
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        toastr.error("Failed to update status.");
-                        console.error("Error details:", status, error, xhr.responseText);
+            $.ajax({
+                type: "POST",
+                url: "/tax/updateStatus",
+                data: {
+                    id: taxId,
+                    isActive: isActive,
+                    isDefault: isDefault
+                },
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                    } else {
+                        toastr.error(response.message);
                     }
-                });
+                },
+                error: function (xhr, status, error) {
+                    toastr.error("Failed to update status.");
+                    console.error("Error details:", status, error, xhr.responseText);
+                }
             });
-
-            
         });
-    </script>
+    });
+</script>

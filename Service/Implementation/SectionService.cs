@@ -48,7 +48,7 @@ public List<SectionViewModel> GetAllSections()    {
             CreatedBy = userId,
             CreatedAt = DateTime.UtcNow,
             ModifiedBy = userId,
-            ModifiedAt = DateTime.UtcNow,
+            ModifiedAt = DateTime.UtcNow
         };
         try
         {

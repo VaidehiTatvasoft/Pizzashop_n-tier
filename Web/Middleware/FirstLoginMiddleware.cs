@@ -19,14 +19,11 @@ namespace Web.Middleware
         public async Task InvokeAsync(HttpContext context)
         {
             var path = context.Request.Path.Value.ToLower();
-            _logger.LogInformation($"Processing request for path: {path}");
 
             if (context.User.Identity.IsAuthenticated)
             {
                 _logger.LogInformation("User is authenticated.");
                 var isFirstLogin = context.User.Claims.FirstOrDefault(c => c.Type == "isFirstLogin")?.Value;
-                _logger.LogInformation($"isFirstLogin claim value: {isFirstLogin}");
-
                 if (bool.TryParse(isFirstLogin, out var isFirstLoginValue) && isFirstLoginValue)
                 {
                     if (!path.Contains("/forgotpassword") && !path.Contains("/resetpassword") && !path.Contains("/user/changepassword") && !path.Contains("/logout"))
