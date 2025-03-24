@@ -38,10 +38,10 @@ public class TaxController : Controller
     {
         if (ModelState.IsValid)
         {
-            var tax = await _taxAndFeeService.AddTax(model, User);
-            if (tax)
+            var result = await _taxAndFeeService.AddTax(model, User);
+            if (result)
             {
-                return Json(new { success = true, message = "Tax created successfully." });
+                return Json(new { success = true, message = "Tax created successfully.", taxId = model.Id });
             }
             else
             {
@@ -52,6 +52,7 @@ public class TaxController : Controller
         }
         return PartialView("_TaxFormPartial", model);
     }
+
     [Route("edit")]
     [HttpPost]
     public async Task<IActionResult> Edit(TaxandFeeViewModel model)
@@ -89,31 +90,22 @@ public class TaxController : Controller
         return RedirectToAction(nameof(TaxList));
     }
     [Route("search")]
-[HttpGet]
-public async Task<IActionResult> Search(string query)
-{
-    var taxes = await _taxAndFeeService.GetAllTaxes();
-    if (!string.IsNullOrEmpty(query))
+    [HttpGet]
+    public async Task<IActionResult> Search(string query)
     {
-        query = query.ToLower();
-        taxes = taxes.Where(t => t.Name.ToLower().Contains(query)).ToList();
-    }
-    return PartialView("_TaxTablePartial", taxes);
-}
-    [Route("updateStatus")]
-    [HttpPost]
-    public async Task<IActionResult> UpdateStatus(int id, bool isActive, bool isDefault)
-    {
-        var tax = await _taxAndFeeService.GetTaxById(id);
-
-        if (tax == null)
+        var taxes = await _taxAndFeeService.GetAllTaxes();
+        if (!string.IsNullOrEmpty(query))
         {
-            return Json(new { success = false, message = "Tax not found." });
+            query = query.ToLower();
+            taxes = taxes.Where(t => t.Name.ToLower().Contains(query)).ToList();
         }
-
-        tax.IsActive = isActive;
-        tax.IsDefault = isDefault;
-        var result = await _taxAndFeeService.UpdateTax(tax, User);
+        return PartialView("_TaxTablePartial", taxes);
+    }
+    [Route("updateTaxStatus")]
+    [HttpPost]
+    public async Task<IActionResult> UpdateTaxStatus(int id, bool isActive, bool isDefault)
+    {
+        var result = await _taxAndFeeService.UpdateTaxStatus(id, isActive, isDefault, User);
 
         if (result)
         {

@@ -15,4 +15,6 @@ public interface ITaxAndFeeService
     Task<bool> UpdateTax(TaxandFeeViewModel model, ClaimsPrincipal userClaims);
 
     Task<bool> DeleteTax(int id, ClaimsPrincipal userClaims);
+    Task<bool> UpdateTaxStatus(int id, bool isActive, bool isDefault, ClaimsPrincipal userClaims);
+
 }

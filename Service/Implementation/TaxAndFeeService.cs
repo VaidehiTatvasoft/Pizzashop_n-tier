@@ -15,33 +15,39 @@ public class TaxAndFeeService : ITaxAndFeeService
         _taxAndFeeRepository = taxAndFeeRepository;
     }
 
-    public async Task<bool> AddTax(TaxandFeeViewModel model, ClaimsPrincipal userClaims)
+   public async Task<bool> AddTax(TaxandFeeViewModel model, ClaimsPrincipal userClaims)
+{
+    var tax = await _taxAndFeeRepository.GetTaxByName(model.Name);
+    if (tax != null)
     {
-        var tax = await _taxAndFeeRepository.GetTaxByName(model.Name);
-        if (tax != null)
-        {
-            return false;
-        }
-        var userIdClaim = userClaims.FindFirst("UserId");
-        if (userIdClaim == null)
-        {
-            return false;
-        }
-        var userId = int.Parse(userIdClaim.Value);
-        var newTax = new TaxesAndFee
-        {
-            Name = model.Name,
-            Type = model.Type,
-            TaxValue = model.TaxValue,
-            IsDefault = model.IsDefault,
-            IsActive = model.IsActive,
-            CreatedBy = userId,
-            CreatedAt = DateTime.UtcNow
-        };
+        return false;
+    }
+    var userIdClaim = userClaims.FindFirst("UserId");
+    if (userIdClaim == null)
+    {
+        return false;
+    }
+    var userId = int.Parse(userIdClaim.Value);
+    var newTax = new TaxesAndFee
+    {
+        Name = model.Name,
+        Type = model.Type,
+        TaxValue = model.TaxValue,
+        IsDefault = model.IsDefault,
+        IsActive = model.IsActive,
+        CreatedBy = userId,
+        CreatedAt = DateTime.UtcNow
+    };
 
-        return await _taxAndFeeRepository.AddTax(newTax);
+    bool result = await _taxAndFeeRepository.AddTax(newTax);
+
+    if (result)
+    {
+        model.Id = newTax.Id; 
     }
 
+    return result;
+}
     public async Task<List<TaxesAndFee>> GetAllTaxes()
     {
         return await _taxAndFeeRepository.GetAllTaxes();
@@ -126,4 +132,27 @@ public class TaxAndFeeService : ITaxAndFeeService
 
         return false;
     }
+    public async Task<bool> UpdateTaxStatus(int id, bool isActive, bool isDefault, ClaimsPrincipal userClaims)
+{
+    var tax = await _taxAndFeeRepository.GetTaxById(id);
+    if (tax == null)
+    {
+        return false;
+    }
+
+    var userIdClaim = userClaims.FindFirst("UserId");
+    if (userIdClaim == null)
+    {
+        return false;
+    }
+
+    var userId = int.Parse(userIdClaim.Value);
+    tax.IsActive = isActive;
+    tax.IsDefault = isDefault;
+    tax.ModifiedBy = userId;
+    tax.ModifiedAt = DateTime.UtcNow;
+
+    await _taxAndFeeRepository.UpdateTax(tax);
+    return true;
+}
 }
