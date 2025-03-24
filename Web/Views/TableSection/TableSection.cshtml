@@ -1,11 +1,14 @@
 @model Entity.ViewModel.TableSectionViewModel;
-
+@{
+    ViewData["Title"] = "TableSection";
+}
 <div class="col-12">
+    <!-- menu header -->
     <h1 class="title">Sections / Tables</h1>
     <section>
         <div class="row mx-0">
             <aside class="col-md-3" style="background-color: #f5f5f5">
-                <!-- Sections header -->
+                <!-- Section header -->
                 <div class="d-flex flex-wrap justify-content-between align-items-center p-2">
                     <h5 class="section-heading">Sections</h5>
                     <button class="fill-btn py-1 px-2" data-bs-toggle="modal" data-bs-target="#sectionModal"
@@ -13,15 +16,15 @@
                         <i class="fa-solid fa-plus"></i>
                     </button>
                 </div>
-                <!-- Category list -->
-                <div id="categoryList">
-                    <div id="sectionsList">
-                        <partial name="_SectionsList" model="Model.Sections" />
-                    </div>
+                <!-- Section list -->
+                <div id="sectionList">
+                    @* <partial name="_SectionList" model="Model.Sections" /> *@
+                    @Html.Partial("_SectionList", Model.Sections)
+                </div>
             </aside>
             <div class="col-md-9 border-start border-primary bg-white">
                 <div>
-                    <!-- Tables header -->
+                    <!-- Item header -->
                     <h5 class="p-2 mb-0 section-heading">Tables</h5>
                     <div class="d-flex justify-content-end align-items-center mb-3">
                         <div class="form-input-div d-flex justify-content-between me-3 position-relative">
@@ -31,17 +34,19 @@
                                     id="eye-icon" style="color: gray"></i>
                             </span>
                         </div>
-                        <button class="btn btn-outline-secondary me-3" id="multiDeleteBtn">
+                        <button class="btn btn-outline-secondary me-3" id="multiDeletTableBtn">
                             <i class="fa-solid fa-trash"></i>
                         </button>
-                        <button class="fill-btn addItemBtn">
+                        <button class="fill-btn addTableBtn">
                             <i class="fa-solid fa-plus"></i> New Table
                         </button>
                     </div>
 
-                    <!-- Table List -->
-                    <div id="TableList">
-                        <partial name="_TableList" model="Model.Tables" />
+                    <!-- Items Table -->
+                    <div id="tableList">
+                        @* <partial name="_TableList" model="Model" /> *@
+                        @Html.Partial("_TableList", Model)
+
                     </div>
                 </div>
             </div>
@@ -49,38 +54,124 @@
     </section>
 </div>
 
-<div class="modal fade" id="sectionModal" tabindex="-1" aria-labelledby="sectionModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div id="modalContent"></div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div id="deleteModalContent"></div>
-        </div>
-    </div>
-</div>
-
 @section Scripts {
     <script>
-        function openAddEditModal(id) {
-            $.get('@Url.Action("AddEditSection", "TableSection")' + '?id=' + id, function (data) {
-                $('#modalContent').html(data);
-                $('#sectionModal').modal('show');
+        $(".addTableBtn").click(function () {
+            console.log("click add")
+            $.get('@Url.Action("AddNewTable", "TableSection")', function (data) {
+                console.log("Add data")
+                $("#AddTablePartial").html(data);
+                $("#addTableModal").modal('show');
+            })
+        })
+
+        $(document).on('submit', "#addNewTableForm", function (event) {
+            var tableId = $(this).data("id");
+            if (tableId == 0 || tableId == undefined) {
+                console.log("save table ID", tableId);
+                event.preventDefault();
+                var form = $("#addNewTableForm");
+                console.log("submit form", form.serialize())
+                $.ajax({
+                    url: '/TableSection/AddNewTable',
+                    type: 'POST',
+                    data: form.serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            console.log("Added")
+                            GetFilteredItems();
+                            toastr.success(response.message);
+                        } else {
+                            toastr.error(response.message);
+                        }
+                        $("#addTableModal").modal('hide');
+                    }
+                })
+            }
+        })
+
+        $(document).on("click", ".editTableBtn", function () {
+            var tableId = $(this).data("id");
+            console.log("Table ", tableId);
+            $.get('@Url.Action("EditTable", "TableSection")', { id: tableId }, function (data) {
+                $("#AddTablePartial").html(data);
+                console.log(data)
+                $("#addTableModal").modal("show");
             });
+        });
+
+        $(document).on('submit', "#addNewTableForm", function (e) {
+            var tableId = $(this).data("id");
+            console.log("Update table ID", tableId);
+            if (tableId != 0) {
+                e.preventDefault();
+                var tableId = $(this).data("id");
+                console.log("Update table ID", tableId);
+                var formData = $("#addNewTableForm").serialize();
+                IsEditTable = false;
+                $.post('@Url.Action("EditTable", "TableSection")', formData, function (response) {
+                    if (response.success) {
+                        GetFilteredItems();
+                        toastr.success(response.message);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                    $("#addTableModal").modal("hide");
+                });
+            }
+        });
+
+        @* Pagination Script *@
+        var debounce;
+        var ajaxRequest;
+        $(".section").click(function () {
+            sectionId = $(this).data("id");
+
+            $.ajax({
+                url: '/TableSection/GetTablesBySectionId',
+                type: 'GET',
+                data: { sectionId: sectionId, pageSize: @Model.PageSize, pageIndex: @Model.PageIndex, searchString: "" },
+                success: function (response) {
+                    console.log(response);
+                    $("#tableList").html(response);
+                }
+            })
+        })
+
+        var pageIndex = @Model.PageIndex;
+
+        function GetFilteredItems() {
+            var SearchString = $("#searchString").val();
+            var pageSize = $("#pageSizeTable").val();
+            if (ajaxRequest && ajaxRequest.readyState !== 4) {
+                ajaxRequest.abort();
+            }
+            console.log("GetFilteredItems Item");
+            ajaxRequest = $.ajax({
+                url: "/TableSection/GetTablesBySectionId",
+                type: "GET",
+                data: {
+                    sectionId: sectionId,
+                    pageIndex: pageIndex,
+                    pageSize: pageSize,
+                    searchString: SearchString
+                },
+                success: function (data) {
+                    $("#tableList").html(data);
+                }
+            })
         }
 
-        function openDeleteModal(id) {
-            $.get('@Url.Action("ConfirmDeleteSection", "TableSection")' + '?id=' + id, function (data) {
-                $('#deleteModalContent').html(data);
-                $('#deleteModal').modal('show');
-            });
-        }
+        $('#searchString').keyup(function () {
+            clearTimeout(debounce);
+            pageIndex = 1
+            pageSize = @Model.PageSize;
+            debounce = setTimeout(() => {
+                GetFilteredItems();
+            }, 600)
+        })
 
+        //AddEdit Section
         function submitAddEditSectionForm(event) {
             event.preventDefault();
             var form = $(event.target);
@@ -91,9 +182,11 @@
                 success: function (response) {
                     if (response.success) {
                         $('#sectionModal').modal('hide');
-                        showSuccessMessage(response.message);
+                        GetFilteredSections();
+                        console.log("Edited")
+                        toastr.success(response.message);
                     } else {
-                        showErrorMessage(response.message);
+                        toastr.success(response.message);
                         $('#modalContent').html(response.html);
                     }
                 },
@@ -105,12 +198,15 @@
 
         $(document).on('submit', '#addEditSectionForm', submitAddEditSectionForm);
 
-        function showSuccessMessage(message) {
-            toastr.success(message);
-        }
-
-        function showErrorMessage(message) {
-            toastr.error(message);
+        function GetFilteredSections() {
+            console.log("GetFilteredSections");
+            ajaxRequest = $.ajax({
+                url: "/TableSection/GetAllSectionsForFilter",
+                type: "GET",
+                success: function (data) {
+                    $("#sectionList").html(data);
+                }
+            })
         }
     </script>
 }

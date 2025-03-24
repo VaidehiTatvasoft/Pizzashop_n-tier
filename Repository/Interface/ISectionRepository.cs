@@ -5,9 +5,9 @@ namespace Repository.Interface;
 
 public interface ISectionRepository
 {
- List<SectionViewModel> GetAllSectionsAsync();
-     Task<Section?> GetSectionByIdAsync(int id);
+    List<SectionViewModel> GetAllSectionsAsync();
+    Section GetSectionById(int sectionId);
     Task<bool> AddSectionAsync(Section section);
     Task<bool> UpdateSectionAsync(Section section);
-    Task DeleteSectionAsync(int id, bool softDelete);
+    Task<string> DeleteSectionAsync(int id, bool softDelete, int userId);
 }

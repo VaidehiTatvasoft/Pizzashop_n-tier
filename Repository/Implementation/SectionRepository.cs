@@ -22,25 +22,36 @@ public class SectionRepository : ISectionRepository
             Id = s.Id,
             Name = s.Name,
             Description = s.Description,
+            IsDeleted = s.IsDeleted,
+            CreatedBy = s.CreatedBy,
+            CreatedAt = DateTime.UtcNow,
+            ModifiedBy = s.ModifiedBy,
+            ModifiedAt = DateTime.UtcNow
         })
         .OrderBy(s => s.Name).ToList();
         return sections;
     }
-
-    public async Task<Section?> GetSectionByIdAsync(int id)
+    public Section GetSectionById(int sectionId)
     {
-        return await _context.Sections.FirstOrDefaultAsync(s => s.Id == id && s.IsDeleted == false);
+        return _context.Sections.FirstOrDefault(s => s.Id == sectionId);
     }
 
     public async Task<bool> AddSectionAsync(Section section)
     {
-        bool isNameUnique = !await _context.Sections
-            .AnyAsync(s => s.Name.ToLower() == section.Name.ToLower() && s.IsDeleted == false);
-        if (!isNameUnique)
-            throw new Exception("Section name must be unique.");
+        try
+        {
+            bool isNameUnique = !await _context.Sections
+           .AnyAsync(s => s.Name.ToLower() == section.Name.ToLower() && s.IsDeleted == false);
+            if (!isNameUnique)
+                throw new Exception("Section name must be unique.");
 
-        await _context.Sections.AddAsync(section);
-        return await _context.SaveChangesAsync() > 0;
+            await _context.Sections.AddAsync(section);
+            return await _context.SaveChangesAsync() > 0;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 
     public async Task<bool> UpdateSectionAsync(Section section)
@@ -54,29 +65,32 @@ public class SectionRepository : ISectionRepository
         return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task DeleteSectionAsync(int id, bool softDelete)
+    public async Task<string> DeleteSectionAsync(int id, bool softDelete, int userId)
     {
-        var section = await GetSectionByIdAsync(id);
+        var section = GetSectionById(id);
         if (section != null)
         {
-            if (softDelete)
+            var tables = await _context.Tables.Where(t => t.SectionId == id && t.IsDeleted == false).ToListAsync();
+            foreach (var table in tables)
             {
-                section.IsDeleted = true;
-                _context.Sections.Update(section);
-
-                var tables = await _context.Tables.Where(t => t.SectionId == id && t.IsDeleted == false).ToListAsync();
-                foreach (var table in tables)
+                if (table.IsAvailable == false)
                 {
-                    table.IsDeleted = true;
-                    _context.Tables.Update(table);
+                    return "table is occupied";
                 }
-            }
-            else
-            {
-                _context.Sections.Remove(section);
+                table.IsDeleted = true;
+                _context.Tables.Update(table);
             }
 
+            section.IsDeleted = true;
+            section.ModifiedBy = userId;
+            section.ModifiedAt = DateTime.UtcNow;
+            _context.Sections.Update(section);
             await _context.SaveChangesAsync();
+            return "success";
+        }
+        else
+        {
+            return "section not found";
         }
     }
 }

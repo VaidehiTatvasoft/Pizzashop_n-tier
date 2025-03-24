@@ -1,0 +1,93 @@
+@model List<Entity.ViewModel.SectionViewModel>;
+
+<div class="section-list">
+    @for (var i = 0; i < Model.Count(); i++)
+    {
+        <div class="d-flex flex-wrap justify-content-between align-items-center item-category-btn p-2 my-2 section"
+            data-id="@Model[i].Id">
+            <div class="category-btn border-0 bg-light">
+                <h6 class=" mb-0">
+                    <i class="fa-solid fa-grip-vertical"></i>
+                    @Model[i].Name
+                </h6>
+            </div>
+            <span class="edit-delete-icon">
+                <a href="javascript:void(0);" class="edit-btn edit-category" style="text-decoration: none; color: inherit;">
+                    <i class="fa-solid fa-pencil m-1" data-bs-toggle="modal" data-bs-target="#sectionModal"
+                        onclick="openAddEditModal(@Model[i].Id)"></i>
+                </a>
+                <i class="fa-regular fa-trash-can mx-2 delete-section" data-id="@Model[i].Id" data-bs-target="#deleteModal"
+                    data-bs-toggle="modal"></i>
+            </span>
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="sectionModal" tabindex="-1" aria-labelledby="sectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div id="modalContent"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteSectionModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div id="deleteModalContent">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Section</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this section?</p>
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" id="deleteSectionBtn" class="btn btn-danger">Yes,
+                        Delete</button>
+                    @* </form> *@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var sectionId = @Model.First().Id;
+    function openAddEditModal(id) {
+        $.get('@Url.Action("AddEditSection", "TableSection")' + '?id=' + id, function (data) {
+            $('#modalContent').html(data);
+            $('#sectionModal').modal('show');
+        });
+    }
+    var deleteSectionId;
+    $(document).on('click', '.delete-section', function () {
+        deleteSectionId = $(this).data("id");
+        $('#deleteSectionModal').modal('show');
+    });
+
+    $('#deleteSectionBtn').click(function () {
+        console.log(deleteSectionId)
+        $.ajax({
+            url: '/TableSection/DeleteSection',
+            type: 'post',
+            data: { id: deleteSectionId },
+            success: function (response) {
+                if (response == null) {
+                    window.location.href = "/Login";
+                    toastr.error("Your Session is Expired. Please Login Again!");
+                }
+                if (response.isSuccess) {
+                    GetFilteredItems();
+                    toastr.success(response.message);
+                } else {
+                    toastr.error(response.message);
+                }
+                $("#deleteSectionModal").modal('hide');
+            }
+        })
+    })
+</script>

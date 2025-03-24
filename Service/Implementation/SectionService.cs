@@ -14,14 +14,15 @@ public class SectionService : ISectionService
         _sectionRepository = sectionRepository;
     }
 
-public List<SectionViewModel> GetAllSections()    {
-        var sections =  _sectionRepository.GetAllSectionsAsync();
+    public List<SectionViewModel> GetAllSections()
+    {
+        var sections = _sectionRepository.GetAllSectionsAsync();
         return sections;
     }
 
     public async Task<SectionViewModel?> GetSectionByIdAsync(int id)
     {
-        var section = await _sectionRepository.GetSectionByIdAsync(id);
+        var section = _sectionRepository.GetSectionById(id);
         if (section == null)
             return null;
 
@@ -35,7 +36,7 @@ public List<SectionViewModel> GetAllSections()    {
 
     public async Task<bool> AddSectionAsync(SectionViewModel model, ClaimsPrincipal userClaims)
     {
-        var userIdClaim = userClaims.FindFirst("UserId");
+         var userIdClaim = userClaims.FindFirst("UserId");
         if (userIdClaim == null)
         {
             return false;
@@ -48,7 +49,7 @@ public List<SectionViewModel> GetAllSections()    {
             CreatedBy = userId,
             CreatedAt = DateTime.UtcNow,
             ModifiedBy = userId,
-            ModifiedAt = DateTime.UtcNow
+            ModifiedAt = DateTime.UtcNow,
         };
         try
         {
@@ -62,13 +63,13 @@ public List<SectionViewModel> GetAllSections()    {
 
     public async Task<bool> UpdateSectionAsync(SectionViewModel model, ClaimsPrincipal userClaims)
     {
-        var userIdClaim = userClaims.FindFirst("UserId");
+         var userIdClaim = userClaims.FindFirst("UserId");
         if (userIdClaim == null)
         {
             return false;
         }
         var userId = int.Parse(userIdClaim.Value);
-        var existingSection = await _sectionRepository.GetSectionByIdAsync(model.Id);
+        var existingSection = _sectionRepository.GetSectionById(model.Id);
         if (existingSection == null)
         {
             return false;
@@ -89,20 +90,26 @@ public List<SectionViewModel> GetAllSections()    {
         }
     }
 
-    public async Task DeleteSectionAsync(int id, bool softDelete, ClaimsPrincipal userClaims)
+    public async Task<string> DeleteSectionAsync(int id, bool softDelete, ClaimsPrincipal userClaims)
     {
-        var userIdClaim = userClaims.FindFirst("UserId");
+         var userIdClaim = userClaims.FindFirst("UserId");
         if (userIdClaim == null)
         {
-            return;
+            return "UserId Not found";
         }
         var userId = int.Parse(userIdClaim.Value);
-        var section = await _sectionRepository.GetSectionByIdAsync(id);
-        if (section != null)
+        var isSectionDeleted = await _sectionRepository.DeleteSectionAsync(id, softDelete, userId);
+        if (isSectionDeleted == "table is occupied")
         {
-            section.ModifiedBy = userId;
-            section.ModifiedAt = DateTime.UtcNow;
+            return "table is occupied";
         }
-        await _sectionRepository.DeleteSectionAsync(id, softDelete);
+        else if (isSectionDeleted == "success")
+        {
+            return "success";
+        }
+        else
+        {
+            return "section not found";
+        }
     }
 }
