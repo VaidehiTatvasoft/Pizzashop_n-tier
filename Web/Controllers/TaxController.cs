@@ -89,17 +89,17 @@ public class TaxController : Controller
         return RedirectToAction(nameof(TaxList));
     }
     [Route("search")]
-    [HttpGet]
-    public async Task<IActionResult> Search(string query)
+[HttpGet]
+public async Task<IActionResult> Search(string query)
+{
+    var taxes = await _taxAndFeeService.GetAllTaxes();
+    if (!string.IsNullOrEmpty(query))
     {
-        var taxes = await _taxAndFeeService.GetAllTaxes();
-        if (!string.IsNullOrEmpty(query))
-        {
-            query = query.ToLower();
-            taxes = taxes.Where(t => t.Name.ToLower().Contains(query)).ToList();
-        }
-        return PartialView("_TaxTablePartial", taxes);
+        query = query.ToLower();
+        taxes = taxes.Where(t => t.Name.ToLower().Contains(query)).ToList();
     }
+    return PartialView("_TaxTablePartial", taxes);
+}
     [Route("updateStatus")]
     [HttpPost]
     public async Task<IActionResult> UpdateStatus(int id, bool isActive, bool isDefault)

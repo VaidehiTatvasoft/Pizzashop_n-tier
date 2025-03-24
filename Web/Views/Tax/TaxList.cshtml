@@ -1,36 +1,32 @@
 @model IEnumerable<Entity.Data.TaxesAndFee>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "TaxList";
+    var searchString = ViewBag.SearchString as string;
 }
 <div class="container-fluid" style="padding: 20px !important;">
-    <div class="d-flex justify-content-between">
-        <h2 style="color: #0066A7;">Taxes/Fees</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex justify-content-start align-items-center">
+            <h2><b>Taxes/Fees</b></h2>
+        </div>
         <div class="upper-div d-flex justify-content-end">
-            <div class="d-flex">
+            <div class="d-flex justify-content-center align-items-center">
                 <div class="search-box" style="margin-right: 13px;">
-                    <input type="text" name="search" id="searchMenuInput" placeholder="Search"
-                        style="height: 50px; width: 250px; border: 1px solid #adadad; border-radius: 5%;">
+                    <input type="text" name="search" id="searchInput" placeholder="Search">
                     <i class="fa-solid fa-magnifying-glass search-btn"></i>
                 </div>
 
-                <a href="javascript:void(0);" class="edit-btn add-tax-btn"
-                    style="text-decoration: none; color: inherit;">
-                    <button data-bs-toggle="modal" data-bs-target="#taxModal" class="add-user-btn"
-                        style="border: 1px solid #adadad; border-radius: 5%; background-color:#0066A7; color: white;">
-                        <span class="span1">new Tax</span>
-                        <span class="span2">+</span>
-                    </button>
+                <a href="javascript:void(0);" class="btn btn-primary add-tax-btn" data-bs-toggle="modal" data-bs-target="#taxModal">
+                        <span class="part-1"><i class="fa-solid fa-plus"></i></span>
+                        <span class="part-2">New Tax</span>
                 </a>
- 
+
                 <div class="modal fade" id="taxModal" tabindex="-1" aria-labelledby="taxModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
-
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -78,7 +74,7 @@
                     </text>
             }
 
-                $('#searchMenuInput').on('input', function () {
+                $('#searchInput').on('keyup', function () {
                     var searchTerm = $(this).val().toLowerCase();
                     $.ajax({
                         type: "GET",
@@ -140,7 +136,7 @@
                         if (response.success) {
                             toastr.success(response.message);
                             $('#taxModal').modal('hide');
-                            location.reload(); 
+                            location.reload();
                         } else {
                             $("#taxModal").find('.modal-content').html(response);
                         }
@@ -151,7 +147,6 @@
                     }
                 });
             });
-
 
             window.confirmDelete = function (taxId) {
                 const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
