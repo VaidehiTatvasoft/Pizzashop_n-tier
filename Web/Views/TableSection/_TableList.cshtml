@@ -1,5 +1,4 @@
-@model Entity.ViewModel.TableSectionViewModel
-
+@model Entity.ViewModel.TableSectionViewModel;
 @{
     var PageSize = Model.PageSize;
     var PageIndex = Model.PageIndex;
@@ -11,12 +10,12 @@
     @if (Model.Tables.Count == 0)
     {
         <div class="d-flex justify-content-center align-items-center mt-5">
-            <p>No table associated to this table</p>
+            <p>Table Not Found</p>
         </div>
     }
     else
     {
-        <table class="table user-table mb-0">
+        <table class="table user-table mb-0 menu-table">
             <thead>
                 <tr>
                     <th>
@@ -54,10 +53,10 @@
                         </td>
                         <td>
                             <button type="button" class="btn editTableBtn" data-id="@Model.Tables[i].Id">
-                                <i class="bi bi-pen m-1 "></i>
+                                <i class="bi bi-pen m-1 edit-icon"></i>
                             </button>
                             <button type="button" class="btn deleteTable" value="@Model.Tables[i].Id">
-                                <i class="bi bi-trash m-1"></i>
+                                <i class="bi bi-trash m-1 delete-icon"></i>
                             </button>
                         </td>
                     </tr>
@@ -103,7 +102,6 @@
     }
 </section>
 <div id="AddTablePartial">
-
 
 </div>
 @* Delete Table Model*@
@@ -158,6 +156,8 @@
         </div>
     </div>
 </div>
+<script src="/lib/jquery/dist/jquery.min.js"></script>
+<script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     $(document).ready(function () {
         var deleteTableId;
@@ -165,7 +165,7 @@
         $(".deleteTable").click(function () {
             deleteTableId = $(this).val();
             $('#deleteTableModal').modal('show');
-        })
+        });
         $('#deleteTableBtn').click(function () {
             $.ajax({
                 url: '/TableSection/DeleteTable',
@@ -185,8 +185,8 @@
                     }
                     $("#deleteTableModal").modal('hide');
                 }
-            })
-        })
+            });
+        });
 
         var deleteTableIds = [];
         $('#tableList').on("click", ".tableCheckBox", function () {
@@ -197,14 +197,14 @@
             else {
                 deleteTableIds = deleteTableIds.filter(id => id != parseInt(tableId));
             }
-        })
+        });
         $('#multiDeletTableBtn').click(function () {
             if (deleteTableIds.length == 0) {
                 toastr.warning("Select at Least One Item");
             } else {
                 $('#deleteMultipleTableModal').modal('show');
             }
-        })
+        });
         $('#multiDeleteTableBtn').click(function () {
             $.ajax({
                 url: '/TableSection/MultiDeleteTable',
@@ -218,7 +218,7 @@
                         toastr.error("Your Session is Expired. Please Login Again!");
                     }
                     if (response.isSuccess) {
-                        console.log("Delete")
+                        console.log("Delete");
                         GetFilteredSections();
                         toastr.success(response.message);
                     } else {
@@ -226,8 +226,8 @@
                     }
                     $("#deleteMultipleTableModal").modal('hide');
                 }
-            })
-        })
+            });
+        });
 
         function GetFilteredSections() {
             var SearchString = $("#searchString").val();
@@ -248,25 +248,25 @@
                 success: function (data) {
                     $("#tableList").html(data);
                 }
-            })
+            });
         }
 
         $('#pageSizeTable').change(function () {
             var pageSize = $(this).val();
-            console.log("pagesize:", pageSize)
+            console.log("pagesize:", pageSize);
             GetFilteredItems();
-        })
+        });
 
         $("#Previous").click(function () {
-            console.log("Previous")
+            console.log("Previous");
             pageIndex -= 1;
-            GetFilteredItems()
-        })
+            GetFilteredItems();
+        });
 
         $('#Next').click(function () {
             pageIndex += 1;
-            console.log("Next")
+            console.log("Next");
             GetFilteredItems();
-        })
-    })
+        });
+    });
 </script>
