@@ -35,7 +35,7 @@
         @Html.Partial("_TaxTablePartial", Model)
     </div>
 
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -43,7 +43,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body d-flex flex-column justify-content-center align-items-center">
-                    <img src="@Url.Content("~/images/warning.png")" alt="" style="height: 40px; width: auto;">
+                    <img src="@Url.Content("~/assets/warning.png")" alt="" style="height: 40px; width: auto;">
                     Are you sure you want to delete this tax?
                 </div>
                 <div class="d-flex justify-content-center align-items-center" style="gap: 10px; margin-bottom: 20px;">
@@ -137,7 +137,6 @@
                             toastr.success(response.message);
                             $('#taxModal').modal('hide');
                              addTaxToTable(response.taxId, form.serializeArray());
-                            @* location.reload(); *@
                         } else {
                             $("#taxModal").find('.modal-content').html(response);
                         }
@@ -152,7 +151,23 @@
             window.confirmDelete = function (taxId) {
                 const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
                 document.getElementById("confirmDeleteButton").onclick = function () {
-                    document.getElementById(`deleteform-${taxId}`).submit();
+                    $.ajax({
+                        type: 'POST',
+                        url: '/tax/delete/' + taxId,
+                        data: {
+                            __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function (response) {
+                            modal.hide();
+                            toastr.success("Tax deleted successfully.");
+                            $('tr[data-id="' + taxId + '"]').remove();
+                        },
+                        error: function (xhr, status, error) {
+                            modal.hide();
+                            toastr.error("Failed to delete tax.");
+                            console.error("Error details:", status, error, xhr.responseText);
+                        }
+                    });
                 };
                 modal.show();
             };
