@@ -2,23 +2,21 @@
 @{
     ViewData["Title"] = "TableSection";
 }
-<div class="container-fluid p-2">
+<div class="col-12">
+    <!-- menu header -->
     <h1 class="title">Sections / Tables</h1>
-    <div class="row mx-0">
-        <div class="sidebarr col-lg-2 text-dark" style="background-image: linear-gradient(to right, white, #f2f2f2);">
-            <div class="d-flex justify-content-between align-items-center" style="color: #0066A7;">
-                <h4>Sections</h4>
-                <i class="cat-i fa-regular fa-square-plus add-section" data-bs-toggle="modal" data-bs-target="#sectionModal"></i>
-            </div>
-            <div class="overflow-auto" style="max-height: 500px;">
-                @Html.Partial("_SectionList", Model.Sections)
-            </div>
-            <div class="modal fade" id="sectionModal" tabindex="-1" aria-labelledby="sectionModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <!-- Content will be loaded here via AJAX -->
-                    </div>
+    <section>
+        <div class="row mx-0">
+            <aside class="col-md-3" style="background-color: #f5f5f5">
+                <!-- Section header -->
+                <div class="d-flex flex-wrap justify-content-between align-items-center p-2">
+                    <h5 class="section-heading">Sections</h5>
+                    <button class="fill-btn py-1 px-2" data-bs-toggle="modal" data-bs-target="#sectionModal"
+                        onclick="openAddEditModal(0)">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
                 </div>
+<<<<<<< HEAD
             </div>
             <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
@@ -34,108 +32,46 @@
                         <div class="d-flex justify-content-center align-items-center" style="gap: 10px; margin-bottom: 20px;">
                             <button type="button" class="btn" id="confirmDeleteButton" style="height: 40px; width: 100px; background-color: #006098; color: white;">Yes</button>
                             <button type="button" class="btn" data-bs-dismiss="modal" style="height: 40px; width: 100px; background-color: white; border: 1px solid #006098;">No</button>
+=======
+                <!-- Section list -->
+                <div id="sectionList">
+                    @Html.Partial("_SectionList", Model.Sections)
+                </div>
+            </aside>
+            <div class="col-md-9 border-start border-primary bg-white">
+                <div>
+                    <!-- Item header -->
+                    <h5 class="p-2 mb-0 section-heading">Tables</h5>
+                    <div class="d-flex justify-content-end align-items-center mb-3">
+                        <div class="form-input-div d-flex justify-content-between me-3 position-relative">
+                            <input type="text" placeholder="Search" class="form-control p-2 d-none d-sm-block "
+                                name="search" minlength="5" required id="searchString" />
+                            <span class="form-input-icon position-absolute search-icon"><i class="fa-solid fa-search"
+                                    id="eye-icon" style="color: gray"></i>
+                            </span>
+>>>>>>> parent of e6d81e3 (Table Section)
                         </div>
+                        <button class="btn btn-outline-secondary me-3" id="multiDeletTableBtn">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                        <button class="fill-btn addTableBtn">
+                            <i class="fa-solid fa-plus"></i> New Table
+                        </button>
+                    </div>
+
+                    <div id="tableList">
+                        @Html.Partial("_TableList", Model)
+
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-10 border-start border-primary bg-white p-3">
-            <h4 style="color: #0066A7;">Tables</h4>
-            <div class="d-flex justify-content-end align-items-center mb-3">
-                <div class="form-input-div d-flex justify-content-between me-3 position-relative">
-                    <input type="text" placeholder="Search" class="form-control p-2 d-none d-sm-block" name="search" minlength="5" required id="searchString" />
-                    <span class="form-input-icon position-absolute search-icon"><i class="fa-solid fa-search" id="eye-icon" style="color: gray"></i></span>
-                </div>
-                <button class="btn btn-outline-secondary me-3" id="multiDeletTableBtn">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
-                <button class="fill-btn addTableBtn">
-                    <i class="fa-solid fa-plus"></i> New Table
-                </button>
-            </div>
-            <div id="tableList">
-                @Html.Partial("_TableList", Model)
-            </div>
-        </div>
-    </div>
+    </section>
 </div>
 
 @section Scripts {
     <script>
-        function confirmDelete(sectionId) {
-            const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
-            document.getElementById("confirmDeleteButton").onclick = function () {
-                document.getElementById(`deleteform-${sectionId}`).submit();
-            };
-            modal.show();
-        }
-
         $(document).ready(function () {
-            var successMessage = '@TempData["SuccessMessage"]';
-            var errorMessage = '@TempData["ErrorMessage"]';
-
-            if (successMessage) {
-                toastr.success(successMessage);
-            }
-            if (errorMessage) {
-                toastr.error(errorMessage);
-            }
-
-            $(document).on('click', '.add-section', function () {
-                $.ajax({
-                    type: "GET",
-                    url: "/TableSection/AddEditSection",
-                    dataType: "html",
-                    headers: {
-                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                    },
-                    success: function (data) {
-                        $("#sectionModal").find('.modal-content').html(data);
-                        $('#sectionModal').modal('show');
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Error loading section form:", status, error);
-                        alert("Failed to load section form.");
-                    }
-                });
-            });
-
-            $(document).on('click', '.section-link', function (e) {
-                e.preventDefault();
-                var sectionId = $(this).data('section-id');
-                $.ajax({
-                    url: '@Url.Action("TableList", "TableSection")',
-                    type: 'GET',
-                    data: { sectionId: sectionId },
-                    success: function (result) {
-                        $('#item-list').html($(result).find('#item-list').html());
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Error loading section items:", status, error);
-                        alert("Failed to load section items.");
-                    }
-                });
-            });
-
-            $(document).on('click', '.edit-icon', function () {
-                var id = $(this).data('id');
-                $.ajax({
-                    type: "GET",
-                    url: "/TableSection/AddEditSection/" + id,
-                    dataType: "html",
-                    headers: {
-                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                    },
-                    success: function (data) {
-                        $("#editSectionModal").find('.modal-content').html(data);
-                        $('#editSectionModal').modal('show');
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Error loading section details:", status, error);
-                        alert("Failed to load section details.");
-                    }
-                });
-            });
 
             $(".addTableBtn").click(function () {
                 console.log("click add")

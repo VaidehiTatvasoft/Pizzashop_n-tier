@@ -1,5 +1,6 @@
 @model List<Entity.ViewModel.SectionViewModel>;
 
+<<<<<<< HEAD
    <div class="section-list">
 @for (var i = 0; i < Model.Count(); i++)
     {
@@ -11,6 +12,27 @@
                     <i class="bi bi-trash m-1 delete-icon" data-id="@Model[i].Id" data-bs-target="#deleteModal" data-bs-toggle="modal"></i>
                 </span>
             </a>
+=======
+<div class="section-list">
+    @for (var i = 0; i < Model.Count(); i++)
+    {
+        <div class="d-flex flex-wrap justify-content-between align-items-center item-category-btn p-2 my-2 section"
+            data-id="@Model[i].Id">
+            <div class="category-btn border-0 bg-light">
+                <h6 class=" mb-0">
+                    <i class="fa-solid fa-grip-vertical"></i>
+                    @Model[i].Name
+                </h6>
+            </div>
+            <span class="edit-delete-icon">
+                <a href="javascript:void(0);" class="edit-btn edit-category" style="text-decoration: none; color: inherit;">
+                    <i class="fa-solid fa-pencil m-1" data-bs-toggle="modal" data-bs-target="#sectionModal"
+                        onclick="openAddEditModal(@Model[i].Id)"></i>
+                </a>
+                <i class="fa-regular fa-trash-can mx-2 delete-section" data-id="@Model[i].Id" data-bs-target="#deleteModal"
+                    data-bs-toggle="modal"></i>
+            </span>
+>>>>>>> parent of e6d81e3 (Table Section)
         </div>
     }
 </div>
