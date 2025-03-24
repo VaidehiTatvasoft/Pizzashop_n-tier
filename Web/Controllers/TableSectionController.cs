@@ -209,6 +209,7 @@ public class TableSectionController : Controller
         var isDeleted = await _sectionService.DeleteSectionAsync(id, softDelete, User);
         if (isDeleted == "table is occupied")
         {
+            TempData["ErrorMessage"] = "Table of this section is occupied you cannot delete it";
             return Json(new { isSuccess = false, message = "You can not delete this section because any table of this section is occupied" });
         }
         else if (isDeleted == "success")

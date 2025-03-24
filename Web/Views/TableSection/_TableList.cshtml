@@ -11,12 +11,12 @@
     @if (Model.Tables.Count == 0)
     {
         <div class="d-flex justify-content-center align-items-center mt-5">
-            <p>Table Not Found</p>
+            <p>No table associated to this table</p>
         </div>
     }
     else
     {
-        <table class="table user-table mb-0 menu-table">
+        <table class="table user-table mb-0">
             <thead>
                 <tr>
                     <th>
@@ -54,10 +54,10 @@
                         </td>
                         <td>
                             <button type="button" class="btn editTableBtn" data-id="@Model.Tables[i].Id">
-                                <i class="fa-solid fa-pen me-3 "></i>
+                                <i class="bi bi-pen m-1 "></i>
                             </button>
                             <button type="button" class="btn deleteTable" value="@Model.Tables[i].Id">
-                                <i class="fa-regular fa-trash-can"></i>
+                                <i class="bi bi-trash m-1"></i>
                             </button>
                         </td>
                     </tr>
@@ -123,8 +123,8 @@
                 </p>
             </div>
             <div class="modal-footer d-flex justify-content-center border-0">
-                <button type="button" id="deleteTableBtn" class="fill-btn">Yes</button>
-                <button type="button" class="outline-btn" data-bs-dismiss="modal">
+                <button type="button" id="deleteTableBtn" class="btn update-button">Yes</button>
+                <button type="button" class="btn cancel-button" data-bs-dismiss="modal">
                     No
                 </button>
             </div>
@@ -150,8 +150,8 @@
                 </p>
             </div>
             <div class="modal-footer d-flex justify-content-center border-0">
-                <button type="button" id="multiDeleteTableBtn" class="fill-btn">Yes</button>
-                <button type="button" class="outline-btn" data-bs-dismiss="modal">
+                <button type="button" id="multiDeleteTableBtn" class="btn update-button">Yes</button>
+                <button type="button" class="btn cancel-button" data-bs-dismiss="modal">
                     No
                 </button>
             </div>
