@@ -9,6 +9,8 @@ using Entity.Data;
 using Microsoft.EntityFrameworkCore;
 using Pizzashop.Service.Interfaces;
 using Microsoft.AspNetCore.Authentication;
+using Web.Attributes;
+using Entity.Shared;
 
 namespace pizzashop.Controllers
 {
@@ -41,7 +43,7 @@ namespace pizzashop.Controllers
             return Json(new { profileImgPath = profileImagePath ?? "Default_pfp.svg.png" });
         }
 
-        [Authorize(Roles = "1")]
+        [CustomAuthorize(1, RolePermissionEnum.Permission.CanEdit)]
         [Route("/adduser")]
         [HttpGet]
         public async Task<IActionResult> AddUser()
@@ -142,7 +144,7 @@ namespace pizzashop.Controllers
             await LoadDropdowns();
             return View(model);
         }
-        [Authorize(Roles = "1")]
+        [CustomAuthorize(1, RolePermissionEnum.Permission.CanEdit)]
         [Route("/user/edituser")]
         [HttpGet]
         public async Task<IActionResult> EditUser(int id)
@@ -225,7 +227,7 @@ namespace pizzashop.Controllers
             return View(model);
         }
 
-        [Authorize(Roles = "1")]
+        [CustomAuthorize(1, RolePermissionEnum.Permission.CanDelete)]
         [Route("/user/deleteuser")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -241,7 +243,7 @@ namespace pizzashop.Controllers
             return RedirectToAction("UserList");
         }
 
-        [Authorize(Roles = "1")]
+        [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)]
         [Route("/user/list")]
         public IActionResult UserList(string searchString, int pageIndex = 1, int pageSize = 5, string sortOrder = "", bool isAjax = false)
         {
@@ -272,7 +274,7 @@ namespace pizzashop.Controllers
             return View(users);
         }
 
-        [Authorize(Roles = "1")]
+        [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)]
         [Route("/user/profile")]
         [HttpGet]
         public async Task<IActionResult> Profile()
@@ -286,7 +288,7 @@ namespace pizzashop.Controllers
             return View(user);
         }
 
-        [Route("/user/profile")]
+        [CustomAuthorize(1, RolePermissionEnum.Permission.CanEdit)]
         [HttpPost]
         public async Task<IActionResult> Profile(UserViewModel model, IFormFile? ProfileImage)
         {
@@ -340,7 +342,6 @@ namespace pizzashop.Controllers
             var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
             return !string.IsNullOrEmpty(extension) && permittedExtensions.Contains(extension);
         }
-        [Authorize(Roles = "1")]
         [Route("/user/changepassword")]
         [HttpGet]
         public async Task<IActionResult> ChangePassword()

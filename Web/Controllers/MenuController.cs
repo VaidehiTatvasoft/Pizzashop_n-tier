@@ -1,8 +1,10 @@
+using Entity.Shared;
 using Entity.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Service.Interface;
+using Web.Attributes;
 
 
 namespace Web.Controllers
@@ -22,7 +24,7 @@ namespace Web.Controllers
             _logger = logger;
         }
 
-        [Authorize(Roles = "1")]
+        [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)]
         [HttpGet]
         public async Task<IActionResult> MenuList(int? categoryId)
         {
@@ -39,7 +41,7 @@ namespace Web.Controllers
             return View(categories);
         }
 
-        [Authorize(Roles = "1")]
+        [CustomAuthorize(1, RolePermissionEnum.Permission.CanEdit)]
         [HttpGet]
         public IActionResult AddCategory()
         {
@@ -76,7 +78,7 @@ namespace Web.Controllers
                 return PartialView("_AddCategoryPartial", model);
             }
         }
-        [Authorize(Roles = "1")]
+        [CustomAuthorize(1, RolePermissionEnum.Permission.CanEdit)]
         [HttpGet]
         public async Task<IActionResult> EditCategory(int Id)
         {
@@ -116,7 +118,7 @@ namespace Web.Controllers
 
             return Json(new { success = false, message = "Invalid data.", errors = errors });
         }
-        [Authorize(Roles = "1")]
+        [CustomAuthorize(1, RolePermissionEnum.Permission.CanDelete)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCategory(int id)
@@ -135,7 +137,7 @@ namespace Web.Controllers
             }
         }
 
-        [Authorize(Roles = "1")]
+        [CustomAuthorize(1, RolePermissionEnum.Permission.CanEdit)]
         [HttpGet]
         public async Task<IActionResult> AddItem()
         {
@@ -188,7 +190,7 @@ namespace Web.Controllers
             }
         }
 
-        [Authorize(Roles = "1")]
+        [CustomAuthorize(1, RolePermissionEnum.Permission.CanEdit)]
         [HttpGet]
         public async Task<IActionResult> EditItem(int id)
         {
@@ -245,7 +247,7 @@ namespace Web.Controllers
             return PartialView("_EditItemPartial", menuItemViewModel);
         }
 
-        [Authorize(Roles = "1")]
+        [CustomAuthorize(1, RolePermissionEnum.Permission.CanDelete)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteItem(int id)
@@ -271,7 +273,7 @@ namespace Web.Controllers
 
             return RedirectToAction("MenuList");
         }
-        [Authorize(Roles = "1")]
+        [CustomAuthorize(1, RolePermissionEnum.Permission.CanDelete)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteMultipleItems([FromBody] List<int> itemIds)
@@ -297,7 +299,7 @@ namespace Web.Controllers
                 return StatusCode(500, new { success = false, message = "Error deleting items." });
             }
         }
-        [Authorize(Roles = "1")]
+        [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)]
         [HttpGet]
         public async Task<IActionResult> SelectedModifiers(int groupId)
         {

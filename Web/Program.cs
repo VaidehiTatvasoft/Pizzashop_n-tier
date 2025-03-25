@@ -1,5 +1,6 @@
 using System.Text;
 using Entity.Data;
+using Entity.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -58,16 +59,20 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 app.UseStatusCodePages(async context =>
-   {
-       if (context.HttpContext.Response.StatusCode == 404)
-       {
-           context.HttpContext.Response.Redirect("/Home/NotFound");
-       }
-       else if (context.HttpContext.Response.StatusCode == 401)
-       {
-           context.HttpContext.Response.Redirect("/Home/Unauthorized");
-       }
-   });
+{
+    if (context.HttpContext.Response.StatusCode == 404)
+    {
+        context.HttpContext.Response.Redirect("/Home/NotFound");
+    }
+    else if (context.HttpContext.Response.StatusCode == 401)
+    {
+        context.HttpContext.Response.Redirect("/Home/Unauthorized");
+    }
+    else if (context.HttpContext.Response.StatusCode == 403)
+    {
+        context.HttpContext.Response.Redirect("/Home/Forbidden");
+    }
+});
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -75,10 +80,10 @@ app.UseRouting();
 
 app.UseSession(); 
 
-
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<FirstLoginMiddleware>(); 
+app.UseMiddleware<CustomAuthorizationMiddleware>();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Accounts}/{action=Login}/{id?}");

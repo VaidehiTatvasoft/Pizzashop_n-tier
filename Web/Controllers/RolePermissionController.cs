@@ -1,9 +1,11 @@
 using System.Security.Claims;
+using Entity.Shared;
 using Entity.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using pizzashop.Services.Interfaces;
 using Service.Interface;
+using Web.Attributes;
 
 namespace Web.Controllers;
 
@@ -17,7 +19,7 @@ public class RolePermissionController : Controller
         _user = user;
         _rolePermission = rolePermission;
     }
-    [Authorize(Roles = "1")]
+    [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)]
     [Route("/roles")]
     [HttpGet]
     public async Task<IActionResult> Role()
@@ -25,7 +27,7 @@ public class RolePermissionController : Controller
         var roles = await _rolePermission.GetAllRoles();
         return View(roles);
     }
-    [Authorize(Roles = "1")]
+    [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)]
     [Route("/permission")]
     [HttpGet]
     public IActionResult Permission(int id)
@@ -40,8 +42,8 @@ public class RolePermissionController : Controller
             return View(model);
         return RedirectToAction("Permission");
     }
+    [CustomAuthorize(1, RolePermissionEnum.Permission.CanEdit)]
     [Route("/permission")]
-
     [HttpPost]
     public async Task<IActionResult> Permission(List<RolePermissionViewModel> model)
     {
