@@ -1,7 +1,7 @@
-@model Entity.ViewModel.TableViewModel
+@model Entity.ViewModel.TableViewModel;
 <partial name="_ValidationScriptsPartial" />
 <div class="container mt-5">
-    <div class="modal fade" id="addTableModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addTableModal" tabindex="-1" aria-labelledby="addTableModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header border-0">
@@ -35,7 +35,8 @@
                             </div>
                             <div class="col">
                                 <div class="form-floating">
-                                    <select asp-for="IsAvailable" class="form-select" aria-label="Floating label select example">
+                                    <select asp-for="IsAvailable" class="form-select"
+                                        aria-label="Floating label select example">
                                         <option selected disabled hidden>Select a Status</option>
                                         <option value="true">Available</option>
                                         <option value="false">Occupied</option>
@@ -46,7 +47,7 @@
                             </div>
                         </div>
                         <div class="modal-footer d-flex justify-content-end border-0">
-                            <button class="btn update-button" type="submit" id="submitTableForm">Save</button>
+<button class="btn update-button" type="submit" id="submitTableForm">Save</button>
                             <button type="button" class="btn cancel-button" data-bs-dismiss="modal">Cancel</button>
                         </div>
                     </form>
@@ -58,9 +59,8 @@
 <script src="/lib/jquery/dist/jquery.min.js"></script>
 <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    var selectedSectionId = '@Model.SectionId';
-    var tableId = '@Model.Id';
-
+    var selectedSectionId = '@Model.SectionId'; 
+    var tableId = '@Model.Id'; 
     $.getJSON('@Url.Action("GetAllSections", "TableSection")', function (sections) {
         $('#Sectionlist').empty().append('<option selected disabled hidden>Select Section</option>');
         $.each(sections, function (i, section) {

@@ -7,11 +7,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] Pizzashop</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" />    
     <link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href=" https://cdn.datatables.net/2.2.2/css/dataTables.bootstrap5.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.bootstrap5.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,6 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/AdminDashboard.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
 </head>
 
 <body class="main">
@@ -30,17 +31,26 @@
                         <i class="fa fa-times"></i>
                     </button>
                     <a class="navbar-brand">
-                        <img src="@Url.Content("~/assets/pizzashop_logo.png")" alt="" width="65" height="65" class="d-inline-block align-top">
+                        <img src="@Url.Content("~/assets/pizzashop_logo.png")" alt="" width="65" height="65"
+                            class="d-inline-block align-top">
                         <txt><b>PIZZASHOP</b></txt>
                     </a>
-                    <a class="btn" asp-controller="Home" asp-action="AdminDashboard"><i class="fa-solid fa-table-cells-large me-2"></i><b>Dashboard</b></a>
-                    <a class="btn" asp-controller="User" asp-action="UserList"><i class="fa-solid fa-users me-2"></i><b>Users</b></a>
-                    <a class="btn" asp-controller="RolePermission" asp-action="Role"><i class="fas fa-user-cog me-2"></i><b>Roles and Permission</b></a>
-                    <a class="btn" asp-controller="Menu" asp-action="menulist"><i class="fa-solid fa-monument me-2"></i><b>Menu</b></a>
-                    <a class="btn" asp-controller="TableSection" asp-action="TableSection"><i class="fa-solid fa-square"></i><b>Tables and Sections</b></a>
-                    <a class="btn" asp-controller="Tax" asp-action="TaxList"><i class="fa-solid fa-money-check-dollar"></i><b>Taxes and Fees</b></a>
-                    <a class="btn" asp-controller="Home" asp-action="AdminDasboard"><i class="fas fa-clipboard-check"></i><b>Orders</b></a>
-                    <a class="btn" asp-controller="Home" asp-action="AdminDashoard"><i class="fa-solid fa-users-rectangle"></i><b>Customers</b></a>
+                    <a class="btn" asp-controller="Home" asp-action="AdminDashboard"><i
+                            class="fa-solid fa-table-cells-large me-2"></i><b>Dashboard</b></a>
+                    <a class="btn" asp-controller="User" asp-action="UserList"><i
+                            class="fa-solid fa-users me-2"></i><b>Users</b></a>
+                    <a class="btn" asp-controller="RolePermission" asp-action="Role"><i
+                            class="fas fa-user-cog me-2"></i><b>Roles and Permission</b></a>
+                    <a class="btn" asp-controller="Menu" asp-action="menulist"><i
+                            class="fa-solid fa-monument me-2"></i><b>Menu</b></a>
+                    <a class="btn" asp-controller="TableSection" asp-action="TableSection"><i
+                            class="fa-solid fa-square"></i><b>Tables and Sections</b></a>
+                    <a class="btn" asp-controller="Tax" asp-action="TaxList"><i
+                            class="fa-solid fa-money-check-dollar"></i><b>Taxes and Fees</b></a>
+                    <a class="btn" asp-controller="Home" asp-action="AdminDasboard"><i
+                            class="fas fa-clipboard-check"></i><b>Orders</b></a>
+                    <a class="btn" asp-controller="Home" asp-action="AdminDashoard"><i
+                            class="fa-solid fa-users-rectangle"></i><b>Customers</b></a>
                 </div>
                 <div class="col p-0 justify-content-center bg-light">
                     <div>
@@ -51,27 +61,42 @@
                             </div>
                             <div class="d-flex align-items-center justify-content-end flex-grow-1">
                                 <a class="navbar-brand" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img id="profileImage" src="@Url.Content("~/assets/Default_pfp.svg.png")" width="40" height="40" alt="" style="border-radius: 50%;">
+                                    <img id="profileImage" src="@Url.Content("~/assets/Default_pfp.svg.png")" width="40"
+                                        height="40" alt="" style="border-radius: 50%;">
                                 </a>
                                 <ul class="dropdown-menu justify-content-end">
-                                    <li class="drop"><img id="profileImageDropdown" src="@Url.Content("~/assets/Default_pfp.svg.png")" alt="" height="30px" style="border-radius: 50%;">
+                                    <li class="drop"><img id="profileImageDropdown"
+                                            src="@Url.Content("~/assets/Default_pfp.svg.png")" alt="" height="30px"
+                                            style="border-radius: 50%;">
                                         @User.FindFirst(ClaimTypes.Email)?.Value</li>
                                     <li class="dropdown-divider"></li>
-                                    <li class="drop"><a class="dropdown-item" asp-controller="User" asp-action="Profile"><i class="fa fa-user-circle" style="color:grey"></i> My Profile</a></li>
-                                    <li class="drop"><a class="dropdown-item" asp-controller="User" asp-action="ChangePassword"><i class="fas fa-redo-alt" style="color:grey"></i> Change Password</a></li>
-                                    <li class="drop"><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><i class="fa fa-sign-out" style="color:grey"></i> Logout</a></li>
+                                    <li class="drop"><a class="dropdown-item" asp-controller="User"
+                                            asp-action="Profile"><i class="fa fa-user-circle" style="color:grey"></i> My
+                                            Profile</a></li>
+                                    <li class="drop"><a class="dropdown-item" asp-controller="User"
+                                            asp-action="ChangePassword"><i class="fas fa-redo-alt"
+                                                style="color:grey"></i> Change Password</a></li>
+                                    <li class="drop"><a class="dropdown-item" type="button" data-bs-toggle="modal"
+                                            data-bs-target="#staticBackdrop"><i class="fa fa-sign-out"
+                                                style="color:grey"></i> Logout</a></li>
                                 </ul>
-                                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static"
+                                    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                    aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
-                                            <div class="modal-body d-flex flex-column justify-content-center align-items-center">
-                                                <img src="@Url.Content("~/assets/warning.png")" alt="" height="40px" width="40px">
+                                            <div
+                                                class="modal-body d-flex flex-column justify-content-center align-items-center">
+                                                <img src="@Url.Content("~/assets/warning.png")" alt="" height="40px"
+                                                    width="40px">
                                                 <br> Are you sure you want to logout?
                                                 <div class="d-flex justify-content-center align-items-center mt-3">
                                                     <form asp-controller="Accounts" asp-action="Logout" method="post">
-                                                        <button type="submit" class="btn update-button m-1" id="logoutButton" style=" width: 70px;">Yes</button>
+                                                        <button type="submit" class="btn update-button m-1"
+                                                            id="logoutButton" style=" width: 70px;">Yes</button>
                                                     </form>
-                                                    <button type="submit" class="btn cancel-button m-1" style=" width: 70px;" data-bs-dismiss="modal">No</button>
+                                                    <button type="submit" class="btn cancel-button m-1"
+                                                        style=" width: 70px;" data-bs-dismiss="modal">No</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -87,15 +112,14 @@
             </div>
         </main>
     </div>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+        <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
     <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.2.2/js/dataTables.bootstrap5.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+        <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>

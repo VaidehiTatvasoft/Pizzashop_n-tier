@@ -42,7 +42,7 @@ public class RolePermissionController : Controller
             return View(model);
         return RedirectToAction("Permission");
     }
-    [CustomAuthorize(1, RolePermissionEnum.Permission.CanEdit)]
+     [CustomAuthorize(1, RolePermissionEnum.Permission.CanEdit)]
     [Route("/permission")]
     [HttpPost]
     public async Task<IActionResult> Permission(List<RolePermissionViewModel> model)

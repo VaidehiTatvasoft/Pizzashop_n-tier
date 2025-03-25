@@ -2,7 +2,6 @@
     ViewData["Title"] = "TableSection";
 }
 @model Entity.ViewModel.TableSectionViewModel;
-     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
 <div class="col-12">
     <!-- menu header -->
@@ -17,7 +16,6 @@
                     <i class="cat-i fa-regular fa-square-plus" data-bs-toggle="modal" data-bs-target="#sectionModal"
                         onclick="openAddEditModal(0)"></i>
                 </div>
-                <!-- Section list -->
                 <div id="sectionList">
                     @Html.Partial("_SectionList", Model.Sections)
                 </div>
@@ -51,27 +49,23 @@
         </div>
     </section>
 </div>
-@section Scripts
-{
-    <script src="/lib/jquery/dist/jquery.min.js"></script>
-    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function () {
             $(".addTableBtn").click(function () {
                 console.log("click add");
                 $.get('@Url.Action("AddNewTable", "TableSection")', function (data) {
-                    console.log("Add data");
+                    console.log("Add data")
                     $("#AddTablePartial").html(data);
                     $("#addTableModal").modal('show');
                 });
             });
-
-            // Submit Add New Table Form
             $(document).on('submit', "#addNewTableForm", function (event) {
                 var tableId = $(this).data("id");
                 event.preventDefault();
                 var form = $("#addNewTableForm");
-                console.log("submit form", form.serialize());
                 $.ajax({
                     url: tableId ? '/TableSection/EditTable' : '/TableSection/AddNewTable',
                     type: 'POST',
@@ -88,38 +82,31 @@
                     }
                 });
             });
-
             // Edit Table Button Click
             $(document).on("click", ".editTableBtn", function () {
                 var tableId = $(this).data("id");
-                console.log("Table ", tableId);
                 $.get('@Url.Action("EditTable", "TableSection")', { id: tableId }, function (data) {
                     $("#AddTablePartial").html(data);
                     $("#addNewTableForm").data("id", tableId);
-                    console.log(data);
                     $("#addTableModal").modal("show");
                 });
             });
-
             // Pagination and Filtering
             var debounce;
             var ajaxRequest;
             $(".section").click(function () {
+                sectionId = $(this).data("id");
                 var sectionId = $(this).data("id");
-
                 $.ajax({
                     url: '/TableSection/GetTablesBySectionId',
                     type: 'GET',
                     data: { sectionId: sectionId, pageSize: @Model.PageSize, pageIndex: @Model.PageIndex, searchString: "" },
                     success: function (response) {
-                        console.log(response);
                         $("#tableList").html(response);
                     }
                 });
             });
-
             var pageIndex = @Model.PageIndex;
-
             function GetFilteredItems() {
                 var SearchString = $("#searchString").val();
                 var pageSize = $("#pageSizeTable").val();
@@ -141,7 +128,6 @@
                     }
                 });
             }
-
             $('#searchString').keyup(function () {
                 clearTimeout(debounce);
                 pageIndex = 1
@@ -150,8 +136,6 @@
                     GetFilteredItems();
                 }, 600);
             });
-
-            // AddEdit Section
             function submitAddEditSectionForm(event) {
                 event.preventDefault();
                 var form = $(event.target);
@@ -163,7 +147,6 @@
                         if (response.success) {
                             $('#sectionModal').modal('hide');
                             GetFilteredSections();
-                            console.log("Edited");
                             toastr.success(response.message);
                         } else {
                             toastr.success(response.message);
@@ -177,7 +160,6 @@
             }
 
             $(document).on('submit', '#addEditSectionForm', submitAddEditSectionForm);
-
             function GetFilteredSections() {
                 console.log("GetFilteredSections");
                 ajaxRequest = $.ajax({
