@@ -18,7 +18,9 @@
 <div id="ordersPartial">
     @Html.Partial("_OrderList", Model)
 </div>
+
 @section Scripts {
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
         $('#searchInput').on('input', function () {
@@ -26,10 +28,6 @@
         });
 
         $('#pageSizeTable').change(function () {
-            loadOrders(1);
-        });
-
-        $('#sortColumn, #sortDirection').change(function () {
             loadOrders(1);
         });
     });
@@ -50,18 +48,19 @@
             },
             success: function (result) {
                 $('#ordersPartial').html(result);
+                $('#pageSizeTable').val(pageSize); 
             },
             error: function (xhr, status, error) {
                 console.error(error);
-                toastr.error("An error occurred while fetching the items. Please try again.");
+                alert("An error occurred while fetching the items. Please try again.");
             }
         });
     }
 
     function toggleSort(column) {
-        var sortOrder = $('#sortOrder').val();
-        if (sortOrder === column + '_asc') {
-            sortOrder = column + '_desc';
+        var sortOrder = $('#sortOrder').val() || '';
+        if (sortOrder.startsWith(column)) {
+            sortOrder = sortOrder.endsWith('_asc') ? column + '_desc' : column + '_asc';
         } else {
             sortOrder = column + '_asc';
         }
@@ -69,4 +68,5 @@
         loadOrders(1);
     }
 </script>
+<input type="hidden" id="sortOrder" value="@ViewBag.SortOrder" />
 }

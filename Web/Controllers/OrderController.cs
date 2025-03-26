@@ -18,7 +18,7 @@ public class OrderController : Controller
     }
     [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)]
     [HttpGet]
-        public IActionResult Order(string searchTerm, string sortOrder, int pageIndex = 1, int pageSize = 10)
+        public IActionResult Order(string searchTerm, string sortOrder, int pageIndex = 1, int pageSize = 5)
         {
             IEnumerable<OrderViewModel> orderViewModel = _orderService.GetAllOrderViewModels(searchTerm, sortOrder, pageIndex, pageSize, out int totalItems);
             ViewBag.PageIndex = pageIndex;
