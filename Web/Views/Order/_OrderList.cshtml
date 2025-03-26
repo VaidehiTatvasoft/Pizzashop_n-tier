@@ -1,23 +1,28 @@
 @model IEnumerable<Entity.ViewModel.OrderViewModel>
-
+@{
+    var PageSize = ViewBag.PageSize;
+    var PageIndex = ViewBag.PageIndex;
+    var TotalPage = ViewBag.TotalPage;
+    var SearchString = ViewBag.SearchString;
+}
 <table class="table">
     <thead>
         <tr>
             <th>
                 Order
-                <a href="javascript:void(0)" onclick="toggleSort('OrderId')">
+                <a href="javascript:void(0)" onclick="toggleSort('orderid')">
                     <i class="fa-solid fa-sort" id="orderIdSortIcon"></i>
                 </a>
             </th>
             <th>
                 Date
-                <a href="javascript:void(0)" onclick="toggleSort('Date')">
+                <a href="javascript:void(0)" onclick="toggleSort('date')">
                     <i class="fa-solid fa-sort" id="dateSortIcon"></i>
                 </a>
             </th>
             <th>
                 Customer
-                <a href="javascript:void(0)" onclick="toggleSort('CustomerName')">
+                <a href="javascript:void(0)" onclick="toggleSort('customername')">
                     <i class="fa-solid fa-sort" id="customerNameSortIcon"></i>
                 </a>
             </th>
@@ -47,16 +52,14 @@
     </tbody>
 </table>
 
-<div class="d-flex justify-content-end align-items-center mt-2">
-    <p class="mb-0">Table Per page</p>
-    <select class="ms-3 form-select w-auto" aria-label="Default select example" id="pageSizeTable">
-        <option value="5" selected="@(ViewBag.PageSize == 5 ? "selected" : "")">5</option>
-        <option value="10" selected="@(ViewBag.PageSize == 10 ? "selected" : "")">10</option>
-        <option value="15" selected="@(ViewBag.PageSize == 15 ? "selected" : "")">15</option>
-    </select>
-    <span class="mb-0 ms-2 me-2 d-none d-md-block" id="showing">Showing @(Math.Min(((ViewBag.PageIndex - 1) * ViewBag.PageSize) + 1,
-        ViewBag.TotalItems)) -
-    @(Math.Min(ViewBag.PageIndex * ViewBag.PageSize, ViewBag.TotalItems)) of @ViewBag.TotalItems</span>
+        <div class="d-flex justify-content-end align-items-center mt-2">
+            <p class="mb-0">Table Per page</p>
+            <select class="ms-3 form-select w-auto" aria-label="Default select example" id="pageSizeTable">
+                <option value="5" selected="@(PageSize == 5 ? true : false)">5</option>
+                <option value="10" selected="@(PageSize == 10 ? true : false)">10</option>
+                <option value="15" selected="@(PageSize == 15 ? true : false)">15</option>
+            </select>
+            <span>Showing @PageIndex out of <span>@TotalPage</span></span>
 
     @if (ViewBag.PageIndex > 1)
     {
