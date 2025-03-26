@@ -16,7 +16,7 @@ public class OrderController : Controller
         _orderService = orderService;
     }
 
-    public IActionResult OrderList(string searchTerm, int pageIndex = 1, int pageSize = 10, string sortOrder = "", bool isAjax = false)
+    public IActionResult Order(string searchTerm, int pageIndex = 1, int pageSize = 10, string sortOrder = "", bool isAjax = false)
         {
             var orders = _orderService.GetAllOrderViewModels(searchTerm, sortOrder, pageIndex, pageSize, out int count);
 
