@@ -16,9 +16,9 @@ public class OrderService: IOrderService
             _orderRepository = orderRepository;
         }
 
-        public IEnumerable<OrderViewModel> GetAllOrderViewModels(string searchTerm, string sortOrder, int pageIndex, int pageSize, out int count)
+        public IEnumerable<OrderViewModel> GetFilteredOrderViewModels(string searchTerm, string sortOrder, int pageIndex, int pageSize, string statusFilter, DateTime? startDate, DateTime? endDate, out int count)
         {
-            var orders = _orderRepository.GetAllOrders(searchTerm, sortOrder, pageIndex, pageSize, out count);
+            var orders = _orderRepository.GetAllOrders(searchTerm, sortOrder, pageIndex, pageSize, statusFilter, startDate, endDate, out count);
             var orderViewModels = orders.Select(o => new OrderViewModel
             {
                 Id = o.Id,

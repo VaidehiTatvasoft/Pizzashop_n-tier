@@ -5,5 +5,5 @@ namespace Service.Interface;
 
 public interface IOrderService
 {
-        IEnumerable<OrderViewModel> GetAllOrderViewModels(string searchTerm, string sortOrder, int pageIndex, int pageSize, out int count);
+        IEnumerable<OrderViewModel> GetFilteredOrderViewModels(string searchTerm, string sortOrder, int pageIndex, int pageSize, string statusFilter, DateTime? startDate, DateTime? endDate, out int totalItems);
 }

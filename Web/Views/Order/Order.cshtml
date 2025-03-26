@@ -6,11 +6,41 @@
 
 <h2>Orders</h2>
 
-<div class="d-flex justify-content-end align-items-center">
+<div class="d-flex justify-content-end align-items-center mb-3">
     <form method="get" class="search">
-        <div class="input-group">
+        <div class="input-group me-3">
             <input type="text" class="form-control" placeholder="Search" id="searchInput" aria-label="Search" name="searchString" aria-describedby="search-addon" />
             <i class="fa-solid fa-magnifying-glass search-btn"></i>
+        </div>
+        <div class="input-group me-3">
+            <select class="form-select" id="statusFilter">
+                <option value="All Status" selected>All Status</option>
+                <option value="Pending">Pending</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Served">Served</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+                <option value="On Hold">On Hold</option>
+                <option value="Failed">Failed</option>
+            </select>
+        </div>
+        <div class="input-group me-3">
+            <select class="form-select" id="dateRangeFilter">
+                <option value="All Time" selected>All Time</option>
+                <option value="Last 7 days">Last 7 days</option>
+                <option value="Last 30 days">Last 30 days</option>
+                <option value="Current Month">Current Month</option>
+            </select>
+        </div>
+        <div class="input-group me-3">
+            <input type="date" class="form-control" id="fromDate" aria-label="From Date" />
+        </div>
+        <div class="input-group me-3">
+            <input type="date" class="form-control" id="toDate" aria-label="To Date" />
+        </div>
+        <div class="input-group me-3">
+            <button type="button" class="btn btn-primary" onclick="applyFilters()">Search</button>
+            <button type="button" class="btn btn-secondary ms-2" onclick="clearFilters()">Clear</button>
         </div>
     </form>
 </div>
@@ -20,7 +50,6 @@
 </div>
 
 @section Scripts {
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
         $('#searchInput').on('input', function () {
@@ -30,12 +59,24 @@
         $('#pageSizeTable').change(function () {
             loadOrders(1);
         });
+
+        $('#statusFilter').change(function () {
+            loadOrders(1);
+        });
+
+        $('#dateRangeFilter').change(function () {
+            loadOrders(1);
+        });
     });
 
     function loadOrders(pageIndex) {
         var searchTerm = $('#searchInput').val().trim();
         var pageSize = $('#pageSizeTable').val() || 5;
         var sortOrder = $('#sortOrder').val();
+        var statusFilter = $('#statusFilter').val();
+        var dateRangeFilter = $('#dateRangeFilter').val();
+        var fromDate = $('#fromDate').val();
+        var toDate = $('#toDate').val();
 
         $.ajax({
             url: '@Url.Action("Order", "Order")',
@@ -44,7 +85,11 @@
                 searchTerm: searchTerm,
                 pageIndex: pageIndex,
                 pageSize: pageSize,
-                sortOrder: sortOrder
+                sortOrder: sortOrder,
+                statusFilter: statusFilter,
+                dateRangeFilter: dateRangeFilter,
+                fromDate: fromDate,
+                toDate: toDate
             },
             success: function (result) {
                 $('#ordersPartial').html(result);
@@ -65,6 +110,19 @@
             sortOrder = column + '_asc';
         }
         $('#sortOrder').val(sortOrder);
+        loadOrders(1);
+    }
+
+    function applyFilters() {
+        loadOrders(1);
+    }
+
+    function clearFilters() {
+        $('#searchInput').val('');
+        $('#statusFilter').val('All Status');
+        $('#dateRangeFilter').val('All Time');
+        $('#fromDate').val('');
+        $('#toDate').val('');
         loadOrders(1);
     }
 </script>
