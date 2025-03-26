@@ -17,28 +17,20 @@ public class OrderController : Controller
         _orderService = orderService;
     }
     [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)]
-
-    public IActionResult Order(string searchTerm, int pageIndex = 1, int pageSize = 10, string sortOrder = "", bool isAjax = false)
-    {
-        var orders = _orderService.GetAllOrderViewModels(searchTerm, sortOrder, pageIndex, pageSize, out int count);
-
-        ViewData["OrderIdSortParam"] = sortOrder == "orderid_asc" ? "orderid_desc" : "orderid_asc";
-        ViewData["DateSortParam"] = sortOrder == "date_asc" ? "date_desc" : "date_asc";
-        ViewData["CustomerNameSortParam"] = sortOrder == "customername_asc" ? "customername_desc" : "customername_asc";
-
-        ViewBag.Count = count;
-        ViewBag.PageIndex = pageIndex;
-        ViewBag.PageSize = pageSize;
-        ViewBag.TotalPage = (int)Math.Ceiling(count / (double)pageSize);
-        ViewBag.SearchTerm = searchTerm;
-        ViewBag.SortOrder = sortOrder;
-
-        if (isAjax)
+    [HttpGet]
+        public IActionResult Order(string searchTerm, string sortOrder, int pageIndex = 1, int pageSize = 10)
         {
-            return PartialView("_OrderList");
+            IEnumerable<OrderViewModel> orderViewModel = _orderService.GetAllOrderViewModels(searchTerm, sortOrder, pageIndex, pageSize, out int totalItems);
+            ViewBag.PageIndex = pageIndex;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalItems = totalItems;
+            ViewBag.TotalPage = (int)Math.Ceiling((double)totalItems / pageSize);
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_OrderList", orderViewModel);
+            }
+
+            return View(orderViewModel);
         }
-
-        return View(Order);
-    }
-
 }
