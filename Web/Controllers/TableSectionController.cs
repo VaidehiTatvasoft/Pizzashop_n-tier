@@ -73,7 +73,7 @@ public class TableSectionController : Controller
         if (ModelState.IsValid)
         {
 
-            var table = _tableService.AdddTable(model, User);
+            var table = _tableService.AddTable(model, User);
 
             if (table)
             {

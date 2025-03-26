@@ -6,7 +6,7 @@ using Service.Interface;
 
 namespace Service.Implementation;
 
-public class TableService: ITableService
+public class TableService : ITableService
 {
     private readonly ITableRepository _tableRepository;
 
@@ -14,7 +14,7 @@ public class TableService: ITableService
     {
         _tableRepository = tableService;
     }
-public List<TableViewModel> GetAllTables()
+    public List<TableViewModel> GetAllTables()
     {
         var sections = _tableRepository.GetAllTablesAsync();
         return sections;
@@ -55,7 +55,7 @@ public List<TableViewModel> GetAllTables()
 
     public bool DeleteTable(int id, ClaimsPrincipal userClaims)
     {
-         var userIdClaim = userClaims.FindFirst("UserId");
+        var userIdClaim = userClaims.FindFirst("UserId");
         if (userIdClaim == null)
         {
             return false;
@@ -67,7 +67,7 @@ public List<TableViewModel> GetAllTables()
 
     public bool MultiDeleteTable(int[] tableIds, ClaimsPrincipal userClaims)
     {
-         var userIdClaim = userClaims.FindFirst("UserId");
+        var userIdClaim = userClaims.FindFirst("UserId");
         if (userIdClaim == null)
         {
             return false;
@@ -76,7 +76,7 @@ public List<TableViewModel> GetAllTables()
         try
         {
             var occupied = false;
-            
+
             foreach (var table in tableIds)
             {
                 var isDelete = _tableRepository.DeleteTable(table, userId);
@@ -97,16 +97,16 @@ public List<TableViewModel> GetAllTables()
         }
     }
 
-    public bool AdddTable(TableViewModel model, ClaimsPrincipal userClaims)
+    public bool AddTable(TableViewModel model, ClaimsPrincipal userClaims)
     {
-        bool isTable = _tableRepository.IsTableExist(model.Name, model.SectionId, model.Id);
- var userIdClaim = userClaims.FindFirst("UserId");
+        Table isTable = _tableRepository.IsTableExist(model.Name, model.SectionId, model.Id);
+        var userIdClaim = userClaims.FindFirst("UserId");
         if (userIdClaim == null)
         {
             return false;
         }
         var userId = int.Parse(userIdClaim.Value);
-        if (isTable == false)
+        if (isTable == null)
         {
             var newTable = new Table
             {
@@ -130,27 +130,43 @@ public List<TableViewModel> GetAllTables()
 
     public bool UpdateTable(TableViewModel model, ClaimsPrincipal userClaims)
     {
-        bool isTable = _tableRepository.IsTableExist(model.Name, model.SectionId, model.Id);
- var userIdClaim = userClaims.FindFirst("UserId");
+        Table table = _tableRepository.IsTableExist(model.Name, model.SectionId, model.Id);
+        var userIdClaim = userClaims.FindFirst("UserId");
         if (userIdClaim == null)
         {
             return false;
         }
         var userId = int.Parse(userIdClaim.Value);
-        if (isTable == false)
+        if (table != null)
         {
-            var newTable = new Table
-            {
-                Name = model.Name,
-                SectionId = model.SectionId,
-                Capacity = model.Capacity,
-                IsAvailable = model.IsAvailable,
-                CreatedBy = userId,
-                CreatedAt = DateTime.UtcNow
-            };
 
-            return _tableRepository.UpdateTable(newTable);
+            table.Name = model.Name;
+            table.SectionId = model.SectionId;
+            table.Capacity = model.Capacity;
+            table.IsAvailable = model.IsAvailable;
+            table.CreatedBy = userId;
+            table.CreatedAt = DateTime.UtcNow;
+
+
+            return _tableRepository.UpdateTable(table);
         }
         return false;
     }
+    //   public bool UpdateTable(TableViewModel model, int userId)
+    //     {
+    //         Table table = _tableRepository.IsTableExist(model.Name, model.SectionId, model.Id);
+
+    //         if (table != null)
+    //         {
+    //             table.Name = model.Name;
+    //             table.SectionId = model.SectionId;
+    //             table.Capacity = model.Capacity;
+    //             table.IsAvailable = model.IsAvailable;
+    //             table.CreatedBy = userId;
+    //             table.CreatedAt = DateTime.UtcNow;
+
+    //             return _tableRepository.UpdateTable(table);
+    //         }
+    //         return false;
+    //     }
 }

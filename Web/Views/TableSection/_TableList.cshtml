@@ -241,7 +241,6 @@
         });
     });
 
-    // Fetch filtered sections
     function GetFilteredItems() {
         var SearchString = $("#searchString").val();
         var pageSize = $("#pageSizeTable").val();
@@ -267,18 +266,15 @@
         });
     }
 
-    // Handle page size change
     $('#pageSizeTable').change(function () {
         GetFilteredItems();
     });
 
-    // Handle previous page
     $("#Previous").click(function () {
         pageIndex -= 1;
         GetFilteredItems();
     });
 
-    // Handle next page
     $('#Next').click(function () {
         pageIndex += 1;
         GetFilteredItems();
