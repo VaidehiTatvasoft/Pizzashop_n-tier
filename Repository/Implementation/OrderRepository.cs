@@ -1,9 +1,6 @@
 using Entity.Data;
 using Microsoft.EntityFrameworkCore;
 using Repository.Interface;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 namespace Repository.Implementation;
 
 public class OrderRepository : IOrderRepository
@@ -17,32 +14,43 @@ public class OrderRepository : IOrderRepository
 
     public async Task<(List<Order>, int)> GetAllOrdersAsync(string searchTerm, string sortColumn, bool sortAscending, int pageIndex, int pageSize)
     {
-        IQueryable<Order> query = _context.Orders
+        IQueryable<Order> orderQuery = _context.Orders
             .Include(o => o.Customer)
             .Include(o => o.Invoices)
                 .ThenInclude(i => i.Payments);
 
         if (!string.IsNullOrEmpty(searchTerm))
         {
-            query = query.Where(o => o.Id.ToString().Contains(searchTerm.Trim()) ||
-                                     o.Customer.Name.Contains(searchTerm.Trim()));
+            orderQuery = orderQuery.Where(o => o.Id.ToString().Contains(searchTerm.Trim()) ||
+                                               o.Customer.Name.ToLower().Contains(searchTerm.ToLower()));
         }
 
-        query = sortColumn switch
+        switch (sortColumn.ToLower())
         {
-            "OrderId" => sortAscending ? query.OrderBy(o => o.Id) : query.OrderByDescending(o => o.Id),
-            "Date" => sortAscending ? query.OrderBy(o => o.OrderDate) : query.OrderByDescending(o => o.OrderDate),
-            "CustomerName" => sortAscending ?
-                query.OrderBy(o => o.Customer.Name).ThenBy(o => o.OrderDate) :
-                query.OrderByDescending(o => o.Customer.Name).ThenByDescending(o => o.OrderDate),
-            _ => query.OrderBy(o => o.Id)
-        };
+            case "orderid":
+                orderQuery = sortAscending ? orderQuery.OrderBy(o => o.Id) : orderQuery.OrderByDescending(o => o.Id);
+                break;
 
-        var totalItems = await query.CountAsync();
-        query = query.Skip((pageIndex - 1) * pageSize).Take(pageSize);
+            case "date":
+                orderQuery = sortAscending ? orderQuery.OrderBy(o => o.OrderDate) : orderQuery.OrderByDescending(o => o.OrderDate);
+                break;
 
-        return (await query.ToListAsync(), totalItems);
+            case "customername":
+                orderQuery = sortAscending ? orderQuery.OrderBy(o => o.Customer.Name).ThenBy(o => o.OrderDate) : orderQuery.OrderByDescending(o => o.Customer.Name).ThenByDescending(o => o.OrderDate);
+                break;
+
+            default:
+                orderQuery = orderQuery.OrderBy(o => o.Id);
+                break;
+        }
+
+        int count = await orderQuery.CountAsync();
+
+        var orders = await orderQuery
+            .Skip((pageIndex - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return (orders, count);
     }
-
-
 }

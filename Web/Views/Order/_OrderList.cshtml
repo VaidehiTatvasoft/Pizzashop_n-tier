@@ -3,9 +3,24 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Order</th>
-            <th>Date</th>
-            <th>Customer</th>
+            <th>
+                Order
+                <a href="javascript:void(0)" onclick="toggleSort('OrderId')">
+                    <i class="fa-solid fa-sort" id="orderIdSortIcon"></i>
+                </a>
+            </th>
+            <th>
+                Date
+                <a href="javascript:void(0)" onclick="toggleSort('Date')">
+                    <i class="fa-solid fa-sort" id="dateSortIcon"></i>
+                </a>
+            </th>
+            <th>
+                Customer
+                <a href="javascript:void(0)" onclick="toggleSort('CustomerName')">
+                    <i class="fa-solid fa-sort" id="customerNameSortIcon"></i>
+                </a>
+            </th>
             <th>Status</th>
             <th>Payment Mode</th>
             <th>Rating</th>
