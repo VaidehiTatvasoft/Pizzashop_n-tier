@@ -16,9 +16,9 @@ public class OrderService: IOrderService
             _orderRepository = orderRepository;
         }
 
-        public async Task<(List<OrderViewModel>, int)> GetAllOrderViewModelsAsync(string searchTerm, string sortColumn, bool sortAscending, int pageIndex, int pageSize)
+        public IEnumerable<OrderViewModel> GetAllOrderViewModels(string searchTerm, string sortOrder, int pageIndex, int pageSize, out int count)
         {
-            var (orders, totalItems) = await _orderRepository.GetAllOrdersAsync(searchTerm, sortColumn, sortAscending, pageIndex, pageSize);
+            var orders = _orderRepository.GetAllOrders(searchTerm, sortOrder, pageIndex, pageSize, out count);
             var orderViewModels = orders.Select(o => new OrderViewModel
             {
                 Id = o.Id,
@@ -29,6 +29,6 @@ public class OrderService: IOrderService
                 TotalAmount = o.TotalAmount
             }).ToList();
 
-            return (orderViewModels, totalItems);
+            return orderViewModels;
         }
     }

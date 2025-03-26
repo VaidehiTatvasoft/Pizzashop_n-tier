@@ -16,19 +16,34 @@ public class OrderController : Controller
         _orderService = orderService;
     }
 
-    public async Task<IActionResult> Order(string searchTerm, string sortColumn, bool sortAscending, int pageIndex = 1, int pageSize = 5)
+    public IActionResult OrderList(string searchTerm, int pageIndex = 1, int pageSize = 10, string sortOrder = "", bool isAjax = false)
         {
-            var (orderViewModel, totalItems) = await _orderService.GetAllOrderViewModelsAsync(searchTerm, sortColumn, sortAscending, pageIndex, pageSize);
+            var orders = _orderService.GetAllOrderViewModels(searchTerm, sortOrder, pageIndex, pageSize, out int count);
+
+            ViewData["OrderIdSortParam"] = sortOrder == "orderid_asc" ? "orderid_desc" : "orderid_asc";
+            ViewData["DateSortParam"] = sortOrder == "date_asc" ? "date_desc" : "date_asc";
+            ViewData["CustomerNameSortParam"] = sortOrder == "customername_asc" ? "customername_desc" : "customername_asc";
+
+            ViewBag.Count = count;
             ViewBag.PageIndex = pageIndex;
             ViewBag.PageSize = pageSize;
-            ViewBag.TotalItems = totalItems;
-            ViewBag.TotalPage = (int)Math.Ceiling((double)totalItems / pageSize);
+            ViewBag.TotalPage = (int)Math.Ceiling(count / (double)pageSize);
+            ViewBag.SearchTerm = searchTerm;
+            ViewBag.SortOrder = sortOrder;
 
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            if (orders == null || !orders.Any())
             {
-                return PartialView("_OrderList", orderViewModel);
+                ViewBag.ErrorMessage = "Order list is empty.";
             }
-            return View(orderViewModel);
+
+            ViewBag.OrderList = orders;
+
+            if (isAjax)
+            {
+                return PartialView("_OrderList", orders);
+            }
+
+            return View(orders);
         }
 
 }
