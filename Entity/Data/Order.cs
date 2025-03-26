@@ -11,8 +11,6 @@ public partial class Order
 
     public int OrderNo { get; set; }
 
-    public int[] OrderStatus { get; set; } = null!;
-
     public decimal TotalAmount { get; set; }
 
     public decimal? Tax { get; set; }
@@ -34,6 +32,10 @@ public partial class Order
     public DateTime? ModifiedAt { get; set; }
 
     public int? ModifiedBy { get; set; }
+
+    public DateOnly? OrderDate { get; set; }
+
+    public int? OrderStatus { get; set; }
 
     public virtual User CreatedByNavigation { get; set; } = null!;
 

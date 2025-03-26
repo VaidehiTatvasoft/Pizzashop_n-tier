@@ -450,6 +450,7 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.ModifiedAt).HasColumnName("modified_at");
             entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
             entity.Property(e => e.Notes).HasColumnName("notes");
+            entity.Property(e => e.OrderDate).HasColumnName("order_date");
             entity.Property(e => e.OrderNo).HasColumnName("order_no");
             entity.Property(e => e.OrderStatus).HasColumnName("order_status");
             entity.Property(e => e.PaidAmount)

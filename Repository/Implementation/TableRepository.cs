@@ -138,10 +138,10 @@ public List<Table> GetTablesBySectionId(int sectionId, int pageSize, int pageInd
     public Table IsTableExist(string name, int sectionId, int tableId)
     {
         name = name.Trim().ToLower();
-        var table = _context.Tables.FirstOrDefault(t => t.Name.ToLower() == name && t.SectionId == sectionId);
+        var table = _context.Tables.FirstOrDefault(t => t.Name.ToLower() == name && t.SectionId == sectionId && (t.IsDeleted == false || t.IsDeleted == null));
 
         var existingTable = _context.Tables
-       .Where(t => t.Id == tableId).FirstOrDefault();
+       .Where(t => t.Id == tableId && (t.IsDeleted == false || t.IsDeleted == null)).FirstOrDefault();
         if (table != null && existingTable!.Name.ToLower() != name && existingTable.SectionId != sectionId)
         {
             return null;

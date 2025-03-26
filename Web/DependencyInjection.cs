@@ -17,7 +17,7 @@ namespace Web
         public static void AddProjectServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<PizzaShopContext>(options =>
-    options.UseNpgsql(configuration.GetConnectionString("pizza_shopConnection")));
+            options.UseNpgsql(configuration.GetConnectionString("pizza_shopConnection")));
 
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IEmailService, EmailService>();
@@ -30,6 +30,7 @@ namespace Web
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ITableService, TableService>();
             services.AddScoped<ITaxAndFeeService, TaxAndFeeService>();
+            services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IMenuRepository, MenuRepository>();
@@ -39,6 +40,7 @@ namespace Web
             services.AddScoped<ISectionRepository, SectionRepository>();
             services.AddScoped<ITableRepository, TableRepository>();
             services.AddScoped<ITaxAndFeeRepository, TaxAndFeeRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddSingleton<IConfiguration>(configuration);
         }
     }

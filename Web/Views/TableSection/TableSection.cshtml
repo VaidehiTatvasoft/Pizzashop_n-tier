@@ -81,7 +81,7 @@
                             toastr.success(response.message);
                         } else {
                             toastr.error(response.message);
-                            $('#modalContent').html(response.html); // Update modal content in case of validation errors
+                            $('#modalContent').html(response.html); 
                         }
                     },
                     error: function (xhr, status, error) {
@@ -133,7 +133,6 @@
                     }
                 });
             });
-            // Edit Table Button Click
             $(document).on("click", ".editTableBtn", function () {
                 var tableId = $(this).data("id");
                 $.get('@Url.Action("EditTable", "TableSection")', { id: tableId }, function (data) {
@@ -142,7 +141,6 @@
                     $("#addTableModal").modal("show");
                 });
             });
-            // Pagination and Filtering
             var debounce;
             var ajaxRequest;
             $(".section").click(function () {

@@ -73,7 +73,18 @@
             <span class="mb-0 ms-2 me-2 d-none d-md-block" id="showing">Showing @(Math.Min(((PageIndex - 1) * PageSize) + 1,
                 TotalItems)) -
             @(Math.Min(PageIndex * PageSize, TotalItems)) of @TotalItems</span>
-        @if (PageIndex > 1)
+
+            @* <a class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark @((PageIndex <= 1) ? "disabled" : "")"
+                name="PageIndex" id="Previous">
+                <i class="fa fa-chevron-left"></i>
+            </a>
+
+            <a class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark @((PageIndex >= TotalPage) ? "disabled" : "")"
+                name="PageIndex" id="Next">
+                <i class="fa fa-chevron-right"></i>
+            </a> *@
+
+            @if (PageIndex > 1)
             {
                 <a class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" name="PageIndex" id="Previous">
                     <i class="fa fa-chevron-left"></i>
@@ -99,7 +110,7 @@
                 </button>
             }
         </div>
-    }
+        }
 </section>
 <div id="AddTablePartial">
 
@@ -160,124 +171,125 @@
 <script src="/lib/jquery/dist/jquery.min.js"></script>
 <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-   $(document).ready(function () {
-    var deleteTableId;
-    var ajaxRequest;
-    var pageIndex = 1;
+    $(document).ready(function () {
+        var deleteTableId;
+        var ajaxRequest;
+        var pageIndex = 1;
 
-    // Show delete table modal
-    $(".deleteTable").click(function () {
-        deleteTableId = $(this).val();
-        $('#deleteTableModal').modal('show');
-    });
+        // Show delete table modal
+        $(".deleteTable").click(function () {
+            deleteTableId = $(this).val();
+            $('#deleteTableModal').modal('show');
+        });
 
-    // Handle delete table action
-    $('#deleteTableBtn').click(function () {
-        $.ajax({
-            url: '/TableSection/DeleteTable',
-            type: 'post',
-            data: { id: deleteTableId },
-            success: function (response) {
-                if (response == null) {
-                    window.location.href = "/Auth/Login";
-                    toastr.error("Your Session is Expired. Please Login Again!");
-                } else if (response.isSuccess) {
-                    GetFilteredItems();
-                    toastr.success(response.message);
-                } else {
-                    toastr.error(response.message);
+        // Handle delete table action
+        $('#deleteTableBtn').click(function () {
+            $.ajax({
+                url: '/TableSection/DeleteTable',
+                type: 'post',
+                data: { id: deleteTableId },
+                success: function (response) {
+                    if (response == null) {
+                        window.location.href = "/Auth/Login";
+                        toastr.error("Your Session is Expired. Please Login Again!");
+                    } else if (response.isSuccess) {
+                        GetFilteredItems();
+                        toastr.success(response.message);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                    $("#deleteTableModal").modal('hide');
+                },
+                error: function (xhr, status, error) {
+                    console.error("An error occurred: " + error);
+                    toastr.error("An error occurred while deleting the table. Please try again.");
                 }
-                $("#deleteTableModal").modal('hide');
-            },
-            error: function (xhr, status, error) {
-                console.error("An error occurred: " + error);
-                toastr.error("An error occurred while deleting the table. Please try again.");
+            });
+        });
+        var sectionId = '@Model.Sections.FirstOrDefault()?.Id';
+
+        // Handle multiple delete action
+        var deleteTableIds = [];
+        $('#tableList').on("click", ".tableCheckBox", function () {
+            var tableId = $(this).val();
+            if (this.checked) {
+                deleteTableIds.push(parseInt(tableId));
+            } else {
+                deleteTableIds = deleteTableIds.filter(id => id != parseInt(tableId));
             }
         });
-    });
 
-    // Handle multiple delete action
-    var deleteTableIds = [];
-    $('#tableList').on("click", ".tableCheckBox", function () {
-        var tableId = $(this).val();
-        if (this.checked) {
-            deleteTableIds.push(parseInt(tableId));
-        } else {
-            deleteTableIds = deleteTableIds.filter(id => id != parseInt(tableId));
-        }
-    });
+        $('#multiDeleteTableBtn').click(function () {
+            if (deleteTableIds.length == 0) {
+                toastr.warning("Select at Least One Item");
+            } else {
+                $('#deleteMultipleTableModal').modal('show');
+            }
+        });
 
-    $('#multiDeleteTableBtn').click(function () {
-        if (deleteTableIds.length == 0) {
-            toastr.warning("Select at Least One Item");
-        } else {
-            $('#deleteMultipleTableModal').modal('show');
-        }
-    });
-
-    $('#multiDeleteTableBtn').click(function () {
-        $.ajax({
-            url: '/TableSection/MultiDeleteTable',
-            type: 'POST',
-            data: {
-                itemIds: deleteTableIds
-            },
-            success: function (response) {
-                if (response == null) {
-                    window.location.href = "/Auth/Login";
-                    toastr.error("Your Session is Expired. Please Login Again!");
-                } else if (response.isSuccess) {
-                    GetFilteredItems();
-                    toastr.success(response.message);
-                } else {
-                    toastr.error(response.message);
+        $('#multiDeleteTableBtn').click(function () {
+            $.ajax({
+                url: '/TableSection/MultiDeleteTable',
+                type: 'POST',
+                data: {
+                    itemIds: deleteTableIds
+                },
+                success: function (response) {
+                    if (response == null) {
+                        window.location.href = "/Auth/Login";
+                        toastr.error("Your Session is Expired. Please Login Again!");
+                    } else if (response.isSuccess) {
+                        GetFilteredItems();
+                        toastr.success(response.message);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                    $("#deleteMultipleTableModal").modal('hide');
+                },
+                error: function (xhr, status, error) {
+                    console.error("An error occurred: " + error);
+                    toastr.error("An error occurred while deleting the tables. Please try again.");
                 }
-                $("#deleteMultipleTableModal").modal('hide');
-            },
-            error: function (xhr, status, error) {
-                console.error("An error occurred: " + error);
-                toastr.error("An error occurred while deleting the tables. Please try again.");
-            }
+            });
         });
-    });
 
-    function GetFilteredItems() {
-        var SearchString = $("#searchString").val();
-        var pageSize = $("#pageSizeTable").val();
-        if (ajaxRequest && ajaxRequest.readyState !== 4) {
-            ajaxRequest.abort();
+        function GetFilteredItems() {
+            var SearchString = $("#searchString").val();
+            var pageSize = $("#pageSizeTable").val();
+            if (ajaxRequest && ajaxRequest.readyState !== 4) {
+                ajaxRequest.abort();
+            }
+            ajaxRequest = $.ajax({
+                url: "/TableSection/GetTablesBySectionId",
+                type: "GET",
+                data: {
+                    sectionId: sectionId,
+                    pageIndex: pageIndex,
+                    pageSize: pageSize,
+                    searchString: SearchString
+                },
+                success: function (data) {
+                    $("#tableList").html(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error("An error occurred: " + error);
+                    toastr.error("An error occurred while fetching the items. Please try again.");
+                }
+            });
         }
-        ajaxRequest = $.ajax({
-            url: "/TableSection/GetTablesBySectionId",
-            type: "GET",
-            data: {
-                sectionId: sectionId,
-                pageIndex: pageIndex,
-                pageSize: pageSize,
-                searchString: SearchString
-            },
-            success: function (data) {
-                $("#tableList").html(data);
-            },
-            error: function (xhr, status, error) {
-                console.error("An error occurred: " + error);
-                toastr.error("An error occurred while fetching the items. Please try again.");
-            }
+
+        $('#pageSizeTable').change(function () {
+            GetFilteredItems();
         });
-    }
 
-    $('#pageSizeTable').change(function () {
-        GetFilteredItems();
-    });
+        $("#Previous").click(function (e) {
+            pageIndex -= 1;
+            GetFilteredItems();
+        });
 
-    $("#Previous").click(function () {
-        pageIndex -= 1;
-        GetFilteredItems();
+        $('#Next').click(function () {
+            pageIndex += 1;
+            GetFilteredItems();
+        });
     });
-
-    $('#Next').click(function () {
-        pageIndex += 1;
-        GetFilteredItems();
-    });
-});
 </script>
