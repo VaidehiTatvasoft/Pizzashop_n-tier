@@ -5,4 +5,79 @@
 }
 
 <h2>Orders</h2>
-@Html.Partial("_OrderList")
+
+<div class="d-flex justify-content-end align-items-center ">
+    <form method="get" class="search">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search " id="searchInput" aria-label="Search"
+                name="searchString" aria-describedby="search-addon" />
+            <i class="fa-solid fa-magnifying-glass search-btn"></i>
+        </div>
+    </form>
+</div>
+
+<div>
+    <select id="sortColumn">
+        <option value="OrderId">Order ID</option>
+        <option value="Date">Date</option>
+        <option value="CustomerName">Customer Name</option>
+    </select>
+    <select id="sortDirection">
+        <option value="true">Ascending</option>
+        <option value="false">Descending</option>
+    </select>
+    <button onclick="loadOrders()">Sort</button>
+</div>
+
+<div>
+    <select id="pageSizeTable">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="15">15</option>
+    </select>
+    <span id="showing"></span>
+</div>
+
+<div id="ordersPartial">
+    @Html.Partial("_OrderList", Model)
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#searchInput').on('input', function () {
+            var searchTerm = $(this).val().trim();
+            var pageSize = $('#pageSizeTable').val() || 5;
+            var sortOrder = '@ViewBag.sortOrder';
+            var sortColumn = $('#sortColumn').val();
+            var sortDirection = $('#sortDirection').val();
+
+            $.ajax({
+                url: '@Url.Action("Order", "Order")',
+                type: 'GET',
+                data: {
+                    searchTerm: searchTerm,
+                    pageIndex: 1,
+                    pageSize: pageSize,
+                    sortColumn: sortColumn,
+                    sortAscending: sortDirection === 'true'
+                },
+                success: function (result) {
+                    $('#ordersPartial').html(result);
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                    toastr.error("An error occurred while fetching the items. Please try again.");
+                }
+            });
+        });
+
+        $('#pageSizeTable').change(function () {
+            $('#searchInput').trigger('input');
+        });
+
+        $('#sortColumn, #sortDirection').change(function () {
+            $('#searchInput').trigger('input');
+        });
+    });
+</script>

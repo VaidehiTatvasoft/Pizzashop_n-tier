@@ -6,5 +6,5 @@ namespace Repository.Interface;
 
 public interface IOrderRepository
 {
-    Task<List<Order>> GetAllOrdersAsync();
+        Task<(List<Order>, int)> GetAllOrdersAsync(string searchTerm, string sortColumn, bool sortAscending, int pageIndex, int pageSize);
 }

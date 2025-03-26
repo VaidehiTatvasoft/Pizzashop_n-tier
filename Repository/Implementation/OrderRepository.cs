@@ -6,23 +6,43 @@ using System.Linq;
 using System.Threading.Tasks;
 namespace Repository.Implementation;
 
-public class OrderRepository: IOrderRepository
+public class OrderRepository : IOrderRepository
+{
+    private readonly PizzaShopContext _context;
+
+    public OrderRepository(PizzaShopContext context)
     {
-        private readonly PizzaShopContext _context;
+        _context = context;
+    }
 
-        public OrderRepository(PizzaShopContext context)
+    public async Task<(List<Order>, int)> GetAllOrdersAsync(string searchTerm, string sortColumn, bool sortAscending, int pageIndex, int pageSize)
+    {
+        IQueryable<Order> query = _context.Orders
+            .Include(o => o.Customer)
+            .Include(o => o.Invoices)
+                .ThenInclude(i => i.Payments);
+
+        if (!string.IsNullOrEmpty(searchTerm))
         {
-            _context = context;
+            query = query.Where(o => o.Id.ToString().Contains(searchTerm.Trim()) ||
+                                     o.Customer.Name.Contains(searchTerm.Trim()));
         }
 
-        public async Task<List<Order>> GetAllOrdersAsync()
+        query = sortColumn switch
         {
-            return await _context.Orders
-                .Include(o => o.Customer)
-                .Include(o => o.Invoices)
-                    .ThenInclude(i => i.Payments)
-                .ToListAsync();
-        }
+            "OrderId" => sortAscending ? query.OrderBy(o => o.Id) : query.OrderByDescending(o => o.Id),
+            "Date" => sortAscending ? query.OrderBy(o => o.OrderDate) : query.OrderByDescending(o => o.OrderDate),
+            "CustomerName" => sortAscending ?
+                query.OrderBy(o => o.Customer.Name).ThenBy(o => o.OrderDate) :
+                query.OrderByDescending(o => o.Customer.Name).ThenByDescending(o => o.OrderDate),
+            _ => query.OrderBy(o => o.Id)
+        };
 
-        
+        var totalItems = await query.CountAsync();
+        query = query.Skip((pageIndex - 1) * pageSize).Take(pageSize);
+
+        return (await query.ToListAsync(), totalItems);
+    }
+
+
 }
