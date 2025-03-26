@@ -26,7 +26,8 @@ public class OrderService: IOrderService
                 CustomerName = o.Customer.Name,
                 OrderStatus = ((OrderStatusEnum)o.OrderStatus).ToString(),
                 PaymentMethod = o.Invoices.Select(i => ((PaymentMethodEnum)i.Payments.FirstOrDefault()?.PaymentMethod).ToString()).FirstOrDefault(),
-                TotalAmount = o.TotalAmount
+                TotalAmount = o.TotalAmount,
+                AvgRating = o.Feedbacks.Any() ? o.Feedbacks.Select(f => f.AvgRating).FirstOrDefault() ?? 0 : 0 
             }).ToList();
 
             return orderViewModels;

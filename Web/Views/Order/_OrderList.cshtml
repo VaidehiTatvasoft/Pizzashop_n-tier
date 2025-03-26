@@ -1,24 +1,46 @@
 @model IEnumerable<Entity.ViewModel.OrderViewModel>
+<style>
+    .star-rating {
+        position: relative;
+        display: inline-block;
+        font-size: 20px;
+        color: #ffffff;
+    }
 
+    .star-rating-filled {
+        position: absolute;
+        top: 0;
+        left: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        color: #ffc107;
+    }
+
+    .star-rating-blank {
+        display: inline-block;
+        color: #ffffff;
+        -webkit-text-stroke: 1px #f7ce4a;
+    }
+</style>
 <table class="table">
     <thead>
         <tr>
             <th>
-                Order 
+                Order
                 <a href="javascript:void(0)" onclick="toggleSort('orderid')">
-                    <i class="fa-solid fa-sort" id="orderIdSortIcon"></i>
+                    <i class="fa-solid fa-sort" style="color: grey;" id="orderIdSortIcon"></i>
                 </a>
             </th>
             <th>
                 Date
                 <a href="javascript:void(0)" onclick="toggleSort('date')">
-                    <i class="fa-solid fa-sort" id="dateSortIcon"></i>
+                    <i class="fa-solid fa-sort" style="color: grey;" id="dateSortIcon"></i>
                 </a>
             </th>
             <th>
-                Customer 
+                Customer
                 <a href="javascript:void(0)" onclick="toggleSort('customername')">
-                    <i class="fa-solid fa-sort" id="customerNameSortIcon"></i>
+                    <i class="fa-solid fa-sort" style="color: grey;" id="customerNameSortIcon"></i>
                 </a>
             </th>
             <th>Status</th>
@@ -26,7 +48,7 @@
             <th>Rating</th>
             <th>Total Amount
                 <a href="javascript:void(0)" onclick="toggleSort('totalamount')">
-                    <i class="fa-solid fa-sort" id="totalamountSortIcon"></i>
+                    <i class="fa-solid fa-sort" style="color: grey;" id="totalamountSortIcon"></i>
                 </a>
             </th>
             <th>Action</th>
@@ -41,10 +63,19 @@
                 <td>@order.CustomerName</td>
                 <td>@order.OrderStatus</td>
                 <td>@order.PaymentMethod</td>
-                <td></td>
+                <td>
+                    <div class="star-rating">
+                        <div class="star-rating-filled" style="width: @(order.AvgRating / 5 * 100)%;">
+                            @order.StarRating
+                        </div>
+                        <div class="star-rating-blank">
+                            @order.StarRating
+                        </div>
+                    </div>
+                </td>
                 <td>@order.TotalAmount</td>
                 <td>
-                    <a href="@Url.Action("Details", "Order", new { id = order.Id })" class="btn btn-info">View</a>
+                    <i class="fa fa-eye eye-icon"></i>
                 </td>
             </tr>
         }
@@ -53,38 +84,41 @@
 
 <div class="d-flex justify-content-end align-items-center mt-2">
     <p class="mb-0">Orders Per page</p>
-    <select class="ms-3 form-select w-auto" aria-label="Default select example" id="pageSizeTable" onchange="loadOrders(@ViewBag.PageIndex)">
+    <select class="ms-3 form-select w-auto" aria-label="Default select example" id="pageSizeTable"
+        onchange="loadOrders(@ViewBag.PageIndex)">
         @if (ViewBag.PageSize == 5)
-                    {
-                        <option selected value="5">5</option>
-                    }
-                    else
-                    {
-                        <option value="5">5</option>
-                    }
-                    @if (ViewBag.PageSize == 10)
-                    {
-                        <option selected value="10">10</option>
-                    }
-                    else
-                    {
-                        <option value="10">10</option>
-                    }
-                    @if (ViewBag.PageSize == 15)
-                    {
-                        <option selected value="15">15</option>
-                    }
-                    else
-                    {
-                        <option value="15">15</option>
-                    }
+        {
+            <option selected value="5">5</option>
+        }
+        else
+        {
+            <option value="5">5</option>
+        }
+        @if (ViewBag.PageSize == 10)
+        {
+            <option selected value="10">10</option>
+        }
+        else
+        {
+            <option value="10">10</option>
+        }
+        @if (ViewBag.PageSize == 15)
+        {
+            <option selected value="15">15</option>
+        }
+        else
+        {
+            <option value="15">15</option>
+        }
     </select>
-    <span class="mb-0 ms-2 me-2 d-none d-md-block" id="showing">Showing @(Math.Min((int)(((ViewBag.PageIndex - 1) * ViewBag.PageSize) + 1), (int)ViewBag.TotalItems)) -
-    @(Math.Min((int)(ViewBag.PageIndex * ViewBag.PageSize), (int)ViewBag.TotalItems)) of @ViewBag.TotalItems</span>
+    <span class="mb-0 ms-2 me-2 d-none d-md-block" id="showing">Showing @(Math.Min((int)(((ViewBag.PageIndex - 1) *
+        ViewBag.PageSize) +1), (int)ViewBag.TotalItems)) -
+        @(Math.Min((int)(ViewBag.PageIndex * ViewBag.PageSize), (int)ViewBag.TotalItems)) of @ViewBag.TotalItems</span>
 
     @if (ViewBag.PageIndex > 1)
     {
-        <a href="javascript:void(0)" class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" onclick="loadOrders(@ViewBag.PageIndex - 1)">
+        <a href="javascript:void(0)" class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark"
+            onclick="loadOrders(@ViewBag.PageIndex - 1)">
             <i class="fa fa-chevron-left"></i>
         </a>
     }
@@ -97,7 +131,8 @@
 
     @if (ViewBag.PageIndex < ViewBag.TotalPage)
     {
-        <a href="javascript:void(0)" class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" onclick="loadOrders(@ViewBag.PageIndex + 1)">
+        <a href="javascript:void(0)" class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark"
+            onclick="loadOrders(@ViewBag.PageIndex + 1)">
             <i class="fa fa-chevron-right"></i>
         </a>
     }

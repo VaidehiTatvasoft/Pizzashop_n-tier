@@ -134,7 +134,9 @@ public partial class PizzaShopContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Ambience).HasColumnName("ambience");
-            entity.Property(e => e.AvgRating).HasColumnName("avg_rating");
+            entity.Property(e => e.AvgRating)
+                .HasPrecision(18, 2)
+                .HasColumnName("avg_rating");
             entity.Property(e => e.Comments)
                 .HasMaxLength(200)
                 .HasColumnName("comments");

@@ -18,7 +18,7 @@ public class OrderController : Controller
     }
     [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)]
     [HttpGet]
-    public IActionResult Order(string searchTerm, string sortOrder, int pageIndex = 1, int pageSize = 10, string statusFilter = "All Status", string dateRangeFilter = "All Time", DateTime? fromDate = null, DateTime? toDate = null)
+    public IActionResult Order(string searchTerm, string sortOrder, int pageIndex = 1, int pageSize = 5, string statusFilter = "All Status", string dateRangeFilter = "All Time", DateTime? fromDate = null, DateTime? toDate = null)
     {
         DateTime? startDate = null;
         DateTime? endDate = null;

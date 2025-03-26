@@ -18,7 +18,7 @@ public class OrderRepository : IOrderRepository
             IQueryable<Order> orderQuery = _context.Orders
                 .Include(o => o.Customer)
                 .Include(o => o.Invoices)
-                    .ThenInclude(i => i.Payments);
+                    .ThenInclude(i => i.Payments).Include(o => o.Feedbacks);
 
             if (!string.IsNullOrEmpty(searchTerm))
             {

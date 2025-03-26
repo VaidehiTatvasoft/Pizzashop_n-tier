@@ -9,15 +9,7 @@ public partial class Feedback
 
     public int OrderId { get; set; }
 
-    public int[]? Food { get; set; }
-
-    public int[]? Service { get; set; }
-
-    public int[]? Ambience { get; set; }
-
     public string? Comments { get; set; }
-
-    public int[]? AvgRating { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 
@@ -26,6 +18,14 @@ public partial class Feedback
     public DateTime? ModifiedAt { get; set; }
 
     public int? ModifiedBy { get; set; }
+
+    public int? Ambience { get; set; }
+
+    public int? Service { get; set; }
+
+    public int? Food { get; set; }
+
+    public decimal? AvgRating { get; set; }
 
     public virtual User CreatedByNavigation { get; set; } = null!;
 
