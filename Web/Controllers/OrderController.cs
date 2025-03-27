@@ -24,6 +24,7 @@ namespace Web.Controllers
         }
 
         [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)]
+        [Route("/order")]
         [HttpGet]
         public IActionResult Order(string searchTerm, string sortOrder, int pageIndex = 1, int pageSize = 5, string statusFilter = "All Status", string dateRangeFilter = "All Time", DateTime? fromDate = null, DateTime? toDate = null)
         {
@@ -44,8 +45,8 @@ namespace Web.Controllers
 
             return View(orderViewModel);
         }
-
-        [HttpGet("/order/exportorders")]
+        [Route("/order/exportorders")]
+        [HttpGet]
         public IActionResult ExportOrders(string searchTerm, string sortOrder, string statusFilter = "All Status", string dateRangeFilter = "All Time", DateTime? fromDate = null, DateTime? toDate = null)
         {
             var (orderViewModel, totalItems) = GetFilteredOrders(searchTerm, sortOrder, 1, int.MaxValue, statusFilter, dateRangeFilter, fromDate, toDate);
@@ -180,6 +181,17 @@ namespace Web.Controllers
 
             IEnumerable<OrderViewModel> orderViewModel = _orderService.GetFilteredOrderViewModels(searchTerm, sortOrder, pageIndex, pageSize, statusFilter, startDate, endDate, out int totalItems);
             return (orderViewModel, totalItems);
+        }
+        [Route("/order/orderdetails")]
+        [HttpGet]
+        public IActionResult OrderDetails(int orderId)
+        {
+            var order = _orderService.GetOrderByIdAsync(orderId).Result;
+            if (order == null)
+            {
+                return NotFound();
+            }
+            return View("_OrderDetails", order);
         }
     }
 }

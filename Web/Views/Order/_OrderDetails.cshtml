@@ -1,12 +1,33 @@
 @model Entity.ViewModel.OrderViewModel
-
-<div>
-    <h3>Order Details</h3>
+<div class="col-11 bg-light justify-content-center align-items-center-center">
+    
+    <div class="col-12 d-flex justify-content-between m-2 mb-4">
+        <div><h2>Order-Details</h2></div>
+    <div>
+        <a asp-controller="Order" asp-action="order" class="btn bg-light cancel-button"
+            style="background:transparent;">
+            < Back</a>
+    </div>
+    </div>
+    <div class="col-12 m-2 p-2 bg-white rounded shadow-sm justify-content-start align-items-center">
+        <h5>Order Summary</h5>
+        <p><strong>Status:</strong> @Model.OrderStatus</p>
+        <p><strong>Order Date:</strong> @Model.OrderDate?.ToString("yyyy-MM-dd")</p>
+    </div>
+    <div class="row">
+        <div class="col-12 d-flex">
+            <div class="col-md-6 p-2 m-1 bg-white rounded shadow-sm justify-content-start align-items-center">
+                <h5>Customer Details</h5>
+                <p><strong>Customer Name:</strong> @Model.CustomerName</p>
+            </div>
+            <div class="col-md-6 p-2 m-1 bg-white rounded shadow-sm justify-content-start align-items-center">
+                <h5>Table Details</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 p-2 m-2 bg-white rounded shadow-sm justify-content-start align-items-center">
+        <h5>Order Items</h5>
+        <p><strong>Total Amount:</strong> @Model.TotalAmount</p>
+    </div>
     <p><strong>Order ID:</strong> @Model.Id</p>
-    <p><strong>Customer Name:</strong> @Model.CustomerName</p>
-    <p><strong>Order Date:</strong> @Model.OrderDate?.ToString("yyyy-MM-dd")</p>
-    <p><strong>Status:</strong> @Model.OrderStatus</p>
-    <p><strong>Payment Method:</strong> @Model.PaymentMethod</p>
-    <p><strong>Rating:</strong> @Model.AvgRating</p>
-    <p><strong>Total Amount:</strong> @Model.TotalAmount</p>
 </div>
