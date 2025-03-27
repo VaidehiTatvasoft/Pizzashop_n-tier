@@ -1,0 +1,6 @@
+<ul class="list-group">
+    @foreach (var category in Model.Categories)
+    {
+        <li class="list-group-item" onclick="loadItems(@category.Id)">@category.Name</li>
+    }
+</ul>

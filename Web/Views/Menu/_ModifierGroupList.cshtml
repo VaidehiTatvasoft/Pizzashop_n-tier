@@ -1,0 +1,6 @@
+<ul class="list-group">
+    @foreach (var modifierGroup in Model.ModifierGroups)
+    {
+        <li class="list-group-item" onclick="loadModifiers(@modifierGroup.Id)">@modifierGroup.Name</li>
+    }
+</ul>
