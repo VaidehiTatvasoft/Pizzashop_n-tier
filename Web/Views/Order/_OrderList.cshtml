@@ -19,69 +19,75 @@
     .star-rating-blank {
         display: inline-block;
         color: #ffffff;
-        -webkit-text-stroke: 1px #f7ce4a;
+     -webkit-text-stroke: 1px #fcd560;
     }
 </style>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Order
-                <a href="javascript:void(0)" onclick="toggleSort('orderid')">
-                    <i class="fa-solid fa-sort" style="color: grey;" id="orderIdSortIcon"></i>
-                </a>
-            </th>
-            <th>
-                Date
-                <a href="javascript:void(0)" onclick="toggleSort('date')">
-                    <i class="fa-solid fa-sort" style="color: grey;" id="dateSortIcon"></i>
-                </a>
-            </th>
-            <th>
-                Customer
-                <a href="javascript:void(0)" onclick="toggleSort('customername')">
-                    <i class="fa-solid fa-sort" style="color: grey;" id="customerNameSortIcon"></i>
-                </a>
-            </th>
-            <th>Status</th>
-            <th>Payment Mode</th>
-            <th>Rating</th>
-            <th>Total Amount
-                <a href="javascript:void(0)" onclick="toggleSort('totalamount')">
-                    <i class="fa-solid fa-sort" style="color: grey;" id="totalamountSortIcon"></i>
-                </a>
-            </th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var order in Model)
-        {
+<div class="table-responsive">
+    <table class="table">
+        <thead>
             <tr>
-                <td>@order.Id</td>
-                <td>@order.OrderDate?.ToString("yyyy-MM-dd")</td>
-                <td>@order.CustomerName</td>
-                <td>@order.OrderStatus</td>
-                <td>@order.PaymentMethod</td>
-                <td>
-                    <div class="star-rating">
-                        <div class="star-rating-filled" style="width: @(order.AvgRating / 5 * 100)%;">
-                            @order.StarRating
-                        </div>
-                        <div class="star-rating-blank">
-                            @order.StarRating
-                        </div>
-                    </div>
-                </td>
-                <td>@order.TotalAmount</td>
-                <td>
-                    <i class="fa fa-eye eye-icon"></i>
-                </td>
+                <th>
+                    <span class="sort-icon">Order
+                        <a href="javascript:void(0)" onclick="toggleSort('orderid')">
+                            <i class="fa-solid fa-sort" style="color: grey;" id="orderIdSortIcon"></i>
+                        </a>
+                    </span>
+                </th>
+                <th>
+                    <span class="sort-icon">Date
+                        <a href="javascript:void(0)" onclick="toggleSort('date')">
+                            <i class="fa-solid fa-sort" style="color: grey;" id="dateSortIcon"></i>
+                        </a>
+                    </span>
+                </th>
+                <th>
+                    <span class="sort-icon">Customer
+                        <a href="javascript:void(0)" onclick="toggleSort('customername')">
+                            <i class="fa-solid fa-sort" style="color: grey;" id="customerNameSortIcon"></i>
+                        </a>
+                    </span>
+                </th>
+                <th>Status</th>
+                <th>Payment Mode</th>
+                <th>Rating</th>
+                <th>
+                    <span class="sort-icon">Total Amount
+                        <a href="javascript:void(0)" onclick="toggleSort('totalamount')">
+                            <i class="fa-solid fa-sort" style="color: grey;" id="totalamountSortIcon"></i>
+                        </a>
+                    </span>
+                </th>
+                <th>Action</th>
             </tr>
-        }
-    </tbody>
-</table>
-
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    <td>@order.OrderDate?.ToString("yyyy-MM-dd")</td>
+                    <td>@order.CustomerName</td>
+                    <td>@order.OrderStatus</td>
+                    <td>@order.PaymentMethod</td>
+                    <td>
+                        <div class="star-rating">
+                            <div class="star-rating-filled" style="width: @(order.AvgRating * 20)%;">
+                                &#9733;&#9733;&#9733;&#9733;&#9733;
+                            </div>
+                            <div class="star-rating-blank">
+                                &#9733;&#9733;&#9733;&#9733;&#9733;
+                            </div>
+                        </div>
+                    </td>
+                    <td>@order.TotalAmount</td>
+                    <td>
+                        <i class="fa fa-eye eye-icon"></i>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 <div class="d-flex justify-content-end align-items-center mt-2">
     <p class="mb-0">Orders Per page</p>
     <select class="ms-3 form-select w-auto" aria-label="Default select example" id="pageSizeTable"
@@ -112,8 +118,9 @@
         }
     </select>
     <span class="mb-0 ms-2 me-2 d-none d-md-block" id="showing">Showing @(Math.Min((int)(((ViewBag.PageIndex - 1) *
-        ViewBag.PageSize) +1), (int)ViewBag.TotalItems)) -
-        @(Math.Min((int)(ViewBag.PageIndex * ViewBag.PageSize), (int)ViewBag.TotalItems)) of @ViewBag.TotalItems</span>
+                ViewBag.PageSize) + 1), (int)ViewBag.TotalItems)) -
+        @(Math.Min((int)(ViewBag.PageIndex * ViewBag.PageSize), (int)ViewBag.TotalItems)) of
+        @ViewBag.TotalItems</span>
 
     @if (ViewBag.PageIndex > 1)
     {

@@ -3,147 +3,175 @@
 @{
     ViewData["Title"] = "Orders";
 }
-<div class="row my-1 mx-1">
-    <div class="col-xl-3 col-12 d-flex justify-content-xl-start justify-content-center">
-        <h2>Orders</h2>
-    </div>
-    <div class="col-xl-9 mb-2 col-12 px-0">
-        <div class="row">
-                <form method="get" class="search d-flex">
-                    <div class="col-md-3 col-6 p-2">
-                    <div class="d-flex justify-content-between  me-3 position-relative">
-                        <div class="input-group me-3">
-                            <input type="text" class="form-control p-2 d-none d-sm-block" placeholder="Search"
-                                id="searchInput" aria-label="Search" name="searchString"
-                                aria-describedby="search-addon" />
-                            @* <span class="form-input-icon position-absolute search-icon"></span> <i
-                                class="fa-solid fa-magnifying-glass search-btn"></i>
-                            </span> *@
-                        </div>
-                    </div>
-                    </div>
-                    <div class="col-md-3 col-12 p-2 ">
-                        <select class="form-select" id="statusFilter">
-                            <option value="All Status" selected>All Status</option>
-                            <option value="Pending">Pending</option>
-                            <option value="In Progress">In Progress</option>
-                            <option value="Served">Served</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Cancelled">Cancelled</option>
-                            <option value="On Hold">On Hold</option>
-                            <option value="Failed">Failed</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3 col-6 p-2">
-                        <select class="form-select" id="dateRangeFilter">
-                            <option value="All Time" selected>All Time</option>
-                            <option value="Last 7 days">Last 7 days</option>
-                            <option value="Last 30 days">Last 30 days</option>
-                            <option value="Current Month">Current Month</option>
-                        </select>
-                    </div>
-                    <div class=" p-2">
-                        <button type="button" class="btn btn-primary w-100">
-                            <span><i class="fa-solid fa-share-from-square me-1"></i></span>
-                            <span>Export</span>
-                        </button>
-                    </div>
+<div class="upper-div d-flex justify-content-between row">
+    <h2 class="col-xl-3 col-md-2 col-12">Orders</h2>
+    <div class="d-flex row col-xl-8 col-md-9 col-12" style="gap: 10px; justify-content: end;padding-left:15px;padding-right:0px;">
+        <div class="d-flex align-items-center justify-content-center col-xl-7 col-lg-6 col-md-6 col-12" style="gap: 10px;">
+            <div class=" col-xl-6 col-lg-6 col-md-6 col-6">
+                <form method="get">
+                    <input type="text" class="mb-3 col-12" placeholder="Search" id="searchbox"
+                        aria-label="Search" name="searchString" aria-describedby="search-addon"
+                        style="height: 50px; border:1px solid #d3d3d3; border-radius: 5%;" />
+                @* <i class="fa-solid fa-magnifying-glass search-btn"></i> *@
                 </form>
             </div>
-            <div class="d-flex justify-content-end align-items-center mb-3">
-                <div class="input-group p-2">
-                    <input type="date" class="form-control" id="fromDate" aria-label="From Date" />
-                </div>
-                <div class="input-group p-2 me-3">
-                    <input type="date" class="form-control" id="toDate" aria-label="To Date" />
-                </div>
-                <div class="input-group p-2 me-3">
-                    <button type="button" class="btn btn-primary" onclick="applyFilters()">Search</button>
-                    <button type="button" class="btn btn-secondary ms-2" onclick="clearFilters()">Clear</button>
-                </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-6">
+                <select class="form-select mb-3 col-12" id="statusFilter"
+                    style="height: 50px; border:1px solid #d3d3d3; border-radius: 5%;margin-left: 10px;">
+                    <option value="All Status" selected>All Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="InProgress">In Progress</option>
+                    <option value="Served">Served</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                    <option value="On Hold">On Hold</option>
+                    <option value="Failed">Failed</option>
+                </select>
+            </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-center col-xl-4 col-lg-5 col-md-5 col-12"
+            style="gap: 10px; margin-left: 10px;">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-6">
+                <select class="form-select mb-3 col-12" id="dateRangeFilter"
+                    style="height: 50px; border:1px solid #d3d3d3; border-radius: 5%;">
+                    <option value="All Time" selected>All Time</option>
+                    <option value="Last 7 days">Last 7 days</option>
+                    <option value="Last 30 days">Last 30 days</option>
+                    <option value="Current Month">Current Month</option>
+                </select>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-6">
+                <button type="button" class="btn btn-primary mb-3  mr-2 w-100 col-12" onclick="exportOrders()" style="height: 50px;">
+                    <span><i class="fa-solid fa-share-from-square me-1"></i></span>
+                    <span>Export</span>
+                </button>
             </div>
         </div>
     </div>
-            <div id="ordersPartial">
-                @Html.Partial("_OrderList", Model)
-            </div>
+</div>
+<div class="d-flex row" style="gap: 10px; justify-content: end; ">
+    <div class="d-flex align-items-center justify-content-center col-xl-4 col-lg-5 col-md-5 col-12" style="gap: 10px;">
+        <div class="form-floating col-xl-6 col-lg-6 col-md-6 col-6">
+            <input type="date" class="form-control mb-3 col-12" id="fromDate" aria-label="From Date"
+                style="height: 50px; border:1px solid #d3d3d3; border-radius: 5%;" />
+            <label for="fromDate">From Date</label>
+        </div>
+        <div class="form-floating col-xl-6 col-lg-6 col-md-6 col-6">
+            <input type="date" class="form-control mb-3 col-12" id="toDate" aria-label="To Date"
+                style="height: 50px;  border:1px solid #d3d3d3; border-radius: 5%;" />
+            <label for="toDate">To Date</label>
+
+        </div>
+    </div>
+    <div class="d-flex align-items-center justify-content-center col-xl-2 col-md-3 col-12"
+        style="gap: 10px; margin-left: 10px;">
+        <button type="button" class="btn btn-primary mb-3 col-6" onclick="applyFilters()"
+            style="height: 50px; background-color: #0066A7; color: white; border: 1px solid #0066A7;">Search</button>
+        <button type="button" class="btn btn-secondary mb-3 col-6" onclick="clearFilters()"
+            style="height: 50px; background-color:transparent; color: #0066A7; border: 1px solid #0066A7;">Clear</button>
+    </div>
+</div>
+
+<div id="ordersPartial">
+    @Html.Partial("_OrderList", Model)
+</div>
 
 @section Scripts {
-                <script>
-                    $(document).ready(function () {
-                        $('#searchInput').on('input', function () {
-                            loadOrders(1);
-                        });
+    <script>
+        $(document).ready(function () {
+            $('#searchbox').on('input', function () {
+                loadOrders(1);
+            });
 
-                        $('#pageSizeTable').change(function () {
-                            loadOrders(1);
-                        });
+            $('#pageSizeTable').change(function () {
+                loadOrders(1);
+            });
 
-                        $('#statusFilter').change(function () {
-                            loadOrders(1);
-                        });
+            $('#statusFilter').change(function () {
+                loadOrders(1);
+            });
 
-                        $('#dateRangeFilter').change(function () {
-                            loadOrders(1);
-                        });
-                    });
+            $('#dateRangeFilter').change(function () {
+                loadOrders(1);
+            });
+        });
 
-                    function loadOrders(pageIndex) {
-                        var searchTerm = $('#searchInput').val().trim();
-                        var pageSize = $('#pageSizeTable').val() || 5;
-                        var sortOrder = $('#sortOrder').val();
-                        var statusFilter = $('#statusFilter').val();
-                        var dateRangeFilter = $('#dateRangeFilter').val();
-                        var fromDate = $('#fromDate').val();
-                        var toDate = $('#toDate').val();
+        function loadOrders(pageIndex) {
+            var searchTerm = $('#searchbox').val().trim();
+            var pageSize = $('#pageSizeTable').val() || 5;
+            var sortOrder = $('#sortOrder').val();
+            var statusFilter = $('#statusFilter').val();
+            var dateRangeFilter = $('#dateRangeFilter').val();
+            var fromDate = $('#fromDate').val();
+            var toDate = $('#toDate').val();
 
-                        $.ajax({
-                            url: '@Url.Action("Order", "Order")',
-                            type: 'GET',
-                            data: {
-                                searchTerm: searchTerm,
-                                pageIndex: pageIndex,
-                                pageSize: pageSize,
-                                sortOrder: sortOrder,
-                                statusFilter: statusFilter,
-                                dateRangeFilter: dateRangeFilter,
-                                fromDate: fromDate,
-                                toDate: toDate
-                            },
-                            success: function (result) {
-                                $('#ordersPartial').html(result);
-                                $('#pageSizeTable').val(pageSize);
-                            },
-                            error: function (xhr, status, error) {
-                                console.error(error);
-                                alert("An error occurred while fetching the items. Please try again.");
-                            }
-                        });
-                    }
+            $.ajax({
+                url: '@Url.Action("Order", "Order")',
+                type: 'GET',
+                data: {
+                    searchTerm: searchTerm,
+                    pageIndex: pageIndex,
+                    pageSize: pageSize,
+                    sortOrder: sortOrder,
+                    statusFilter: statusFilter,
+                    dateRangeFilter: dateRangeFilter,
+                    fromDate: fromDate,
+                    toDate: toDate
+                },
+                success: function (result) {
+                    $('#ordersPartial').html(result);
+                    $('#pageSizeTable').val(pageSize);
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                    alert("An error occurred while fetching the items. Please try again.");
+                }
+            });
+        }
 
-                    function toggleSort(column) {
-                        var sortOrder = $('#sortOrder').val() || '';
-                        if (sortOrder.startsWith(column)) {
-                            sortOrder = sortOrder.endsWith('_asc') ? column + '_desc' : column + '_asc';
-                        } else {
-                            sortOrder = column + '_asc';
-                        }
-                        $('#sortOrder').val(sortOrder);
-                        loadOrders(1);
-                    }
+        function toggleSort(column) {
+            var sortOrder = $('#sortOrder').val() || '';
+            if (sortOrder.startsWith(column)) {
+                sortOrder = sortOrder.endsWith('_asc') ? column + '_desc' : column + '_asc';
+            } else {
+                sortOrder = column + '_asc';
+            }
+            $('#sortOrder').val(sortOrder);
+            loadOrders(1);
+        }
 
-                    function applyFilters() {
-                        loadOrders(1);
-                    }
+        function applyFilters() {
+            loadOrders(1);
+        }
 
-                    function clearFilters() {
-                        $('#searchInput').val('');
-                        $('#statusFilter').val('All Status');
-                        $('#dateRangeFilter').val('All Time');
-                        $('#fromDate').val('');
-                        $('#toDate').val('');
-                        loadOrders(1);
-                    }
-                </script>
-                <input type="hidden" id="sortOrder" value="@ViewBag.SortOrder" />
+        function clearFilters() {
+            $('#searchbox').val('');
+            $('#statusFilter').val('All Status');
+            $('#dateRangeFilter').val('All Time');
+            $('#fromDate').val('');
+            $('#toDate').val('');
+            loadOrders(1);
+        }
+
+        function exportOrders() {
+            var searchTerm = $('#searchbox').val().trim();
+            var sortOrder = $('#sortOrder').val();
+            var statusFilter = $('#statusFilter').val();
+            var dateRangeFilter = $('#dateRangeFilter').val();
+            var fromDate = $('#fromDate').val();
+            var toDate = $('#toDate').val();
+
+            var query = $.param({
+                searchTerm: searchTerm,
+                sortOrder: sortOrder,
+                statusFilter: statusFilter,
+                dateRangeFilter: dateRangeFilter,
+                fromDate: fromDate,
+                toDate: toDate
+            });
+
+            window.location.href = '@Url.Action("ExportOrders", "Order")?' + query;
+        }
+    </script>
+    <input type="hidden" id="sortOrder" value="@ViewBag.SortOrder" />
 }

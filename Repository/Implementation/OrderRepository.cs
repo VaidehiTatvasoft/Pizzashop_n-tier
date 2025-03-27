@@ -70,10 +70,10 @@ public class OrderRepository : IOrderRepository
                     orderQuery = orderQuery.OrderByDescending(o => o.Customer.Name).ThenByDescending(o => o.OrderDate);
                     break;
                 case "totalamount_asc":
-                    orderQuery = orderQuery.OrderBy(o => o.TotalAmount);
+                    orderQuery = orderQuery.OrderBy(o => o.TotalAmount).ThenBy(o => o.Customer.Name);
                     break;
                 case "totalamount_desc":
-                    orderQuery = orderQuery.OrderByDescending(o => o.TotalAmount);
+                    orderQuery = orderQuery.OrderByDescending(o => o.TotalAmount).ThenByDescending(o => o.Customer.Name);
                     break;
                 default:
                     orderQuery = orderQuery.OrderBy(o => o.Id);

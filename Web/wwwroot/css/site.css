@@ -600,3 +600,13 @@ a i {
    border-radius: 5px;
    margin:5px;
 }
+.sort-icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+@media (min-width: 1025px) {
+  .sort-icon {
+      display: inline;
+  }
+}
