@@ -1,14 +1,20 @@
 using Entity.Data;
-using Entity.ViewModel;
 
 namespace Repository.Interface;
 
 public interface IModifierRepository
 {
-    Task<List<Modifier>> GetAllModifiersAsync();
-    Task<List<Modifier>> GetModifiersByGroupAsync(int modifierGroupId);
-    Task<Modifier> GetModifierByIdAsync(int modifierId);
-    Task<bool> AddModifierAsync(Modifier modifier);
-    Task<bool> UpdateModifierAsync(Modifier modifier);
-    Task<bool> DeleteModifierAsync(int modifierId);
+    Task<List<ModifierGroup>> GetAllModifiers();
+
+    Task<List<Modifier>> GetItemsByModifier(int modifierId);
+
+    Task<ModifierGroup> GetModifierByName(string category);
+
+    Task<bool> AddModifierAsync(ModifierGroup modifierGroup);
+
+    Task<bool> UpdateModifierBy(ModifierGroup modifierGroup);
+
+    Task<ModifierGroup> GetModifierByIdAsync(int id);
+
+    Task<IEnumerable<ModifierGroup>> GetModifierGroupsByIds(int[] modifierGroupIds);
 }

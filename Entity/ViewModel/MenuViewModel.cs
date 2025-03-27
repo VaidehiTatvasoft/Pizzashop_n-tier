@@ -1,7 +1,11 @@
+using Entity.Data;
+
 namespace Entity.ViewModel;
 
 public class MenuViewModel
 {
-    public List<ItemTabViewModel> ItemTabs { get; set; }
-    public List<ModifierTabViewModel> ModifierTabs { get; set; }
+ 
+public IEnumerable<ModifierGroup> ModifierGroups { get; set; } = new List<ModifierGroup>();
+    public IEnumerable<Modifier> Modifiers { get; set; } = new List<Modifier>();
 }
+

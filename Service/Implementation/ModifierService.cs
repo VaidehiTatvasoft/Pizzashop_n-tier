@@ -3,7 +3,6 @@ using Entity.ViewModel;
 using Repository.Interface;
 using Service.Interface;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -18,107 +17,99 @@ namespace Service.Implementation
             _modifierRepository = modifierRepository;
         }
 
-        public async Task<IEnumerable<ModifierViewModel>> GetAllModifiersAsync()
+        public async Task<bool> AddNewModifier(string category, ModifierViewModel model, ClaimsPrincipal userClaims)
         {
-            var modifiers = await _modifierRepository.GetAllModifiersAsync();
-            return modifiers.Select(modifier => new ModifierViewModel
+            var userIdClaim = userClaims.FindFirst("UserId");
+            if (userIdClaim == null)
             {
-                ModifierGroupId = modifier.ModifierGroupId,
-                Id = modifier.Id,
-                Name = modifier.Name,
-                Rate = modifier.Rate,
-                Quantity = modifier.Quantity,
-                UnitId = modifier.UnitId,
-                UnitName = modifier.Unit.Name,
-                Description = modifier.Description
-            }).ToList();
+                return false;
+            }
+
+            var userId = int.Parse(userIdClaim.Value);
+            var cat = await _modifierRepository.GetModifierByName(category);
+
+            if (cat == null)
+            {
+                cat = new ModifierGroup
+                {
+                    Name = model.Name,
+                    Description = model.Description,
+                    CreatedBy = userId
+                };
+
+                return await _modifierRepository.AddModifierAsync(cat);
+            }
+            return false;
         }
 
-        public async Task<IEnumerable<ModifierViewModel>> GetModifiersByGroupAsync(int modifierGroupId)
+        public async Task<bool> DeleteModifierById(int id)
         {
-            var modifiers = await _modifierRepository.GetModifiersByGroupAsync(modifierGroupId);
-            return modifiers.Select(modifier => new ModifierViewModel
+            var category = await _modifierRepository.GetModifierByIdAsync(id);
+
+            if (category != null)
             {
-                ModifierGroupId = modifier.ModifierGroupId,
-                Id = modifier.Id,
-                Name = modifier.Name,
-                Rate = modifier.Rate,
-                Quantity = modifier.Quantity,
-                UnitId = modifier.UnitId,
-                UnitName = modifier.Unit.Name,
-                Description = modifier.Description
-            }).ToList();
+                category.IsDeleted = true;
+
+                return await _modifierRepository.UpdateModifierBy(category);
+            }
+
+            return false;
         }
 
-        public async Task<ModifierViewModel> GetModifierByIdAsync(int modifierId)
+        public async Task<bool> UpdateCategoryBy(ModifierGroup modifierGroup)
         {
-            var modifier = await _modifierRepository.GetModifierByIdAsync(modifierId);
-            if (modifier == null) return null;
+            return await _modifierRepository.UpdateModifierBy(modifierGroup);
+        }
+
+        public async Task<List<ModifierGroup>> GetAllModifiers()
+        {
+            return await _modifierRepository.GetAllModifiers();
+        }
+
+        public async Task<List<Modifier>> GetItemsByModifiers(int modifierId)
+        {
+            return await _modifierRepository.GetItemsByModifier(modifierId);
+        }
+
+        public async Task<ModifierViewModel> GetModifierDetailById(int id)
+        {
+            var category = await _modifierRepository.GetModifierByIdAsync(id);
+            if (category == null)
+            {
+                return null;
+            }
 
             return new ModifierViewModel
             {
-                ModifierGroupId = modifier.ModifierGroupId,
-                Id = modifier.Id,
-                Name = modifier.Name,
-                Rate = modifier.Rate,
-                Quantity = modifier.Quantity,
-                UnitId = modifier.UnitId,
-                UnitName = modifier.Unit.Name,
-                Description = modifier.Description
+                Id = category.Id,
+                Name = category.Name,
+                Description = category.Description
             };
         }
 
-        public async Task<bool> AddNewModifierAsync(ModifierViewModel modifier, ClaimsPrincipal userClaims)
+        public async Task<bool> EditModifier(ModifierViewModel model, int id)
         {
-            var userIdClaim = userClaims.FindFirst("UserId");
-            if (userIdClaim == null)
+            var category = await _modifierRepository.GetModifierByIdAsync(id);
+
+            if (category == null)
             {
                 return false;
             }
 
-            var userId = int.Parse(userIdClaim.Value);
-            var newModifier = new Modifier
-            {
-                ModifierGroupId = modifier.ModifierGroupId,
-                Name = modifier.Name,
-                Rate = modifier.Rate,
-                Quantity = modifier.Quantity,
-                UnitId = modifier.UnitId,
-                Description = modifier.Description,
-                CreatedBy = userId
-            };
+            category.Name = model.Name;
+            category.Description = model.Description;
 
-            return await _modifierRepository.AddModifierAsync(newModifier);
+            return await _modifierRepository.UpdateModifierBy(category);
         }
 
-        public async Task<bool> UpdateModifierAsync(ModifierViewModel modifier, ClaimsPrincipal userClaims)
+        public async Task<List<ModifierGroup>> GetAllModifierGroups()
         {
-            var userIdClaim = userClaims.FindFirst("UserId");
-            if (userIdClaim == null)
-            {
-                return false;
-            }
-
-            var userId = int.Parse(userIdClaim.Value);
-            var existingModifier = await _modifierRepository.GetModifierByIdAsync(modifier.Id);
-            if (existingModifier == null)
-            {
-                return false;
-            }
-
-            existingModifier.ModifierGroupId = modifier.ModifierGroupId;
-            existingModifier.Name = modifier.Name;
-            existingModifier.Rate = modifier.Rate;
-            existingModifier.Quantity = modifier.Quantity;
-            existingModifier.UnitId = modifier.UnitId;
-            existingModifier.Description = modifier.Description;
-
-            return await _modifierRepository.UpdateModifierAsync(existingModifier);
+            return await _modifierRepository.GetAllModifiers();
         }
 
-        public async Task<bool> DeleteModifierAsync(int modifierId)
+        public async Task<List<Modifier>> GetModifiersByGroupIdAsync(int groupId)
         {
-            return await _modifierRepository.DeleteModifierAsync(modifierId);
+            return await _modifierRepository.GetItemsByModifier(groupId);
         }
     }
 }

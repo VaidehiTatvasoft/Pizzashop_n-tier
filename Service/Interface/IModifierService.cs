@@ -1,14 +1,23 @@
 using System.Security.Claims;
+using Entity.Data;
 using Entity.ViewModel;
 
-namespace Service.Interface;
-
-public interface IModifierService
+namespace Service.Interface
 {
-    Task<IEnumerable<ModifierViewModel>> GetAllModifiersAsync();
-    Task<IEnumerable<ModifierViewModel>> GetModifiersByGroupAsync(int modifierGroupId);
-    Task<ModifierViewModel> GetModifierByIdAsync(int modifierId);
-    Task<bool> AddNewModifierAsync(ModifierViewModel modifier, ClaimsPrincipal userClaims);
-    Task<bool> UpdateModifierAsync(ModifierViewModel modifier, ClaimsPrincipal userClaims);
-    Task<bool> DeleteModifierAsync(int modifierId);
+    public interface IModifierService
+    {
+       Task<List<ModifierGroup>> GetAllModifiers();
+
+    Task<List<Modifier>> GetItemsByModifiers(int modifierId);
+
+    Task<bool> AddNewModifier(string category, ModifierViewModel model,ClaimsPrincipal userClaims);
+
+    Task<bool> DeleteModifierById(int id);
+
+    Task<ModifierViewModel> GetModifierDetailById(int id);
+
+    Task<bool> EditModifier(ModifierViewModel model, int id);
+    Task<List<ModifierGroup>> GetAllModifierGroups(); 
+        Task<List<Modifier>> GetModifiersByGroupIdAsync(int groupId);
+}
 }

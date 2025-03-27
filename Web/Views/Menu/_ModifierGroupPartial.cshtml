@@ -1,0 +1,40 @@
+@using Entity.ViewModel
+@model IEnumerable<ModifierGroupViewModel>
+
+@foreach (var group in Model)
+{
+    <div>
+        <div class="d-flex justify-content-between align-items-center">
+            <p class="m-0 p-0">@group.Name</p>
+            <i class="fa-solid fa-trash" onclick="deleteModifierGroup(@group.Id)"></i>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <select asp-for="@group.MinSelectionRequired" class="form-control">
+                    @for (int i = 0; i <= 10; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+            </div>
+            <div class="col">
+                <select asp-for="@group.MaxSelectionAllowed" class="form-control">
+                    @for (int i = 0; i <= 10; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <ul>
+            @foreach (var modifier in group.Modifiers)
+            {
+                <div class="d-flex justify-content-between">
+                    <li>@modifier.Name </li>
+                    <li>@modifier.Rate.ToString("C")</li>
+                </div>
+            }
+        </ul>
+    </div>
+}
