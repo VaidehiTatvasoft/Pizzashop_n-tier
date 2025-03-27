@@ -1,5 +1,5 @@
 namespace Service.Interface;
 
-public interface IModifierService
+public interface IItemService
 {
 }

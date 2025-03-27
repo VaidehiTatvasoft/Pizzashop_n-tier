@@ -1,5 +1,5 @@
 namespace Entity.ViewModel;
 
-public class MenuViewModel
+public class ItemTabViewModel
 {
 }

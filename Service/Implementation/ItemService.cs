@@ -1,5 +1,5 @@
 namespace Service.Implementation;
 
-public class ModifierService
+public class ItemService
 {
 }

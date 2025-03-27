@@ -1,5 +1,5 @@
 namespace Repository.Implementation;
 
-public class ModifierRepository
+public class CategoryRepository
 {
 }

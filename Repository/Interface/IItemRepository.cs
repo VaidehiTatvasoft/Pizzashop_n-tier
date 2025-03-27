@@ -1,5 +1,5 @@
 namespace Repository.Interface;
 
-public interface IModifierRepository
+public interface IItemRepository
 {
 }
