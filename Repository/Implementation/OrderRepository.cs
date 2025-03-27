@@ -87,4 +87,13 @@ public class OrderRepository : IOrderRepository
                 .Take(pageSize)
                 .ToList();
         }
+         public async Task<Order> GetOrderByIdAsync(int orderId)
+        {
+            return await _context.Orders
+                .Include(o => o.Customer)
+                .Include(o => o.Invoices)
+                    .ThenInclude(i => i.Payments)
+                .Include(o => o.Feedbacks)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+        }
 }

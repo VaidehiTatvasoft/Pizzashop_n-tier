@@ -1,0 +1,12 @@
+@model Entity.ViewModel.OrderViewModel
+
+<div>
+    <h3>Order Details</h3>
+    <p><strong>Order ID:</strong> @Model.Id</p>
+    <p><strong>Customer Name:</strong> @Model.CustomerName</p>
+    <p><strong>Order Date:</strong> @Model.OrderDate?.ToString("yyyy-MM-dd")</p>
+    <p><strong>Status:</strong> @Model.OrderStatus</p>
+    <p><strong>Payment Method:</strong> @Model.PaymentMethod</p>
+    <p><strong>Rating:</strong> @Model.AvgRating</p>
+    <p><strong>Total Amount:</strong> @Model.TotalAmount</p>
+</div>

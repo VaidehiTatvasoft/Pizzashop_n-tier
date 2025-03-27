@@ -540,4 +540,11 @@ C:\Users\patel\pizzashop\Pizzashop_n-tier\Web\obj\Debug\net7.0\refint\Web.dll
 C:\Users\patel\pizzashop\Pizzashop_n-tier\Web\obj\Debug\net7.0\Web.pdb
 C:\Users\patel\pizzashop\Pizzashop_n-tier\Web\obj\Debug\net7.0\Web.genruntimeconfig.cache
 C:\Users\patel\pizzashop\Pizzashop_n-tier\Web\obj\Debug\net7.0\ref\Web.dll
-D:\Project_pce54\Pizzashop_n-tier\Web\bin\Debug\net7.0\CsvHelper.dll
+D:\Project_pce54\Pizzashop_n-tier\Web\bin\Debug\net7.0\ClosedXML.dll
+D:\Project_pce54\Pizzashop_n-tier\Web\bin\Debug\net7.0\ClosedXML.Parser.dll
+D:\Project_pce54\Pizzashop_n-tier\Web\bin\Debug\net7.0\DocumentFormat.OpenXml.dll
+D:\Project_pce54\Pizzashop_n-tier\Web\bin\Debug\net7.0\DocumentFormat.OpenXml.Framework.dll
+D:\Project_pce54\Pizzashop_n-tier\Web\bin\Debug\net7.0\ExcelNumberFormat.dll
+D:\Project_pce54\Pizzashop_n-tier\Web\bin\Debug\net7.0\RBush.dll
+D:\Project_pce54\Pizzashop_n-tier\Web\bin\Debug\net7.0\SixLabors.Fonts.dll
+D:\Project_pce54\Pizzashop_n-tier\Web\bin\Debug\net7.0\System.IO.Packaging.dll

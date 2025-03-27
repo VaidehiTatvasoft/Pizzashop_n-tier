@@ -19,7 +19,7 @@
     .star-rating-blank {
         display: inline-block;
         color: #ffffff;
-     -webkit-text-stroke: 1px #fcd560;
+        -webkit-text-stroke: 1px #fcd560;
     }
 </style>
 <div class="table-responsive">
@@ -81,7 +81,10 @@
                     </td>
                     <td>@order.TotalAmount</td>
                     <td>
-                        <i class="fa fa-eye eye-icon"></i>
+                        <i class="fa-solid fa-file-pdf m-1"></i>
+                        <i class="fa fa-eye eye-icon m-1">
+                            <a href="@Url.Action("OrderDetails", "Order", new { orderId = order.Id })">
+                        </i>
                     </td>
                 </tr>
             }

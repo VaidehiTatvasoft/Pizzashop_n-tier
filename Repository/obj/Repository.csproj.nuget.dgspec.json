@@ -42,9 +42,9 @@
               "target": "Package",
               "version": "[4.0.3, )"
             },
-            "CsvHelper": {
+            "ClosedXML": {
               "target": "Package",
-              "version": "[33.0.1, )"
+              "version": "[0.104.2, )"
             },
             "MailKit": {
               "target": "Package",
