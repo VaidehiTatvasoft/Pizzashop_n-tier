@@ -20,7 +20,7 @@
             </aside>
             <div class="col-md-9 border-start border-primary bg-white">
                 <div>
-                    <!-- Item header -->
+                    <!-- table header -->
                     <h5 class="p-2 mb-0 section-heading">Tables</h5>
                     <div class="d-flex justify-content-end align-items-center mb-3">
                         <div class="form-input-div d-flex justify-content-between me-3 position-relative">
@@ -30,8 +30,8 @@
                                     id="eye-icon" style="color: gray"></i>
                             </span>
                         </div>
-                        <button class="btn btn-outline-secondary me-3" id="multiDeletTableBtn">
-                            <i class="bi bi-trash m-1"></i>
+                        <button class="btn btn-outline-secondary me-3" id="multiDeleteTableBtn">
+                            <i class="bi bi-trash m-1"></i> 
                         </button>
                         <button class="fill-btn addTableBtn">
                             <i class="fa-solid fa-plus"></i> New Table
@@ -61,10 +61,8 @@
                 });
             }
 
-            // Attach the function to the global window object
             window.openAddEditModal = openAddEditModal;
 
-            // Handle form submission for adding/editing sections
             $(document).on('submit', '#addEditSectionForm', function (event) {
                 event.preventDefault();
                 var form = $(this);
@@ -76,12 +74,13 @@
                     data: formData,
                     success: function (response) {
                         if (response.success) {
-                            $('#sectionModal').modal('hide');
+                            $('#sectionModal').remove();
+                            $('.modal-backdrop').remove();
                             GetFilteredSections();
                             toastr.success(response.message);
                         } else {
                             toastr.error(response.message);
-                            $('#modalContent').html(response.html); 
+                            $('#modalContent').html(response.html);
                         }
                     },
                     error: function (xhr, status, error) {
@@ -143,7 +142,7 @@
             });
             var debounce;
             var ajaxRequest;
-            $(".section").click(function () {
+            $(document).on('click', '.section', function () {
                 sectionId = $(this).data("id");
                 var sectionId = $(this).data("id");
                 $.ajax({

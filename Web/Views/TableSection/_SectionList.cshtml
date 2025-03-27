@@ -16,8 +16,8 @@
                     <i class="bi bi-pen m-1 edit-icon" data-bs-toggle="modal" data-bs-target="#sectionModal"
                         onclick="openAddEditModal(@Model[i].Id)"></i>
                 </a>
-                <i class="bi bi-trash m-1 delete-icon delete-section" data-id="@Model[i].Id" data-bs-target="#deleteSectionModal"
-                    data-bs-toggle="modal"></i>
+                <i class="bi bi-trash m-1 delete-icon delete-section" data-id="@Model[i].Id"
+                    data-bs-target="#deleteSectionModal" data-bs-toggle="modal"></i>
             </span>
         </div>
     }
@@ -51,34 +51,35 @@
         </div>
     </div>
 </div>
-    <script src="/lib/jquery/dist/jquery.min.js"></script>
-    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        var deleteSectionId;
-        $(document).on('click', '.delete-section', function () {
-            deleteSectionId = $(this).data("id");
-            $('#deleteSectionModal').modal('show');
-        });
-        $('#deleteSectionBtn').click(function () {
-            $.ajax({
-                url: '/TableSection/DeleteSection',
-                type: 'post',
-                data: { id: deleteSectionId },
-                success: function (response) {
-                    if (response == null) {
-                        window.location.href = "/Auth/Login";
-                        toastr.error("Your Session is Expired. Please Login Again!");
-                    }
-                    else if (response.isSuccess) {
-                        GetFilteredSections();
-                        toastr.success(response.message);
-                    } else {
-                        toastr.error(response.message);
-                    }
-                    $("#deleteSectionModal").modal('hide');
+<script src="/lib/jquery/dist/jquery.min.js"></script>
+<script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    var deleteSectionId;
+    $(document).on('click', '.delete-section', function () {
+        deleteSectionId = $(this).data("id");
+        $('#deleteSectionModal').modal('show');
+    });
+    $('#deleteSectionBtn').click(function () {
+        $.ajax({
+            url: '/TableSection/DeleteSection',
+            type: 'post',
+            data: { id: deleteSectionId },
+            success: function (response) {
+                if (response == null) {
+                    window.location.href = "/Auth/Login";
+                    toastr.error("Your Session is Expired. Please Login Again!");
                 }
-            });
-            function GetFilteredSections() {
+                else if (response.isSuccess) {
+                    GetFilteredSections();
+                    toastr.success(response.message);
+                } else {
+                    toastr.error(response.message);
+                }
+                $("#deleteSectionModal").remove();
+                $('.modal-backdrop').remove();
+            }
+    });
+    function GetFilteredSections() {
         $.ajax({
             url: "/TableSection/GetAllSectionsForFilter",
             type: "GET",
@@ -88,5 +89,5 @@
         });
     }
         });
-        
-    </script>
+
+</script>
