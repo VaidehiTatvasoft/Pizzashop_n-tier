@@ -23,7 +23,9 @@ namespace Web.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)]
+        // [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)]
+                [CustomAuthorize(1,RolePermissionEnum.Permission.Orders_CanView)]
+
         [Route("/order")]
         [HttpGet]
         public IActionResult Order(string searchTerm, string sortOrder, int pageIndex = 1, int pageSize = 5, string statusFilter = "All Status", string dateRangeFilter = "All Time", DateTime? fromDate = null, DateTime? toDate = null)

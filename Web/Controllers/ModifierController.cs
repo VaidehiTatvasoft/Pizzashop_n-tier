@@ -1,9 +1,11 @@
+using Entity.Shared;
 using Entity.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interface;
 using System.Linq;
 using System.Threading.Tasks;
+using Web.Attributes;
 
 namespace Web.Controllers
 {
@@ -15,7 +17,7 @@ namespace Web.Controllers
         {
             _modifierService = modifierService;
         }
-        [Authorize(Roles = "1")]
+        [CustomAuthorize(1,RolePermissionEnum.Permission.Menu_CanView)]
         public async Task<IActionResult> ModifiersList(int? modifierId)
         {
             var modifiers = await _modifierService.GetAllModifiers();
@@ -31,7 +33,6 @@ namespace Web.Controllers
             return View("~/Views/Menu/ModifiersList.cshtml", modifiers);
         }
 
-        [Authorize(Roles = "1")]
         [HttpPost]
         public async Task<IActionResult> AddModifier(ModifierViewModel model)
         {
@@ -54,7 +55,7 @@ namespace Web.Controllers
             ViewBag.ModifierItems = await _modifierService.GetItemsByModifiers(model.Id);
             return View("~/Views/Menu/ModifiersList.cshtml", modifiers);
         }
-        [Authorize(Roles = "1")]
+        [CustomAuthorize(1,RolePermissionEnum.Permission.Menu_CanEdit)]
         [HttpGet]
         public async Task<IActionResult> EditModifier(int id)
         {
@@ -88,7 +89,7 @@ namespace Web.Controllers
             return Json(new { success = false, message = "Invalid data." });
         }
 
-        [Authorize(Roles = "1")]
+        [CustomAuthorize(1,RolePermissionEnum.Permission.Menu_CanDelete)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteModifier(int id)

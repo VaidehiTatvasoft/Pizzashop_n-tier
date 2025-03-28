@@ -24,7 +24,8 @@ public class HomeController : Controller
     {
         return View();
     }
-    [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)] 
+    // [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)] 
+    
     [Route("/home/admindashboard")]
     public IActionResult AdminDashboard()
     {

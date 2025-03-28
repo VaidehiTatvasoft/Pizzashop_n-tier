@@ -1,7 +1,9 @@
+using Entity.Shared;
 using Entity.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interface;
+using Web.Attributes;
 
 namespace Web.Controllers;
 [Route("tax")]
@@ -14,6 +16,7 @@ public class TaxController : Controller
     {
         _taxAndFeeService = taxAndFeeService;
     }
+                [CustomAuthorize(1,RolePermissionEnum.Permission.TaxesAndFees_CanView)]
 
     [Route("taxlist")]
     [HttpGet]
@@ -22,6 +25,7 @@ public class TaxController : Controller
         var taxes = await _taxAndFeeService.GetAllTaxes();
         return View(taxes);
     }
+                [CustomAuthorize(1,RolePermissionEnum.Permission.TaxesAndFees_CanView)]
 
     [Route("taxform")]
     [HttpGet]
@@ -34,6 +38,7 @@ public class TaxController : Controller
         }
         return PartialView("_TaxFormPartial", new TaxandFeeViewModel());
     }
+                [CustomAuthorize(1,RolePermissionEnum.Permission.TaxesAndFees_CanEdit)]
 
     [Route("addtax")]
     [HttpPost]
@@ -55,6 +60,7 @@ public class TaxController : Controller
         }
         return PartialView("_TaxFormPartial", model);
     }
+                [CustomAuthorize(1,RolePermissionEnum.Permission.TaxesAndFees_CanEdit)]
 
     [Route("edit")]
     [HttpPost]
@@ -76,6 +82,7 @@ public class TaxController : Controller
         Response.StatusCode = 400;
         return PartialView("_TaxFormPartial", model);
     }
+                [CustomAuthorize(1,RolePermissionEnum.Permission.TaxesAndFees_CanDelete)]
 
     [Route("delete/{id}")]
     [HttpPost]
@@ -106,6 +113,7 @@ public class TaxController : Controller
         }
         return PartialView("_TaxTablePartial", taxes);
     }
+                [CustomAuthorize(1,RolePermissionEnum.Permission.TaxesAndFees_CanEdit)]
 
     [Route("updateTaxStatus")]
     [HttpPost]

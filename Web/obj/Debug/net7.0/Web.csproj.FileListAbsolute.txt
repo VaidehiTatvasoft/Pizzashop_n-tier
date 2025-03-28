@@ -548,3 +548,11 @@ D:\Project_pce54\Pizzashop_n-tier\Web\bin\Debug\net7.0\ExcelNumberFormat.dll
 D:\Project_pce54\Pizzashop_n-tier\Web\bin\Debug\net7.0\RBush.dll
 D:\Project_pce54\Pizzashop_n-tier\Web\bin\Debug\net7.0\SixLabors.Fonts.dll
 D:\Project_pce54\Pizzashop_n-tier\Web\bin\Debug\net7.0\System.IO.Packaging.dll
+C:\Users\patel\pizzashop\Pizzashop_n-tier\Web\bin\Debug\net7.0\ClosedXML.dll
+C:\Users\patel\pizzashop\Pizzashop_n-tier\Web\bin\Debug\net7.0\ClosedXML.Parser.dll
+C:\Users\patel\pizzashop\Pizzashop_n-tier\Web\bin\Debug\net7.0\DocumentFormat.OpenXml.dll
+C:\Users\patel\pizzashop\Pizzashop_n-tier\Web\bin\Debug\net7.0\DocumentFormat.OpenXml.Framework.dll
+C:\Users\patel\pizzashop\Pizzashop_n-tier\Web\bin\Debug\net7.0\ExcelNumberFormat.dll
+C:\Users\patel\pizzashop\Pizzashop_n-tier\Web\bin\Debug\net7.0\RBush.dll
+C:\Users\patel\pizzashop\Pizzashop_n-tier\Web\bin\Debug\net7.0\SixLabors.Fonts.dll
+C:\Users\patel\pizzashop\Pizzashop_n-tier\Web\bin\Debug\net7.0\System.IO.Packaging.dll

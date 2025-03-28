@@ -2,6 +2,8 @@ using Entity.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Service.Interface;
+using Web.Attributes;
+using Entity.Shared;
 
 namespace Web.Controllers;
 
@@ -16,6 +18,7 @@ public class TableSectionController : Controller
         _tableService = tableService;
         _sectionService = sectionService;
     }
+                [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanView)]
     [HttpGet]
     public IActionResult TableSection(int? id, int pageSize = 5, int pageIndex = 1, string searchString = "")
     {
@@ -60,12 +63,14 @@ public class TableSectionController : Controller
         var sections = _sectionService.GetAllSections();
         return PartialView("_SectionList", sections);
     }
+                [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanView)]
 
     [HttpGet]
     public IActionResult AddNewTable()
     {
         return PartialView("_AddEditTable", new TableViewModel());
     }
+                [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanEdit)]
 
     [HttpPost]
     public async Task<IActionResult> AddNewTable(TableViewModel model)
@@ -97,6 +102,7 @@ public class TableSectionController : Controller
             return Json(new { success = false, message = errorMessage });
         }
     }
+                [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanDelete)]
 
     [HttpPost]
     public async Task<IActionResult>? DeleteTable(int id)
@@ -113,6 +119,7 @@ public class TableSectionController : Controller
             return Json(new { isSuccess = false, message = "Error While Delete Table. Please Try again!" });
         }
     }
+                [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanDelete)]
 
     [HttpPost]
     public async Task<IActionResult>? MultiDeleteTable(int[] itemIds)
@@ -130,6 +137,7 @@ public class TableSectionController : Controller
             return Json(new { isSuccess = false, message = "Error While Delete Table. Please Try again!" });
         }
     }
+                [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanView)]
 
     [HttpGet]
     public async Task<IActionResult> EditTable(int id)
@@ -141,6 +149,7 @@ public class TableSectionController : Controller
         }
         return PartialView("_AddEditTable", table);
     }
+                [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanEdit)]
 
     [HttpPost]
     public async Task<IActionResult> EditTable(TableViewModel model)
@@ -168,6 +177,7 @@ public class TableSectionController : Controller
             return Json(new { success = false, message = errorMessage });
         }
     }
+                [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanView)]
 
     [HttpGet]
     public async Task<IActionResult> AddEditSection(int? id)
@@ -178,6 +188,7 @@ public class TableSectionController : Controller
         var tableSection = await _sectionService.GetSectionByIdAsync(id.Value);
         return PartialView("_AddEditSection", tableSection);
     }
+                [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanEdit)]
 
     [HttpPost]
     public async Task<IActionResult> AddEditSection(SectionViewModel sectionViewModel)
@@ -201,6 +212,7 @@ public class TableSectionController : Controller
             return Json(new { success = false, message = ex.Message });
         }
     }
+                [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanDelete)]
 
     [HttpPost]
     public async Task<IActionResult> DeleteSection(int id, bool softDelete = true)
