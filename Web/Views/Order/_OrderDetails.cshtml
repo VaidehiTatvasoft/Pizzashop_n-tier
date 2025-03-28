@@ -14,8 +14,9 @@
         <div class="d-flex justify-content-between">
             <div>
                 <h5>
-                    <span>Order Summary 
-                        <button class="active-status p-1"style="color:blue; background-color:skyblue; border-radius:0;">
+                    <span>Order Summary
+                        <button class="active-status p-1"
+                            style="color:blue; background-color:skyblue; border-radius:0;">
                             <b>@Model.OrderStatus</b>
                         </button>
                     </span>
@@ -28,14 +29,29 @@
                 </button>
             </div>
         </div>
-        <p><strong>Invoice No:</strong> @Model.InvoiceId</p>
-        <p><span><strong>Paid On:</strong> @Model.OrderDate?.ToString("yyyy-MM-dd")
-                <strong>Placed Date:</strong> @Model.OrderDate?.ToString("yyyy-MM-dd")
-                <strong>Modified on:</strong> @Model.ModifiedAt?.ToString("yyyy-MM-dd")
-                <strong>Order Duration:</strong> @Model.OrderDuration</p>
-        </span>
-        </p>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <p><strong>Invoice No:</strong> @Model.InvoiceId</p>
+                </div>
+                <div class="col-12 d-flex flex-wrap">
+                    <div class="d-inline p-1">
+                        <p><strong> Paid On:</strong> @Model.OrderDate?.ToString("yyyy-MM-dd") </p>
+                    </div>
+                    <div class="d-inline p-1 ml-5">
+                        <p><strong> Placed Date:</strong> @Model.OrderDate?.ToString("yyyy-MM-dd") </p>
+                    </div>
+                    <div class="d-inline p-1 ml-5">
+                        <p><strong> Modified on:</strong> @Model.ModifiedAt?.ToString("yyyy-MM-dd") </p>
+                    </div>
+                    <div class="d-inline p-1 ml-5">
+                        <p><strong> Order Duration:</strong> @Model.OrderDuration</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
     <div class="row">
         <div class="col-12 d-flex">
             <div class="col-md-6 p-2 m-1 bg-white rounded shadow-sm justify-content-start align-items-center">
@@ -79,13 +95,13 @@
                                 </div>
                             </td>
                             <td>
-                                  <div>
+                                <div>
                                     @Model.Items[i].Quantity
                                 </div>
                                 <div>
                                     @Model.Items[i].QuantityOfModifier
                                 </div>
-                                </td>
+                            </td>
                             <td>
                                 <div>
                                     @Model.Items[i].Price
