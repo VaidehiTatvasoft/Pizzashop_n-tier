@@ -78,7 +78,14 @@
                                     @Model.Items[i].Modifiers
                                 </div>
                             </td>
-                            <td>@Model.Items[i].Quantity</td>
+                            <td>
+                                  <div>
+                                    @Model.Items[i].Quantity
+                                </div>
+                                <div>
+                                    @Model.Items[i].QuantityOfModifier
+                                </div>
+                                </td>
                             <td>
                                 <div>
                                     @Model.Items[i].Price
@@ -92,7 +99,7 @@
                                     @Model.Items[i].TotalAmount
                                 </div>
                                 <div>
-                                    @Model.Items[i].ModifiersPrice
+                                    @Model.Items[i].TotalModifierAmount
                                 </div>
                             </td>
                         </tr>

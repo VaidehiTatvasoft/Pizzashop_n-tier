@@ -49,7 +49,7 @@ public class OrderService : IOrderService
                 ItemName = item.Name,
                 Quantity = item.Quantity,
                 Price = item.Rate ?? 0,
-                TotalAmount = item.TotelAmount,
+                TotalAmount = item.TotalAmount,
                 Modifiers = string.Join(", ", item.OrderedItemModifierMappings.Select(m => m.Modifier.Name)),
                 ModifiersPrice = item.OrderedItemModifierMappings.Sum(m => m.RateOfModifier ?? 0)
             }).ToList(),
