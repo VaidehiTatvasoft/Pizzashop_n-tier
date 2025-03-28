@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Entity.Shared; 
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Entity.Shared;
 using System.Linq;
 
 namespace Web.Attributes
@@ -10,6 +11,7 @@ namespace Web.Attributes
     {
         private readonly int _requiredRoleId;
         private readonly RolePermissionEnum.Permission _requiredPermission;
+        private ITempDataDictionaryFactory _tempDataDictionaryFactory;
 
         public CustomAuthorizeAttribute(int roleId, RolePermissionEnum.Permission permission)
         {
@@ -19,6 +21,7 @@ namespace Web.Attributes
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
+            _tempDataDictionaryFactory = context.HttpContext.RequestServices.GetService(typeof(ITempDataDictionaryFactory)) as ITempDataDictionaryFactory;
             var user = context.HttpContext.User;
             if (!user.Identity.IsAuthenticated)
             {
@@ -33,11 +36,28 @@ namespace Web.Attributes
                 return;
             }
 
-            var userPermissions = context.HttpContext.Items["Permissions"] as List<RolePermissionEnum.Permission>;
-
+            var userPermissions = context.HttpContext.Items["Permissions"] as HashSet<RolePermissionEnum.Permission>;
+   
             if (userPermissions == null || !userPermissions.Contains(_requiredPermission))
             {
-                context.Result = new ForbidResult();
+                context.HttpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
+
+                if (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    context.Result = new JsonResult(new { message = "You are not authorized to access this page." });
+                }
+                else
+                {
+                    var refererUrl = context.HttpContext.Request.Headers["Referer"].ToString();
+                    if (!string.IsNullOrEmpty(refererUrl))
+                    {
+                        var tempData = _tempDataDictionaryFactory.GetTempData(context.HttpContext);
+                        tempData["ErrorMessage"] = "You are not authorized to access this page.";
+                        context.HttpContext.Response.Redirect(refererUrl);
+                    }
+                }
+                // context.Result = new ForbidResult();
+
                 return;
             }
         }

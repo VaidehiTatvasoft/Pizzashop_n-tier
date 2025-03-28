@@ -10,30 +10,64 @@ namespace Service.Implementation;
 public class OrderService : IOrderService
 {
     private readonly IOrderRepository _orderRepository;
+    private readonly ITableRepository _tableRepository;
+    private readonly ISectionRepository _sectionRepository;
 
-    public OrderService(IOrderRepository orderRepository)
+    public OrderService(IOrderRepository orderRepository, ITableRepository tableRepository, ISectionRepository sectionRepository)
     {
         _orderRepository = orderRepository;
+        _tableRepository = tableRepository;
+        _sectionRepository = sectionRepository;
     }
-  public async Task<OrderViewModel> GetOrderByIdAsync(int orderId)
-        {
-            var order = await _orderRepository.GetOrderByIdAsync(orderId);
-            if (order == null)
-            {
-                return null;
-            }
 
-            return new OrderViewModel
-            {
-                Id = order.Id,
-                OrderDate = order.OrderDate,
-                CustomerName = order.Customer.Name,
-                OrderStatus = ((OrderStatusEnum)order.OrderStatus).ToString(),
-                PaymentMethod = order.Invoices.Select(i => ((PaymentMethodEnum)i.Payments.FirstOrDefault()?.PaymentMethod).ToString()).FirstOrDefault(),
-                TotalAmount = order.TotalAmount,
-                AvgRating = order.Feedbacks.Any() ? order.Feedbacks.Select(f => f.AvgRating).FirstOrDefault() ?? 0 : 0
-            };
+    public async Task<OrderDetailsViewModel> GetOrderDetailsAsync(int orderId)
+    {
+        var order = await _orderRepository.GetOrderByIdAsync(orderId);
+        if (order == null)
+        {
+            return null;
         }
+
+        var tableOrderMapping = _orderRepository.GetTableOrderMappingByOrderId(orderId);
+        var table = await _tableRepository.GetTableById(tableOrderMapping.TableId);
+        var section = _sectionRepository.GetSectionById(table.SectionId);
+
+        var orderDetailsViewModel = new OrderDetailsViewModel
+            {
+                OrderId = order.Id,
+                OrderDate = order.OrderDate,
+                ModifiedAt = order.ModifiedAt,
+                OrderStatus = ((OrderStatusEnum)order.OrderStatus).ToString(),
+                CustomerName = order.Customer.Name,
+                CustomerPhone = order.Customer.Phone,
+                CustomerEmail = order.Customer.Email,
+                NoOfPerson = tableOrderMapping.NoOfPeople,
+                TableName = table.Name,
+                SectionName = section.Name,
+                InvoiceId = order.Invoices.FirstOrDefault()?.Id ?? 0,
+                Items = order.OrderedItems.Select(item => new OrderItemViewModel
+                {
+                    ItemName = item.Name,
+                    Quantity = item.Quantity,
+                    Price = item.Rate ?? 0,
+                    TotalAmount = item.TotalAmount,
+                    Modifiers = string.Join(", ", item.OrderedItemModifierMappings.Select(m => m.Modifier.Name)),
+                    QuantityOfModifier = item.OrderedItemModifierMappings.FirstOrDefault()?.QuantityOfModifier ?? 0,
+                    ModifiersPrice = item.OrderedItemModifierMappings.Sum(m => m.RateOfModifier ?? 0),
+                    TotalModifierAmount = item.TotalModifierAmount ?? 0
+                }).ToList(),
+                SubTotal = order.SubTotal ?? 0,
+                CGST = order.OrderTaxMappings.Where(t => t.Tax.Name == "CGST").Sum(t => t.TaxValue ?? 0),
+                SGST = order.OrderTaxMappings.Where(t => t.Tax.Name == "SGST").Sum(t => t.TaxValue ?? 0),
+                GST = order.OrderTaxMappings.Where(t => t.Tax.Name == "GST").Sum(t => t.TaxValue ?? 0),
+                Other = order.OrderTaxMappings.Where(t => t.Tax.Name == "Other").Sum(t => t.TaxValue ?? 0),
+                Total = order.TotalAmount
+            };
+
+
+        return orderDetailsViewModel;
+    }
+
     public IEnumerable<OrderViewModel> GetFilteredOrderViewModels(string searchTerm, string sortOrder, int pageIndex, int pageSize, string statusFilter, DateTime? startDate, DateTime? endDate, out int count)
     {
 

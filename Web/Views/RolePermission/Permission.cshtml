@@ -117,12 +117,14 @@
                 const canDelete = document.querySelector(`.can-delete[data-index='${index}']`);
                 
                 canView.disabled = !isChecked;
-                canView.checked = isChecked;
-
                 canAddEdit.disabled = !isChecked;
-                    canAddEdit.checked = isChecked;
                 canDelete.disabled = !isChecked;
-                    canDelete.checked = isChecked;
+
+                if (!isChecked) {
+                    canView.checked = false;
+                    canAddEdit.checked = false;
+                    canDelete.checked = false;
+                }
 
                 canView.addEventListener("change", function () {
                     if (!this.checked) {

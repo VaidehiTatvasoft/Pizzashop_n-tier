@@ -23,11 +23,10 @@ public partial class OrderedItem
 
     public decimal? Tax { get; set; }
 
-    public decimal TotelAmount { get; set; }
+    public decimal TotalAmount { get; set; }
 
     public string? Instruction { get; set; }
-
-    public int[]? OrderStatus { get; set; }
+    public int ? OrderStatus { get; set; }
 
     public bool? IsDeleted { get; set; }
 

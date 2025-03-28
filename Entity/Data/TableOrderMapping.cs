@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Entity.Data;
+﻿namespace Entity.Data;
 
 public partial class TableOrderMapping
 {
