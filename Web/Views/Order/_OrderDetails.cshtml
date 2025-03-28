@@ -1,12 +1,11 @@
-@model Entity.ViewModel.OrderViewModel
+@model Entity.ViewModel.OrderDetailsViewModel
 <div class="col-11 bg-light justify-content-center align-items-center">
-
     <div class="col-12 d-flex justify-content-between m-2 mb-4">
         <div>
             <h2>Order-Details</h2>
         </div>
         <div>
-            <a asp-controller="Order" asp-action="order" class="btn bg-light cancel-button"
+            <a asp-controller="Order" asp-action="Order" class="btn bg-light cancel-button"
                 style="background:transparent;">
                 < Back</a>
         </div>
@@ -16,7 +15,7 @@
             <div>
                 <h5>
                     <span>Order Summary 
-                        <button class="active-status p-1"style="color:blue; background-color:skyblue;border-radius:0;">
+                        <button class="active-status p-1"style="color:blue; background-color:skyblue; border-radius:0;">
                             <b>@Model.OrderStatus</b>
                         </button>
                     </span>
@@ -29,11 +28,12 @@
                 </button>
             </div>
         </div>
-        <p><strong>Invoice No:</strong></p>
-        <p><span><strong>Paid On: Placed Date:</strong> @Model.OrderDate?.ToString("yyyy-MM-dd")
-                <strong>Modified on:</strong>
-                <strong>Order Duration:</strong>
-            </span>
+        <p><strong>Invoice No:</strong> @Model.InvoiceId</p>
+        <p><span><strong>Paid On:</strong> @Model.OrderDate?.ToString("yyyy-MM-dd")
+                <strong>Placed Date:</strong> @Model.OrderDate?.ToString("yyyy-MM-dd")
+                <strong>Modified on:</strong> @Model.ModifiedAt?.ToString("yyyy-MM-dd")
+                <strong>Order Duration:</strong> @Model.OrderDuration</p>
+        </span>
         </p>
     </div>
     <div class="row">
@@ -41,14 +41,14 @@
             <div class="col-md-6 p-2 m-1 bg-white rounded shadow-sm justify-content-start align-items-center">
                 <h5>Customer Details</h5>
                 <div class="mt-3 m-1">Name: @Model.CustomerName</div>
-                <div class="m-1">Phone:</div>
-                <div class="m-1">No of Person:</div>
-                <div class="m-1">Email:</div>
+                <div class="m-1">Phone: @Model.CustomerPhone</div>
+                <div class="m-1">No of Person: @Model.NoOfPerson</div>
+                <div class="m-1">Email: @Model.CustomerEmail</div>
             </div>
             <div class="col-md-6 p-2 m-1 bg-white rounded shadow-sm justify-content-start align-items-center">
                 <h5>Table Details</h5>
-                <div class="mt-3 m-1">Table:</div>
-                <div class="m-1">Section:</div>
+                <div class="mt-3 m-1">Table: @Model.TableName</div>
+                <div class="m-1">Section: @Model.SectionName</div>
             </div>
         </div>
     </div>
@@ -66,50 +66,49 @@
                     </tr>
                 </thead>
                 <tbody class="table-group-divider" id="orderdetails">
-                    <tr>
-                        <td></td>
-                        <td>
-                            <div>
-                                Item Name
-                            </div>
-                            <div>
-                                Modifiers
-                            </div>
-                        </td>
-
-                        <td></td>
-
-                        <td>
-                            <div>
-                                Item Price
-                            </div>
-                            <div>
-                                Modifiers Price
-                            </div>
-                        </td>
-                        <td>
-                            <div>
-                                Total of item
-                            </div>
-                            <div>
-                                Total of Modifier
-                            </div>
-                        </td>
-                    </tr>
+                    @for (int i = 0; i < Model.Items.Count; i++)
+                    {
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td>
+                                <div>
+                                    @Model.Items[i].ItemName
+                                </div>
+                                <div>
+                                    @Model.Items[i].Modifiers
+                                </div>
+                            </td>
+                            <td>@Model.Items[i].Quantity</td>
+                            <td>
+                                <div>
+                                    @Model.Items[i].Price
+                                </div>
+                                <div>
+                                    @Model.Items[i].ModifiersPrice
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    @Model.Items[i].TotalAmount
+                                </div>
+                                <div>
+                                    @Model.Items[i].ModifiersPrice
+                                </div>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
             <div class="d-flex justify-content-end align-items-center">
                 <div>
-                    <div><strong>Subtotal:</strong>₹</div>
-                    <div><strong>CGST:</strong>₹</div>
-                    <div><strong>SGST:</strong>₹</div>
-                    <div><strong>GST:</strong>₹</div>
-                    <div><strong>Other:</strong>₹</div>
-                    <div><strong>Total:</strong>₹</div>
+                    <div><strong>Subtotal:</strong> ₹@Model.SubTotal</div>
+                    <div><strong>CGST:</strong> ₹@Model.CGST</div>
+                    <div><strong>SGST:</strong> ₹@Model.SGST</div>
+                    <div><strong>GST:</strong> ₹@Model.GST</div>
+                    <div><strong>Other:</strong> ₹@Model.Other</div>
+                    <div><strong>Total:</strong> ₹@Model.Total</div>
                 </div>
             </div>
         </div>
-        @* <p><strong>Total Amount:</strong> @Model.TotalAmount</p> *@
     </div>
-    @* <p><strong>Order ID:</strong> @Model.Id</p> *@
 </div>

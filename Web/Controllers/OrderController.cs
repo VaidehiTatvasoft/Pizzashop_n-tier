@@ -45,6 +45,7 @@ namespace Web.Controllers
 
             return View(orderViewModel);
         }
+
         [Route("/order/exportorders")]
         [HttpGet]
         public IActionResult ExportOrders(string searchTerm, string sortOrder, string statusFilter = "All Status", string dateRangeFilter = "All Time", DateTime? fromDate = null, DateTime? toDate = null)
@@ -182,11 +183,12 @@ namespace Web.Controllers
             IEnumerable<OrderViewModel> orderViewModel = _orderService.GetFilteredOrderViewModels(searchTerm, sortOrder, pageIndex, pageSize, statusFilter, startDate, endDate, out int totalItems);
             return (orderViewModel, totalItems);
         }
+
         [Route("/order/orderdetails")]
         [HttpGet]
-        public IActionResult OrderDetails(int orderId)
+        public async Task<IActionResult> OrderDetails(int orderId)
         {
-            var order = _orderService.GetOrderByIdAsync(orderId).Result;
+            var order = await _orderService.GetOrderDetailsAsync(orderId);
             if (order == null)
             {
                 return NotFound();

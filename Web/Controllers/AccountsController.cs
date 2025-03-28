@@ -68,7 +68,7 @@ namespace Pizzashop.Web.Controllers
                 return View(model);
             }
 
-            var tokenString = _tokenService.GenerateAuthToken(user, TimeSpan.FromHours(24));
+            var tokenString = _tokenService.GenerateAuthToken(user, TimeSpan.FromDays(30));
             _accountService.SetCookies(HttpContext, tokenString, model.RememberMe);
 
             if (user.IsFirstlogin == true)

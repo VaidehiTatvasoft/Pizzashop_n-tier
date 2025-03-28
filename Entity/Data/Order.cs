@@ -33,7 +33,7 @@ public partial class Order
 
     public int? ModifiedBy { get; set; }
 
-    public DateOnly? OrderDate { get; set; }
+    public DateTime? OrderDate { get; set; }
 
     public int? OrderStatus { get; set; }
 

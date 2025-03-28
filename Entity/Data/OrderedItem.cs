@@ -26,8 +26,7 @@ public partial class OrderedItem
     public decimal TotelAmount { get; set; }
 
     public string? Instruction { get; set; }
-
-    public int[]? OrderStatus { get; set; }
+    public int ? OrderStatus { get; set; }
 
     public bool? IsDeleted { get; set; }
 
