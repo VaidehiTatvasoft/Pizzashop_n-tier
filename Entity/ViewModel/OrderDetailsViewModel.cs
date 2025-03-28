@@ -25,15 +25,16 @@ namespace Entity.ViewModel
         public decimal Other { get; set; }
         public decimal Total { get; set; }
 
-        public TimeSpan? OrderDuration
+         public string OrderDuration
         {
             get
             {
-                if (CreatedAt.HasValue && ModifiedAt.HasValue)
+                if (OrderDate.HasValue && ModifiedAt.HasValue)
                 {
-                    return ModifiedAt.Value - CreatedAt.Value;
+                    var duration = ModifiedAt.Value - OrderDate.Value;
+                    return $"{duration.Hours}h{duration.Minutes}m";
                 }
-                return null;
+                return "N/A";
             }
         }
     }

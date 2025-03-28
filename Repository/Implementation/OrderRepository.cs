@@ -17,10 +17,12 @@ public class OrderRepository : IOrderRepository
     public IEnumerable<Order> GetAllOrders(string searchTerm, string sortOrder, int pageIndex, int pageSize, string statusFilter, DateTime? startDate, DateTime? endDate, out int count)
     {
         IQueryable<Order> orderQuery = _context.Orders
-            .Include(o => o.Customer)
-            .Include(o => o.Invoices)
-                .ThenInclude(i => i.Payments)
-            .Include(o => o.Feedbacks);
+               .Include(o => o.Customer)
+               .Include(o => o.OrderedItems)
+               .ThenInclude(oi => oi.OrderedItemModifierMappings)
+               .Include(o => o.Invoices)
+                   .ThenInclude(i => i.Payments)
+               .Include(o => o.Feedbacks);
 
         if (!string.IsNullOrEmpty(searchTerm))
         {
@@ -92,16 +94,16 @@ public class OrderRepository : IOrderRepository
     public async Task<Order> GetOrderByIdAsync(int orderId)
     {
         return await _context.Orders
-            .Include(o => o.Customer)
-            .Include(o => o.Invoices)
-                .ThenInclude(i => i.Payments)
-            .Include(o => o.Feedbacks)
-            .Include(o => o.OrderedItems)
-                .ThenInclude(oi => oi.OrderedItemModifierMappings)
-                    .ThenInclude(oim => oim.Modifier)
-            .Include(o => o.OrderTaxMappings)
-                .ThenInclude(otm => otm.Tax)
-            .FirstOrDefaultAsync(o => o.Id == orderId);
+                .Include(o => o.Customer)
+                .Include(o => o.Invoices)
+                    .ThenInclude(i => i.Payments)
+                .Include(o => o.Feedbacks)
+                .Include(o => o.OrderedItems)
+                    .ThenInclude(oi => oi.OrderedItemModifierMappings)
+                        .ThenInclude(oim => oim.Modifier)
+                .Include(o => o.OrderTaxMappings)
+                    .ThenInclude(otm => otm.Tax)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
     }
 
     public TableOrderMapping GetTableOrderMappingByOrderId(int orderId)
