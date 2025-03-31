@@ -23,7 +23,6 @@ namespace Web.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        // [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)]
         [CustomAuthorize(1,RolePermissionEnum.Permission.Orders_CanView)]
         [Route("/order")]
         [HttpGet]
@@ -195,6 +194,17 @@ namespace Web.Controllers
                 return NotFound();
             }
             return View("_OrderDetails", order);
+        }
+        [Route("/order/invoicetemplate")]
+        [HttpGet]
+        public async Task<IActionResult> InvoiceTemplate(int orderId)
+        {
+            var order = await _orderService.GetOrderDetailsAsync(orderId);
+            if (order == null)
+            {
+                return NotFound();
+            }
+            return View("InvoiceTemplate", order);
         }
     }
 }

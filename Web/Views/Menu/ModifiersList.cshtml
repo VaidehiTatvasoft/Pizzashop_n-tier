@@ -15,8 +15,7 @@
                         <div class="d-flex flex-wrap justify-content-between align-items-center"
                             style="color: #0066A7;">
                             <h5>Modifier Group</h5>
-                            <i class="cat-i fa-regular fa-square-plus" style="height: 30px; width:30px;"
-                                data-bs-toggle="modal" data-bs-target="#addModifierModal"></i>
+                            <i class="cat-i fa-regular fa-square-plus" data-bs-toggle="modal" data-bs-target="#addModifierModal" style="height: 30px; width:30px;"></i>
                             <div class="modal fade" id="addModifierModal" tabindex="-1"
                                 aria-labelledby="addModifierModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -219,36 +218,42 @@
                     });
                 }
             });
-        });
 
-        // Clear modal content when hidden
-        $('#editModifierModal').on('hidden.bs.modal', function () {
-            $(this).find('.modal-content').html('');
-        });
-
-        $('#addModifierModal').on('hidden.bs.modal', function () {
-            $(this).find('.modal-content').html('');
-        });
-
-        $('#addModifierForm').on('submit', function (e) {
-            e.preventDefault();
-            $.ajax({
-                type: 'POST',
-                url: $(this).attr('action'),
-                data: $(this).serialize(),
-                success: function (response) {
-                    if (response.success) {
-                        toastr.success(response.message);
-                        $('#addModifierModal').modal('hide');
-                        window.location.href = response.redirectUrl;
-                    } else {
-                        toastr.error(response.message);
-                    }
-                },
-                error: function () {
-                    toastr.error('An error occurred while adding the modifier.');
-                }
+            $('#editModifierModal').on('hidden.bs.modal', function () {
+                $(this).find('.modal-content').html('');
             });
+
+            $('#addModifierModal').on('hidden.bs.modal', function () {
+                $(this).find('.modal-content').html('');
+            });
+
+            $('#addModifierForm').on('submit', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            toastr.success(response.message);
+                            $('#addModifierModal').modal('hide');
+                            window.location.href = response.redirectUrl;
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function () {
+                        toastr.error('An error occurred while adding the modifier.');
+                    }
+                });
+            });
+
+            var defaultCategoryLink = $('.category-link').first();
+            if (defaultCategoryLink.length) {
+                defaultCategoryLink.addClass('active');
+                defaultCategoryLink.trigger('click');
+            }
         });
     </script>
+
 }

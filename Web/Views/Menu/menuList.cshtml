@@ -94,127 +94,153 @@
                 </div>
             </section>
         </div>
+    </div>
+</div>
 
 @section Scripts {
-            <script>
-                function confirmDelete(categoryId) {
-                    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
-                    document.getElementById("confirmDeleteButton").onclick = function () {
-                        document.getElementById(`deleteform-${categoryId}`).submit();
-                    };
-                    modal.show();
+<script>
+    function confirmDelete(categoryId) {
+        const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        document.getElementById("confirmDeleteButton").onclick = function () {
+            document.getElementById(`deleteform-${categoryId}`).submit();
+        };
+        modal.show();
+    }
+
+    $(document).ready(function () {
+        var successMessage = '@TempData["SuccessMessage"]';
+        var errorMessage = '@TempData["ErrorMessage"]';
+
+        if (successMessage) {
+            toastr.success(successMessage);
+        }
+        if (errorMessage) {
+            toastr.error(errorMessage);
+        }
+
+        $(document).on('click', '.add-category', function () {
+            $.ajax({
+                type: "GET",
+                url: "/menu/addcategory",
+                dataType: "html",
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (data) {
+                    $("#addCategoryModal").find('.modal-content').html(data);
+                    $('#addCategoryModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    if (xhr.status === 401) {
+                        toastr.error("You are not authorized to perform this action.");
+                    } else if (xhr.status === 403) {
+                        toastr.error("You are forbidden from accessing this resource.");
+                    } else {
+                        console.error("Error loading category form:", status, error);
+                        alert("Failed to load category form.");
+                    }
                 }
+            });
+        });
 
-                $(document).ready(function () {
-                    var successMessage = '@TempData["SuccessMessage"]';
-                    var errorMessage = '@TempData["ErrorMessage"]';
-
-                    if (successMessage) {
-                        toastr.success(successMessage);
+        $(document).on('click', '.category-link', function (e) {
+            e.preventDefault();
+            var categoryId = $(this).data('category-id');
+            $('.category-link').removeClass('active');
+            $(this).addClass('active');
+            $.ajax({
+                url: '@Url.Action("MenuList", "Menu")',
+                type: 'GET',
+                data: { categoryId: categoryId },
+                success: function (result) {
+                    $('#item-list').html($(result).find('#item-list').html());
+                },
+                error: function (xhr, status, error) {
+                    if (xhr.status === 401) {
+                        toastr.error("You are not authorized to perform this action.");
+                    } else if (xhr.status === 403) {
+                        toastr.error("You are forbidden from accessing this resource.");
+                    } else {
+                        console.error("Error loading category items:", status, error);
+                        alert("Failed to load category items.");
                     }
-                    if (errorMessage) {
-                        toastr.error(errorMessage);
+                }
+            });
+        });
+
+        $(document).on('click', '.edit-icon', function () {
+            var id = $(this).data('id');
+            $.ajax({
+                type: "GET",
+                url: "/menu/editcategory/" + id,
+                dataType: "html",
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (data) {
+                    $("#editCategoryModal").find('.modal-content').html(data);
+                    $('#editCategoryModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    if (xhr.status === 401) {
+                        toastr.error("You are not authorized to perform this action.");
+                    } else if (xhr.status === 403) {
+                        toastr.error("You are forbidden from accessing this resource.");
+                    } else {
+                        console.error("Error loading category details:", status, error);
+                        alert("Failed to load category details.");
                     }
+                }
+            });
+        });
 
-                    $(document).on('click', '.add-category', function () {
-                        $.ajax({
-                            type: "GET",
-                            url: "/menu/addcategory",
-                            dataType: "html",
-                            headers: {
-                                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                            },
-                            success: function (data) {
-                                $("#addCategoryModal").find('.modal-content').html(data);
-                                $('#addCategoryModal').modal('show');
-                            },
-                            error: function (xhr, status, error) {
-                                if (xhr.status === 401) {
-                                    toastr.error("You are not authorized to perform this action.");
-                                } else if (xhr.status === 403) {
-                                    toastr.error("You are forbidden from accessing this resource.");
-                                } else {
-                                    console.error("Error loading category form:", status, error);
-                                    alert("Failed to load category form.");
-                                }
-                            }
-                        });
-                    });
-
-                    $(document).on('click', '.category-link', function (e) {
-                        e.preventDefault();
-                        var categoryId = $(this).data('category-id');
-                        $('.category-link').removeClass('active');
-                        $(this).addClass('active');
-                        $.ajax({
-                            url: '@Url.Action("MenuList", "Menu")',
-                            type: 'GET',
-                            data: { categoryId: categoryId },
-                            success: function (result) {
-                                $('#item-list').html($(result).find('#item-list').html());
-                            },
-                            error: function (xhr, status, error) {
-                                if (xhr.status === 401) {
-                                    toastr.error("You are not authorized to perform this action.");
-                                } else if (xhr.status === 403) {
-                                    toastr.error("You are forbidden from accessing this resource.");
-                                } else {
-                                    console.error("Error loading category items:", status, error);
-                                    alert("Failed to load category items.");
-                                }
-                            }
-                        });
-                    });
-
-                    $(document).on('click', '.edit-icon', function () {
-                        var id = $(this).data('id');
-                        $.ajax({
-                            type: "GET",
-                            url: "/menu/editcategory/" + id,
-                            dataType: "html",
-                            headers: {
-                                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                            },
-                            success: function (data) {
-                                $("#editCategoryModal").find('.modal-content').html(data);
-                                $('#editCategoryModal').modal('show');
-                            },
-                            error: function (xhr, status, error) {
-                                if (xhr.status === 401) {
-                                    toastr.error("You are not authorized to perform this action.");
-                                } else if (xhr.status === 403) {
-                                    toastr.error("You are forbidden from accessing this resource.");
-                                } else {
-                                    console.error("Error loading category details:", status, error);
-                                    alert("Failed to load category details.");
-                                }
-                            }
-                        });
-                    });
-
-                    $('#categoryDropdown').change(function () {
-                        var categoryId = $(this).val();
-                        if (categoryId) {
-                            $.ajax({
-                                url: '@Url.Action("MenuList", "Menu")',
-                                type: 'GET',
-                                data: { categoryId: categoryId },
-                                success: function (result) {
-                                    $('#item-list').html($(result).find('#item-list').html());
-                                },
-                                error: function (xhr, status, error) {
-                                    if (xhr.status === 401) {
-                                        toastr.error("You are not authorized to perform this action.");
-                                    } else if (xhr.status === 403) {
-                                        toastr.error("You are forbidden from accessing this resource.");
-                                    } else {
-                                        console.error("Error loading category items:", status, error);
-                                        alert("Failed to load category items.");
-                                    }
-                                }
-                            });
+        $('#categoryDropdown').change(function () {
+            var categoryId = $(this).val();
+            if (categoryId) {
+                $.ajax({
+                    url: '@Url.Action("MenuList", "Menu")',
+                    type: 'GET',
+                    data: { categoryId: categoryId },
+                    success: function (result) {
+                        $('#item-list').html($(result).find('#item-list').html());
+                    },
+                    error: function (xhr, status, error) {
+                        if (xhr.status === 401) {
+                            toastr.error("You are not authorized to perform this action.");
+                        } else if (xhr.status === 403) {
+                            toastr.error("You are forbidden from accessing this resource.");
+                        } else {
+                            console.error("Error loading category items:", status, error);
+                            alert("Failed to load category items.");
                         }
-                    });
+                    }
                 });
-            </script>
+            }
+        });
+
+        var defaultCategoryLink = $('.category-link').first();
+        if (defaultCategoryLink.length) {
+            defaultCategoryLink.addClass('active');
+            var defaultCategoryId = defaultCategoryLink.data('category-id');
+            $.ajax({
+                url: '@Url.Action("MenuList", "Menu")',
+                type: 'GET',
+                data: { categoryId: defaultCategoryId },
+                success: function (result) {
+                    $('#item-list').html($(result).find('#item-list').html());
+                },
+                error: function (xhr, status, error) {
+                    if (xhr.status === 401) {
+                        toastr.error("You are not authorized to perform this action.");
+                    } else if (xhr.status === 403) {
+                        toastr.error("You are forbidden from accessing this resource.");
+                    } else {
+                        console.error("Error loading default category items:", status, error);
+                        alert("Failed to load default category items.");
+                    }
+                }
+            });
+        }
+    });
+</script>
 }

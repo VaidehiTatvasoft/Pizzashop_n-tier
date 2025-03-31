@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Web;
 using Web.Middleware;
+using Rotativa.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,8 +22,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
 
 var jwtKey = builder.Configuration["Jwt:key"];
-if(string.IsNullOrEmpty(jwtKey)){
-    throw new ArgumentNullException("Jwt:Key","Jwt Key is missing in appsettings.json");
+if (string.IsNullOrEmpty(jwtKey))
+{
+    throw new ArgumentNullException("Jwt:Key", "Jwt Key is missing in appsettings.json");
 }
 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -42,7 +44,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             OnMessageReceived = context =>
             {
-                if (context.Request.Cookies.ContainsKey("AuthToken")) 
+                if (context.Request.Cookies.ContainsKey("AuthToken"))
                 {
                     context.Token = context.Request.Cookies["AuthToken"];
                 }
@@ -50,6 +52,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             }
         };
     });
+
+// Configure Rotativa
+builder.Services.ConfigureRotativa(config => config.WkhtmltopdfPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "lib", "wkhtmltopdf.exe"));
 
 var app = builder.Build();
 
@@ -81,11 +86,11 @@ app.UseStatusCodePages(async context =>
 
 app.UseRouting();
 
-app.UseSession(); 
+app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseMiddleware<FirstLoginMiddleware>(); 
+app.UseMiddleware<FirstLoginMiddleware>();
 app.UseMiddleware<CustomAuthorizationMiddleware>();
 app.MapControllerRoute(
     name: "default",

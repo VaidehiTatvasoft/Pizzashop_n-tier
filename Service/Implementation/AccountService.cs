@@ -50,7 +50,7 @@ namespace Pizzashop.Service.Implementation
 
         public void Logout(HttpContext context)
         {
-            context.Session.Clear();
+           context.Session.Clear();
             context.Response.Cookies.Delete(".AspNetCore.Identity.Application");
             context.Response.Cookies.Delete("AuthToken");
         }

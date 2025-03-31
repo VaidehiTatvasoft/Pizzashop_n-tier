@@ -41,7 +41,16 @@ namespace Service.Implementation
             }
             return false;
         }
+        public async Task<bool> AddModifiersToGroup(List<int> modifierIds, int groupId)
+        {
+            var modifiers = await _modifierRepository.GetModifiersByIds(modifierIds);
+            foreach (var modifier in modifiers)
+            {
+                modifier.ModifierGroupId = groupId;
+            }
 
+            return await _modifierRepository.UpdateModifiers(modifiers);
+        }
         public async Task<bool> DeleteModifierById(int id)
         {
             var category = await _modifierRepository.GetModifierByIdAsync(id);
@@ -111,5 +120,44 @@ namespace Service.Implementation
         {
             return await _modifierRepository.GetItemsByModifier(groupId);
         }
+        // public async Task<(List<Modifier> Items, int TotalCount)> GetPaginatedModifierItems(int? modifierId, int offset, int pageSize, string searchString)
+        // {
+        //     // var menuItemsQuery = _modifierRepository.GetItemsByModifierQuery(modifierId, searchString);
+        //     // var totalCount = await menuItemsQuery.CountAsync();
+        //     // var paginatedMenuItems = await menuItemsQuery.Skip(offset).Take(pageSize).ToListAsync();
+
+        //     return (paginatedMenuItems, totalCount);
+        // }
+
+
+        public async Task<bool> AddNewModifierItem(MenuModifierViewModel model)
+        {
+            var modifier = await _modifierRepository.GetModifierItemByName(model.Name);
+            if (modifier != null)
+            {
+                return false;
+            }
+
+            var newModifier = new Modifier
+            {
+                Name = model.Name,
+                ModifierGroupId = model.ModifierGroupId,
+                Rate = model.Rate,
+                Quantity = model.Quantity,
+                Description = model.Description,
+                UnitId = model.UnitId,
+                CreatedBy = model.CreatedBy,
+                CreatedAt = model.CreatedAt
+            };
+
+            return await _modifierRepository.AddModifierItemAsync(newModifier);
+        }
+
+
+        public async Task<List<Modifier>> GetAllModifiers(string searchString)
+        {
+            return await _modifierRepository.GetAllModifiers(searchString);
+        }
+
     }
 }

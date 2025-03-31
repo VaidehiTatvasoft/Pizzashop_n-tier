@@ -1,5 +1,4 @@
-@using Entity.ViewModel
-@model MenuItemViewModel
+@model Entity.ViewModel.MenuItemViewModel
 
 <style>
     .row {
@@ -43,6 +42,7 @@
                                 <option value="false">Non-Veg</option>
                             </select>
                             <label for="Type" class="float">Type*</label>
+                            <span asp-validation-for="Type" class="text-danger"></span>
                         </div>
                         <div class="form-floating col-xl-3 col-lg-6 col-12">
                             <input type="number" class="form-control" id="Rate" asp-for="Rate" value="0">

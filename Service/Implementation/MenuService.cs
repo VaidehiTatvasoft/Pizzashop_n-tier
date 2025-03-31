@@ -197,7 +197,7 @@ public class MenuService : IMenuService
             Type = item.Type ,
             Rate = item.Rate,
             Quantity = item.Quantity,
-            IsAvailable = item.IsAvailable,
+            IsAvailable = item.IsAvailable ?? true,
             Description = item.Description,
             TaxPercentage = item.TaxPercentage,
             IsFavourite = item.IsFavourite ?? false,

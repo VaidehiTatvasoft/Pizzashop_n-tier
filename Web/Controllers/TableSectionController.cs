@@ -33,13 +33,13 @@ public class TableSectionController : Controller
         tables.Sections = sections;
         return View(tables);
     }
-
+    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanView)]
     public IActionResult GetAllTables()
     {
         var tables = _tableService.GetAllTables();
         return PartialView("_TableList", tables);
     }
-
+    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanView)]
     [HttpGet]
     public async Task<IActionResult> GetTablesBySectionId(int sectionId, int pageSize, int pageIndex, string searchString = "")
     {
@@ -49,14 +49,14 @@ public class TableSectionController : Controller
         model.Sections = sections;
         return PartialView("_TableList", model);
     }
-
+    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanView)]
     [HttpGet]
     public async Task<JsonResult> GetAllSections()
     {
         var sections = Json(_sectionService.GetAllSections());
         return sections;
     }
-
+    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanView)]
     [HttpGet]
     public IActionResult GetAllSectionsForFilter()
     {

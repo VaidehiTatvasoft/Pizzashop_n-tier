@@ -6,6 +6,7 @@ using Web.Attributes;
 using Web.Models;
 
 namespace Web.Controllers;
+
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -24,7 +25,7 @@ public class HomeController : Controller
     {
         return View();
     }
-    
+    [Authorize(Roles = "1")]
     [Route("/home/admindashboard")]
     public IActionResult AdminDashboard()
     {
@@ -43,9 +44,9 @@ public class HomeController : Controller
         return View("401");
     }
     public IActionResult Forbidden()
-        {
-            return View("403");
-        }
+    {
+        return View("403");
+    }
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

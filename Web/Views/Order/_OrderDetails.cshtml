@@ -1,137 +1,169 @@
 @model Entity.ViewModel.OrderDetailsViewModel
-<div class="col-11 bg-light justify-content-center align-items-center">
-    <div class="col-12 d-flex justify-content-between m-2 mb-4">
-        <div>
-            <h2>Order-Details</h2>
-        </div>
-        <div>
-            <a asp-controller="Order" asp-action="Order" class="btn bg-light cancel-button"
-                style="background:transparent;">
-                < Back</a>
-        </div>
-    </div>
-    <div class="col-12 m-2 p-2 bg-white rounded shadow-sm justify-content-start align-items-center">
-        <div class="d-flex justify-content-between">
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Details</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div class="col-11 bg-light justify-content-center align-items-center">
+        <div class="col-12 d-flex justify-content-between m-2 mb-4">
             <div>
-                <h5>
-                    <span>Order Summary
-                        <button class="active-status p-1"
+                <h2>Order-Details</h2>
+            </div>
+            <div>
+                <a asp-controller="Order" asp-action="Order" class="btn bg-light cancel-button back-button" style="background:transparent;">
+                    < Back</a>
+            </div>
+        </div>
+        <div class="col-12 m-2 p-2 bg-white rounded shadow-sm justify-content-start align-items-center">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <h5>
+                        <span>Order Summary
+                            <button class="active-status p-1" 
                             style="color:blue; background-color:skyblue; border-radius:0;">
-                            <b>@Model.OrderStatus</b>
-                        </button>
-                    </span>
-                </h5>
+                                <b>@Model.OrderStatus</b>
+                            </button>
+                        </span>
+                    </h5>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary mb-3 mr-2 w-100 col-12" onclick="exportViewOrderPdf()">
+                        <i class="fa-solid fa-share-from-square me-1"></i>
+                        Export
+                    </button>
+                </div>
             </div>
-            <div>
-                <button type="button" class="btn btn-primary mb-3  mr-2 w-100 col-12">
-                    <i class="fa-solid fa-share-from-square me-1"></i>
-                    Export
-                </button>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <p><strong>Invoice No:</strong> @Model.InvoiceId</p>
+                    </div>
+                    <div class="col-12 d-flex flex-wrap">
+                        <div class="d-inline p-1">
+                            <p><strong> Paid On:</strong> @Model.OrderDate?.ToString("yyyy-MM-dd") </p>
+                        </div>
+                        <div class="d-inline p-1 ml-5">
+                            <p><strong> Placed Date:</strong> @Model.OrderDate?.ToString("yyyy-MM-dd") </p>
+                        </div>
+                        <div class="d-inline p-1 ml-5">
+                            <p><strong> Modified on:</strong> @Model.ModifiedAt?.ToString("yyyy-MM-dd") </p>
+                        </div>
+                        <div class="d-inline p-1 ml-5">
+                            <p><strong> Order Duration:</strong> @Model.OrderDuration</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <p><strong>Invoice No:</strong> @Model.InvoiceId</p>
+
+        <div class="row">
+            <div class="col-12 d-flex">
+                <div class="col-md-6 p-2 m-1 bg-white rounded shadow-sm justify-content-start align-items-center">
+                    <h5>Customer Details</h5>
+                    <div class="mt-3 m-1">Name: @Model.CustomerName</div>
+                    <div class="m-1">Phone: @Model.CustomerPhone</div>
+                    <div class="m-1">No of Person: @Model.NoOfPerson</div>
+                    <div class="m-1">Email: @Model.CustomerEmail</div>
                 </div>
-                <div class="col-12 d-flex flex-wrap">
-                    <div class="d-inline p-1">
-                        <p><strong> Paid On:</strong> @Model.OrderDate?.ToString("yyyy-MM-dd") </p>
-                    </div>
-                    <div class="d-inline p-1 ml-5">
-                        <p><strong> Placed Date:</strong> @Model.OrderDate?.ToString("yyyy-MM-dd") </p>
-                    </div>
-                    <div class="d-inline p-1 ml-5">
-                        <p><strong> Modified on:</strong> @Model.ModifiedAt?.ToString("yyyy-MM-dd") </p>
-                    </div>
-                    <div class="d-inline p-1 ml-5">
-                        <p><strong> Order Duration:</strong> @Model.OrderDuration</p>
+                <div class="col-md-6 p-2 m-1 bg-white rounded shadow-sm justify-content-start align-items-center">
+                    <h5>Table Details</h5>
+                    <div class="mt-3 m-1">Table: @Model.TableName</div>
+                    <div class="m-1">Section: @Model.SectionName</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 p-2 m-2 bg-white rounded shadow-sm justify-content-start align-items-center">
+            <h5>Order Items</h5>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th><strong>Sr.No</strong></th>
+                            <th><strong>Item</strong></th>
+                            <th><strong>Quantity</strong></th>
+                            <th><strong>Price</strong></th>
+                            <th><strong>Total Amount:</strong></th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider" id="orderdetails">
+                        @for (int i = 0; i < Model.Items.Count; i++)
+                        {
+                            <tr>
+                                <td>@(i + 1)</td>
+                                <td>
+                                    <div>
+                                        @Model.Items[i].ItemName
+                                    </div>
+                                    @foreach (var modifier in Model.Items[i].Modifiers)
+                                    {
+                                        <div>@modifier.Name</div>
+                                    }
+                                </td>
+                                <td>
+                                    <div>
+                                        @Model.Items[i].Quantity
+                                    </div>
+                                    @foreach (var modifier in Model.Items[i].Modifiers)
+                                    {
+                                        <div>@modifier.QuantityOfModifier</div>
+                                    }
+                                </td>
+                                <td>
+                                    <div>
+                                        @Model.Items[i].Price
+                                    </div>
+                                    @foreach (var modifier in Model.Items[i].Modifiers)
+                                    {
+                                        <div>@modifier.ModifiersPrice</div>
+                                    }
+                                </td>
+                                <td>
+                                    <div>
+                                        @Model.Items[i].TotalAmount
+                                    </div>
+                                    @foreach (var modifier in Model.Items[i].Modifiers)
+                                    {
+                                        <div>@modifier.TotalModifierAmount</div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="d-flex justify-content-end align-items-center">
+                    <div>
+                        <div><strong>Subtotal:</strong> ₹@Model.SubTotal</div>
+                        <div><strong>CGST:</strong> ₹@Model.CGST</div>
+                        <div><strong>SGST:</strong> ₹@Model.SGST</div>
+                        <div><strong>GST:</strong> ₹@Model.GST</div>
+                        <div><strong>Other:</strong> ₹@Model.Other</div>
+                        <div><strong>Total:</strong> ₹@Model.Total</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12 d-flex">
-            <div class="col-md-6 p-2 m-1 bg-white rounded shadow-sm justify-content-start align-items-center">
-                <h5>Customer Details</h5>
-                <div class="mt-3 m-1">Name: @Model.CustomerName</div>
-                <div class="m-1">Phone: @Model.CustomerPhone</div>
-                <div class="m-1">No of Person: @Model.NoOfPerson</div>
-                <div class="m-1">Email: @Model.CustomerEmail</div>
-            </div>
-            <div class="col-md-6 p-2 m-1 bg-white rounded shadow-sm justify-content-start align-items-center">
-                <h5>Table Details</h5>
-                <div class="mt-3 m-1">Table: @Model.TableName</div>
-                <div class="m-1">Section: @Model.SectionName</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-12 p-2 m-2 bg-white rounded shadow-sm justify-content-start align-items-center">
-        <h5>Order Items</h5>
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th><strong>Sr.No</strong></th>
-                        <th><strong>Item</strong></th>
-                        <th><strong>Quantity</strong></th>
-                        <th><strong>Price</strong></th>
-                        <th><strong>Total Amount:</strong></th>
-                    </tr>
-                </thead>
-                <tbody class="table-group-divider" id="orderdetails">
-                    @for (int i = 0; i < Model.Items.Count; i++)
-                    {
-                        <tr>
-                            <td>@(i + 1)</td>
-                            <td>
-                                <div>
-                                    @Model.Items[i].ItemName
-                                </div>
-                                <div>
-                                    @Model.Items[i].Modifiers
-                                </div>
-                            </td>
-                            <td>
-                                <div>
-                                    @Model.Items[i].Quantity
-                                </div>
-                                <div>
-                                    @Model.Items[i].QuantityOfModifier
-                                </div>
-                            </td>
-                            <td>
-                                <div>
-                                    @Model.Items[i].Price
-                                </div>
-                                <div>
-                                    @Model.Items[i].ModifiersPrice
-                                </div>
-                            </td>
-                            <td>
-                                <div>
-                                    @Model.Items[i].TotalAmount
-                                </div>
-                                <div>
-                                    @Model.Items[i].TotalModifierAmount
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-            <div class="d-flex justify-content-end align-items-center">
-                <div>
-                    <div><strong>Subtotal:</strong> ₹@Model.SubTotal</div>
-                    <div><strong>CGST:</strong> ₹@Model.CGST</div>
-                    <div><strong>SGST:</strong> ₹@Model.SGST</div>
-                    <div><strong>GST:</strong> ₹@Model.GST</div>
-                    <div><strong>Other:</strong> ₹@Model.Other</div>
-                    <div><strong>Total:</strong> ₹@Model.Total</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    <script>
+        function exportViewOrderPdf() {
+            const backButton = document.querySelector('.back-button');
+            backButton.style.display = 'none';
+
+            const element = document.querySelector('.col-11');
+            const options = {
+                margin: 1,
+                filename: 'OrderDetails.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            html2pdf().set(options).from(element).save().then(() => {
+                backButton.style.display = 'block';
+            });
+        }
+    </script>
+</body>
+</html>

@@ -39,13 +39,11 @@ namespace Entity.Middleware
                                 rp.CanDelete
                             })
                             .ToListAsync();
-                        var permissions = new HashSet<RolePermissionEnum.Permission>(); // Use HashSet to avoid duplicates
+                        var permissions = new HashSet<RolePermissionEnum.Permission>();
                         foreach(var rp in rolePermissions)
                         {
                             if (rp.CanView)
                             {
-                                                                // permissions.Add((RolePermissionEnum.Permission)rp.PermissionId);
-
                                 switch (rp.PermissionId)
                                 {
                                     case 1:

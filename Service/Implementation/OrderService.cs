@@ -45,16 +45,19 @@ public class OrderService : IOrderService
                 TableName = table.Name,
                 SectionName = section.Name,
                 InvoiceId = order.Invoices.FirstOrDefault()?.Id ?? 0,
-                Items = order.OrderedItems.Select(item => new OrderItemViewModel
+                 Items = order.OrderedItems.Select(item => new OrderItemViewModel
                 {
                     ItemName = item.Name,
                     Quantity = item.Quantity,
                     Price = item.Rate ?? 0,
                     TotalAmount = item.TotalAmount,
-                    Modifiers = string.Join(", ", item.OrderedItemModifierMappings.Select(m => m.Modifier.Name)),
-                    QuantityOfModifier = item.OrderedItemModifierMappings.FirstOrDefault()?.QuantityOfModifier ?? 0,
-                    ModifiersPrice = item.OrderedItemModifierMappings.Sum(m => m.RateOfModifier ?? 0),
-                    TotalModifierAmount = item.TotalModifierAmount ?? 0
+                    Modifiers = item.OrderedItemModifierMappings.Select(m => new ModifyViewModel
+                    {
+                        Name = m.Modifier.Name,
+                        QuantityOfModifier = m.QuantityOfModifier,
+                        ModifiersPrice = m.RateOfModifier ?? 0,
+                        TotalModifierAmount = m.TotalAmount ?? 0
+                    }).ToList()
                 }).ToList(),
                 SubTotal = order.SubTotal ?? 0,
                 CGST = order.OrderTaxMappings.Where(t => t.Tax.Name == "CGST").Sum(t => t.TaxValue ?? 0),

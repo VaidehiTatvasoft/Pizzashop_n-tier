@@ -14,6 +14,7 @@ public class MenuItemViewModel
     [Range(1, int.MaxValue, ErrorMessage = "Please select a valid category.")]
     public int CategoryId { get; set; }
 
+    [Required(ErrorMessage = "Type is required.")]
     public bool? Type { get; set; }
 
     [Range(0.01, double.MaxValue, ErrorMessage = "Rate must be greater than 0.")]
@@ -22,9 +23,10 @@ public class MenuItemViewModel
     [Range(0, int.MaxValue, ErrorMessage = "Quantity cannot be negative.")]
     public int? Quantity { get; set; }
 
+    [Required(ErrorMessage = "Unit is required.")]
     public int UnitId { get; set; }
 
-    public bool? IsAvailable { get; set; }
+    public bool IsAvailable { get; set; }
 
     public bool IsFavourite { get; set; } 
 
@@ -46,5 +48,4 @@ public class MenuItemViewModel
 
     public string? RemovedGroups { get; set; }
     public string? Image { get; set; }
-
 }

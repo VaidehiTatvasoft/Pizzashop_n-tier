@@ -556,3 +556,5 @@ C:\Users\patel\pizzashop\Pizzashop_n-tier\Web\bin\Debug\net7.0\ExcelNumberFormat
 C:\Users\patel\pizzashop\Pizzashop_n-tier\Web\bin\Debug\net7.0\RBush.dll
 C:\Users\patel\pizzashop\Pizzashop_n-tier\Web\bin\Debug\net7.0\SixLabors.Fonts.dll
 C:\Users\patel\pizzashop\Pizzashop_n-tier\Web\bin\Debug\net7.0\System.IO.Packaging.dll
+D:\Project_pce54\Pizzashop_n-tier\Web\bin\Debug\net7.0\DinkToPdf.dll
+D:\Project_pce54\Pizzashop_n-tier\Web\obj\Debug\net7.0\Web.MvcApplicationPartsAssemblyInfo.cs
