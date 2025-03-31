@@ -245,9 +245,6 @@
                     },
                     success: function (result) {
                         $('.bg-light.rounded.shadow').html($(result).find('.bg-light.rounded.shadow').html());
-                    },
-                    error: function (xhr, status, error) {
-                        console.error(error);
                     }
                 });
             });

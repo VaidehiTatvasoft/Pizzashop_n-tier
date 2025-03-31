@@ -39,14 +39,9 @@ namespace Entity.Middleware
                                 rp.CanDelete
                             })
                             .ToListAsync();
-
-                        _logger.LogInformation($"Retrieved Role Permissions: {string.Join(", ", rolePermissions.Select(rp => $"Permission ID: {rp.PermissionId}, CanView: {rp.CanView}, CanEdit: {rp.CanEdit}, CanDelete: {rp.CanDelete}"))}");
-
                         var permissions = new HashSet<RolePermissionEnum.Permission>(); // Use HashSet to avoid duplicates
                         foreach(var rp in rolePermissions)
                         {
-                            _logger.LogInformation($"Role ID: {roleId}, Permission ID: {rp.PermissionId}, CanView: {rp.CanView}, CanEdit: {rp.CanEdit}, CanDelete: {rp.CanDelete}");
-
                             if (rp.CanView)
                             {
                                                                 // permissions.Add((RolePermissionEnum.Permission)rp.PermissionId);
@@ -75,10 +70,8 @@ namespace Entity.Middleware
                                         permissions.Add(RolePermissionEnum.Permission.Customers_CanView);
                                         break;
                                     default:
-                                        _logger.LogWarning($"Unknown PermissionId for CanView: {rp.PermissionId}");
                                         break;
                                 }
-                                _logger.LogInformation($"Added View Permission: {(RolePermissionEnum.Permission)rp.PermissionId}");
                             }
                             if (rp.CanEdit)
                             {
@@ -106,10 +99,8 @@ namespace Entity.Middleware
                                         permissions.Add(RolePermissionEnum.Permission.Customers_CanEdit);
                                         break;
                                     default:
-                                        _logger.LogWarning($"Unknown PermissionId for CanEdit: {rp.PermissionId}");
                                         break;
                                 }
-                                _logger.LogInformation($"Added Edit Permission: {(RolePermissionEnum.Permission)rp.PermissionId}");
                             }
                             if (rp.CanDelete)
                             {
@@ -137,16 +128,10 @@ namespace Entity.Middleware
                                         permissions.Add(RolePermissionEnum.Permission.Customers_CanDelete);
                                         break;
                                     default:
-                                        _logger.LogWarning($"Unknown PermissionId for CanDelete: {rp.PermissionId}");
                                         break;
                                 }
-                                _logger.LogInformation($"Added Delete Permission: {(RolePermissionEnum.Permission)rp.PermissionId}");
                             }
                         }
-
-                        // Logging the role ID and permissions
-                        _logger.LogInformation($"Final Permissions for Role ID: {roleId}: {string.Join(", ", permissions)}");
-
                         context.Items["Permissions"] = permissions;
                     }
                 }

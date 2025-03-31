@@ -1,6 +1,7 @@
 using System.Text;
 using Entity.Data;
 using Entity.Middleware;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -58,6 +59,10 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
 app.UseStatusCodePages(async context =>
 {
     if (context.HttpContext.Response.StatusCode == 404)
@@ -73,8 +78,6 @@ app.UseStatusCodePages(async context =>
         context.HttpContext.Response.Redirect("/Home/Forbidden");
     }
 });
-app.UseHttpsRedirection();
-app.UseStaticFiles();
 
 app.UseRouting();
 

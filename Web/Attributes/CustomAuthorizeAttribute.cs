@@ -32,12 +32,11 @@ namespace Web.Attributes
             var roleClaim = user.FindFirst(System.Security.Claims.ClaimTypes.Role);
             if (roleClaim == null || !int.TryParse(roleClaim.Value, out int userRoleId) || userRoleId != _requiredRoleId)
             {
-                context.Result = new ForbidResult();
+                context.Result = new RedirectToActionResult("Forbidden", "Home", null);
                 return;
             }
 
             var userPermissions = context.HttpContext.Items["Permissions"] as HashSet<RolePermissionEnum.Permission>;
-   
             if (userPermissions == null || !userPermissions.Contains(_requiredPermission))
             {
                 context.HttpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
@@ -48,16 +47,8 @@ namespace Web.Attributes
                 }
                 else
                 {
-                    var refererUrl = context.HttpContext.Request.Headers["Referer"].ToString();
-                    if (!string.IsNullOrEmpty(refererUrl))
-                    {
-                        var tempData = _tempDataDictionaryFactory.GetTempData(context.HttpContext);
-                        tempData["ErrorMessage"] = "You are not authorized to access this page.";
-                        context.HttpContext.Response.Redirect(refererUrl);
-                    }
+                    return Forbid("You are not authorized to access this resource.");
                 }
-                // context.Result = new ForbidResult();
-
                 return;
             }
         }

@@ -29,7 +29,6 @@ namespace pizzashop.Controllers
             _accountService = accountService;
         }
 
-        [Authorize(Roles = "1")]
         [HttpGet]
         public async Task<IActionResult> GetProfileImage()
         {
@@ -43,9 +42,7 @@ namespace pizzashop.Controllers
             return Json(new { profileImgPath = profileImagePath ?? "Default_pfp.svg.png" });
         }
 
-        // [CustomAuthorize(1, RolePermissionEnum.Permission.CanEdit)]
-        [CustomAuthorize(1, RolePermissionEnum.Permission.Users_CanView)]
-
+        [CustomAuthorize(1, RolePermissionEnum.Permission.Users_CanEdit)]
         [Route("/adduser")]
         [HttpGet]
         public async Task<IActionResult> AddUser()
@@ -147,8 +144,7 @@ namespace pizzashop.Controllers
             return View(model);
         }
         // [CustomAuthorize(1, RolePermissionEnum.Permission.CanEdit)]
-        [CustomAuthorize(1, RolePermissionEnum.Permission.Users_CanView)]
-
+        [CustomAuthorize(1, RolePermissionEnum.Permission.Users_CanEdit)]
         [Route("/user/edituser")]
         [HttpGet]
         public async Task<IActionResult> EditUser(int id)
@@ -161,7 +157,6 @@ namespace pizzashop.Controllers
             await LoadDropdowns(user);
             return View(user);
         }
-        [CustomAuthorize(1, RolePermissionEnum.Permission.Users_CanEdit)]
         [Route("/user/edituser")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -250,7 +245,6 @@ namespace pizzashop.Controllers
 
         // [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)]
         [CustomAuthorize(1, RolePermissionEnum.Permission.Users_CanView)]
-
         [Route("/user/list")]
         public IActionResult UserList(string searchString, int pageIndex = 1, int pageSize = 5, string sortOrder = "", bool isAjax = false)
         {

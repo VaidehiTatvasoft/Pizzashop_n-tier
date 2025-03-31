@@ -20,8 +20,7 @@ public class RolePermissionController : Controller
         _rolePermission = rolePermission;
     }
     // [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)]
-            [CustomAuthorize(1,RolePermissionEnum.Permission.RolesAndPermissions_CanView)]
-
+    [CustomAuthorize(1,RolePermissionEnum.Permission.RolesAndPermissions_CanView)]
     [Route("/roles")]
     [HttpGet]
     public async Task<IActionResult> Role()
@@ -30,8 +29,7 @@ public class RolePermissionController : Controller
         return View(roles);
     }
     // [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)]
-            [CustomAuthorize(1,RolePermissionEnum.Permission.RolesAndPermissions_CanView)]
-
+    [CustomAuthorize(1,RolePermissionEnum.Permission.RolesAndPermissions_CanView)]
     [Route("/permission")]
     [HttpGet]
     public IActionResult Permission(int id)
@@ -47,8 +45,7 @@ public class RolePermissionController : Controller
         return RedirectToAction("Permission");
     }
     //  [CustomAuthorize(1, RolePermissionEnum.Permission.CanEdit)]
-            [CustomAuthorize(1,RolePermissionEnum.Permission.RolesAndPermissions_CanEdit)]
-
+    [CustomAuthorize(1,RolePermissionEnum.Permission.RolesAndPermissions_CanEdit)]
     [Route("/permission")]
     [HttpPost]
     public async Task<IActionResult> Permission(List<RolePermissionViewModel> model)

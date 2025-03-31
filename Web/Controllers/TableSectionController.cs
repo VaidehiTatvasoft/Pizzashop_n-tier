@@ -18,7 +18,7 @@ public class TableSectionController : Controller
         _tableService = tableService;
         _sectionService = sectionService;
     }
-                [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanView)]
+    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanView)]
     [HttpGet]
     public IActionResult TableSection(int? id, int pageSize = 5, int pageIndex = 1, string searchString = "")
     {
@@ -63,8 +63,7 @@ public class TableSectionController : Controller
         var sections = _sectionService.GetAllSections();
         return PartialView("_SectionList", sections);
     }
-                [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanView)]
-
+    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanEdit)]
     [HttpGet]
     public IActionResult AddNewTable()
     {
@@ -102,8 +101,7 @@ public class TableSectionController : Controller
             return Json(new { success = false, message = errorMessage });
         }
     }
-                [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanDelete)]
-
+    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanDelete)]
     [HttpPost]
     public async Task<IActionResult>? DeleteTable(int id)
     {
@@ -119,12 +117,10 @@ public class TableSectionController : Controller
             return Json(new { isSuccess = false, message = "Error While Delete Table. Please Try again!" });
         }
     }
-                [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanDelete)]
-
+    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanDelete)]
     [HttpPost]
     public async Task<IActionResult>? MultiDeleteTable(int[] itemIds)
     {
-
         try
         {
             var isDeleted = _tableService.MultiDeleteTable(itemIds, User);
@@ -137,8 +133,7 @@ public class TableSectionController : Controller
             return Json(new { isSuccess = false, message = "Error While Delete Table. Please Try again!" });
         }
     }
-                [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanView)]
-
+    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanEdit)]
     [HttpGet]
     public async Task<IActionResult> EditTable(int id)
     {
@@ -177,8 +172,7 @@ public class TableSectionController : Controller
             return Json(new { success = false, message = errorMessage });
         }
     }
-                [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanView)]
-
+    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanEdit)]
     [HttpGet]
     public async Task<IActionResult> AddEditSection(int? id)
     {
@@ -212,8 +206,7 @@ public class TableSectionController : Controller
             return Json(new { success = false, message = ex.Message });
         }
     }
-                [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanDelete)]
-
+    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanDelete)]
     [HttpPost]
     public async Task<IActionResult> DeleteSection(int id, bool softDelete = true)
     {

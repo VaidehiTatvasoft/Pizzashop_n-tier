@@ -43,7 +43,7 @@ namespace Web.Controllers
         }
 
         // [CustomAuthorize(1, RolePermissionEnum.Permission.CanEdit)]
-        [CustomAuthorize(1,RolePermissionEnum.Permission.Menu_CanView)]
+        [CustomAuthorize(1,RolePermissionEnum.Permission.Menu_CanEdit)]
         [HttpGet]
         public IActionResult AddCategory()
         {
@@ -308,7 +308,7 @@ namespace Web.Controllers
             }
         }
         // [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)]
-                [CustomAuthorize(1,RolePermissionEnum.Permission.Menu_CanView)]
+        [CustomAuthorize(1,RolePermissionEnum.Permission.Menu_CanView)]
         [HttpGet]
         public async Task<IActionResult> SelectedModifiers(int groupId)
         {
