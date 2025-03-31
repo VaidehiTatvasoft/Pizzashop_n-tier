@@ -13,7 +13,8 @@
     </div>
 </div>
 <div class="shadow card container-fluid bg-light shadow pt-4">
-    <form asp-controller="User" asp-action="EditUser" method="post" class="row needs-validation mt-1 mb-3 mx-2" enctype="multipart/form-data" id="editUserForm">
+    <form asp-controller="User" asp-action="EditUser" method="post" class="row needs-validation mt-1 mb-3 mx-2"
+        enctype="multipart/form-data" id="editUserForm">
         <input type="hidden" asp-for="Id">
         <div class="row">
             <div class="col-md-6">
@@ -42,7 +43,8 @@
             </div>
             <div class="col-md-6">
                 <div class="form-floating">
-                    <select id="RoleId" name="RoleId" class="form-select" asp-items="ViewBag.Roles" asp-for="RoleId"></select>
+                    <select id="RoleId" name="RoleId" class="form-select" asp-items="ViewBag.Roles"
+                        asp-for="RoleId"></select>
                     <label for="RoleId">Role*</label>
                 </div>
                 <span class="text-danger fs-6 ms-2" asp-validation-for="RoleId" class="text-danger"></span>
@@ -76,7 +78,8 @@
                     <i class="fa-solid fa-cloud-arrow-up"></i>
                     <h5>Upload</h5>
                 </label>
-                <input asp-for="ProfileImage" type="file" id="ProfileImage" accept="image/*" class="file-upload-input" onchange="showFileName()">
+                <input asp-for="ProfileImage" type="file" id="ProfileImage" accept="image/*" class="file-upload-input"
+                    onchange="showFileName()">
                 <span class="file-upload-name" id="file-upload-name"></span>
                 <span class="text-danger fs-6 ms-2" asp-validation-for="ProfileImage" class="text-danger"></span>
             </div>
@@ -85,17 +88,20 @@
         <br>
         <div class="row">
             <div class="form-floating col-md-4 mb-3">
-                <select id="CountryId" name="CountryId" class="form-select" asp-for="CountryId" asp-items="ViewBag.Countries"></select>
+                <select id="CountryId" name="CountryId" class="form-select" asp-for="CountryId"
+                    asp-items="ViewBag.Countries"></select>
                 <label for="CountryId" class="float">Country*</label>
                 <span asp-validation-for="CountryId" class="text-danger"></span>
             </div>
             <div class="form-floating col-md-4 mb-3">
-                <select id="StateId" name="StateId" class="form-select" asp-items="ViewBag.States" asp-for="StateId"></select>
+                <select id="StateId" name="StateId" class="form-select" asp-items="ViewBag.States"
+                    asp-for="StateId"></select>
                 <label for="StateId" class="float">State*</label>
                 <span asp-validation-for="StateId" class="text-danger"></span>
             </div>
             <div class="form-floating col-md-4 mb-3">
-                <select id="CityId" name="CityId" class="form-select" asp-items="ViewBag.Cities" asp-for="CityId"></select>
+                <select id="CityId" name="CityId" class="form-select" asp-items="ViewBag.Cities"
+                    asp-for="CityId"></select>
                 <label for="CityId" class="float">City*</label>
                 <span asp-validation-for="CityId" class="text-danger"></span>
             </div>
@@ -129,7 +135,6 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            
             $("#CountryId").change(function () {
                 var countryId = $(this).val();
                 if (countryId) {
@@ -144,7 +149,8 @@
                             $.each(data, function (i, state) {
                                 stateDropdown.append('<option value="' + state.id + '">' + state.name + '</option>');
                             });
-                        }
+                        },
+                        error: handleAjaxError
                     });
                 }
             });
@@ -163,7 +169,8 @@
                             $.each(data, function (i, city) {
                                 cityDropdown.append('<option value="' + city.id + '">' + city.name + '</option>');
                             });
-                        }
+                        },
+                        error: handleAjaxError
                     });
                 }
             });
@@ -179,20 +186,7 @@
                     });
                 }
             });
-        });
-        function showFileName() {
-            var input = document.getElementById('ProfileImage');
-            var fileNameSpan = document.getElementById('file-upload-name');
-            if (input.files && input.files[0]) {
-                fileNameSpan.textContent = input.files[0].name;
-                fileNameSpan.style.display = 'block';
-            } else {
-                fileNameSpan.style.display = 'none';
-            }
-        }
-    </script>
-    <script>
-                 $(document).ready(function () {
+
             var successMessage = '@TempData["SuccessMessage"]';
             var errorMessage = '@TempData["ErrorMessage"]';
 
@@ -203,5 +197,27 @@
                 toastr.error(errorMessage);
             }
         });
+
+        function handleAjaxError(xhr, status, error) {
+            if (xhr.status === 401) {
+                toastr.error("You are not authenticated. Please log in.");
+            } else if (xhr.status === 403) {
+                toastr.error(xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : "You are not authorized to perform this action.");
+            } else {
+                toastr.error("An error occurred while processing your request. Please try again.");
+                console.error("Error details:", status, error, xhr.responseText);
+            }
+        }
+
+        function showFileName() {
+            var input = document.getElementById('ProfileImage');
+            var fileNameSpan = document.getElementById('file-upload-name');
+            if (input.files && input.files[0]) {
+                fileNameSpan.textContent = input.files[0].name;
+                fileNameSpan.style.display = 'block';
+            } else {
+                fileNameSpan.style.display = 'none';
+            }
+        }
     </script>
 }

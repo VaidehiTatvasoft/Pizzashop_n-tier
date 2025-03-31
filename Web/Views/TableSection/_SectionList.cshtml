@@ -3,10 +3,11 @@
 <div class="section-list">
     @for (var i = 0; i < Model.Count; i++)
     {
-        <div class="d-flex flex-wrap justify-content-between align-items-center item-category-btn p-2 my-2 section category-link"
-            data-id="@Model[i].Id">
+        var isActive = i == 0 ? "active" : ""; 
+        <div class="d-flex flex-wrap justify-content-between align-items-center item-category-btn p-2 my-2 section category-link @isActive"
+            data-id="@Model[i].Id" onclick="selectSection(this)">
             <div class="category-btn border-0 bg-light">
-                <h6 class="mb-0">
+                <h6 class="mb-0" style="color: grey;">
                     <i class="fa-solid fa-grip-vertical"></i>
                     @Model[i].Name
                 </h6>
@@ -55,10 +56,12 @@
 <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     var deleteSectionId;
+
     $(document).on('click', '.delete-section', function () {
         deleteSectionId = $(this).data("id");
         $('#deleteSectionModal').modal('show');
     });
+
     $('#deleteSectionBtn').click(function () {
         $.ajax({
             url: '/TableSection/DeleteSection',
@@ -68,8 +71,7 @@
                 if (response == null) {
                     window.location.href = "/Auth/Login";
                     toastr.error("Your Session is Expired. Please Login Again!");
-                }
-                else if (response.isSuccess) {
+                } else if (response.isSuccess) {
                     GetFilteredSections();
                     toastr.success(response.message);
                 } else {
@@ -77,17 +79,35 @@
                 }
                 $("#deleteSectionModal").remove();
                 $('.modal-backdrop').remove();
-            }
+            },
+            error: handleAjaxError
+        });
     });
+
     function GetFilteredSections() {
         $.ajax({
             url: "/TableSection/GetAllSectionsForFilter",
             type: "GET",
             success: function (data) {
                 $("#sectionList").html(data);
-            }
+            },
+            error: handleAjaxError
         });
     }
-        });
 
+    function handleAjaxError(xhr, status, error) {
+        if (xhr.status === 401) {
+            toastr.error("You are not authenticated. Please log in.");
+        } else if (xhr.status === 403) {
+            toastr.error(xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : "You are not authorized to perform this action.");
+        } else {
+            toastr.error("An error occurred while processing your request. Please try again.");
+            console.error("Error details:", status, error, xhr.responseText);
+        }
+    }
+
+    function selectSection(element) {
+        $('.section').removeClass('active'); 
+        $(element).addClass('active'); 
+    }
 </script>

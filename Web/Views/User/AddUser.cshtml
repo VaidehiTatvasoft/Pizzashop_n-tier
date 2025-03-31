@@ -79,7 +79,7 @@
                     <i class="fa-solid fa-cloud-arrow-up"></i>
                     <h5>Upload</h5>
                 </label>
-                <input asp-for="ProfileImage" type="file" id="ProfileImage" accept="image/*"class="file-upload-input"
+                <input asp-for="ProfileImage" type="file" id="ProfileImage" accept="image/*" class="file-upload-input"
                     onchange="showFileName()">
                 <span class="file-upload-name" id="file-upload-name"></span>
                 <span class="text-danger fs-6 ms-2" asp-validation-for="ProfileImage"></span>
@@ -88,7 +88,7 @@
         <br>
         <div class="row">
             <div class="form-floating col-md-4  mb-3">
-                <select id="CountryId" asp-for="CountryId" asp-items="ViewBag.Countries"class="form-select">
+                <select id="CountryId" asp-for="CountryId" asp-items="ViewBag.Countries" class="form-select">
                     <option value="">Select Country</option>
                 </select>
                 <label for="CountryId" class="float">Country*</label>
@@ -153,7 +153,8 @@
                             $.each(data, function (i, state) {
                                 stateDropdown.append('<option value="' + state.id + '">' + state.name + '</option>');
                             });
-                        }
+                        },
+                        error: handleAjaxError
                     });
                 }
             });
@@ -172,10 +173,12 @@
                             $.each(data, function (i, city) {
                                 cityDropdown.append('<option value="' + city.id + '">' + city.name + '</option>');
                             });
-                        }
+                        },
+                        error: handleAjaxError
                     });
                 }
             });
+
             var successMessage = '@TempData["SuccessMessage"]';
             var errorMessage = '@TempData["ErrorMessage"]';
 
@@ -192,6 +195,17 @@
                 }
             });
         });
+
+        function handleAjaxError(xhr, status, error) {
+            if (xhr.status === 401) {
+                toastr.error("You are not authenticated. Please log in.");
+            } else if (xhr.status === 403) {
+                toastr.error(xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : "You are not authorized to perform this action.");
+            } else {
+                toastr.error("An error occurred while processing your request. Please try again.");
+                console.error("Error details:", status, error, xhr.responseText);
+            }
+        }
 
         function showFileName() {
             var input = document.getElementById('ProfileImage');

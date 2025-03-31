@@ -16,9 +16,10 @@
                     <i class="fa-solid fa-magnifying-glass search-btn"></i>
                 </div>
 
-                <a href="javascript:void(0);" class="btn btn-primary add-tax-btn" data-bs-toggle="modal" data-bs-target="#taxModal">
-                        <span class="part-1"><i class="fa-solid fa-plus"></i></span>
-                        <span class="part-2">New Tax</span>
+                <a href="javascript:void(0);" class="btn btn-primary add-tax-btn" data-bs-toggle="modal"
+                    data-bs-target="#taxModal">
+                    <span class="part-1"><i class="fa-solid fa-plus"></i></span>
+                    <span class="part-2">New Tax</span>
                 </a>
 
                 <div class="modal fade" id="taxModal" tabindex="-1" aria-labelledby="taxModalLabel" aria-hidden="true">
@@ -35,7 +36,7 @@
         @Html.Partial("_TaxTablePartial", Model)
     </div>
 
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -83,10 +84,7 @@
                         success: function (data) {
                             $('#taxList').html(data);
                         },
-                        error: function (xhr, status, error) {
-                            toastr.error("Failed to search taxes.");
-                            console.error("Error details:", status, error, xhr.responseText);
-                        }
+                        error: handleAjaxError
                     });
                 });
 
@@ -100,10 +98,7 @@
                         $("#taxModal").find('.modal-content').html(data);
                         $('#taxModal').modal('show');
                     },
-                    error: function (xhr, status, error) {
-                        alert("Failed to load Tax form.");
-                        console.error("Error details:", status, error, xhr.responseText);
-                    }
+                    error: handleAjaxError
                 });
             });
 
@@ -118,10 +113,7 @@
                         $("#taxModal").find('.modal-content').html(data);
                         $('#taxModal').modal('show');
                     },
-                    error: function (xhr, status, error) {
-                        alert("Failed to load tax details.");
-                        console.error("Error: " + error);
-                    }
+                    error: handleAjaxError
                 });
             });
 
@@ -136,15 +128,13 @@
                         if (response.success) {
                             toastr.success(response.message);
                             $('#taxModal').modal('hide');
-                             addTaxToTable(response.taxId, form.serializeArray());
+                            addTaxToTable(response.taxId, form.serializeArray());
                         } else {
                             $("#taxModal").find('.modal-content').html(response);
                         }
                     },
-                    error: function (xhr, status, error) {
-                        $("#taxModal").find('.modal-content').html(xhr.responseText);
-                        toastr.error("A Tax with this name already exists");
-                    }
+                    error: handleAjaxError
+                    
                 });
             });
 
@@ -162,15 +152,23 @@
                             toastr.success("Tax deleted successfully.");
                             $('tr[data-id="' + taxId + '"]').remove();
                         },
-                        error: function (xhr, status, error) {
-                            modal.hide();
-                            toastr.error("Failed to delete tax.");
-                            console.error("Error details:", status, error, xhr.responseText);
-                        }
+                        error: handleAjaxError
                     });
                 };
                 modal.show();
             };
+
+            function handleAjaxError(xhr, status, error) {
+                if (xhr.status === 401) {
+                    toastr.error("You are not authenticated. Please log in.");
+                } else if (xhr.status === 403) {
+                    toastr.error(xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : "You are not authorized to perform this action.");
+                    $('.modal-backdrop').remove();
+                } else {
+                    toastr.error("An error occurred while processing your request. Please try again.");
+                    console.error("Error details:", status, error, xhr.responseText);
+                }
+            }
         });
     </script>
 }

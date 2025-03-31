@@ -4,14 +4,14 @@
 @model Entity.ViewModel.TableSectionViewModel;
 
 <div class="col-12">
-    <h1 class="title">Sections / Tables</h1>
+    <h2 style="color: #0066A7;">Sections / Tables</h2>
     <section>
         <div class="row mx-0">
-            <aside class="col-md-3" style="background-color: #f5f5f5">
+            <aside class="col-md-2 " style="background-image: linear-gradient(to right, white, #f2f2f2);">
                 <!-- Section header -->
-                <div class="d-flex flex-wrap justify-content-between align-items-center p-2">
-                    <h5 class="section-heading">Sections</h5>
-                    <i class="cat-i fa-regular fa-square-plus" data-bs-toggle="modal" data-bs-target="#sectionModal"
+                <div class="d-flex flex-wrap justify-content-between align-items-center p-3" style="color: #0066A7;">
+                    <h5>Sections</h5>
+                    <i class="cat-i fa-regular fa-square-plus" style="height: 30px; width:30px;" data-bs-toggle="modal" data-bs-target="#sectionModal"
                         onclick="openAddEditModal(0)"></i>
                 </div>
                 <div id="sectionList">
@@ -23,15 +23,13 @@
                     <!-- table header -->
                     <h5 class="p-2 mb-0 section-heading">Tables</h5>
                     <div class="d-flex justify-content-end align-items-center mb-3">
-                        <div class="form-input-div d-flex justify-content-between me-3 position-relative">
-                            <input type="text" placeholder="Search" class="form-control p-2 d-none d-sm-block "
-                                name="search" minlength="5" required id="searchString" />
-                            <span class="form-input-icon position-absolute search-icon"><i class="fa-solid fa-search"
-                                    id="eye-icon" style="color: gray"></i>
-                            </span>
+                        <div class="d-flex justify-content-between me-3 position-relative">
+                            <input type="text" placeholder="Search" class="p-2 d-none d-sm-block "
+                                name="search" id="searchString"/>
+                            @* <i class="fa-solid fa-magnifying-glass search-btn"></i> *@
                         </div>
                         <button class="btn btn-outline-secondary me-3" id="multiDeleteTableBtn">
-                            <i class="bi bi-trash m-1"></i> 
+                            <i class="bi bi-trash m-1"></i>
                         </button>
                         <button class="fill-btn addTableBtn">
                             <i class="fa-solid fa-plus"></i> New Table
@@ -56,8 +54,7 @@
                     $('#modalContent').html(data);
                     $('#sectionModal').modal('show');
                 }).fail(function (jqXHR, textStatus, errorThrown) {
-                    console.error("Request failed: " + textStatus + ", " + errorThrown);
-                    toastr.error("Failed to load section form. Please try again.");
+                    handleAjaxError(jqXHR, textStatus, errorThrown, "Failed to load section form. Please try again.");
                 });
             }
 
@@ -83,9 +80,8 @@
                             $('#modalContent').html(response.html);
                         }
                     },
-                    error: function (xhr, status, error) {
-                        console.error("An error occurred: " + error);
-                        toastr.error("An error occurred. Please try again.");
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        handleAjaxError(jqXHR, textStatus, errorThrown, "An error occurred. Please try again.");
                     }
                 });
             });
@@ -97,9 +93,8 @@
                     success: function (data) {
                         $("#sectionList").html(data);
                     },
-                    error: function (xhr, status, error) {
-                        console.error("An error occurred while fetching the sections: " + error);
-                        toastr.error("An error occurred while fetching the sections. Please try again.");
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        handleAjaxError(jqXHR, textStatus, errorThrown, "An error occurred while fetching the sections. Please try again.");
                     }
                 });
             }
@@ -110,8 +105,11 @@
                     console.log("Add data")
                     $("#AddTablePartial").html(data);
                     $("#addTableModal").modal('show');
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    handleAjaxError(jqXHR, textStatus, errorThrown, "Failed to load table form. Please try again.");
                 });
             });
+
             $(document).on('submit', "#addNewTableForm", function (event) {
                 var tableId = $(this).data("id");
                 event.preventDefault();
@@ -129,31 +127,41 @@
                             toastr.error(response.message);
                         }
                         $("#addTableModal").modal('hide');
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        handleAjaxError(jqXHR, textStatus, errorThrown, "An error occurred. Please try again.");
                     }
                 });
             });
+
             $(document).on("click", ".editTableBtn", function () {
                 var tableId = $(this).data("id");
                 $.get('@Url.Action("EditTable", "TableSection")', { id: tableId }, function (data) {
                     $("#AddTablePartial").html(data);
                     $("#addNewTableForm").data("id", tableId);
                     $("#addTableModal").modal("show");
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    handleAjaxError(jqXHR, textStatus, errorThrown, "Failed to load table details. Please try again.");
                 });
             });
+
             var debounce;
             var ajaxRequest;
             $(document).on('click', '.section', function () {
                 sectionId = $(this).data("id");
-                var sectionId = $(this).data("id");
                 $.ajax({
                     url: '/TableSection/GetTablesBySectionId',
                     type: 'GET',
                     data: { sectionId: sectionId, pageSize: @Model.PageSize, pageIndex: @Model.PageIndex, searchString: "" },
                     success: function (response) {
                         $("#tableList").html(response);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        handleAjaxError(jqXHR, textStatus, errorThrown, "Failed to load tables. Please try again.");
                     }
                 });
             });
+
             var pageIndex = @Model.PageIndex;
             function GetFilteredItems() {
                 var SearchString = $("#searchString").val();
@@ -173,17 +181,33 @@
                     },
                     success: function (data) {
                         $("#tableList").html(data);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        handleAjaxError(jqXHR, textStatus, errorThrown, "Failed to load tables. Please try again.");
                     }
                 });
             }
+
             $('#searchString').keyup(function () {
                 clearTimeout(debounce);
-                pageIndex = 1
+                pageIndex = 1;
                 pageSize = @Model.PageSize;
                 debounce = setTimeout(() => {
                     GetFilteredItems();
                 }, 600);
             });
+
+            function handleAjaxError(xhr, Status, error) {
+                if (xhr.status === 401) {
+                    toastr.error("You are not authenticated. Please log in.");
+                } else if (xhr.status === 403) {
+                    toastr.error(xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : "You are not authorized to perform this action.");
+                    $('.modal-backdrop').remove();
+                } else {
+                    toastr.error("An error occurred while processing your request. Please try again.");
+                    console.error("Error details:", status, error, xhr.responseText);
+                }
+            }
         });
     </script>
 }

@@ -47,7 +47,7 @@ namespace Web.Attributes
                 }
                 else
                 {
-                    return Forbid("You are not authorized to access this resource.");
+                    context.Result = new StatusCodeResult(StatusCodes.Status403Forbidden);
                 }
                 return;
             }

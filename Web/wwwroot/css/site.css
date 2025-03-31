@@ -234,6 +234,7 @@ body {
   margin-top:18px;
   margin-left: -32px;
   cursor: pointer;
+  border-radius: 5px;
 }
 .eye-icon{
   color:grey;
@@ -348,7 +349,16 @@ left:auto;
   color: gray !important;
   padding: 15px;
 }
-
+.tables td{
+  justify-content: center !important;
+  align-items: center !important;
+  color: gray !important;
+  padding: 10px;
+}
+.tables th{
+  justify-content: center;
+  color: gray !important;
+}
 .table td{
   justify-content: center;
   color: gray !important;
@@ -377,6 +387,28 @@ left:auto;
   border-radius: 22px;
   border: none;
 
+}
+.available, .occupied {
+  width: 75px;
+  font: normal normal normal 15px/20px Roboto;
+  letter-spacing: 0px;
+  border-radius: 22px;
+  border: none;
+  text-align: center;
+  padding: 5px 0;
+}
+
+.available {
+  background: #a0d66d;
+  color: #f7f8bd;
+}
+
+.occupied {
+  background: #555555;
+  color: #ffffff; 
+}
+.name-column {
+  width: 45%;
 }
 .box{
   border-radius:0px !important;
@@ -609,4 +641,22 @@ a i {
   .sort-icon {
       display: inline;
   }
+}
+@media (max-width: 425px) {
+  .search-box {
+    width: 95%;
+    margin-right: 0;
+  }
+
+  #searchInput {
+    width: 95%;
+  }
+}
+.section.active {
+  background-color:transparent;
+  color: #0066A7;
+}
+.category-link.active {
+  background-color:transparent;
+  color: #0066A7 !important;
 }

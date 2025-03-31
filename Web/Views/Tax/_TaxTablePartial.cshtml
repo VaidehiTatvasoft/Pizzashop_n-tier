@@ -19,53 +19,53 @@
                         <td style="font-size: 16px;"><b>@Html.DisplayFor(modelItem => tax.Name)</b></td>
                         <td style="font-size: 16px;">
                             <b>
-                            @if (tax.Type == true)
-                            {
-                                <p style="margin: 0;">Percentage</p>
-                            }
-                            else
-                            {
-                                <p style="margin: 0;">Flat Amount</p>
-                            }
+                                @if (tax.Type == true)
+                                {
+                                    <p style="margin: 0;">Percentage</p>
+                                }
+                                else
+                                {
+                                    <p style="margin: 0;">Flat Amount</p>
+                                }
                             </b>
                         </td>
                         <td style="font-size: 16px;">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" style="height: 30px; width: 50px;" id="flexSwitchCheckChecked"
-                                       @(tax.IsActive == true ? "checked" : "")>
+                                <input class="form-check-input" type="checkbox" style="height: 30px; width: 50px;"
+                                    id="flexSwitchCheckChecked" @(tax.IsActive == true ? "checked" : "")>
                             </div>
                         </td>
                         <td style="font-size: 16px;">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" style="height: 30px; width: 50px;" id="flexSwitchCheckChecked"
-                                       @(tax.IsDefault == true ? "checked" : "")>
+                                <input class="form-check-input" type="checkbox" style="height: 30px; width: 50px;"
+                                    id="flexSwitchCheckChecked" @(tax.IsDefault == true ? "checked" : "")>
                             </div>
                         </td>
                         <td style="font-size: 16px;">
-                             <b>
-                            @if (tax.Type == true)
-                            {
-                                @Html.DisplayFor(modelItem => tax.TaxValue)
-                                <span>%</span>
-                            }
-                            else
-                            {
-                                <span>₹</span>
-                                @Html.DisplayFor(modelItem => tax.TaxValue)
-                            }
+                            <b>
+                                @if (tax.Type == true)
+                                {
+                                    @Html.DisplayFor(modelItem => tax.TaxValue)
+                                    <span>%</span>
+                                }
+                                else
+                                {
+                                    <span>₹</span>
+                                    @Html.DisplayFor(modelItem => tax.TaxValue)
+                                }
                             </b>
                         </td>
                         <td style="font-size: 16px;">
-                            <a href="javascript:void(0);" style="text-decoration: none; color: inherit;"
-                               class="edit-tax" data-id="@tax.Id">
+                            <a href="javascript:void(0);" style="text-decoration: none; color: inherit;" class="edit-tax"
+                                data-id="@tax.Id">
                                 <i class="bi bi-pen m-2"></i>
                             </a>
                             <a href="javascript:void(0)" onclick="confirmDelete(@tax.Id)"
-                               style="text-decoration: none; color: inherit;">
+                                style="text-decoration: none; color: inherit;">
                                 <i class="bi bi-trash m-2"></i>
                             </a>
                             <form id="deleteform-@tax.Id" method="post"
-                                  action="@Url.Action("Delete", "Tax", new { id = @tax.Id })" style="display:none;">
+                                action="@Url.Action("Delete", "Tax", new { id = @tax.Id })" style="display:none;">
                                 @Html.AntiForgeryToken()
                             </form>
                         </td>
@@ -82,11 +82,11 @@
             var checkbox = $(this);
             var taxId = checkbox.closest('tr').data('id');
             if (!taxId) {
-                return; 
+                return;
             }
             var isActive = checkbox.closest('tr').find('input[type="checkbox"]').eq(0).is(':checked');
             var isDefault = checkbox.closest('tr').find('input[type="checkbox"]').eq(1).is(':checked');
-            
+
             $.ajax({
                 type: "POST",
                 url: "/tax/updateTaxStatus",
@@ -102,11 +102,19 @@
                         toastr.error(response.message);
                     }
                 },
-                error: function (xhr, status, error) {
-                    toastr.error("Failed to update status.");
-                    console.error("Error details:", status, error, xhr.responseText);
-                }
+                error: handleAjaxError
             });
         });
+
+        function handleAjaxError(xhr, status, error) {
+            if (xhr.status === 401) {
+                toastr.error("You are not authenticated. Please log in.");
+            } else if (xhr.status === 403) {
+                toastr.error(xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : "You are not authorized to perform this action.");
+            } else {
+                toastr.error("An error occurred while processing your request. Please try again.");
+                console.error("Error details:", status, error, xhr.responseText);
+            }
+        }
     });
 </script>

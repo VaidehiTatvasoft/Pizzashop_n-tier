@@ -5,14 +5,16 @@
 }
 <div class="upper-div d-flex justify-content-between row">
     <h2 class="col-xl-3 col-md-2 col-12">Orders</h2>
-    <div class="d-flex row col-xl-8 col-md-9 col-12" style="gap: 10px; justify-content: end;padding-left:15px;padding-right:0px;">
-        <div class="d-flex align-items-center justify-content-center col-xl-7 col-lg-6 col-md-6 col-12" style="gap: 10px;">
+    <div class="d-flex row col-xl-8 col-md-9 col-12"
+        style="gap: 10px; justify-content: end;padding-left:15px;padding-right:0px;">
+        <div class="d-flex align-items-center justify-content-center col-xl-7 col-lg-6 col-md-6 col-12"
+            style="gap: 10px;">
             <div class=" col-xl-6 col-lg-6 col-md-6 col-6">
                 <form method="get">
-                    <input type="text" class="mb-3 col-12" placeholder="Search" id="searchbox"
-                        aria-label="Search" name="searchString" aria-describedby="search-addon"
+                    <input type="text" class="mb-3 col-12" placeholder="Search" id="searchbox" aria-label="Search"
+                        name="searchString" aria-describedby="search-addon"
                         style="height: 50px; border:1px solid #d3d3d3; border-radius: 5%;" />
-                @* <i class="fa-solid fa-magnifying-glass search-btn"></i> *@
+                    @* <i class="fa-solid fa-magnifying-glass search-btn"></i> *@
                 </form>
             </div>
             <div class="col-xl-6 col-lg-6 col-md-6 col-6">
@@ -41,7 +43,8 @@
                 </select>
             </div>
             <div class="col-xl-6 col-lg-6 col-md-6 col-6">
-                <button type="button" class="btn btn-primary mb-3  mr-2 w-100 col-12" onclick="exportOrders()" style="height: 50px;">
+                <button type="button" class="btn btn-primary mb-3  mr-2 w-100 col-12" onclick="exportOrders()"
+                    style="height: 50px;">
                     <span><i class="fa-solid fa-share-from-square me-1"></i></span>
                     <span>Export</span>
                 </button>
@@ -94,6 +97,9 @@
             $('#dateRangeFilter').change(function () {
                 loadOrders(1);
             });
+            $('#fromDate, #toDate').change(function () {
+                loadOrders(1);
+            });
         });
 
         function loadOrders(pageIndex) {
@@ -122,10 +128,7 @@
                     $('#ordersPartial').html(result);
                     $('#pageSizeTable').val(pageSize);
                 },
-                error: function (xhr, status, error) {
-                    console.error(error);
-                    alert("An error occurred while fetching the items. Please try again.");
-                }
+                error: handleAjaxError
             });
         }
 
@@ -171,6 +174,17 @@
             });
 
             window.location.href = '@Url.Action("ExportOrders", "Order")?' + query;
+        }
+
+        function handleAjaxError(xhr, status, error) {
+            if (xhr.status === 401) {
+                toastr.error("You are not authenticated. Please log in.");
+            } else if (xhr.status === 403) {
+                toastr.error(xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : "You are not authorized to perform this action.");
+            } else {
+                toastr.error("An error occurred while processing your request. Please try again.");
+                console.error("Error details:", status, error, xhr.responseText);
+            }
         }
     </script>
     <input type="hidden" id="sortOrder" value="@ViewBag.SortOrder" />
