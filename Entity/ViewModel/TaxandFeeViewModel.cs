@@ -8,6 +8,7 @@ public class TaxandFeeViewModel
 
         [Required(ErrorMessage = "Name is required.")]
         [StringLength(50, ErrorMessage = "Name cannot be longer than 50 characters.")] 
+        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = " Name can only contain alphabets.")]
         public string Name { get; set; }
         [Required(ErrorMessage = "Tax Type is required")]
         public bool? Type { get; set; }
