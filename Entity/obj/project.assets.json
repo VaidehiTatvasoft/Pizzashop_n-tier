@@ -105,28 +105,6 @@
           }
         }
       },
-      "DinkToPdf/1.0.8": {
-        "type": "package",
-        "dependencies": {
-          "NETStandard.Library": "1.6.0",
-          "System.Collections.Concurrent": "4.3.0",
-          "System.Globalization": "4.3.0",
-          "System.Reflection.TypeExtensions": "4.3.0",
-          "System.Runtime": "4.3.0",
-          "System.Runtime.InteropServices": "4.3.0",
-          "System.Threading.Thread": "4.0.0"
-        },
-        "compile": {
-          "lib/netstandard1.6/DinkToPdf.dll": {
-            "related": ".pdb;.xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard1.6/DinkToPdf.dll": {
-            "related": ".pdb;.xml"
-          }
-        }
-      },
       "DocumentFormat.OpenXml/3.1.1": {
         "type": "package",
         "dependencies": {
@@ -2413,18 +2391,6 @@
           }
         }
       },
-      "Rotativa.AspNetCore/1.4.0": {
-        "type": "package",
-        "compile": {
-          "lib/net7.0/Rotativa.AspNetCore.dll": {}
-        },
-        "runtime": {
-          "lib/net7.0/Rotativa.AspNetCore.dll": {}
-        },
-        "frameworkReferences": [
-          "Microsoft.AspNetCore.App"
-        ]
-      },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
         "type": "package",
         "runtimeTargets": {
@@ -3465,7 +3431,7 @@
           "System.Runtime": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.5/System.Reflection.TypeExtensions.dll": {
+          "ref/netstandard1.5/_._": {
             "related": ".xml"
           }
         },
@@ -4104,20 +4070,6 @@
           "lib/netcoreapp2.1/_._": {}
         }
       },
-      "System.Threading.Thread/4.0.0": {
-        "type": "package",
-        "dependencies": {
-          "System.Runtime": "4.1.0"
-        },
-        "compile": {
-          "ref/netstandard1.3/System.Threading.Thread.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard1.3/System.Threading.Thread.dll": {}
-        }
-      },
       "System.Threading.Timer/4.3.0": {
         "type": "package",
         "dependencies": {
@@ -4330,20 +4282,6 @@
         "lib/netstandard2.0/ClosedXML.Parser.xml",
         "lib/netstandard2.1/ClosedXML.Parser.dll",
         "lib/netstandard2.1/ClosedXML.Parser.xml"
-      ]
-    },
-    "DinkToPdf/1.0.8": {
-      "sha512": "wJDlcNXjQ+OnBFwh3LBeAXgrXqlKl0RsgN60XpxEFbyqzdaG9ASb5HTXQjXQPaBguSCOrGZZESPnpcng34TEkw==",
-      "type": "package",
-      "path": "dinktopdf/1.0.8",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "dinktopdf.1.0.8.nupkg.sha512",
-        "dinktopdf.nuspec",
-        "lib/netstandard1.6/DinkToPdf.dll",
-        "lib/netstandard1.6/DinkToPdf.pdb",
-        "lib/netstandard1.6/DinkToPdf.xml"
       ]
     },
     "DocumentFormat.OpenXml/3.1.1": {
@@ -7761,24 +7699,6 @@
         "rbush.4.0.0.nupkg.sha512",
         "rbush.nuspec",
         "readme.md"
-      ]
-    },
-    "Rotativa.AspNetCore/1.4.0": {
-      "sha512": "zn0KgqCQqiTuNPYgeqrIJxXafjJUfDJBcUJIhAV5NgWSCX3DOEeg339zMJTbzcCyoJgGPL5LrG+IKZ3k8/Uk9Q==",
-      "type": "package",
-      "path": "rotativa.aspnetcore/1.4.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "README.md",
-        "lib/net5.0/Rotativa.AspNetCore.dll",
-        "lib/net6.0/Rotativa.AspNetCore.dll",
-        "lib/net7.0/Rotativa.AspNetCore.dll",
-        "lib/net8.0/Rotativa.AspNetCore.dll",
-        "lib/netcoreapp3.1/Rotativa.AspNetCore.dll",
-        "lib/netstandard2.0/Rotativa.AspNetCore.dll",
-        "rotativa.aspnetcore.1.4.0.nupkg.sha512",
-        "rotativa.aspnetcore.nuspec"
       ]
     },
     "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
@@ -11804,46 +11724,6 @@
         "version.txt"
       ]
     },
-    "System.Threading.Thread/4.0.0": {
-      "sha512": "gIdJqDXlOr5W9zeqFErLw3dsOsiShSCYtF9SEHitACycmvNvY8odf9kiKvp6V7aibc8C4HzzNBkWXjyfn7plbQ==",
-      "type": "package",
-      "path": "system.threading.thread/4.0.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "ThirdPartyNotices.txt",
-        "dotnet_library_license.txt",
-        "lib/MonoAndroid10/_._",
-        "lib/MonoTouch10/_._",
-        "lib/net46/System.Threading.Thread.dll",
-        "lib/netcore50/_._",
-        "lib/netstandard1.3/System.Threading.Thread.dll",
-        "lib/xamarinios10/_._",
-        "lib/xamarinmac20/_._",
-        "lib/xamarintvos10/_._",
-        "lib/xamarinwatchos10/_._",
-        "ref/MonoAndroid10/_._",
-        "ref/MonoTouch10/_._",
-        "ref/net46/System.Threading.Thread.dll",
-        "ref/netstandard1.3/System.Threading.Thread.dll",
-        "ref/netstandard1.3/System.Threading.Thread.xml",
-        "ref/netstandard1.3/de/System.Threading.Thread.xml",
-        "ref/netstandard1.3/es/System.Threading.Thread.xml",
-        "ref/netstandard1.3/fr/System.Threading.Thread.xml",
-        "ref/netstandard1.3/it/System.Threading.Thread.xml",
-        "ref/netstandard1.3/ja/System.Threading.Thread.xml",
-        "ref/netstandard1.3/ko/System.Threading.Thread.xml",
-        "ref/netstandard1.3/ru/System.Threading.Thread.xml",
-        "ref/netstandard1.3/zh-hans/System.Threading.Thread.xml",
-        "ref/netstandard1.3/zh-hant/System.Threading.Thread.xml",
-        "ref/xamarinios10/_._",
-        "ref/xamarinmac20/_._",
-        "ref/xamarintvos10/_._",
-        "ref/xamarinwatchos10/_._",
-        "system.threading.thread.4.0.0.nupkg.sha512",
-        "system.threading.thread.nuspec"
-      ]
-    },
     "System.Threading.Timer/4.3.0": {
       "sha512": "Z6YfyYTCg7lOZjJzBjONJTFKGN9/NIYKSxhU5GRd+DTwHSZyvWp1xuI5aR+dLg+ayyC5Xv57KiY4oJ0tMO89fQ==",
       "type": "package",
@@ -12069,7 +11949,6 @@
     "net7.0": [
       "BCrypt.Net-Next >= 4.0.3",
       "ClosedXML >= 0.104.2",
-      "DinkToPdf >= 1.0.8",
       "MailKit >= 4.10.0",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 7.0.7",
       "Microsoft.EntityFrameworkCore.Design >= 7.0.11",
@@ -12078,7 +11957,6 @@
       "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 7.0.10",
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 7.0.11",
       "Npgsql.EntityFrameworkCore.PostgreSQL.Design >= 1.1.0",
-      "Rotativa.AspNetCore >= 1.4.0",
       "System.IdentityModel.Tokens.Jwt >= 8.6.0"
     ]
   },
@@ -12088,11 +11966,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "d:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj",
+      "projectUniqueName": "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj",
       "projectName": "Entity",
-      "projectPath": "d:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj",
+      "projectPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj",
       "packagesPath": "C:\\Users\\pce54\\.nuget\\packages\\",
-      "outputPath": "d:\\Project_pce54\\Pizzashop_n-tier\\Entity\\obj\\",
+      "outputPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\pce54\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -12126,10 +12004,6 @@
           "ClosedXML": {
             "target": "Package",
             "version": "[0.104.2, )"
-          },
-          "DinkToPdf": {
-            "target": "Package",
-            "version": "[1.0.8, )"
           },
           "MailKit": {
             "target": "Package",
@@ -12166,10 +12040,6 @@
           "Npgsql.EntityFrameworkCore.PostgreSQL.Design": {
             "target": "Package",
             "version": "[1.1.0, )"
-          },
-          "Rotativa.AspNetCore": {
-            "target": "Package",
-            "version": "[1.4.0, )"
           },
           "System.IdentityModel.Tokens.Jwt": {
             "target": "Package",

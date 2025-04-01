@@ -81,7 +81,9 @@
                     </td>
                     <td>@order.TotalAmount</td>
                     <td>
-                        <i class="fa-solid fa-file-pdf m-1"></i>
+                        <button class="getOrderPdf" data-id="@order.Id">
+                            <i class="fa-solid fa-file-pdf m-1"></i>
+                        </button>
                         <a href="@Url.Action("orderdetails", "order", new { orderId = order.Id })">
                             <i class="fa fa-eye eye-icon m-1"></i>
                         </a>
@@ -153,3 +155,48 @@
         </button>
     }
 </div>
+<div id="InvoiceContainer"hidden></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".getOrderPdf").click(function () {
+            var id = $(this).data('id');
+            console.log("Order ID:", id);
+
+            $.ajax({
+                url: "/order/invoicetemplate",
+                type: "GET",
+                data: { orderId: id },
+                success: function (response) {
+                    console.log("AJAX response received:", response);
+                    $("#InvoiceContainer").html(response);
+
+                    const element = document.querySelector('#invoice-detail');
+                    if (!element) {
+                        toastr.error("Invoice detail element not found.");
+                        return;
+                    }
+
+                    console.log("Invoice detail element found:", element);
+                    const isMobile = window.innerWidth < 768;
+
+                    const options = {
+                        margin: 1,
+                        filename: 'Invoice.pdf',
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: {
+                            scale: isMobile ? 3 : 2,
+                            windowWidth: 800
+                        },
+                        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                    };
+
+                    html2pdf().set(options).from(element).save();
+                },
+                error: function (error) {
+                    toastr.error("Error while downloading the PDF file");
+                }
+            });
+        });
+    });
+</script>

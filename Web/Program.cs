@@ -7,8 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Web;
 using Web.Middleware;
-using Rotativa.AspNetCore;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -53,8 +51,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Configure Rotativa
-builder.Services.ConfigureRotativa(config => config.WkhtmltopdfPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "lib", "wkhtmltopdf.exe"));
 
 var app = builder.Build();
 
