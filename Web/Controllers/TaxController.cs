@@ -46,6 +46,7 @@ public class TaxController : Controller
             var result = await _taxAndFeeService.AddTax(model, User);
             if (result)
             {
+                TempData["SuccessMessage"] = "Tax created successfully.";
                 return Json(new { success = true, message = "Tax created successfully.", taxId = model.Id });
             }
             else
@@ -55,6 +56,7 @@ public class TaxController : Controller
                 return PartialView("_TaxFormPartial", model);
             }
         }
+        TempData["ErrorMessage"] = "Invalid input.";
         return PartialView("_TaxFormPartial", model);
     }
     [CustomAuthorize(1, RolePermissionEnum.Permission.TaxesAndFees_CanEdit)]
@@ -67,14 +69,17 @@ public class TaxController : Controller
             var result = await _taxAndFeeService.UpdateTax(model, User);
             if (result)
             {
+                TempData["SuccessMessage"] = "Tax updated successfully.";
                 return Json(new { success = true, message = "Tax updated successfully." });
             }
             else
             {
                 TempData["ErrorMessage"] = "Tax with this name already exists.";
-                ModelState.AddModelError("", "Tax with this name already exists."); return PartialView("_TaxFormPartial", model);
+                ModelState.AddModelError("", "Tax with this name already exists.");
+                return PartialView("_TaxFormPartial", model);
             }
         }
+        TempData["ErrorMessage"] = "Invalid input.";
         return PartialView("_TaxFormPartial", model);
     }
     [CustomAuthorize(1, RolePermissionEnum.Permission.TaxesAndFees_CanDelete)]
@@ -94,7 +99,6 @@ public class TaxController : Controller
         }
         return RedirectToAction(nameof(TaxList));
     }
-
     [Route("search")]
     [HttpGet]
     public async Task<IActionResult> Search(string query)

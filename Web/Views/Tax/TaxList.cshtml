@@ -16,10 +16,10 @@
                     <i class="fa-solid fa-magnifying-glass search-btn"></i>
                 </div>
 
-                <a href="javascript:void(0);" class="btn btn-primary add-tax-btn" data-bs-toggle="modal"
-                    data-bs-target="#taxModal">
-                    <span class="part-1"><i class="fa-solid fa-plus"></i></span>
-                    <span class="part-2">New Tax</span>
+                <a href="javascript:void(0);" class="btn btn-primary d-flex add-tax-btn justify-content-center align-items-center" data-bs-toggle="modal"
+                    data-bs-target="#taxModal" style="height:43px; border-radius:5px;">
+                    <span class="part-1"><i class="fa-solid fa-plus "></i></span>
+                    <span class="part-2"> New Tax </span>
                 </a>
 
                 <div class="modal fade" id="taxModal" tabindex="-1" aria-labelledby="taxModalLabel" aria-hidden="true">
@@ -57,6 +57,7 @@
         </div>
     </div>
 </div>
+
 
 @section Scripts {
     <script>
@@ -112,6 +113,7 @@
                     success: function (data) {
                         $("#taxModal").find('.modal-content').html(data);
                         $('#taxModal').modal('show');
+
                     },
                     error: handleAjaxError
                 });
@@ -120,6 +122,9 @@
             $(document).on('submit', '#taxForm', function (e) {
                 e.preventDefault();
                 var form = $(this);
+                 if (!validateTaxValue()) {
+                        return;
+                    }
                 $.ajax({
                     type: form.attr('method'),
                     url: form.attr('action'),
@@ -128,13 +133,13 @@
                         if (response.success) {
                             toastr.success(response.message);
                             $('#taxModal').modal('hide');
-                            addTaxToTable(response.taxId, form.serializeArray());
+                            location.reload();
                         } else {
                             $("#taxModal").find('.modal-content').html(response);
                         }
                     },
                     error: handleAjaxError
-                    
+
                 });
             });
 
@@ -157,7 +162,19 @@
                 };
                 modal.show();
             };
+            function validateTaxValue() {
+                var taxType = $('#Type').val();
+                var taxValue = parseFloat($('#Rate').val());
 
+                if (taxType === 'true' && (taxValue < 0 || taxValue > 100)) {
+                    toastr.error("Tax Value must be between 0 and 100 for percentage type.");
+                    return false;
+                } else if (taxType === 'false' && taxValue < 0) {
+                    toastr.error("Tax Value must be non-negative for flat amount type.");
+                    return false;
+                }
+                return true;
+            }
             function handleAjaxError(xhr, status, error) {
                 if (xhr.status === 401) {
                     toastr.error("You are not authenticated. Please log in.");
