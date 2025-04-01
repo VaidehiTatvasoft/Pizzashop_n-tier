@@ -20,7 +20,7 @@ public class HomeController : Controller
     {
         return View();
     }
-    [Authorize]
+    [Authorize(Roles = "2")]
     public IActionResult Dashboard()
     {
         return View();
@@ -41,7 +41,7 @@ public class HomeController : Controller
     }
     public IActionResult Unauthorized()
     {
-        return View("401");
+        return RedirectToAction("Login", "Accounts");
     }
     public IActionResult Forbidden()
     {

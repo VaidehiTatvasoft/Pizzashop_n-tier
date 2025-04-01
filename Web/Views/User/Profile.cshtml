@@ -9,13 +9,17 @@
     <div>
         <img class="profile-bg img-1" src="~/assets/profile_div_bg.jpg" alt="profile-bg">
     </div>
-    <form asp-controller="User" asp-action="Profile" method="post" class="row needs-validation mt-1 mb-3 mx-2" enctype="multipart/form-data" id="profileForm">
+    <form asp-controller="User" asp-action="Profile" method="post" class="row needs-validation mt-1 mb-3 mx-2"
+        enctype="multipart/form-data" id="profileForm">
         <input type="int" asp-for="Id" value="@Model.Id" hidden>
         <div class="row mx-2">
             <div class="col-2 col-md-1 d-flex justify-content-center p-0">
-                <img src="~/uploads/@(Model?.ProfileImage)" class="profile-img profile-photo rounded-circle" alt="profile-img">
-                <input type="file" asp-for="ProfileImage" name="ProfileImage" id="ProfileImage" accept="image/*" style="display: none;">
-                <label id="changeImageButton" for="ProfileImage" class="position-absolute bg-white camera-position z-3 rounded-circle border z-2 shadow-sm">
+                <img src="~/uploads/@(Model?.ProfileImage)" class="profile-img profile-photo rounded-circle"
+                    alt="profile-img">
+                <input type="file" asp-for="ProfileImage" name="ProfileImage" id="ProfileImage" accept="image/*"
+                    style="display: none;">
+                <label id="changeImageButton" for="ProfileImage"
+                    class="position-absolute bg-white camera-position z-3 rounded-circle border z-2 shadow-sm">
                     <i class="fa fa-camera p-2 " aria-hidden="true"></i>
                 </label>
             </div>
@@ -33,14 +37,16 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="firstName" placeholder="firstName" name="FirstName" asp-for="FirstName" />
+                            <input type="text" class="form-control" id="firstName" placeholder="firstName"
+                                name="FirstName" asp-for="FirstName" />
                             <label for="firstName">First Name*</label>
                         </div>
                         <span class="text-danger fs-6 ms-2" asp-validation-for="FirstName"></span>
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="lastName" placeholder="lastName" name="LastName" asp-for="LastName" />
+                            <input type="text" class="form-control" id="lastName" placeholder="lastName" name="LastName"
+                                asp-for="LastName" />
                             <label for="LastName">Last Name*</label>
                         </div>
                         <span class="text-danger fs-6 ms-2" asp-validation-for="LastName"></span>
@@ -50,14 +56,16 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="userName" placeholder="name" name="Username" asp-for="Username" />
+                        <input type="text" class="form-control" id="userName" placeholder="name" name="Username"
+                            asp-for="Username" />
                         <label for="userName">User Name*</label>
                     </div>
                     <span class="text-danger fs-6 ms-2" asp-validation-for="Username"></span>
                 </div>
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <input type="number" id="phone" class="form-control" asp-for="Phone" pattern="[0-9]{10}" maxlength="10" required>
+                        <input type="number" id="phone" class="form-control" asp-for="Phone" pattern="[0-9]{10}"
+                            maxlength="10" required>
                         <label for="phone">Phone*</label>
                     </div>
                     <span class="text-danger fs-6 ms-2" asp-validation-for="Phone"></span>
@@ -66,17 +74,20 @@
             <div>
                 <div class="row">
                     <div class="form-floating col-md-4 mb-3">
-                        <select id="CountryId" name="CountryId" class="form-select" asp-for="CountryId" asp-items="ViewBag.Countries"></select>
+                        <select id="CountryId" name="CountryId" class="form-select" asp-for="CountryId"
+                            asp-items="ViewBag.Countries"></select>
                         <label for="CountryId" class="float">Country*</label>
                         <span asp-validation-for="CountryId" style="color: red;"></span>
                     </div>
                     <div class="form-floating col-md-4 mb-3">
-                        <select id="StateId" name="StateId" class="form-select" asp-for="StateId" asp-items="ViewBag.States"></select>
+                        <select id="StateId" name="StateId" class="form-select" asp-for="StateId"
+                            asp-items="ViewBag.States"></select>
                         <label for="StateId" class="float">State*</label>
                         <span asp-validation-for="StateId" style="color: red;"></span>
                     </div>
                     <div class="form-floating col-md-4 mb-3">
-                        <select id="CityId" name="CityId" class="form-select" asp-for="CityId" asp-items="ViewBag.Cities"></select>
+                        <select id="CityId" name="CityId" class="form-select" asp-for="CityId"
+                            asp-items="ViewBag.Cities"></select>
                         <label for="CityId" class="float">City*</label>
                         <span asp-validation-for="CityId" style="color: red;"></span>
                     </div>
@@ -92,7 +103,8 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <div class="form-floating">
-                        <input type="number" class="form-control" maxlength="6" minlength="6" id="ZipCode" placeholder="ZipCode" asp-for="Zipcode" />
+                        <input type="number" class="form-control" maxlength="6" minlength="6" id="ZipCode"
+                            placeholder="ZipCode" asp-for="Zipcode" />
                         <label for="ZipCode">ZipCode*</label>
                     </div>
                     <span class="text-danger fs-6 ms-2" asp-validation-for="Zipcode"></span>
@@ -101,7 +113,8 @@
             <div>
                 <div class="mt-2 gap-3 d-flex justify-content-end">
                     <button class="btn update-button" type="submit">Update</button>
-                    <button class="btn cancel-button" type="button" id="Cancel" onclick="location.href='@Url.Action("AdminDashboard", "Home")'">Cancel</button>
+                    <button class="btn cancel-button" type="button" id="Cancel"
+                        onclick="location.href='@Url.Action("AdminDashboard", "Home")'">Cancel</button>
                 </div>
                 <span class="text-success">@ViewData["ProfileSuccessMessage"]</span>
             </div>
@@ -109,36 +122,42 @@
     </form>
 </div>
 @section Scripts {
-<script>
-       $(document).ready(function () {
-        document.getElementById('ProfileImage').addEventListener('change', function (event) {
-            var file = event.target.files[0];
-            if (file) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    document.querySelector(".profile-img").src = e.target.result;
+    <script>
+        $(document).ready(function () {
+            document.getElementById('ProfileImage').addEventListener('change', function (event) {
+                var file = event.target.files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        document.querySelector(".profile-img").src = e.target.result;
+                    }
+                    reader.readAsDataURL(file);
                 }
-                reader.readAsDataURL(file);
-            }
-        });
+            });
             $("#CountryId").change(function () {
                 var countryId = $(this).val();
+                var stateDropdown = $("#StateId");
+                var cityDropdown = $("#CityId");
                 if (countryId) {
+                    stateDropdown.empty().append('<option value="">Select State</option>');
+                    cityDropdown.empty().append('<option value="">Select City</option>');
                     $.ajax({
                         url: '/User/GetStates',
                         type: 'GET',
                         data: { countryId: countryId },
                         dataType: 'json',
                         success: function (data) {
-                            var stateDropdown = $("#StateId");
-                            stateDropdown.empty().append('<option value="">Select State</option>');
                             $.each(data, function (i, state) {
                                 stateDropdown.append('<option value="' + state.id + '">' + state.name + '</option>');
                             });
                         }
                     });
+                } else {
+                    stateDropdown.empty().append('<option value="">Select State</option>');
+                    cityDropdown.empty().append('<option value="">Select City</option>');
                 }
             });
+
 
             $("#StateId").change(function () {
                 var stateId = $(this).val();

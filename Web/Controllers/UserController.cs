@@ -76,7 +76,7 @@ namespace pizzashop.Controllers
                 {
                     TempData["ErrorMessage"] = "Email already exists.";
                     ModelState.AddModelError("", "Email already exists.");
-                    await LoadDropdowns();
+                    await LoadDropdowns(model);
                     return View(model);
                 }
 
@@ -85,7 +85,7 @@ namespace pizzashop.Controllers
                 {
                     TempData["ErrorMessage"] = "Username already exists.";
                     ModelState.AddModelError("", "Username already exists.");
-                    await LoadDropdowns();
+                    await LoadDropdowns(model);
                     return View(model);
                 }
 
@@ -95,7 +95,7 @@ namespace pizzashop.Controllers
                     {
                         TempData["ErrorMessage"] = "Only image files are allowed.";
                         ModelState.AddModelError("ProfileImage", "Only image files are allowed.");
-                        await LoadDropdowns();
+                        await LoadDropdowns(model);
                         return View(model);
                     }
                     var fileName = Path.GetFileName(ProfileImage.FileName);
@@ -108,6 +108,7 @@ namespace pizzashop.Controllers
 
                     model.ProfileImage = fileName;
                 }
+                var plainTextPassword = model.PasswordHash;
                 model.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.PasswordHash);
                 var result = await _userService.AddUserAsync(model, User);
                 if (result)
@@ -122,13 +123,13 @@ namespace pizzashop.Controllers
                 Welcome to Pizza Shop, <br><br>
                 Please find the details below for login to your account. <br>
                 <div style='border: 1px solid black; padding: 0.5rem; font-weight: bold;'>
-                    <h3>Login Details:</h3>
-                    Username: {model.Email} <br>
-                    Password: {model.PasswordHash}
+                <h3>Login Details:</h3>
+                Username: {model.Email} <br>
+                Password: {plainTextPassword}
                 </div><br>
                 If you encounter any issues or have any questions, please do not hesitate to contact our support team. <br><br>
             </p>
-        </div>";
+            </div>";
 
                     await _emailService.SendEmailAsync(model.Email, subject, body);
 
@@ -140,7 +141,7 @@ namespace pizzashop.Controllers
                     TempData["ErrorMessage"] = "Error adding user.";
                 }
             }
-            await LoadDropdowns();
+            await LoadDropdowns(model);
             return View(model);
         }
         [CustomAuthorize(1, RolePermissionEnum.Permission.Users_CanEdit)]
@@ -255,6 +256,7 @@ namespace pizzashop.Controllers
             ViewBag.pageIndex = pageIndex;
             ViewBag.pageSize = pageSize;
             ViewBag.totalPage = (int)Math.Ceiling(count / (double)pageSize);
+            ViewBag.totalItems = count;
             ViewBag.searchString = searchString;
             ViewBag.sortOrder = sortOrder;
 
@@ -273,7 +275,7 @@ namespace pizzashop.Controllers
             return View(users);
         }
 
-        [CustomAuthorize(1, RolePermissionEnum.Permission.Users_CanView)]
+        [Authorize]
 
         [Route("/user/profile")]
         [HttpGet]
@@ -322,6 +324,14 @@ namespace pizzashop.Controllers
                         model.ProfileImage = existingUser.ProfileImage;
                     }
                 }
+                var existingUserByUsername = await _userService.GetUserByUsername(model.Username);
+                if (existingUserByUsername != null && existingUserByUsername.Id != model.Id)
+                {
+                    TempData["ErrorMessage"] = "Username already exists.";
+                    ModelState.AddModelError("", "Username already exists.");
+                    await LoadDropdowns(model);
+                    return View(model);
+                }
                 var result = await _userService.UpdateProfileAsync(model);
                 if (result)
                 {
@@ -338,11 +348,11 @@ namespace pizzashop.Controllers
         }
         private bool IsImageFile(IFormFile file)
         {
-            string[] permittedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
+            string[] permittedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".jfif" };
             var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
             return !string.IsNullOrEmpty(extension) && permittedExtensions.Contains(extension);
         }
-        [Authorize(Roles = "1")]
+        [Authorize]
         [Route("/user/changepassword")]
         [HttpGet]
         public async Task<IActionResult> ChangePassword()
@@ -369,6 +379,15 @@ namespace pizzashop.Controllers
                 }
             }
             return View(model);
+        }
+
+        private async Task LoadDropdowns(AddUserModel model = null)
+        {
+            var countries = await _userService.GetAllCountriesAsync();
+            var roles = await _userService.GetAllRolesAsync();
+
+            ViewBag.Countries = new SelectList(countries, "Id", "Name", model?.CountryId);
+            ViewBag.Roles = new SelectList(roles, "Id", "Name", model?.RoleId);
         }
 
         private async Task LoadDropdowns(UserViewModel model = null)

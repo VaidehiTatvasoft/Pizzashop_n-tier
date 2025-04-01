@@ -2,26 +2,22 @@
 
 <div class="section-list">
     @for (var i = 0; i < Model.Count; i++)
-    {
+{
         var isActive = i == 0 ? "active" : ""; 
-        <div class="d-flex flex-wrap justify-content-between align-items-center item-category-btn p-2 my-2 section category-link @isActive"
-            data-id="@Model[i].Id" onclick="selectSection(this)">
-            <div class="category-btn border-0 bg-light">
-                <h6 class="mb-0" style="color: grey;">
-                    <i class="fa-solid fa-grip-vertical"></i>
-                    @Model[i].Name
-                </h6>
-            </div>
-            <span class="edit-delete-icon">
-                <a href="javascript:void(0);" class="edit-btn edit-category" style="text-decoration: none; color: inherit;">
-                    <i class="bi bi-pen m-1 edit-icon" data-bs-toggle="modal" data-bs-target="#sectionModal"
-                        onclick="openAddEditModal(@Model[i].Id)"></i>
-                </a>
-                <i class="bi bi-trash m-1 delete-icon delete-section" data-id="@Model[i].Id"
-                    data-bs-target="#deleteSectionModal" data-bs-toggle="modal"></i>
+        <div class="category-wrapper">
+        <a class="nav-link menu-sidebar section category-link @isActive"
+            data-id="@Model[i].Id" onclick="selectSection(this)" href="javascript:void(0);" data-id="@Model[i].Id">
+            <span class="category-item">
+                <i class="fa-solid fa-grip-vertical"></i><b> @Model[i].Name</b>
+                <i class="bi bi-pen m-1 edit-icon" data-bs-toggle="modal" data-bs-target="#sectionModal" onclick="openAddEditModal(@Model[i].Id)"></i>
+                <i class="bi bi-trash m-1 delete-icon delete-section" data-id="@Model[i].Id" data-bs-toggle="modal" data-bs-target="#deleteSectionModal"></i>
             </span>
-        </div>
-    }
+        </a>
+        @* <form id="deleteform-@Model[i].Id" method="post" action="@Url.Action("DeleteCategory", "Menu", new { id = @Model[i].Id })" style="display: none;">
+            @Html.AntiForgeryToken()
+        </form> *@
+    </div>
+}
 </div>
 
 <div class="modal fade" id="sectionModal" tabindex="-1" aria-labelledby="sectionModalLabel" aria-hidden="true">

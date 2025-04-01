@@ -18,7 +18,7 @@ public class TableSectionController : Controller
         _tableService = tableService;
         _sectionService = sectionService;
     }
-    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanView)]
+    [CustomAuthorize(1, RolePermissionEnum.Permission.TablesAndSections_CanView)]
     [HttpGet]
     public IActionResult TableSection(int? id, int pageSize = 5, int pageIndex = 1, string searchString = "")
     {
@@ -33,13 +33,13 @@ public class TableSectionController : Controller
         tables.Sections = sections;
         return View(tables);
     }
-    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanView)]
+    [CustomAuthorize(1, RolePermissionEnum.Permission.TablesAndSections_CanView)]
     public IActionResult GetAllTables()
     {
         var tables = _tableService.GetAllTables();
         return PartialView("_TableList", tables);
     }
-    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanView)]
+    [CustomAuthorize(1, RolePermissionEnum.Permission.TablesAndSections_CanView)]
     [HttpGet]
     public async Task<IActionResult> GetTablesBySectionId(int sectionId, int pageSize, int pageIndex, string searchString = "")
     {
@@ -49,28 +49,26 @@ public class TableSectionController : Controller
         model.Sections = sections;
         return PartialView("_TableList", model);
     }
-    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanView)]
+    [CustomAuthorize(1, RolePermissionEnum.Permission.TablesAndSections_CanView)]
     [HttpGet]
     public async Task<JsonResult> GetAllSections()
     {
         var sections = Json(_sectionService.GetAllSections());
         return sections;
     }
-    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanView)]
+    [CustomAuthorize(1, RolePermissionEnum.Permission.TablesAndSections_CanView)]
     [HttpGet]
     public IActionResult GetAllSectionsForFilter()
     {
         var sections = _sectionService.GetAllSections();
         return PartialView("_SectionList", sections);
     }
-    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanEdit)]
+    [CustomAuthorize(1, RolePermissionEnum.Permission.TablesAndSections_CanEdit)]
     [HttpGet]
     public IActionResult AddNewTable()
     {
         return PartialView("_AddEditTable", new TableViewModel());
     }
-                [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanEdit)]
-
     [HttpPost]
     public async Task<IActionResult> AddNewTable(TableViewModel model)
     {
@@ -81,10 +79,12 @@ public class TableSectionController : Controller
 
             if (table)
             {
+                TempData["SuccessMessage"] = "Table Added successfully.";
                 return Json(new { success = true, message = "Table Added successfully." });
             }
             else
             {
+                TempData["ErrorMessage"] = "Table already exist!";
                 return Json(new { success = false, message = "Table already exist!" });
             }
         }
@@ -101,13 +101,13 @@ public class TableSectionController : Controller
             return Json(new { success = false, message = errorMessage });
         }
     }
-    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanDelete)]
+    [CustomAuthorize(1, RolePermissionEnum.Permission.TablesAndSections_CanDelete)]
     [HttpPost]
     public async Task<IActionResult>? DeleteTable(int id)
     {
         try
         {
-            var isDeleted = _tableService.DeleteTable(id,User);
+            var isDeleted = _tableService.DeleteTable(id, User);
             if (!isDeleted)
                 return Json(new { isSuccess = false, message = "Table is Occupied so you can not delete it." });
             return Json(new { isSuccess = true, message = "Table Deleted Successfully" });
@@ -117,7 +117,7 @@ public class TableSectionController : Controller
             return Json(new { isSuccess = false, message = "Error While Delete Table. Please Try again!" });
         }
     }
-    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanDelete)]
+    [CustomAuthorize(1, RolePermissionEnum.Permission.TablesAndSections_CanDelete)]
     [HttpPost]
     public async Task<IActionResult>? MultiDeleteTable(int[] itemIds)
     {
@@ -133,7 +133,7 @@ public class TableSectionController : Controller
             return Json(new { isSuccess = false, message = "Error While Delete Table. Please Try again!" });
         }
     }
-    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanEdit)]
+    [CustomAuthorize(1, RolePermissionEnum.Permission.TablesAndSections_CanEdit)]
     [HttpGet]
     public async Task<IActionResult> EditTable(int id)
     {
@@ -144,7 +144,6 @@ public class TableSectionController : Controller
         }
         return PartialView("_AddEditTable", table);
     }
-                [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanEdit)]
 
     [HttpPost]
     public async Task<IActionResult> EditTable(TableViewModel model)
@@ -156,11 +155,13 @@ public class TableSectionController : Controller
 
             if (updated)
             {
+                 TempData["SuccessMessage"] = "Table updated successfully.";
                 return Json(new { success = true, message = "Table updated successfully." });
             }
             else
             {
-                return Json(new { success = false, message = "Table update failed!" });
+                TempData["ErrorMessage"] = "Table already exist!";
+                return Json(new { success = false, message = "Table already exist!" });
             }
         }
         else
@@ -172,7 +173,7 @@ public class TableSectionController : Controller
             return Json(new { success = false, message = errorMessage });
         }
     }
-    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanEdit)]
+    [CustomAuthorize(1, RolePermissionEnum.Permission.TablesAndSections_CanEdit)]
     [HttpGet]
     public async Task<IActionResult> AddEditSection(int? id)
     {
@@ -182,8 +183,7 @@ public class TableSectionController : Controller
         var tableSection = await _sectionService.GetSectionByIdAsync(id.Value);
         return PartialView("_AddEditSection", tableSection);
     }
-                [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanEdit)]
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.TablesAndSections_CanEdit)]
     [HttpPost]
     public async Task<IActionResult> AddEditSection(SectionViewModel sectionViewModel)
     {
@@ -192,9 +192,9 @@ public class TableSectionController : Controller
 
         try
         {
-         
+
             if (sectionViewModel.Id == 0)
-                await _sectionService.AddSectionAsync(sectionViewModel,User);
+                await _sectionService.AddSectionAsync(sectionViewModel, User);
             else
                 await _sectionService.UpdateSectionAsync(sectionViewModel, User);
 
@@ -206,11 +206,11 @@ public class TableSectionController : Controller
             return Json(new { success = false, message = ex.Message });
         }
     }
-    [CustomAuthorize(1,RolePermissionEnum.Permission.TablesAndSections_CanDelete)]
+    [CustomAuthorize(1, RolePermissionEnum.Permission.TablesAndSections_CanDelete)]
     [HttpPost]
     public async Task<IActionResult> DeleteSection(int id, bool softDelete = true)
     {
-        
+
         var isDeleted = await _sectionService.DeleteSectionAsync(id, softDelete, User);
         if (isDeleted == "table is occupied")
         {

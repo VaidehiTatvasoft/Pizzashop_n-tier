@@ -7,100 +7,95 @@
     var TotalItems = Model.TotalItems;
 }
 <section class="table-responsive">
-    @if (Model.Tables.Count == 0)
-    {
-        <div class="d-flex justify-content-center align-items-center mt-5">
-            <p>Table Not Found</p>
-        </div>
-    }
-    else
-    {
-        <table class="table user-table mb-0 menu-table">
-            <thead>
+    <table class="table user-table mb-0 menu-table">
+        <thead>
+            <tr>
+                <th style="margin-right:0;">
+                    <div class="form-check pr-0 mr-0">
+                        <input class="form-check-input " type="checkbox" value="" id="flexCheckDefault" />
+                    </div>
+                </th>
+                <th style="width:45%;padding:10px;">Name</th>
+                <th style="padding:10px;"><p class="d-flex justify-content-center align-items-center p-0 m-0">Capacity</p></th>
+                <th style="padding:10px;"><p class="d-flex justify-content-center align-items-center p-0 m-0">Status</p></th>
+                <th style="padding:10px;"><p class="d-flex justify-content-center align-items-center p-0 m-0">Action</p></th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider tables" id="tableList">
+            @for (var i = 0; i < Model.Tables.Count; i++)
+            {
                 <tr>
-                    <th>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                    <td>
+                        <div class="form-check pr-0 mr-0">
+                            <input class="form-check-input tableCheckBox" value="@Model.Tables[i].Id" type="checkbox"
+                                value="" id="flexCheckDefault" />
                         </div>
-                    </th>
-                    <th scope="col" class="name-column">Name</th>
-                    <th scope="col">Capacity</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Action</th>
+                    </td>
+                    <td>@Model.Tables[i].Name</td>
+                    <td><p class="d-flex justify-content-center align-items-center p-0 m-0"> @Model.Tables[i].Capacity</p></td>
+                    <td class="d-flex justify-content-center align-items-center">
+                        @if ((bool)@Model.Tables[i].IsAvailable)
+                        {
+                            <div class="available">Available</div>
+                        }
+                        else
+                        {
+                            <div class="occupied">Occupied</div>
+                        }
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-center align-items-center p-0 m-0">
+                        <button type="button" class="btn editTableBtn p-0" data-id="@Model.Tables[i].Id">
+                            <i class="bi bi-pen m-2 edit-icon"></i>
+                        </button>
+                        <button type="button" class="btn deleteTable  p-0" value="@Model.Tables[i].Id">
+                            <i class="bi bi-trash m-2 delete-icon"></i>
+                        </button>
+                        </div>
+                    </td>
                 </tr>
-            </thead>
-            <tbody class="table-group-divider tables" id="tableList">
-                @for (var i = 0; i < Model.Tables.Count; i++)
-                {
-                    <tr>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input tableCheckBox" value="@Model.Tables[i].Id" type="checkbox"
-                                    value="" id="flexCheckDefault" />
-                            </div>
-                        </td>
-                        <td>@Model.Tables[i].Name</td>
-                        <td>@Model.Tables[i].Capacity</td>
-                        <td>
-                            @if ((bool)@Model.Tables[i].IsAvailable)
-                            {
-                                <div class="available">Available</div>
-                            }
-                            else
-                            {
-                                <div class="occupied">Occupied</div>
-                            }
-                        </td>
-                        <td>
-                            <button type="button" class="btn editTableBtn p-0" data-id="@Model.Tables[i].Id">
-                                <i class="bi bi-pen m-1 edit-icon"></i>
-                            </button>
-                            <button type="button" class="btn deleteTable  p-0" value="@Model.Tables[i].Id">
-                                <i class="bi bi-trash m-1 delete-icon"></i>
-                            </button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <div class="d-flex justify-content-end align-items-center mt-2">
-            <p class="mb-0">Table Per page</p>
-            <select class="ms-3 form-select w-auto" aria-label="Default select example" id="pageSizeTable">
-                <option value="5" selected="@(PageSize == 5 ? true : false)">5</option>
-                <option value="10" selected="@(PageSize == 10 ? true : false)">10</option>
-                <option value="15" selected="@(PageSize == 15 ? true : false)">15</option>
-            </select>
-            <span class="mb-0 ms-2 me-2 d-none d-md-block" id="showing">Showing @(Math.Min(((PageIndex - 1) * PageSize) + 1,
-                            TotalItems)) -
+            }
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-end align-items-center mt-2 p-2">
+        <div class="d-flex justify-content-end align-items-center">
+        <label for="form-select" class="mx-2">Items per Page:</label>
+        <select class=" form-select w-auto mx-2" aria-label="Default select" id="pageSizeTable">
+            <option value="5" selected="@(PageSize == 5 ? true : false)">5</option>
+            <option value="10" selected="@(PageSize == 10 ? true : false)">10</option>
+            <option value="15" selected="@(PageSize == 15 ? true : false)">15</option>
+        </select>
+        <span class="mb-0 ms-2 me-2 d-none d-md-block" id="showing">Showing @(Math.Min(((PageIndex - 1) * PageSize) + 1,
+                        TotalItems)) -
             @(Math.Min(PageIndex * PageSize, TotalItems)) of @TotalItems</span>
 
         @if (PageIndex > 1)
-            {
-                <a class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" name="PageIndex" id="Previous">
-                    <i class="fa fa-chevron-left"></i>
-                </a>
-            }
-            else
-            {
-                <button class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" name="PageIndex" hidden>
-                    <i class="fa fa-chevron-left"></i>
-                </button>
-            }
+        {
+            <a class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" name="PageIndex" id="Previous">
+                <i class="fa fa-chevron-left"></i>
+            </a>
+        }
+        else
+        {
+            <button class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" name="PageIndex" hidden>
+                <i class="fa fa-chevron-left"></i>
+            </button>
+        }
 
-            @if (PageIndex < TotalPage)
-            {
-                <a class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" name="PageIndex" id="Next">
-                    <i class="fa fa-chevron-right"></i>
-                </a>
-            }
-            else
-            {
-                <button class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" name="PageIndex" hidden>
-                    <i class="fa fa-chevron-right"></i>
-                </button>
-            }
-        </div>
-    }
+        @if (PageIndex < TotalPage)
+        {
+            <a class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" name="PageIndex" id="Next">
+                <i class="fa fa-chevron-right"></i>
+            </a>
+        }
+        else
+        {
+            <button class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" name="PageIndex" hidden>
+                <i class="fa fa-chevron-right"></i>
+            </button>
+        }
+    </div>
+    </div>
 </section>
 <div id="AddTablePartial">
 
@@ -200,7 +195,6 @@
             }
         });
 
-        // Show multiple delete confirmation modal
         $('#multiDeleteTableBtn').click(function () {
             if (deleteTableIds.length == 0) {
                 toastr.warning("Select at Least One Item");
@@ -209,7 +203,6 @@
             }
         });
 
-        // Perform multiple delete on confirmation
         $('#deleteMultipleTableModal').click(function () {
             $.ajax({
                 url: '/TableSection/MultiDeleteTable',

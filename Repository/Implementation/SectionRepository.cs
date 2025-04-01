@@ -40,8 +40,7 @@ public class SectionRepository : ISectionRepository
     {
         try
         {
-            bool isNameUnique = !await _context.Sections
-           .AnyAsync(s => s.Name.ToLower() == section.Name.ToLower() && s.IsDeleted == false);
+            bool isNameUnique = !await _context.Sections.AnyAsync(s => s.Name.ToLower() == section.Name.ToLower() && s.IsDeleted == false);
             if (!isNameUnique)
                 throw new Exception("Section name must be unique.");
 
@@ -56,11 +55,9 @@ public class SectionRepository : ISectionRepository
 
     public async Task<bool> UpdateSectionAsync(Section section)
     {
-        bool isNameUnique = !await _context.Sections
-            .AnyAsync(s => s.Name.ToLower() == section.Name.ToLower() && s.Id != section.Id && s.IsDeleted == false);
+        bool isNameUnique = !await _context.Sections.AnyAsync(s => s.Name.ToLower() == section.Name.ToLower() && s.Id != section.Id && s.IsDeleted == false);
         if (!isNameUnique)
             throw new Exception("Section name must be unique.");
-
         _context.Sections.Update(section);
         return await _context.SaveChangesAsync() > 0;
     }

@@ -6,10 +6,10 @@
 <div class="col-12">
     <h2 style="color: #0066A7;">Sections / Tables</h2>
     <section>
-        <div class="row mx-0">
-            <aside class="col-md-2 " style="background-image: linear-gradient(to right, white, #f2f2f2);">
+        <div class="row p-2 m-3" style="border-radius: 5px;">
+            <aside class="col-md-3 col-lg-2 " style="background-image: linear-gradient(to right, white, #f2f2f2);">
                 <!-- Section header -->
-                <div class="d-flex flex-wrap justify-content-between align-items-center p-3" style="color: #0066A7;">
+                <div class="d-flex flex-wrap justify-content-between align-items-center pt-3 pb-4" style="color: #0066A7;">
                     <h5>Sections</h5>
                     <i class="cat-i fa-regular fa-square-plus" style="height: 30px; width:30px;" data-bs-toggle="modal" data-bs-target="#sectionModal"
                         onclick="openAddEditModal(0)"></i>
@@ -18,7 +18,7 @@
                     @Html.Partial("_SectionList", Model.Sections)
                 </div>
             </aside>
-            <div class="col-md-9 border-start border-primary bg-white">
+            <div class="col-md-9 col-lg-10 border-custom bg-white">
                 <div>
                     <!-- table header -->
                     <h5 class="p-2 mb-0 section-heading">Tables</h5>
@@ -106,7 +106,7 @@
                     $("#AddTablePartial").html(data);
                     $("#addTableModal").modal('show');
                 }).fail(function (jqXHR, textStatus, errorThrown) {
-                    handleAjaxError(jqXHR, textStatus, errorThrown, "Failed to load table form. Please try again.");
+                    handleAjaxError(jqXHR, textStatus, errorThrown);
                 });
             });
 
@@ -129,7 +129,7 @@
                         $("#addTableModal").modal('hide');
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
-                        handleAjaxError(jqXHR, textStatus, errorThrown, "An error occurred. Please try again.");
+                        handleAjaxError(jqXHR, textStatus, errorThrown);
                     }
                 });
             });
@@ -141,7 +141,7 @@
                     $("#addNewTableForm").data("id", tableId);
                     $("#addTableModal").modal("show");
                 }).fail(function (jqXHR, textStatus, errorThrown) {
-                    handleAjaxError(jqXHR, textStatus, errorThrown, "Failed to load table details. Please try again.");
+                    handleAjaxError(jqXHR, textStatus, errorThrown);
                 });
             });
 
@@ -157,7 +157,7 @@
                         $("#tableList").html(response);
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
-                        handleAjaxError(jqXHR, textStatus, errorThrown, "Failed to load tables. Please try again.");
+                        handleAjaxError(jqXHR, textStatus, errorThrown);
                     }
                 });
             });
@@ -183,7 +183,7 @@
                         $("#tableList").html(data);
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
-                        handleAjaxError(jqXHR, textStatus, errorThrown, "Failed to load tables. Please try again.");
+                        handleAjaxError(jqXHR, textStatus, errorThrown);
                     }
                 });
             }
