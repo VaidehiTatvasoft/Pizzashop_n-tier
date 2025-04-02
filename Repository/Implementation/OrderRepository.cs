@@ -41,13 +41,13 @@ public class OrderRepository : IOrderRepository
 
         if (startDate.HasValue)
         {
-            DateTime start = startDate.Value;
+            DateTime start = startDate.Value.ToUniversalTime();
             orderQuery = orderQuery.Where(o => o.OrderDate >= start);
         }
 
         if (endDate.HasValue)
         {
-            DateTime end = endDate.Value;
+            DateTime end = endDate.Value.ToUniversalTime();
             orderQuery = orderQuery.Where(o => o.OrderDate <= end);
         }
 

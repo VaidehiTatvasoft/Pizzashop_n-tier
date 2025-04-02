@@ -33,39 +33,39 @@ public class OrderService : IOrderService
         var section = _sectionRepository.GetSectionById(table.SectionId);
 
         var orderDetailsViewModel = new OrderDetailsViewModel
+        {
+            OrderId = order.Id,
+            OrderDate = order.OrderDate,
+            ModifiedAt = order.ModifiedAt,
+            OrderStatus = ((OrderStatusEnum)order.OrderStatus).ToString(),
+            CustomerName = order.Customer.Name,
+            CustomerPhone = order.Customer.Phone,
+            CustomerEmail = order.Customer.Email,
+            NoOfPerson = tableOrderMapping.NoOfPeople,
+            TableName = table.Name,
+            SectionName = section.Name,
+            InvoiceId = order.Invoices.FirstOrDefault()?.Id ?? 0,
+             Items = order.OrderedItems.Select(item => new OrderItemViewModel
             {
-                OrderId = order.Id,
-                OrderDate = order.OrderDate,
-                ModifiedAt = order.ModifiedAt,
-                OrderStatus = ((OrderStatusEnum)order.OrderStatus).ToString(),
-                CustomerName = order.Customer.Name,
-                CustomerPhone = order.Customer.Phone,
-                CustomerEmail = order.Customer.Email,
-                NoOfPerson = tableOrderMapping.NoOfPeople,
-                TableName = table.Name,
-                SectionName = section.Name,
-                InvoiceId = order.Invoices.FirstOrDefault()?.Id ?? 0,
-                 Items = order.OrderedItems.Select(item => new OrderItemViewModel
+                ItemName = item.Name,
+                Quantity = item.Quantity,
+                Price = item.Rate ?? 0,
+                TotalAmount = item.TotalAmount,
+                Modifiers = item.OrderedItemModifierMappings.Select(m => new ModifyViewModel
                 {
-                    ItemName = item.Name,
-                    Quantity = item.Quantity,
-                    Price = item.Rate ?? 0,
-                    TotalAmount = item.TotalAmount,
-                    Modifiers = item.OrderedItemModifierMappings.Select(m => new ModifyViewModel
-                    {
-                        Name = m.Modifier.Name,
-                        QuantityOfModifier = m.QuantityOfModifier,
-                        ModifiersPrice = m.RateOfModifier ?? 0,
-                        TotalModifierAmount = m.TotalAmount ?? 0
-                    }).ToList()
-                }).ToList(),
-                SubTotal = order.SubTotal ?? 0,
-                CGST = order.OrderTaxMappings.Where(t => t.Tax.Name == "CGST").Sum(t => t.TaxValue ?? 0),
-                SGST = order.OrderTaxMappings.Where(t => t.Tax.Name == "SGST").Sum(t => t.TaxValue ?? 0),
-                GST = order.OrderTaxMappings.Where(t => t.Tax.Name == "GST").Sum(t => t.TaxValue ?? 0),
-                Other = order.OrderTaxMappings.Where(t => t.Tax.Name == "Other").Sum(t => t.TaxValue ?? 0),
-                Total = order.TotalAmount
-            };
+                    Name = m.Modifier.Name,
+                    QuantityOfModifier = m.QuantityOfModifier,
+                    ModifiersPrice = m.RateOfModifier ?? 0,
+                    TotalModifierAmount = m.TotalAmount ?? 0
+                }).ToList()
+            }).ToList(),
+            SubTotal = order.SubTotal ?? 0,
+            CGST = order.OrderTaxMappings.Where(t => t.Tax.Name == "CGST").Sum(t => t.TaxValue ?? 0),
+            SGST = order.OrderTaxMappings.Where(t => t.Tax.Name == "SGST").Sum(t => t.TaxValue ?? 0),
+            GST = order.OrderTaxMappings.Where(t => t.Tax.Name == "GST").Sum(t => t.TaxValue ?? 0),
+            Other = order.OrderTaxMappings.Where(t => t.Tax.Name == "Other").Sum(t => t.TaxValue ?? 0),
+            Total = order.TotalAmount
+        };
 
 
         return orderDetailsViewModel;

@@ -81,9 +81,9 @@
                     </td>
                     <td>@order.TotalAmount</td>
                     <td>
-                        <button class="getOrderPdf" data-id="@order.Id">
-                            <i class="fa-solid fa-file-pdf m-1"></i>
-                        </button>
+                        <a class="getOrderPdf" data-id="@order.Id" style="text-decoration: none;">
+                            <i class="fa-solid fa-file-pdf m-1" style="color:grey"></i>
+                        </a>
                         <a href="@Url.Action("orderdetails", "order", new { orderId = order.Id })">
                             <i class="fa fa-eye eye-icon m-1"></i>
                         </a>
@@ -155,7 +155,7 @@
         </button>
     }
 </div>
-<div id="InvoiceContainer"hidden></div>
+<div id="InvoiceContainer" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
 <script>
     $(document).ready(function () {

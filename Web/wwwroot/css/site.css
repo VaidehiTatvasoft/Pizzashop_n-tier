@@ -378,6 +378,7 @@ body {
 .utable td th {
   display: flex;
   justify-content: center;
+  align-items: center !important;
   color: gray !important;
   padding: 10px;
   border-bottom: 3px solid #ADADAD !important;
@@ -388,6 +389,8 @@ body {
   background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity));
   color: gray !important;
   padding: 10px;
+  align-items: center !important;
+
 }
 
 .utable th {
@@ -395,7 +398,9 @@ body {
   background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity));
   color: gray !important;
   padding: 15px;
+  align-items: center !important;
 }
+
 
 .tables td {
   justify-content: center !important;
@@ -407,17 +412,13 @@ body {
 .tables th {
   justify-content: center;
   color: gray !important;
+  align-items: center !important;
 }
 
-.table td {
-  justify-content: center;
+.table td, .table th {
+  vertical-align: middle;
   color: gray !important;
   padding: 10px;
-}
-
-.table th {
-  justify-content: center;
-  color: gray !important;
 }
 
 .active-status {

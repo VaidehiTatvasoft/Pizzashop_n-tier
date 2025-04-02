@@ -28,22 +28,33 @@ namespace Web.Controllers
         [HttpGet]
         public IActionResult Order(string searchTerm, string sortOrder, int pageIndex = 1, int pageSize = 5, string statusFilter = "All Status", string dateRangeFilter = "All Time", DateTime? fromDate = null, DateTime? toDate = null)
         {
-            var (orderViewModel, totalItems) = GetFilteredOrders(searchTerm, sortOrder, pageIndex, pageSize, statusFilter, dateRangeFilter, fromDate, toDate);
-
-            ViewBag.PageIndex = pageIndex;
-            ViewBag.PageSize = pageSize;
-            ViewBag.TotalItems = totalItems;
-            ViewBag.TotalPage = (int)Math.Ceiling((double)totalItems / pageSize);
-            ViewBag.SortOrder = sortOrder;
-            ViewBag.StatusFilter = statusFilter;
-            ViewBag.DateRangeFilter = dateRangeFilter;
-
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            try
             {
-                return PartialView("_OrderList", orderViewModel);
-            }
+                var (startDate, endDate) = GetDateRange(dateRangeFilter, fromDate, toDate);
 
-            return View(orderViewModel);
+                IEnumerable<OrderViewModel> orderViewModel = _orderService.GetFilteredOrderViewModels(searchTerm, sortOrder, pageIndex, pageSize, statusFilter, startDate, endDate, out int totalItems);
+                ViewBag.PageIndex = pageIndex;
+                ViewBag.PageSize = pageSize;
+                ViewBag.TotalItems = totalItems;
+                ViewBag.TotalPage = (int)Math.Ceiling((double)totalItems / pageSize);
+                ViewBag.SortOrder = sortOrder;
+                ViewBag.StatusFilter = statusFilter;
+                ViewBag.DateRangeFilter = dateRangeFilter;
+
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return PartialView("_OrderList", orderViewModel);
+                }
+
+                return View(orderViewModel);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
         }
 
         [Route("/order/exportorders")]
@@ -148,7 +159,7 @@ namespace Web.Controllers
             }
         }
 
-        private (IEnumerable<OrderViewModel>, int) GetFilteredOrders(string searchTerm, string sortOrder, int pageIndex, int pageSize, string statusFilter, string dateRangeFilter, DateTime? fromDate, DateTime? toDate)
+        private (DateTime? startDate, DateTime? endDate) GetDateRange(string dateRangeFilter, DateTime? fromDate, DateTime? toDate)
         {
             DateTime? startDate = null;
             DateTime? endDate = null;
@@ -156,14 +167,14 @@ namespace Web.Controllers
             switch (dateRangeFilter)
             {
                 case "Last 7 days":
-                    startDate = DateTime.Now.AddDays(-7);
+                    startDate = DateTime.UtcNow.AddDays(-7);
                     break;
                 case "Last 30 days":
-                    startDate = DateTime.Now.AddDays(-30);
+                    startDate = DateTime.UtcNow.AddDays(-30);
                     break;
                 case "Current Month":
-                    startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-                    endDate = startDate.Value.AddMonths(1).AddDays(-1);
+                    startDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1);
+                    endDate = startDate.Value.AddMonths(1).AddTicks(-1);
                     break;
                 case "All Time":
                 default:
@@ -172,13 +183,20 @@ namespace Web.Controllers
 
             if (fromDate.HasValue)
             {
-                startDate = fromDate.Value;
+                startDate = fromDate.Value.ToUniversalTime();
             }
 
             if (toDate.HasValue)
             {
-                endDate = toDate.Value;
+                endDate = toDate.Value.ToUniversalTime();
             }
+
+            return (startDate, endDate);
+        }
+
+        private (IEnumerable<OrderViewModel>, int) GetFilteredOrders(string searchTerm, string sortOrder, int pageIndex, int pageSize, string statusFilter, string dateRangeFilter, DateTime? fromDate, DateTime? toDate)
+        {
+            var (startDate, endDate) = GetDateRange(dateRangeFilter, fromDate, toDate);
 
             IEnumerable<OrderViewModel> orderViewModel = _orderService.GetFilteredOrderViewModels(searchTerm, sortOrder, pageIndex, pageSize, statusFilter, startDate, endDate, out int totalItems);
             return (orderViewModel, totalItems);

@@ -10,16 +10,16 @@
         <div class="d-flex align-items-center justify-content-center col-xl-7 col-lg-6 col-md-6 col-12"
             style="gap: 10px;">
             <div class=" col-xl-6 col-lg-6 col-md-6 col-6">
-                <form method="get">
-                    <input type="text" class="mb-3 col-12" placeholder="Search" id="searchbox" aria-label="Search"
+                <form method="get"> 
+                    <input type="text" class="mb-3 col-12 p-2" placeholder="Search" id="searchbox" aria-label="Search"
                         name="searchString" aria-describedby="search-addon"
-                        style="height: 50px; border:1px solid #d3d3d3; border-radius: 5%;" />
+                        style="height: 50px; border:1px solid #d3d3d3; border-radius: 5px; " />
                     @* <i class="fa-solid fa-magnifying-glass search-btn"></i> *@
                 </form>
             </div>
             <div class="col-xl-6 col-lg-6 col-md-6 col-6">
                 <select class="form-select mb-3 col-12" id="statusFilter"
-                    style="height: 50px; border:1px solid #d3d3d3; border-radius: 5%;margin-left: 10px;">
+                    style="height: 50px; border:1px solid #d3d3d3; border-radius: 5px;margin-left: 10px;">
                     <option value="All Status" selected>All Status</option>
                     <option value="Pending">Pending</option>
                     <option value="InProgress">In Progress</option>
@@ -35,7 +35,7 @@
             style="gap: 10px; margin-left: 10px;">
             <div class="col-xl-6 col-lg-6 col-md-6 col-6">
                 <select class="form-select mb-3 col-12" id="dateRangeFilter"
-                    style="height: 50px; border:1px solid #d3d3d3; border-radius: 5%;">
+                    style="height: 50px; border:1px solid #d3d3d3; border-radius: 5px;">
                     <option value="All Time" selected>All Time</option>
                     <option value="Last 7 days">Last 7 days</option>
                     <option value="Last 30 days">Last 30 days</option>
@@ -44,7 +44,7 @@
             </div>
             <div class="col-xl-6 col-lg-6 col-md-6 col-6">
                 <button type="button" class="btn btn-primary mb-3  mr-2 w-100 col-12" onclick="exportOrders()"
-                    style="height: 50px;">
+                    style="height: 50px;border-radius:5px;"">
                     <span><i class="fa-solid fa-share-from-square me-1"></i></span>
                     <span>Export</span>
                 </button>
@@ -52,26 +52,25 @@
         </div>
     </div>
 </div>
-<div class="d-flex row" style="gap: 10px; justify-content: end; ">
+<div class="d-flex row" style="justify-content: end;">
     <div class="d-flex align-items-center justify-content-center col-xl-4 col-lg-5 col-md-5 col-12" style="gap: 10px;">
         <div class="form-floating col-xl-6 col-lg-6 col-md-6 col-6">
             <input type="date" class="form-control mb-3 col-12" id="fromDate" aria-label="From Date"
-                style="height: 50px; border:1px solid #d3d3d3; border-radius: 5%;" />
+                style="height: 50px; border:1px solid #d3d3d3; border-radius: 5px;" />
             <label for="fromDate">From Date</label>
         </div>
         <div class="form-floating col-xl-6 col-lg-6 col-md-6 col-6">
             <input type="date" class="form-control mb-3 col-12" id="toDate" aria-label="To Date"
-                style="height: 50px;  border:1px solid #d3d3d3; border-radius: 5%;" />
+                style="height: 50px;  border:1px solid #d3d3d3; border-radius: 5px;" />
             <label for="toDate">To Date</label>
-
         </div>
     </div>
     <div class="d-flex align-items-center justify-content-center col-xl-2 col-md-3 col-12"
         style="gap: 10px; margin-left: 10px;">
         <button type="button" class="btn btn-primary mb-3 col-6" onclick="applyFilters()"
-            style="height: 50px; background-color: #0066A7; color: white; border: 1px solid #0066A7;">Search</button>
+            style="height: 58px; background-color: #0066A7; color: white; border-radius:5px;">Search</button>
         <button type="button" class="btn btn-secondary mb-3 col-6" onclick="clearFilters()"
-            style="height: 50px; background-color:transparent; color: #0066A7; border: 1px solid #0066A7;">Clear</button>
+            style="height: 58px; background-color:transparent; color: #0066A7; border: 1px solid #0066A7;">Clear</button>
     </div>
 </div>
 
@@ -81,111 +80,131 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            $('#searchbox').on('input', function () {
-                loadOrders(1);
-            });
-
-            $('#pageSizeTable').change(function () {
-                loadOrders(1);
-            });
-
-            $('#statusFilter').change(function () {
-                loadOrders(1);
-            });
-
-            $('#dateRangeFilter').change(function () {
-                loadOrders(1);
-            });
-            $('#fromDate, #toDate').change(function () {
-                loadOrders(1);
-            });
+    var lastChangedFilter = 'dateRangeFilter'; 
+    $(document).ready(function () {
+        $('#searchbox').on('input', function () {
+            loadOrders(1);
         });
 
-        function loadOrders(pageIndex) {
-            var searchTerm = $('#searchbox').val().trim();
-            var pageSize = $('#pageSizeTable').val() || 5;
-            var sortOrder = $('#sortOrder').val();
-            var statusFilter = $('#statusFilter').val();
-            var dateRangeFilter = $('#dateRangeFilter').val();
-            var fromDate = $('#fromDate').val();
-            var toDate = $('#toDate').val();
-
-            $.ajax({
-                url: '@Url.Action("Order", "Order")',
-                type: 'GET',
-                data: {
-                    searchTerm: searchTerm,
-                    pageIndex: pageIndex,
-                    pageSize: pageSize,
-                    sortOrder: sortOrder,
-                    statusFilter: statusFilter,
-                    dateRangeFilter: dateRangeFilter,
-                    fromDate: fromDate,
-                    toDate: toDate
-                },
-                success: function (result) {
-                    $('#ordersPartial').html(result);
-                    $('#pageSizeTable').val(pageSize);
-                },
-                error: handleAjaxError
-            });
-        }
-
-        function toggleSort(column) {
-            var sortOrder = $('#sortOrder').val() || '';
-            if (sortOrder.startsWith(column)) {
-                sortOrder = sortOrder.endsWith('_asc') ? column + '_desc' : column + '_asc';
-            } else {
-                sortOrder = column + '_asc';
-            }
-            $('#sortOrder').val(sortOrder);
+        $('#pageSizeTable').change(function () {
             loadOrders(1);
-        }
+        });
 
-        function applyFilters() {
+        $('#statusFilter').change(function () {
             loadOrders(1);
-        }
+            lastChangedFilter = 'statusFilter';
+        });
 
-        function clearFilters() {
-            $('#searchbox').val('');
-            $('#statusFilter').val('All Status');
-            $('#dateRangeFilter').val('All Time');
-            $('#fromDate').val('');
-            $('#toDate').val('');
+        $('#dateRangeFilter').change(function () {
             loadOrders(1);
+            lastChangedFilter = 'dateRangeFilter';
+        });
+
+        $('#fromDate').change(function () {
+            loadOrders(1);
+            lastChangedFilter = 'fromDate';
+        });
+
+        $('#toDate').change(function () {
+            loadOrders(1);
+            lastChangedFilter = 'toDate';
+        });
+    });
+
+    function loadOrders(pageIndex) {
+        var searchTerm = $('#searchbox').val().trim();
+        var pageSize = $('#pageSizeTable').val() || 5;
+        var sortOrder = $('#sortOrder').val();
+        var statusFilter = $('#statusFilter').val();
+        var dateRangeFilter = $('#dateRangeFilter').val();
+        var fromDate = $('#fromDate').val();
+        var toDate = $('#toDate').val();
+
+        var data = {
+            searchTerm: searchTerm,
+            pageIndex: pageIndex,
+            pageSize: pageSize,
+            sortOrder: sortOrder,
+            statusFilter: statusFilter
+        };
+
+        if (lastChangedFilter === 'dateRangeFilter') {
+            data.dateRangeFilter = dateRangeFilter;
+            data.fromDate = null;
+            data.toDate = null;
+        } else if (lastChangedFilter === 'fromDate' || lastChangedFilter === 'toDate') {
+            data.dateRangeFilter = null;
+            data.fromDate = fromDate;
+            data.toDate = toDate;
         }
 
-        function exportOrders() {
-            var searchTerm = $('#searchbox').val().trim();
-            var sortOrder = $('#sortOrder').val();
-            var statusFilter = $('#statusFilter').val();
-            var dateRangeFilter = $('#dateRangeFilter').val();
-            var fromDate = $('#fromDate').val();
-            var toDate = $('#toDate').val();
+        $.ajax({
+            url: '@Url.Action("Order", "Order")',
+            type: 'GET',
+            data: data,
+            success: function (result) {
+                $('#ordersPartial').html(result);
+                $('#pageSizeTable').val(pageSize);
+            },
+            error: handleAjaxError
+        });
+    }
 
-            var query = $.param({
-                searchTerm: searchTerm,
-                sortOrder: sortOrder,
-                statusFilter: statusFilter,
-                dateRangeFilter: dateRangeFilter,
-                fromDate: fromDate,
-                toDate: toDate
-            });
-
-            window.location.href = '@Url.Action("ExportOrders", "Order")?' + query;
+    function toggleSort(column) {
+        var sortOrder = $('#sortOrder').val() || '';
+        if (sortOrder.startsWith(column)) {
+            sortOrder = sortOrder.endsWith('_asc') ? column + '_desc' : column + '_asc';
+        } else {
+            sortOrder = column + '_asc';
         }
+        $('#sortOrder').val(sortOrder);
+        loadOrders(1);
+    }
 
-        function handleAjaxError(xhr, status, error) {
-            if (xhr.status === 401) {
-                toastr.error("You are not authenticated. Please log in.");
-            } else if (xhr.status === 403) {
-                toastr.error(xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : "You are not authorized to perform this action.");
-            } else {
-                toastr.error("An error occurred while processing your request. Please try again.");
-                console.error("Error details:", status, error, xhr.responseText);
-            }
+    function applyFilters() {
+        loadOrders(1);
+    }
+
+    function clearFilters() {
+        $('#searchbox').val('');
+        $('#statusFilter').val('All Status');
+        $('#dateRangeFilter').val('All Time');
+        $('#fromDate').val('');
+        $('#toDate').val('');
+        lastChangedFilter = 'dateRangeFilter'; 
+        loadOrders(1);
+    }
+
+    function exportOrders() {
+        var searchTerm = $('#searchbox').val().trim();
+        var sortOrder = $('#sortOrder').val();
+        var statusFilter = $('#statusFilter').val();
+        var dateRangeFilter = $('#dateRangeFilter').val();
+        var fromDate = $('#fromDate').val();
+        var toDate = $('#toDate').val();
+
+        var query = $.param({
+            searchTerm: searchTerm,
+            sortOrder: sortOrder,
+            statusFilter: statusFilter,
+            dateRangeFilter: lastChangedFilter === 'dateRangeFilter' ? dateRangeFilter : null,
+            fromDate: lastChangedFilter === 'fromDate' || lastChangedFilter === 'toDate' ? fromDate : null,
+            toDate: lastChangedFilter === 'fromDate' || lastChangedFilter === 'toDate' ? toDate : null
+        });
+
+        window.location.href = '@Url.Action("ExportOrders", "Order")?' + query;
+    }
+
+    function handleAjaxError(xhr, status, error) {
+        if (xhr.status === 401) {
+            toastr.error("You are not authenticated. Please log in.");
+        } else if (xhr.status === 403) {
+            toastr.error(xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : "You are not authorized to perform this action.");
+        } else {
+            toastr.error("An error occurred while processing your request. Please try again.");
+            console.error("Error details:", status, error, xhr.responseText);
         }
-    </script>
+    }
+</script>
     <input type="hidden" id="sortOrder" value="@ViewBag.SortOrder" />
 }
