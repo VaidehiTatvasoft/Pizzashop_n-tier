@@ -3,7 +3,7 @@
     var PageSize = Model.PageSize;
     var PageIndex = Model.PageIndex;
     var TotalPage = Model.TotalPage;
-    var SearchString = Model.SearchString;
+    var searchInput = Model.searchInput;
     var TotalItems = Model.TotalItems;
 }
 <section class="table-responsive">
@@ -105,20 +105,20 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header border-0">
-                <h1 class="modal-title fs-5" id="deleteTableLable">
+                <h1 class="modal-title fs-5" id="deleteTableLable" style="color:grey;">
                     Delete Confirmation
                 </h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body text-center p-1">
-                <i class="fa-solid fa-triangle-exclamation fa-2xl" style="color: #FFD43B;"></i>
-                <p class="fw-bold mb-0">
+            <div class="modal-body text-center p-1" style="color:grey;">
+                <i class="fa-solid fa-triangle-exclamation fa-2xl pb-2" style="color: #FFD43B;"></i>
+                <p class="mb-0">
                     Are you sure you want to delete this table?
                 </p>
             </div>
             <div class="modal-footer d-flex justify-content-center border-0">
-                <button type="button" id="deleteTableBtn" class="btn update-button">Yes</button>
-                <button type="button" class="btn cancel-button" data-bs-dismiss="modal">
+                <button type="button" id="deleteTableBtn" class="btn update-button" style=" width: 70px;">Yes</button>
+                <button type="button" class="btn cancel-button" data-bs-dismiss="modal" style=" width: 70px;">
                     No
                 </button>
             </div>
@@ -131,20 +131,20 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header border-0">
-                <h1 class="modal-title fs-5" id="deleteTableLable">
+                <h1 class="modal-title fs-5" id="deleteTableLable" style="color:grey;">
                     Multiple Delete Confirmation
                 </h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body text-center p-1">
-                <i class="fa-solid fa-triangle-exclamation fa-2xl" style="color: #FFD43B;"></i>
-                <p class="fw-bold mb-0">
+            <div class="modal-body text-center p-1" style="color:grey;">
+                <i class="fa-solid fa-triangle-exclamation fa-2xl pb-2" style="color: #FFD43B;"></i>
+                <p class="mb-0">
                     Are you sure you want to delete these tables?
                 </p>
             </div>
             <div class="modal-footer d-flex justify-content-center border-0">
-                <button type="button" id="multiDeleteTableBtn" class="btn update-button">Yes</button>
-                <button type="button" class="btn cancel-button" data-bs-dismiss="modal">No</button>
+                <button type="submit" id="multiDeleteTableBtn" class="btn update-button" style=" width: 70px;">Yes</button>
+                <button type="button" class="btn cancel-button" data-bs-dismiss="modal" style=" width: 70px;">No</button>
             </div>
         </div>
     </div>
@@ -225,7 +225,7 @@
         });
 
         function GetFilteredItems() {
-            var SearchString = $("#searchString").val();
+            var searchInput = $("#searchInput").val();
             var pageSize = $("#pageSizeTable").val();
             if (ajaxRequest && ajaxRequest.readyState !== 4) {
                 ajaxRequest.abort();
@@ -237,7 +237,7 @@
                     sectionId: sectionId,
                     pageIndex: pageIndex,
                     pageSize: pageSize,
-                    searchString: SearchString
+                    searchInput: searchInput
                 },
                 success: function (data) {
                     $("#tableList").html(data);

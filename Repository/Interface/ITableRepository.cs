@@ -12,8 +12,8 @@ public interface ITableRepository
 
     public bool UpdateTable(Table model);
 
-    public Table IsTableExist(string name, int sectionId, int tableId);
+    public Table IsTableExist(string name, int sectionId, int? tableId);
     public Task<TableViewModel> GetTableById(int id);
-    public List<Table> GetTablesBySectionId(int sectionId, int pageSize, int pageIndex, string? searchString);
-    public int GetTableCountBySectionId(int sId, string? searchString);
+    public List<Table> GetTablesBySectionId(int sectionId, int pageSize, int pageIndex, string? searchInput);
+    public int GetTableCountBySectionId(int sId, string? searchInput);
 }

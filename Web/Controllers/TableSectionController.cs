@@ -20,7 +20,7 @@ public class TableSectionController : Controller
     }
     [CustomAuthorize(1, RolePermissionEnum.Permission.TablesAndSections_CanView)]
     [HttpGet]
-    public IActionResult TableSection(int? id, int pageSize = 5, int pageIndex = 1, string searchString = "")
+    public IActionResult TableSection(int? id, int pageSize = 5, int pageIndex = 1, string searchInput = "")
     {
         var sections = _sectionService.GetAllSections();
         if (!sections.Any())
@@ -29,7 +29,7 @@ public class TableSectionController : Controller
         }
         var validSectionId = id ?? sections.First().Id;
 
-        var tables = _tableService.GetTablesBySectionId(validSectionId, pageSize, pageIndex, searchString);
+        var tables = _tableService.GetTablesBySectionId(validSectionId, pageSize, pageIndex, searchInput);
         tables.Sections = sections;
         return View(tables);
     }
@@ -41,11 +41,11 @@ public class TableSectionController : Controller
     }
     [CustomAuthorize(1, RolePermissionEnum.Permission.TablesAndSections_CanView)]
     [HttpGet]
-    public async Task<IActionResult> GetTablesBySectionId(int sectionId, int pageSize, int pageIndex, string searchString = "")
+    public async Task<IActionResult> GetTablesBySectionId(int sectionId, int pageSize, int pageIndex, string searchInput = "")
     {
         var sections = _sectionService.GetAllSections();
 
-        TableSectionViewModel model = _tableService.GetTablesBySectionId(sectionId, pageSize == 0 ? 5 : pageSize, pageIndex == 0 ? 1 : pageIndex, searchString);
+        TableSectionViewModel model = _tableService.GetTablesBySectionId(sectionId, pageSize == 0 ? 5 : pageSize, pageIndex == 0 ? 1 : pageIndex, searchInput);
         model.Sections = sections;
         return PartialView("_TableList", model);
     }
@@ -74,30 +74,26 @@ public class TableSectionController : Controller
     {
         if (ModelState.IsValid)
         {
+            string message;
+            var tableAdded = _tableService.AddTable(model, User, out message);
 
-            var table = _tableService.AddTable(model, User);
-
-            if (table)
+            if (tableAdded)
             {
-                TempData["SuccessMessage"] = "Table Added successfully.";
-                return Json(new { success = true, message = "Table Added successfully." });
+                TempData["SuccessMessage"] = message;
+                return Json(new { success = true, message });
             }
             else
             {
-                TempData["ErrorMessage"] = "Table already exist!";
-                return Json(new { success = false, message = "Table already exist!" });
+                TempData["ErrorMessage"] = message;
+                return Json(new { success = false, message });
             }
         }
         else
         {
-            var errorMessage = "";
-            foreach (var state in ModelState)
-            {
-                if (state.Value.Errors.Count > 0)
-                {
-                    errorMessage += $"{state.Key}: {state.Value.Errors.First().ErrorMessage}; ";
-                }
-            }
+            var errorMessage = string.Join("; ", ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage));
+
             return Json(new { success = false, message = errorMessage });
         }
     }
@@ -150,18 +146,18 @@ public class TableSectionController : Controller
     {
         if (ModelState.IsValid)
         {
-            var token = Request.Cookies["Token"];
-            var updated = _tableService.UpdateTable(model, User);
+            string message;
+            var tableUpdated = _tableService.UpdateTable(model, User, out message);
 
-            if (updated)
+            if (tableUpdated)
             {
-                 TempData["SuccessMessage"] = "Table updated successfully.";
-                return Json(new { success = true, message = "Table updated successfully." });
+                TempData["SuccessMessage"] = message;
+                return Json(new { success = true, message });
             }
             else
             {
-                TempData["ErrorMessage"] = "Table already exist!";
-                return Json(new { success = false, message = "Table already exist!" });
+                TempData["ErrorMessage"] = message;
+                return Json(new { success = false, message });
             }
         }
         else
@@ -192,17 +188,30 @@ public class TableSectionController : Controller
 
         try
         {
-
+            (bool success, string errorMessage) result;
             if (sectionViewModel.Id == 0)
-                await _sectionService.AddSectionAsync(sectionViewModel, User);
+            {
+                result = await _sectionService.AddSectionAsync(sectionViewModel, User);
+            }
             else
-                await _sectionService.UpdateSectionAsync(sectionViewModel, User);
+            {
+                result = await _sectionService.UpdateSectionAsync(sectionViewModel, User);
+            }
 
-            return Json(new { success = true, message = "Section saved successfully." });
+            if (result.success)
+            {
+                TempData["SuccessMessage"] = "Section saved successfully.";
+                return Json(new { success = true, message = "Section saved successfully." });
+            }
+            else
+            {
+                TempData["ErrorMessage"] = result.errorMessage;
+                return Json(new { success = false, message = result.errorMessage });
+            }
         }
         catch (Exception ex)
         {
-            ModelState.AddModelError(string.Empty, ex.Message);
+            TempData["ErrorMessage"] = ex.Message;
             return Json(new { success = false, message = ex.Message });
         }
     }

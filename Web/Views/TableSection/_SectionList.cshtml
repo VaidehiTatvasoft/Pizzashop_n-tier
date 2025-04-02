@@ -21,7 +21,7 @@
 </div>
 
 <div class="modal fade" id="sectionModal" tabindex="-1" aria-labelledby="sectionModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div id="modalContent"></div>
         </div>
@@ -30,19 +30,22 @@
 
 <div class="modal fade" id="deleteSectionModal" tabindex="-1" aria-labelledby="deleteSectionModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div id="deleteModalContent">
-                <div class="modal-header">
-                    <h5 class="modal-title">Delete Section</h5>
+                <div class="modal-header border-0">
+                    <h1 class="modal-title fs-5" style="color:grey;">Delete Confirmation</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete this section?</p>
+                <div class="modal-body text-center p-1" style="color:grey;">
+                <i class="fa-solid fa-triangle-exclamation fa-2xl pb-2" style="color: #FFD43B;"></i>
+                <p class="mb-0">
+                    Are you sure you want to delete this Section?
+                </p>                
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                    <button type="button" id="deleteSectionBtn" class="btn btn-danger">Yes, Delete</button>
+                <div class="modal-footer d-flex justify-content-center border-0">
+                    <button type="button" id="deleteSectionBtn" class="btn update-button" style=" width: 70px;">Yes</button>
+                    <button type="button" class="btn cancel-button" data-bs-dismiss="modal"style=" width: 70px;">No</button>
                 </div>
             </div>
         </div>

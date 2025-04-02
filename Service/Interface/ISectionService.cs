@@ -8,7 +8,7 @@ using System.Security.Claims;
  
      public List<SectionViewModel> GetAllSections();
      Task<SectionViewModel?> GetSectionByIdAsync(int id);
-     Task<bool> AddSectionAsync(SectionViewModel model, ClaimsPrincipal userClaims);
-     Task<bool> UpdateSectionAsync(SectionViewModel model, ClaimsPrincipal userClaims);
+     Task<(bool success, string errorMessage)> AddSectionAsync(SectionViewModel model, ClaimsPrincipal userClaims);
+     Task<(bool success, string errorMessage)> UpdateSectionAsync(SectionViewModel model, ClaimsPrincipal userClaims);
      Task<string> DeleteSectionAsync(int id, bool softDelete, ClaimsPrincipal userClaims);
  }

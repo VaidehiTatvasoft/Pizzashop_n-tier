@@ -39,7 +39,7 @@ public class TaxAndFeeRepository : ITaxAndFeeRepository
     public async Task<TaxesAndFee> GetTaxByNameExId(string name, int id)
     {
         return await _context.TaxesAndFees
-            .Where(tf => tf.Name.ToLower() == name.ToLower() && tf.Id != id)
+            .Where(tf => tf.Name.ToLower() == name.ToLower() && tf.Id != id && tf.IsDeleted == false)
             .FirstOrDefaultAsync();
     }
 

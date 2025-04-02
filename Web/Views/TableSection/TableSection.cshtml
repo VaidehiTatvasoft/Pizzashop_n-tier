@@ -9,40 +9,65 @@
         <div class="row p-2 m-3" style="border-radius: 5px;">
             <aside class="col-md-3 col-lg-2 " style="background-image: linear-gradient(to right, white, #f2f2f2);">
                 <!-- Section header -->
-                <div class="d-flex flex-wrap justify-content-between align-items-center pt-3 pb-4" style="color: #0066A7;">
+                <div class="d-flex flex-wrap justify-content-between align-items-center pt-3 pb-4"
+                    style="color: #0066A7;">
                     <h5>Sections</h5>
-                    <i class="cat-i fa-regular fa-square-plus" style="height: 30px; width:30px;" data-bs-toggle="modal" data-bs-target="#sectionModal"
-                        onclick="openAddEditModal(0)"></i>
+                    <i class="cat-i fa-regular fa-square-plus" style="height: 30px; width:30px;" data-bs-toggle="modal"
+                        data-bs-target="#sectionModal" onclick="openAddEditModal(0)"></i>
                 </div>
                 <div id="sectionList">
                     @Html.Partial("_SectionList", Model.Sections)
                 </div>
             </aside>
             <div class="col-md-9 col-lg-10 border-custom bg-white">
-                <div>
+                <div class="d-flex justify-content-between align-items-center pt-3 pb-3">
                     <!-- table header -->
-                    <h5 class="p-2 mb-0 section-heading">Tables</h5>
-                    <div class="d-flex justify-content-end align-items-center mb-3">
-                        <div class="d-flex justify-content-between me-3 position-relative">
-                            <input type="text" placeholder="Search" class="p-2 d-none d-sm-block "
-                                name="search" id="searchString"/>
-                            @* <i class="fa-solid fa-magnifying-glass search-btn"></i> *@
+                    <div>
+                        <h5 class="p-2 mb-0" style="color:#0066A7">Tables</h5>
+                    </div>
+                    <div class="upper-div d-flex justify-content-end">
+                        <div class="d-flex justify-content-center align-items-center"></div>
+                        <div class="search-box" style="margin-right: 13px;">
+                            <input type="text" name="search" id="searchInput" placeholder="Search">
+                            <i class="fa-solid fa-magnifying-glass search-btn part-2"></i>
                         </div>
-                        <button class="btn btn-outline-secondary me-3" id="multiDeleteTableBtn">
-                            <i class="bi bi-trash m-1"></i>
+                        <button id="multiDeleteTableBtn">
+                            <i class="bi bi-trash m-1 massdelete" style="cursor: pointer; color: #adadad;"></i>
                         </button>
-                        <button class="fill-btn addTableBtn">
+                        <a href="javascript:void(0);" style="text-decoration: none; color: inherit;">
+                            <button class="btn btn-primary addTableBtn"
+                                style="border-radius: 5px;  margin:5px; height:43px;">
+                                <span class="part-1"><i class="fa-solid fa-plus "></i></span>
+                                <span class="part-2"> New Table </span>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+                @* 
+                       
+                        <button id="multiDeleteTableBtn">
+                            <i class="bi bi-trash m-1 massdelete" style="cursor: pointer; color: #adadad;"></i>
+                        </button>
+                        <a href="javascript:void(0);"
+                            class="btn btn-primary d-flex addTableBtn justify-content-center align-items-center"
+                            style="text-decoration: none; color: inherit;"></a>
+                        <button class="addTableBtn" style="border-radius: 5px;  margin:5px;">
+                            <span class="part-1"><i class="fa-solid fa-plus "></i></span>
+                            <span class="part-2"> New Table </span>
+                        </button>
+                        </a>
+                        @* <button class="fill-btn addTableBtn">
                             <i class="fa-solid fa-plus"></i> New Table
-                        </button>
-                    </div>
-                    <!-- Items Table -->
-                    <div id="tableList">
-                        @Html.Partial("_TableList", Model)
-                    </div>
+                        </button> *@
+                @* </div>  *@
+                <!-- Items Table -->
+                <div id="tableList">
+                    @Html.Partial("_TableList", Model)
                 </div>
             </div>
         </div>
-    </section>
+</div>
+</section>
 </div>
 @section Scripts {
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -152,7 +177,7 @@
                 $.ajax({
                     url: '/TableSection/GetTablesBySectionId',
                     type: 'GET',
-                    data: { sectionId: sectionId, pageSize: @Model.PageSize, pageIndex: @Model.PageIndex, searchString: "" },
+                    data: { sectionId: sectionId, pageSize: @Model.PageSize, pageIndex: @Model.PageIndex, searchInput: "" },
                     success: function (response) {
                         $("#tableList").html(response);
                     },
@@ -164,7 +189,7 @@
 
             var pageIndex = @Model.PageIndex;
             function GetFilteredItems() {
-                var SearchString = $("#searchString").val();
+                var searchInput = $("#searchInput").val();
                 var pageSize = $("#pageSizeTable").val();
                 if (ajaxRequest && ajaxRequest.readyState !== 4) {
                     ajaxRequest.abort();
@@ -177,7 +202,7 @@
                         sectionId: sectionId,
                         pageIndex: pageIndex,
                         pageSize: pageSize,
-                        searchString: SearchString
+                        searchInput: searchInput
                     },
                     success: function (data) {
                         $("#tableList").html(data);
@@ -188,7 +213,7 @@
                 });
             }
 
-            $('#searchString').keyup(function () {
+            $('#searchInput').keyup(function () {
                 clearTimeout(debounce);
                 pageIndex = 1;
                 pageSize = @Model.PageSize;

@@ -1,6 +1,6 @@
 @model Entity.ViewModel.SectionViewModel
 <partial name="_ValidationScriptsPartial" />
-<div class="modal-header">
+<div class="modal-header border-0">
     <h5 class="modal-title">@(Model.Id == 0 ? "Add Section" : "Edit Section")</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
@@ -8,19 +8,22 @@
     <form id="addEditSectionForm" method="post" action="@Url.Action("AddEditSection", "TableSection")">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="Id" />
-        <div class="form-group">
-            <label asp-for="Name" class="control-label"></label>
-            <input asp-for="Name" class="form-control" />
+        
+        <div class="form-floating mb-3">
+            <input asp-for="Name" class="form-control" placeholder="Name*" />
+            <label asp-for="Name" class="control-label">Name*</label>
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <label asp-for="Description" class="control-label"></label>
-            <textarea asp-for="Description" class="form-control"></textarea>
+        
+        <div class="form-floating mb-3">
+            <textarea asp-for="Description" class="form-control" placeholder="Description" style="height: 100px;"></textarea>
+            <label asp-for="Description" class="control-label">Description</label>
             <span asp-validation-for="Description" class="text-danger"></span>
         </div>
-        <div class="modal-footer">
-            <button type="submit" class="btn update-button">Save</button>
-            <button type="button" class="btn cancel-button" data-bs-dismiss="modal">Cancel</button>
+        
+        <div class="modal-footer border-0" style="padding-right:0;">
+            <button type="submit" class="btn update-button" style=" width: 80px;">Save</button>
+            <button type="button" class="btn cancel-button" data-bs-dismiss="modal" style=" width: 80px;">Cancel</button>
         </div>
     </form>
 </div>

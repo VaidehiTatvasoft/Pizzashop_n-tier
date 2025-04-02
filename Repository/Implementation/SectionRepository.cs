@@ -31,6 +31,18 @@ public class SectionRepository : ISectionRepository
         .OrderBy(s => s.Name).ToList();
         return sections;
     }
+    public async Task<bool> IsSectionNameUniqueAsync(string name, int? sectionId = null)
+    {
+        name = name.Trim().ToLower();
+        if (sectionId.HasValue)
+        {
+            return !await _context.Sections.AnyAsync(s => s.Name.ToLower() == name && s.Id != sectionId.Value && s.IsDeleted == false);
+        }
+        else
+        {
+            return !await _context.Sections.AnyAsync(s => s.Name.ToLower() == name && s.IsDeleted == false);
+        }
+    }
     public Section GetSectionById(int sectionId)
     {
         return _context.Sections.FirstOrDefault(s => s.Id == sectionId);
@@ -40,28 +52,37 @@ public class SectionRepository : ISectionRepository
     {
         try
         {
-            bool isNameUnique = !await _context.Sections.AnyAsync(s => s.Name.ToLower() == section.Name.ToLower() && s.IsDeleted == false);
-            if (!isNameUnique)
-                throw new Exception("Section name must be unique.");
-
             await _context.Sections.AddAsync(section);
             return await _context.SaveChangesAsync() > 0;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Console.WriteLine("Exception Message: " + ex.Message);
+            if (ex.InnerException != null)
+            {
+                Console.WriteLine("Inner Exception: " + ex.InnerException.Message);
+            }
             return false;
         }
     }
 
     public async Task<bool> UpdateSectionAsync(Section section)
     {
-        bool isNameUnique = !await _context.Sections.AnyAsync(s => s.Name.ToLower() == section.Name.ToLower() && s.Id != section.Id && s.IsDeleted == false);
-        if (!isNameUnique)
-            throw new Exception("Section name must be unique.");
-        _context.Sections.Update(section);
-        return await _context.SaveChangesAsync() > 0;
+        try
+        {
+            _context.Sections.Update(section);
+            return await _context.SaveChangesAsync() > 0;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Exception Message: " + ex.Message);
+            if (ex.InnerException != null)
+            {
+                Console.WriteLine("Inner Exception: " + ex.InnerException.Message);
+            }
+            return false;
+        }
     }
-
     public async Task<string> DeleteSectionAsync(int id, bool softDelete, int userId)
     {
         var section = GetSectionById(id);

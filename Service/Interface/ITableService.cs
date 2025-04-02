@@ -8,10 +8,10 @@ public interface ITableService
         public List<TableViewModel> GetAllTables();
     public bool DeleteTable(int id, ClaimsPrincipal userClaims);
     public bool MultiDeleteTable(int[] tableIds, ClaimsPrincipal userClaims);
-    public bool AddTable(TableViewModel model, ClaimsPrincipal userClaims);
-    public bool UpdateTable(TableViewModel model, ClaimsPrincipal userClaims);
+    public bool AddTable(TableViewModel model, ClaimsPrincipal userClaims , out string message);
+    public bool UpdateTable(TableViewModel model, ClaimsPrincipal userClaims,out string message);
     public Task<TableViewModel> GetTableById(int id);
-    public int GetTableCountBySectionId(int sId, string? searchString);
-    public TableSectionViewModel GetTablesBySectionId(int sectionId, int pageSize, int pageIndex, string? searchString);
+    public int GetTableCountBySectionId(int sId, string? searchInput);
+    public TableSectionViewModel GetTablesBySectionId(int sectionId, int pageSize, int pageIndex, string? searchInput);
 
 }

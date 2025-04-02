@@ -5,7 +5,7 @@ using Repository.Interface;
 
 namespace Repository.Implementation;
 
-public class TableRepository: ITableRepository
+public class TableRepository : ITableRepository
 {
     private readonly PizzaShopContext _context;
 
@@ -34,38 +34,38 @@ public class TableRepository: ITableRepository
         return tables;
     }
 
-    public int GetTableCountBySectionId(int sId, string? searchString)
+    public int GetTableCountBySectionId(int sId, string? searchInput)
     {
         var tableQuery = _context.Tables.Where(i => i.SectionId == sId && i.IsDeleted == false);
-        if (!string.IsNullOrEmpty(searchString))
+        if (!string.IsNullOrEmpty(searchInput))
         {
-            searchString = searchString.Trim().ToLower();
+            searchInput = searchInput.Trim().ToLower();
 
             tableQuery = tableQuery.Where(n =>
-                n.Name!.ToLower().Contains(searchString)
+                n.Name!.ToLower().Contains(searchInput)
             );
         }
         int count = tableQuery.ToList()!.Count();
         return count;
     }
 
-public List<Table> GetTablesBySectionId(int sectionId, int pageSize, int pageIndex, string? searchString)
-{
-    var tablesQuery = _context.Tables.Where(c => c.SectionId == sectionId && c.IsDeleted == false);
-
-    if (!string.IsNullOrEmpty(searchString))
+    public List<Table> GetTablesBySectionId(int sectionId, int pageSize, int pageIndex, string? searchInput)
     {
-        searchString = searchString.Trim().ToLower();
-        tablesQuery = tablesQuery.Where(i => i.Name.ToLower().Contains(searchString));
+        var tablesQuery = _context.Tables.Where(c => c.SectionId == sectionId && c.IsDeleted == false);
+
+        if (!string.IsNullOrEmpty(searchInput))
+        {
+            searchInput = searchInput.Trim().ToLower();
+            tablesQuery = tablesQuery.Where(i => i.Name.ToLower().Contains(searchInput));
+        }
+
+        var tableList = tablesQuery.OrderBy(u => u.Name)
+            .Skip((pageIndex - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        return tableList;
     }
-
-    var tableList = tablesQuery.OrderBy(u => u.Name)
-        .Skip((pageIndex - 1) * pageSize)
-        .Take(pageSize)
-        .ToList();
-
-    return tableList;
-}
     public bool DeleteTable(int id, int userId)
     {
         var table = _context.Tables.FirstOrDefault(i => i.Id == id);
@@ -135,20 +135,20 @@ public List<Table> GetTablesBySectionId(int sectionId, int pageSize, int pageInd
         return table!;
     }
 
-    public Table IsTableExist(string name, int sectionId, int tableId)
+    public Table IsTableExist(string name, int sectionId, int? tableId = null)
     {
         name = name.Trim().ToLower();
         var table = _context.Tables.FirstOrDefault(t => t.Name.ToLower() == name && t.SectionId == sectionId && (t.IsDeleted == false || t.IsDeleted == null));
 
-        var existingTable = _context.Tables
-       .Where(t => t.Id == tableId && (t.IsDeleted == false || t.IsDeleted == null)).FirstOrDefault();
-        if (table != null && existingTable!.Name.ToLower() != name && existingTable.SectionId != sectionId)
+        if (tableId.HasValue)
         {
-            return null;
-        }
-        else
-        {
+            var existingTable = _context.Tables.FirstOrDefault(t => t.Id == tableId && (t.IsDeleted == false || t.IsDeleted == null));
+            if (table != null && table.Id != tableId)
+            {
+                return table;
+            }
             return existingTable;
         }
+        return table;
     }
 }

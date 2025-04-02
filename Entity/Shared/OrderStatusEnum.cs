@@ -7,5 +7,6 @@ public enum OrderStatusEnum
         InProgress,
         Served,
         Cancelled,
+        OnHold,
         Failed
     }

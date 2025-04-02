@@ -19,9 +19,9 @@ public class TableService : ITableService
         var sections = _tableRepository.GetAllTablesAsync();
         return sections;
     }
-    public TableSectionViewModel GetTablesBySectionId(int sectionId, int pageSize, int pageIndex, string? searchString)
+    public TableSectionViewModel GetTablesBySectionId(int sectionId, int pageSize, int pageIndex, string? searchInput)
     {
-        var tables = _tableRepository.GetTablesBySectionId(sectionId, pageSize, pageIndex, searchString);
+        var tables = _tableRepository.GetTablesBySectionId(sectionId, pageSize, pageIndex, searchInput);
         var filteredTables = tables.Select(t => new TableViewModel
         {
             Id = t.Id,
@@ -35,22 +35,22 @@ public class TableService : ITableService
             ModifiedAt = DateTime.UtcNow,
             ModifiedBy = t.ModifiedBy
         }).ToList();
-        var totalTable = _tableRepository.GetTableCountBySectionId(sectionId, searchString);
+        var totalTable = _tableRepository.GetTableCountBySectionId(sectionId, searchInput);
         var model = new TableSectionViewModel
         {
             Tables = filteredTables,
             PageSize = pageSize,
             PageIndex = pageIndex,
-            SearchString = searchString,
+            searchInput = searchInput,
             TotalPage = (int)Math.Ceiling(totalTable / (double)pageSize),
             TotalItems = totalTable
         };
         return model;
     }
 
-    public int GetTableCountBySectionId(int sId, string? searchString)
+    public int GetTableCountBySectionId(int sId, string? searchInput)
     {
-        return _tableRepository.GetTableCountBySectionId(sId, searchString!);
+        return _tableRepository.GetTableCountBySectionId(sId, searchInput!);
     }
 
     public bool DeleteTable(int id, ClaimsPrincipal userClaims)
@@ -97,12 +97,13 @@ public class TableService : ITableService
         }
     }
 
-    public bool AddTable(TableViewModel model, ClaimsPrincipal userClaims)
+    public bool AddTable(TableViewModel model, ClaimsPrincipal userClaims, out string message)
     {
         Table isTable = _tableRepository.IsTableExist(model.Name, model.SectionId, model.Id);
         var userIdClaim = userClaims.FindFirst("UserId");
         if (userIdClaim == null)
         {
+            message = "User not authorized.";
             return false;
         }
         var userId = int.Parse(userIdClaim.Value);
@@ -118,8 +119,11 @@ public class TableService : ITableService
                 CreatedAt = DateTime.UtcNow
             };
 
-            return _tableRepository.AddTable(newTable);
+            bool isAdded = _tableRepository.AddTable(newTable);
+            message = isAdded ? "Table added successfully." : "Failed to add table.";
+            return isAdded;
         }
+        message = "Table already exists.";
         return false;
     }
 
@@ -128,45 +132,37 @@ public class TableService : ITableService
         return await _tableRepository.GetTableById(id);
     }
 
-    public bool UpdateTable(TableViewModel model, ClaimsPrincipal userClaims)
+    public bool UpdateTable(TableViewModel model, ClaimsPrincipal userClaims, out string message)
     {
-        Table table = _tableRepository.IsTableExist(model.Name, model.SectionId, model.Id);
+        Table isTable = _tableRepository.IsTableExist(model.Name, model.SectionId, model.Id);
         var userIdClaim = userClaims.FindFirst("UserId");
         if (userIdClaim == null)
         {
+            message = "User not authorized.";
             return false;
         }
         var userId = int.Parse(userIdClaim.Value);
-        if (table != null)
+        if (isTable == null || isTable.Id == model.Id)
         {
+            var table = _tableRepository.GetTableById(model.Id).Result;
 
-            table.Name = model.Name;
-            table.SectionId = model.SectionId;
-            table.Capacity = model.Capacity;
-            table.IsAvailable = model.IsAvailable;
-            table.CreatedBy = userId;
-            table.CreatedAt = DateTime.UtcNow;
+            if (table != null)
+            {
+                table.Name = model.Name;
+                table.SectionId = model.SectionId;
+                table.Capacity = model.Capacity;
+                table.IsAvailable = model.IsAvailable;
+                table.ModifiedBy = userId;
+                table.ModifiedAt = DateTime.UtcNow;
 
-
-            return _tableRepository.UpdateTable(table);
+                bool isUpdated = _tableRepository.UpdateTable(isTable);
+                message = isUpdated ? "Table updated successfully." : "Failed to update table.";
+                return isUpdated;
+            }
+            message = "Table not found.";
+            return false;
         }
+        message = "Table with the same name already exists.";
         return false;
     }
-    //   public bool UpdateTable(TableViewModel model, int userId)
-    //     {
-    //         Table table = _tableRepository.IsTableExist(model.Name, model.SectionId, model.Id);
-
-    //         if (table != null)
-    //         {
-    //             table.Name = model.Name;
-    //             table.SectionId = model.SectionId;
-    //             table.Capacity = model.Capacity;
-    //             table.IsAvailable = model.IsAvailable;
-    //             table.CreatedBy = userId;
-    //             table.CreatedAt = DateTime.UtcNow;
-
-    //             return _tableRepository.UpdateTable(table);
-    //         }
-    //         return false;
-    //     }
 }

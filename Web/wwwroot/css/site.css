@@ -420,7 +420,6 @@ body {
   color: gray !important;
   padding: 10px;
 }
-
 .active-status {
   width: 90px;
   background: #a0d66d;
@@ -685,13 +684,20 @@ a i {
 
 #deleteSelectedButton {
   width: 40px;
-  height: 40px;
+  height: 43px;
   margin: 5px;
   background-color: white;
   border: 1px solid #bbbbbb;
   border-radius: 5px;
 }
-
+#multiDeleteTableBtn{
+  width: 40px;
+  height: 43px;
+  margin: 5px;
+  background-color: white;
+  border: 1px solid #bbbbbb;
+  border-radius: 5px;
+}
 #searchInput {
   height: 43px;
   width: 200px;
