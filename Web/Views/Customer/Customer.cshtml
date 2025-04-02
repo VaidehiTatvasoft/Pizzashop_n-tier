@@ -1,0 +1,175 @@
+@model IEnumerable<Entity.ViewModel.CustomerViewModel>
+
+@{
+    ViewData["Title"] = "Customers";
+}
+<div class="upper-div d-flex justify-content-between row">
+    <h2 class="col-xl-3 col-md-2 col-12">Customers</h2>
+    <div class="d-flex row col-xl-8 col-md-9 col-12" style=" justify-content: end;">
+        <div class="col-xl-4 col-lg-4 col-md-4 col-5" style="padding-left: calc(var(--bs-gutter-x)* .5) !important; padding-right:0px !important;">
+            <form method="get">
+                <input type="text" class="mb-3 col-12 p-2" placeholder="Search" id="searchbox" aria-label="Search"
+                    name="searchString" aria-describedby="search-addon"
+                    style="height: 50px; border:1px solid #d3d3d3; border-radius: 5px; " />
+                @* <i class="fa-solid fa-magnifying-glass search-btn"></i> *@
+            </form>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-4 col-5 "style="padding-left: calc(var(--bs-gutter-x)* .5) !important; padding-right:0px !important;">
+            <select class="form-select mb-3 col-12" id="dateRangeFilter"
+                style="height: 50px; border:1px solid #d3d3d3; border-radius: 5px;">
+                <option value="All Time" selected>All Time</option>
+                <option value="Today">Today</option>
+                <option value="Last 7 days">Last 7 days</option>
+                <option value="Last 30 days">Last 30 days</option>
+                <option value="Current Month">Current Month</option>
+                <option value="Custom Date">Custom Date</option>
+            </select>
+        </div>
+        <div class="col-xl-2 col-lg-2 col-md-2 col-2 pr-3 " style="padding-left: calc(var(--bs-gutter-x)* .5) !important;">
+            <button type="button" class="btn btn-primary mb-3 w-100 col-12 p-2" onclick="exportCustomers()"
+                style="height: 50px; border-radius:5px;">
+                <span class="part-1" ><i class="fa-solid fa-share-from-square me-1"></i></span>
+                <span class="part-2">Export</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Date Range Modal -->
+<div class="modal fade" id="dateRangeModal" tabindex="-1" role="dialog" aria-labelledby="dateRangeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="dateRangeModalLabel" style="color:grey;"><b>Select Date Range</b></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                
+            </div>
+            <div class="modal-body d-flex justify-content-center align-items-center">
+                <div class="form-floating col-6 p-2">
+                    <input type="date" class="form-control" id="startDate" style="border:1px solid #d3d3d3; border-radius: 5px;" "required>
+                    <label  for="startDate" class="mt-2 mx-1">Select Date</label>
+                </div>
+                <div class="form-floating col-6 p-2">
+                    <input type="date" class="form-control" id="endDate" style="border:1px solid #d3d3d3; border-radius: 5px;" required>
+                    <label for="endDate"  class="mt-2 mx-1">End Date</label>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-center border-0" >
+                <button type="button" class="btn update-button" id="submitDateRange" style=" width: 80px;">Submit</button>
+                <button type="button" class="btn cancel-button" data-dismiss="modal" style=" width: 80px;">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="customersPartial" class="bg-light rounded shadow">
+    @Html.Partial("_CustomerList", Model)
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#searchbox').on('input', function () {
+                loadCustomers(1);
+            });
+
+            $('#pageSizeTable').change(function () {
+                loadCustomers(1);
+            });
+
+            $('#dateRangeFilter').change(function () {
+                if ($(this).val() === 'Custom Date') {
+                    $('#dateRangeModal').modal('show');
+                } else {
+                    loadCustomers(1);
+                }
+            });
+
+            $('#submitDateRange').click(function () {
+                const startDate = $('#startDate').val();
+                const endDate = $('#endDate').val();
+
+                if (startDate && endDate) {
+                    $('#dateRangeModal').modal('hide');
+                    $('#dateRangeFilter').val('Custom Date');
+                    loadCustomers(1, startDate, endDate);
+                    $('#dateRangeFilter').val('All Time');
+                } else {
+                    alert('Both Start Date and End Date are required.');
+                }
+            });
+
+        });
+
+
+        function loadCustomers(pageIndex, startDate = null, endDate = null) {
+            var searchTerm = $('#searchbox').val().trim();
+            var pageSize = $('#pageSizeTable').val() || 5;
+            var sortOrder = $('#sortOrder').val();
+            var dateRangeFilter = $('#dateRangeFilter').val();
+
+            var data = {
+                searchTerm: searchTerm,
+                pageIndex: pageIndex,
+                pageSize: pageSize,
+                sortOrder: sortOrder,
+                dateRangeFilter: dateRangeFilter,
+                fromDate: startDate,
+                toDate: endDate
+            };
+
+            $.ajax({
+                url: '@Url.Action("Customer", "Customer")',
+                type: 'GET',
+                data: data,
+                success: function (result) {
+                    $('#customersPartial').html(result);
+                    $('#pageSizeTable').val(pageSize);
+                },
+                error: handleAjaxError
+            });
+        }
+
+        function toggleSort(column) {
+            var sortOrder = $('#sortOrder').val() || '';
+            if (sortOrder.startsWith(column)) {
+                sortOrder = sortOrder.endsWith('_asc') ? column + '_desc' : column + '_asc';
+            } else {
+                sortOrder = column + '_asc';
+            }
+            $('#sortOrder').val(sortOrder);
+            loadCustomers(1);
+        }
+
+        function exportCustomers() {
+            var searchTerm = $('#searchbox').val().trim();
+            var sortOrder = $('#sortOrder').val();
+            var dateRangeFilter = $('#dateRangeFilter').val();
+            var startDate = $('#startDate').val();
+            var endDate = $('#endDate').val();
+
+            var query = $.param({
+                searchTerm: searchTerm,
+                sortOrder: sortOrder,
+                dateRangeFilter: dateRangeFilter,
+                startDate: startDate,
+                endDate: endDate
+            });
+
+            window.location.href = '@Url.Action("ExportCustomers", "Customer")?' + query;
+        }
+
+        function handleAjaxError(xhr, status, error) {
+            if (xhr.status === 401) {
+                toastr.error("You are not authenticated. Please log in.");
+            } else if (xhr.status === 403) {
+                toastr.error(xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : "You are not authorized to perform this action.");
+            } else {
+                toastr.error("An error occurred while processing your request. Please try again.");
+                console.error("Error details:", status, error, xhr.responseText);
+            }
+        }
+    </script>
+    <input type="hidden" id="sortOrder" value="@ViewBag.SortOrder" />
+}

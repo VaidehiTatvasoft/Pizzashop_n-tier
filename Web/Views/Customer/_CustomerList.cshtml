@@ -1,0 +1,153 @@
+@model IEnumerable<Entity.ViewModel.CustomerViewModel>
+
+<div class="table-responsive">
+    <table class="table utable">
+        <thead>
+            <tr>
+                <th>
+                    <span class="sort-icon">Name
+                        <a href="javascript:void(0)" onclick="toggleSort('name')">
+                            <i class="fa-solid fa-sort" style="color: grey;" id="NameSortIcon"></i>
+                        </a>
+                    </span>
+                </th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>
+                    <span class="sort-icon">Date
+                        <a href="javascript:void(0)" onclick="toggleSort('date')">
+                            <i class="fa-solid fa-sort" style="color: grey;" id="dateSortIcon"></i>
+                        </a>
+                    </span>
+                </th>
+                <th>
+                    <span class="sort-icon">Total Order
+                        <a href="javascript:void(0)" onclick="toggleSort('totalorder')">
+                            <i class="fa-solid fa-sort" style="color: grey;" id="totalorderIdSortIcon"></i>
+                        </a>
+                    </span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in Model)
+            {
+                <tr>
+                    <td>@customer.Name</td>
+                    <td>@customer.Email</td>
+                    <td>@customer.Phone</td>
+                    <td>@customer.OrderDate?.ToString("yyyy-MM-dd")</td>
+                    <td>@customer.TotalOrder</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="d-flex justify-content-end align-items-center mt-2 pb-3">
+    <p class="mb-0">Customers Per Page</p>
+    <select class="ms-3 form-select w-auto" aria-label="Default select example" id="pageSizeTable"
+        onchange="loadCustomers(@ViewBag.PageIndex)">
+        @if (ViewBag.PageSize == 5)
+        {
+            <option selected value="5">5</option>
+        }
+        else
+        {
+            <option value="5">5</option>
+        }
+        @if (ViewBag.PageSize == 10)
+        {
+            <option selected value="10">10</option>
+        }
+        else
+        {
+            <option value="10">10</option>
+        }
+        @if (ViewBag.PageSize == 15)
+        {
+            <option selected value="15">15</option>
+        }
+        else
+        {
+            <option value="15">15</option>
+        }
+    </select>
+    <span class="mb-0 ms-2 me-2 d-none d-md-block" id="showing">Showing @(Math.Min((int)(((ViewBag.PageIndex - 1) *
+                ViewBag.PageSize) + 1), (int)ViewBag.TotalItems)) -
+        @(Math.Min((int)(ViewBag.PageIndex * ViewBag.PageSize), (int)ViewBag.TotalItems)) of
+        @ViewBag.TotalItems</span>
+
+    @if (ViewBag.PageIndex > 1)
+    {
+        <a href="javascript:void(0)" class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark"
+            onclick="loadCustomers(@ViewBag.PageIndex - 1)">
+            <i class="fa fa-chevron-left"></i>
+        </a>
+    }
+    else
+    {
+        <button class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" hidden>
+            <i class="fa fa-chevron-left"></i>
+        </button>
+    }
+
+    @if (ViewBag.PageIndex < ViewBag.TotalPage)
+    {
+        <a href="javascript:void(0)" class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark"
+            onclick="loadCustomers(@ViewBag.PageIndex + 1)">
+            <i class="fa fa-chevron-right"></i>
+        </a>
+    }
+    else
+    {
+        <button class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" hidden>
+            <i class="fa fa-chevron-right"></i>
+        </button>
+    }
+</div>
+@* </div>
+<div id="InvoiceContainer" hidden></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".getOrderPdf").click(function () {
+            var id = $(this).data('id');
+            console.log("Order ID:", id);
+
+            $.ajax({
+                url: "/order/invoicetemplate",
+                type: "GET",
+                data: { orderId: id },
+                success: function (response) {
+                    console.log("AJAX response received:", response);
+                    $("#InvoiceContainer").html(response);
+
+                    const element = document.querySelector('#invoice-detail');
+                    if (!element) {
+                        toastr.error("Invoice detail element not found.");
+                        return;
+                    }
+
+                    console.log("Invoice detail element found:", element);
+                    const isMobile = window.innerWidth < 768;
+
+                    const options = {
+                        margin: 1,
+                        filename: 'Invoice.pdf',
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: {
+                            scale: isMobile ? 3 : 2,
+                            windowWidth: 800
+                        },
+                        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                    };
+
+                    html2pdf().set(options).from(element).save();
+                },
+                error: function (error) {
+                    toastr.error("Error while downloading the PDF file");
+                }
+            });
+        });
+    });
+</script> *@

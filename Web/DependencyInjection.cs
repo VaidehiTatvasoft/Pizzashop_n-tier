@@ -28,6 +28,7 @@ namespace Web
             services.AddScoped<IRolePermissionService, RolePermissionService>();
             services.AddScoped<IUnitService, UnitService>();
             services.AddScoped<ISectionService, SectionService>();
+            services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<ITableService, TableService>();
             services.AddScoped<ITaxAndFeeService, TaxAndFeeService>();
             services.AddScoped<IOrderService, OrderService>();
@@ -38,6 +39,7 @@ namespace Web
             services.AddScoped<IUnitRepository, UnitRepository>();
             services.AddScoped<IModifierRepository, ModifierRepository>();
             services.AddScoped<ISectionRepository, SectionRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<ITableRepository, TableRepository>();
             services.AddScoped<ITaxAndFeeRepository, TaxAndFeeRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
