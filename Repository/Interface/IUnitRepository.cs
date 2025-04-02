@@ -4,5 +4,5 @@ namespace Repository.Interfaces;
 
 public interface IUnitRepository
 {
-        Task<List<Unit>> GetAllUnits();
+        List<Unit> GetAllUnits();
 }

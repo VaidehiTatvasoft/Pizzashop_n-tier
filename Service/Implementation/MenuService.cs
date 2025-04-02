@@ -1,280 +1,445 @@
-using System.Security.Claims;
 using Entity.Data;
 using Entity.ViewModel;
 using Repository.Interface;
+using Repository.Interfaces;
 using Service.Interface;
 
 namespace Service.Implementation;
 
-public class MenuService : IMenuService
-{
-    private readonly IMenuRepository _menuRepository;
-
-    public MenuService(IMenuRepository menuRepository)
+public class MenuService: IMenuService
     {
-        _menuRepository = menuRepository;
-    }
+        private readonly IMenuCategoryRepository _menuCategoryRepository;
+        private readonly IMenuItemsRepository _menuItemRepository;
+        private readonly IMenuModifierGroupRepository _menuModifierGroupRepository;
+        private readonly IUnitRepository _unitRepository;
+        private readonly IMenuModifierRepository _menuModifierRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IMappingMenuItemsWithModifierRepository _mappingMenuItemsWithModifierRepository;
 
-    public async Task<List<MenuCategory>> GetAllCategories()
-    {
-        return await _menuRepository.GetAllCategories();
-    }
 
-    public async Task<List<MenuItem>> GetItemsByCategory(int categoryId)
-    {
-        return await _menuRepository.GetItemsByCategory(categoryId);
-    }
 
-    public async Task<bool> AddNewCategory(string category, MenuCategoryViewModel model, ClaimsPrincipal userClaims)
-    {
-        var existingCategory = await _menuRepository.GetCategoryByName(category);
-
-        if (existingCategory != null)
+        public MenuService(IMenuCategoryRepository menuCategoryRepository, IMenuItemsRepository menuItemsRepository, IUnitRepository unitRepository, IUserRepository userRepository, IMappingMenuItemsWithModifierRepository mappingMenuItemsWithModifierRepository, IMenuModifierGroupRepository menuModifierGroupRepository, IMenuModifierRepository menuModifierRepository)
         {
-            throw new Exception("A category with this name already exists.");
-        }
-        var userIdClaim = userClaims.FindFirst("UserId");
-        if (userIdClaim == null)
-        {
-            return false;
+            _menuCategoryRepository = menuCategoryRepository ?? throw new ArgumentNullException(nameof(menuCategoryRepository));
+            _menuItemRepository = menuItemsRepository ?? throw new ArgumentNullException(nameof(menuItemsRepository));
+            _unitRepository = unitRepository ?? throw new ArgumentNullException(nameof(unitRepository));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _menuModifierRepository = menuModifierRepository ?? throw new ArgumentNullException(nameof(menuModifierRepository));
+            _menuModifierGroupRepository = menuModifierGroupRepository ?? throw new ArgumentNullException(nameof(menuModifierGroupRepository));
+            _mappingMenuItemsWithModifierRepository = mappingMenuItemsWithModifierRepository ?? throw new ArgumentNullException(nameof(mappingMenuItemsWithModifierRepository));
         }
 
-        var userId = int.Parse(userIdClaim.Value);
-        var newCategory = new MenuCategory
+        public async Task<List<MenuCategoryViewModel>> GetAllMenuCategoriesAsync()
         {
-            Name = model.Name,
-            Description = model.Description,
-            CreatedBy = userId
-        };
-
-        return await _menuRepository.AddCategoryAsync(newCategory);
-    }
-
-    public async Task<bool> DeleteCategoryById(int id)
-    {
-        var category = await _menuRepository.GetCategoryByIdAsync(id);
-
-        if (category != null)
-        {
-            category.IsDeleted = true;
-
-            return await _menuRepository.UpdateCategoryBy(category);
+            return await _menuCategoryRepository.GetAllMenuCategoriesAsync();
         }
 
-        return false;
-    }
-
-    public async Task<bool> UpdateCategoryBy(MenuCategory menuCategory)
-    {
-        return await _menuRepository.UpdateCategoryBy(menuCategory);
-    }
-
-    public async Task<MenuCategoryViewModel> GetCategoryDetailById(int id)
-    {
-        var category = await _menuRepository.GetCategoryByIdAsync(id);
-        if (category == null)
+        public async Task<ItemTabViewModel> GetItemTabDetails(int categoryId, int pageSize, int pageIndex, string? searchString)
         {
-            return null;
-        }
+            var categories = await _menuCategoryRepository.GetAllMenuCategoriesAsync();
 
-        return new MenuCategoryViewModel
-        {
-            Id = category.Id,
-            Name = category.Name,
-            Description = category.Description
-        };
-    }
-
-    public async Task<bool> EditCategory(MenuCategoryViewModel model, int categoryId)
-    {
-        var category = await _menuRepository.GetCategoryByIdAsync(categoryId);
-
-        if (category == null)
-        {
-            return false;
-        }
-
-        category.Name = model.Name;
-        category.Description = model.Description;
-
-        return await _menuRepository.UpdateCategoryBy(category);
-    }
-
-    public async Task<bool> AddNewItem(MenuItemViewModel model, ClaimsPrincipal userClaims)
-    {
-        var userIdClaim = userClaims.FindFirst("UserId");
-        if (userIdClaim == null)
-        {
-            return false;
-        }
-
-        var userId = int.Parse(userIdClaim.Value);
-        var menuItem = new MenuItem
-        {
-            CategoryId = model.CategoryId,
-            Name = model.Name,
-            Type = model.Type,
-            Rate = model.Rate,
-            Quantity = model.Quantity,
-            UnitId = model.UnitId,
-            IsAvailable = model.IsAvailable,
-            IsDefaultTax = model.IsDefaultTax,
-            ShortCode = model.ShortCode,
-            Description = model.Description,
-            CreatedBy = userId
-        };
-
-        var isMenuItemAdded = await _menuRepository.AddItemAsync(menuItem);
-
-        if (!isMenuItemAdded)
-        {
-            return false;
-        }
-
-        foreach (var groupId in model.ModifierGroupIds)
-        {
-            var itemModifier = new MappingMenuItemsWithModifier
+            var itemList = await _menuItemRepository.GetItemsByCategory(categoryId, pageSize, pageIndex, searchString);
+            var filteredItems = itemList.Select(c => new MenuItemViewModel
             {
-                MenuItemId = menuItem.Id,
-                ModifierGroupId = groupId,
+                Id = c.Id,
+                UnitId = c.UnitId,
+                CategoryId = c.CategoryId,
+                Name = c.Name,
+                Description = c.Description,
+                Type = c.Type,
+                Rate = c.Rate,
+                Quantity = c.Quantity,
+                IsAvailable = c.IsAvailable,
+                ShortCode = c.ShortCode,
+                Image = c.Image,
+                IsDeleted = c.IsDeleted == null ? false : true,
+            }).ToList();
+
+            var totalCountOfItems = _menuItemRepository.GetItemsCountByCId(categoryId, searchString!);
+
+            var itemTabViewModel = new ItemTabViewModel
+            {
+                categoryList = categories,
+                itemList = filteredItems,
+                PageSize = pageSize,
+                PageIndex = pageIndex,
+                TotalPage = (int)Math.Ceiling(totalCountOfItems / (double)pageSize),
+                // (int)Math.Ceiling(totalCountOfItems / (double)pageSize)
+                SearchString = searchString,
+                TotalItems = totalCountOfItems
+            };
+            return itemTabViewModel;
+        }
+
+        // public bool AddNewCategory(string Name, string Description)
+        // {
+        //     return _menuCategoryRepository.AddNewCategory(Name, Description);
+        // }
+
+        public async Task<bool> AddNewCategory(string category, MenuCategoryViewModel model)
+        {
+            var isCategory = _menuCategoryRepository.GetCategoryByName(category);
+
+            if (isCategory == null)
+            {
+                var newCategory = new MenuCategory
+                {
+                    Name = model.Name,
+                    Description = model.Description,
+                    // CreatedBy = 1,
+                    // CreatedAt = DateTime.Now
+                };
+
+                return _menuCategoryRepository.AddNewCategory(newCategory);
+            }
+            return false;
+        }
+
+        public async Task<MenuCategoryViewModel> GetCategoryDetailById(int id)
+        {
+            var category = await _menuCategoryRepository.GetCategoryByIdAsync(id);
+            if (category == null)
+            {
+                return null;
+            }
+
+            return new MenuCategoryViewModel
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Description = category.Description
+            };
+        }
+
+        public async Task<bool> EditCategory(MenuCategoryViewModel model, int categoryId)
+        {
+            var category = await _menuCategoryRepository.GetCategoryByIdAsync(categoryId);
+
+            if (category == null)
+            {
+                return false;
+            }
+
+            var isCategory = _menuCategoryRepository.GetCategoryByName(model.Name);
+            if (isCategory != null)
+            {
+                if (isCategory.Id != category.Id && isCategory.Name == model.Name)
+                {
+                    return false;
+                }
+            }
+            category.Name = model.Name;
+            category.Description = model.Description;
+
+            return await _menuCategoryRepository.UpdateCategoryBy(category);
+        }
+
+        public async Task<List<MenuItemViewModel>> GetItemsByCategory(int categoryId, int pageSize, int pageIndex, string? searchString)
+        {
+            var Items = await _menuItemRepository.GetItemsByCategory(categoryId, pageSize, pageIndex, searchString);
+            var filteredItems = Items.Select(c => new MenuItemViewModel
+            {
+                Id = c.Id,
+                UnitId = c.UnitId,
+                CategoryId = c.CategoryId,
+                Name = c.Name,
+                Description = c.Description,
+                Type = c.Type,
+                Rate = c.Rate,
+                Quantity = c.Quantity,
+                IsAvailable = c.IsAvailable,
+                ShortCode = c.ShortCode,
+                Image = c.Image,
+                IsDeleted = c.IsDeleted == null ? false : true,
+            }).ToList(); ;
+            return filteredItems;
+        }
+
+        public bool FindCategoryByName(string name)
+        {
+            var isCategory = _menuCategoryRepository.GetCategoryByName(name);
+            if (isCategory != null)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool SoftDeleteCategory(int id)
+        {
+            return _menuCategoryRepository.DeleteCategory(id);
+        }
+
+        public int GetItemsCountByCId(int cId, string? searchString)
+        {
+            return _menuItemRepository.GetItemsCountByCId(cId, searchString!);
+        }
+        public List<Unit> GetAllUnits()
+        {
+            return _unitRepository.GetAllUnits();
+        }
+
+        public async Task<bool> AddNewItem(MenuItemViewModel model, int userId)
+        {
+            string ProfileImagePath = null;
+            if (model.ProfileImagePath != null && model.ProfileImagePath.Length > 0)
+            {
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/ProfileImages");
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+                var filename = Guid.NewGuid().ToString() + Path.GetExtension(model.ProfileImagePath.FileName);
+                var filePath = Path.Combine(folderPath, filename);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    model.ProfileImagePath.CopyTo(stream);
+                }
+                ProfileImagePath = "/ProfileImages/" + filename;
+            }
+            if (ProfileImagePath != null)
+                model.Image = ProfileImagePath;
+
+            // MenuItemModel
+            var menuItem = new MenuItem
+            {
+                Name = model.Name,
+                CategoryId = model.CategoryId,
+                Type = model.Type,
+                Rate = model.Rate,
+                Quantity = model.Quantity,
+                IsAvailable = model.IsAvailable,
+                IsDeleted = false,
+                UnitId = model.UnitId,
+                IsDefaultTax = model.IsDefaultTax,
+                TaxPercentage = model.TaxPercentage,
+                ShortCode = model.ShortCode,
+                Description = model.Description,
+                Image = model.Image,
+                // Createddate = DateTime.Now,
                 CreatedBy = userId
             };
 
-            await _menuRepository.AddItemModifierAsync(itemModifier);
+            bool item = _menuItemRepository.AddNewItem(menuItem);
+            if (!item) return false;
+
+            bool isAddModifierMapping = await _mappingMenuItemsWithModifierRepository.AddMapping(model.ItemModifiersList, menuItem.Id, userId);
+            if (!isAddModifierMapping)
+                return false;
+            return true;
         }
 
-        return true;
-    }
-
-    public async Task<IEnumerable<ModifierGroupViewModel>> GetModifiersById(int groupId)
-    {
-        var modifierGroups = await _menuRepository.GetModifierGroupsById(groupId);
-
-        var modifierGroupViewModels = modifierGroups?
-            .Select(mg => new ModifierGroupViewModel
-            {
-                Id = mg.Id,
-                Name = mg.Name,
-                Modifiers = mg.Modifiers.Select(mod => new ModifierViewModel
-                {
-                    Id = mod.Id,
-                    Name = mod.Name,
-                    Rate = mod.Rate
-                }).ToList()
-            })
-            .ToList();
-
-        return modifierGroupViewModels ?? new List<ModifierGroupViewModel>();
-    }
-
-    public async Task<MenuItemViewModel> GetItemDetailsById(int id)
-    {
-        var item = await _menuRepository.GetItemDetailsById(id);
-        var selectedModifiers = await _menuRepository.GetModifierGroupsByItemId(id);
-
-        var modifierGroups = selectedModifiers?
-            .Where(m => m != null && m.ModifierGroup != null)
-            .Select(m => new ModifierGroupViewModel
-            {
-                Id = m.ModifierGroupId,
-                Name = m.ModifierGroup.Name,
-                MinSelectionRequired = m.MinSelectionRequired,
-                MaxSelectionAllowed = m.MaxSelectionAllowed,
-                Modifiers = m.ModifierGroup.Modifiers.Select(mod => new ModifierViewModel
-                {
-                    Id = mod.Id,
-                    Name = mod.Name,
-                    Rate = mod.Rate
-                }).ToList()
-            })
-            .ToList();
-
-        return new MenuItemViewModel
+        public async Task<MenuItemViewModel> GetMenuItemById(int id)
         {
-            Id = item.Id,
-            CategoryId = item.CategoryId,
-            Name = item.Name,
-            Type = item.Type ,
-            Rate = item.Rate,
-            Quantity = item.Quantity,
-            IsAvailable = item.IsAvailable ?? true,
-            Description = item.Description,
-            TaxPercentage = item.TaxPercentage,
-            IsFavourite = item.IsFavourite ?? false,
-            ShortCode = item.ShortCode,
-            IsDefaultTax = item.IsDefaultTax ?? true,
-            IsDeleted = item.IsDeleted ?? false,
-            UnitId = item.UnitId,
-            ModifierGroups = modifierGroups ?? new List<ModifierGroupViewModel>()
-        };
-    }
+            MenuItem item = _menuItemRepository.GetMenuItemById(id);
+            var units = _unitRepository.GetAllUnits();
+            var modifierGroups = _menuModifierGroupRepository.GetAllMenuModifierGroupsAsync();
+            List<MenuCategoryViewModel> Categories = await _menuCategoryRepository.GetAllMenuCategoriesAsync();
+            List<ItemModifierViewModel> ItemModifiersData = await _mappingMenuItemsWithModifierRepository.ModifierGroupDataByItemId(id);
 
-    public async Task<bool> EditItemAsync(MenuItemViewModel model, ClaimsPrincipal userClaims)
-    {
-        var userIdClaim = userClaims.FindFirst("UserId");
-        if (userIdClaim == null)
-        {
-            return false;
+            foreach (var m in ItemModifiersData)
+            {
+                List<MenuModifierViewModel>? ML = await GetModifiersByModifierGroup(m.ModifierGroupId);
+                m.ModifierList = ML;
+            }
+            var menuItem = new MenuItemViewModel
+            {
+                Id = item.Id,
+                CategoryId = (int)item.CategoryId,
+                Name = item.Name,
+                Type = item.Type,
+                Rate = item.Rate,
+                Quantity = item.Quantity,
+                IsAvailable = (bool)(item.IsAvailable == null ? false : item.IsAvailable),
+                IsDefaultTax = (bool)(item.IsDefaultTax == null ? false : item.IsDefaultTax),
+                UnitId = (int)(item.UnitId == null ? 0 : item.UnitId),
+                TaxPercentage = item.TaxPercentage,
+                ShortCode = item.ShortCode,
+                Description = item.Description,
+                ModifierGroups = modifierGroups,
+                Units = units,
+                Image = item.Image,
+                Categories = Categories,
+                ItemModifiersList = ItemModifiersData
+            };
+
+            return menuItem;
         }
 
-        var userId = int.Parse(userIdClaim.Value);
-        var item = await _menuRepository.GetItemDetailsById(model.Id);
-
-        item.CategoryId = model.CategoryId;
-        item.Name = model.Name;
-        item.Type = model.Type;
-        item.Rate = model.Rate;
-        item.Quantity = model.Quantity;
-        item.IsAvailable = model.IsAvailable;
-        item.Description = model.Description;
-        item.ShortCode = model.ShortCode;
-        item.IsFavourite = model.IsFavourite;
-        item.IsDefaultTax = model.IsDefaultTax;
-        item.UnitId = model.UnitId;
-
-        if (!string.IsNullOrEmpty(model.RemovedGroups))
+        public async Task<List<MenuModifierViewModel>?> GetModifiersByModifierGroup(int? id)
         {
-            var removedGroupIds = model.RemovedGroups.Split(',').Where(id => !string.IsNullOrEmpty(id)).Select(int.Parse).ToList();
-            foreach (var groupId in removedGroupIds)
+            var modifiers = _menuModifierRepository.GetModifiersByGroupId((int)id!);
+            var modifierList = new List<MenuModifierViewModel>();
+
+            foreach (var modifier in modifiers)
             {
-                var existingMapping = await _menuRepository.GetItemModifierMappingAsync(item.Id, groupId);
-                if (existingMapping != null)
+                modifierList.Add(new MenuModifierViewModel
                 {
-                    await _menuRepository.RemoveItemModifierAsync(existingMapping);
+                    Id = modifier.Id,
+                    Name = modifier.Name,
+                    Description = modifier.Description,
+                    Rate = modifier.Rate,
+                    Quantity = modifier.Quantity,
+                    IsDeleted = modifier.IsDeleted,
+                    ModifierGroupId = modifier.ModifierGroupId,
+                });
+            }
+            return modifierList;
+        }
+
+        public bool IsItemExist(string name, int catId)
+        {
+            return _menuItemRepository.IsItemExist(name, catId);
+        }
+
+
+        public async Task EditItem(MenuItemViewModel model, int userId)
+        {
+            string ProfileImagePath = null!;
+            if (model.ProfileImagePath != null && model.ProfileImagePath.Length > 0)
+            {
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/ProfileImages");
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+                var filename = Guid.NewGuid().ToString() + Path.GetExtension(model.ProfileImagePath.FileName);
+                var filePath = Path.Combine(folderPath, filename);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    model.ProfileImagePath.CopyTo(stream);
+                }
+                ProfileImagePath = "/ProfileImages/" + filename;
+            }
+            if (ProfileImagePath != null)
+                model.Image = ProfileImagePath;
+
+            _menuItemRepository.EditMenuItem(model, userId);
+
+            var oldMapping = await _mappingMenuItemsWithModifierRepository.ModifierGroupDataByItemId(model.Id);
+            var newMapping = model.ItemModifiersList;
+            var deleteIds = new List<int?>();
+
+            var oldMappingId = new List<int>();
+            foreach (var om in oldMapping)
+                oldMappingId.Add((int)om.Id);
+
+            var AddMapping = new List<ItemModifierViewModel>();
+            var EditMapping = new List<ItemModifierViewModel>();
+
+            foreach (var m in newMapping)
+            {
+                if (m.Id == -1)
+                {
+                    AddMapping.Add(m);
+                }
+                else if (oldMappingId.IndexOf((int)m.Id) != -1)
+                {
+                    EditMapping.Add(m);
+                    oldMappingId.Remove((int)m.Id);
                 }
             }
+            // also delete mapping (oldMappingId)
+            if (oldMapping.Count() > 0)
+                _mappingMenuItemsWithModifierRepository.DeleteMapping(oldMappingId);
+            if (AddMapping.Count() > 0)
+                await _mappingMenuItemsWithModifierRepository.AddMapping(AddMapping, model.Id, userId);
+            if (EditMapping.Count() > 0)
+                await _mappingMenuItemsWithModifierRepository.EditMappings(EditMapping, model.Id, userId);
+            // }
         }
 
-        foreach (var modifierGroupId in model.ModifierGroupIds)
-        {
-            var existingMapping = await _menuRepository.GetItemModifierMappingAsync(item.Id, modifierGroupId);
-            if (existingMapping == null)
-            {
-                var itemModifier = new MappingMenuItemsWithModifier
-                {
-                    MenuItemId = item.Id,
-                    ModifierGroupId = modifierGroupId,
-                    CreatedBy = userId
-                };
+        // public async Task<bool> EditItemAsync(MenuItemViewModel model, int userId)
+        // {
+        //     var item = _menuItemRepository.GetMenuItemById(model.Id);
 
-                await _menuRepository.AddItemModifierAsync(itemModifier);
+        //     string ProfileImagePath = null;
+        //     if (model.ProfileImagePath != null && model.ProfileImagePath.Length > 0)
+        //     {
+        //         var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/ProfileImages");
+        //         if (!Directory.Exists(folderPath))
+        //         {
+        //             Directory.CreateDirectory(folderPath);
+        //         }
+        //         var filename = Guid.NewGuid().ToString() + Path.GetExtension(model.ProfileImagePath.FileName);
+        //         var filePath = Path.Combine(folderPath, filename);
+        //         using (var stream = new FileStream(filePath, FileMode.Create))
+        //         {
+        //             model.ProfileImagePath.CopyTo(stream);
+        //         }
+        //         ProfileImagePath = "/ProfileImages/" + filename;
+        //     }
+        //     if (ProfileImagePath != null)
+        //         model.Image = ProfileImagePath;
+
+        //     item.CategoryId = model.CategoryId;
+        //     item.Name = model.Name;
+        //     item.Type = model.Type;
+        //     item.Rate = model.Rate;
+        //     item.Quantity = model.Quantity;
+        //     item.IsAvailable = model.IsAvailable;
+        //     item.Description = model.Description;
+        //     item.ShortCode = model.ShortCode;
+        //     item.IsFavourite = model.IsFavourite;
+        //     item.IsDefaultTax = model.IsDefaultTax;
+        //     item.UnitId = model.UnitId;
+        //     item.Image = model.Image;
+        //     item.ModifiedBy = userId;
+        //     item.TaxPercentage = model.TaxPercentage;
+
+        //     if (!string.IsNullOrEmpty(model.RemovedGroups))
+        //     {
+        //         var removedGroupIds = model.RemovedGroups.Split(',').Where(id => !string.IsNullOrEmpty(id)).Select(int.Parse).ToList();
+        //         foreach (var groupId in removedGroupIds)
+        //         {
+        //             var existingMapping = await _menuRepository.GetItemModifierMappingAsync(item.Id, groupId);
+        //             if (existingMapping != null)
+        //             {
+        //                 await _menuRepository.RemoveItemModifierAsync(existingMapping);
+        //             }
+        //         }
+        //     }
+
+        //     foreach (var modifierGroupId in model.ModifierGroupIds)
+        //     {
+        //         var existingMapping = await _menuRepository.GetItemModifierMappingAsync(item.Id, modifierGroupId);
+        //         if (existingMapping == null)
+        //         {
+        //             var itemModifier = new MappingMenuItemsWithModifier
+        //             {
+        //                 MenuItemId = item.Id,
+        //                 ModifierGroupId = modifierGroupId,
+        //                 CreatedBy = userId
+        //             };
+
+        //             await _menuRepository.AddItemModifierAsync(itemModifier);
+        //         }
+        //     }
+
+        //     return _menuItemRepository.UpdateMenuItem(item);
+        // }
+
+        public void DeleteMenuItem(int id)
+        {
+            _menuItemRepository.DeleteMenuItem(id);
+        }
+
+
+        public bool MultiDeleteMenuItem(int[] itemIds)
+        {
+            try
+            {
+                foreach (var item in itemIds)
+                {
+                    _menuItemRepository.DeleteMenuItem(item);
+                }
+                return true;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
             }
         }
-
-        return await _menuRepository.UpdateItem(item);
     }
 
-    public async Task<bool> DeleteItemById(int id)
-    {
-        var item = await _menuRepository.GetItemDetailsById(id);
-
-        if (item != null)
-        {
-            item.IsDeleted = true;
-
-            return await _menuRepository.UpdateItem(item);
-        }
-
-        return false;
-    }
-}

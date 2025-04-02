@@ -13,9 +13,10 @@ public class UnitRepository: IUnitRepository
     {
         _context = context;
     }
-    public async Task<List<Unit>> GetAllUnits()
+    public List<Unit> GetAllUnits()
     {
-        return await _context.Units.Where(u => u.IsDeleted != true).ToListAsync();
+        var units = _context.Units.OrderBy(u => u.Name).ToList();
+        return units;
     }
 
 }

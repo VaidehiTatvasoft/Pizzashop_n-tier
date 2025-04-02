@@ -1,0 +1,62 @@
+@model List<Entity.ViewModel.MenuModifierGroupViewModel>
+
+<div class="category-list">
+    @foreach (var modifierGroup in Model)
+    {
+        <div class="d-flex flex-wrap justify-content-between align-items-center item-category-btn p-2 my-2 modifierGroup"
+            data-id="@modifierGroup.Id">
+            <div class="category-btn border-0 bg-light">
+                <h6 class=" mb-0">
+                    <i class="fa-solid fa-grip-vertical"></i>
+                    @modifierGroup.Name
+                </h6>
+            </div>
+            <span class="edit-delete-icon">
+                <a href="javascript:void(0);" data-id="@modifierGroup.Id" class="edit-btn edit-category"
+                    style="text-decoration: none; color: inherit;">
+                    <i class="fa-solid fa-pencil m-1" data-bs-toggle="modal" data-bs-target="#EditCategoryModal"></i>
+                </a>
+                <i class="fa-regular fa-trash-can mx-2 delete-modifiergroup" data-bs-target="#deleteModifierGroupModal"
+                    data-bs-toggle="modal" id="deleteModifierGroup" data-id="@modifierGroup.Id"></i>
+            </span>
+        </div>
+    }
+</div>
+
+<!-- Delete Modifier Group Modal -->
+<div class="modal fade" id="deleteModifierGroupModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Confirmation</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="text-center">
+                <i class="fa-solid fa-triangle-exclamation fa-2xl" style="color: #FFD43B;"></i>
+            </div>
+            <div class="modal-body text-center p-1">
+                <p class="fw-bold mb-0">Are you sure you want to delete this modifiergroup?</p>
+            </div>
+            <div class="modal-footer d-flex justify-content-center border-0">
+                <button type="button" class="btn btn-primary" id="confirmDeleteCategoryBtn">Yes</button>
+                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var modifierGroupId = @Model.First().Id;
+    $(document).on('click', '.delete-modifiergroup', function () {
+        modifierId = $(this).data("id");
+        console.log("Delete", modifierId)
+        $('#deleteModifierGroupModal').modal('show');
+    });
+
+    $(".modifierGroup").first().addClass("active-new");
+    $(".modifierGroup").click(function () {
+        $(".modifierGroup").removeClass("active-new");
+        $(this).addClass("active-new");
+    });
+</script>

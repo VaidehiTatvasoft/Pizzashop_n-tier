@@ -19,7 +19,7 @@ public partial class MenuItem
 
     public int? Quantity { get; set; }
 
-    public bool? IsAvailable { get; set; }
+    public bool IsAvailable { get; set; }
 
     public string? Image { get; set; }
 

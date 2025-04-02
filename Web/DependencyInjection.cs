@@ -20,29 +20,32 @@ namespace Web
             options.UseNpgsql(configuration.GetConnectionString("pizza_shopConnection")));
 
             services.AddScoped<IAccountService, AccountService>();
-            services.AddScoped<IEmailService, EmailService>();
-            services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IMenuService, MenuService>();
-            services.AddScoped<IModifierService, ModifierService>();
-            services.AddScoped<IRolePermissionService, RolePermissionService>();
-            services.AddScoped<IUnitService, UnitService>();
-            services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IMenuModifierService, MenuModifierService>();
+            services.AddScoped<IMenuService, MenuService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IRolePermissionService, RolePermissionService>();
+            services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ITableService, TableService>();
             services.AddScoped<ITaxAndFeeService, TaxAndFeeService>();
-            services.AddScoped<IOrderService, OrderService>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IRoleRepository, RoleRepository>();
-            services.AddScoped<IMenuRepository, MenuRepository>();
-            services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
-            services.AddScoped<IUnitRepository, UnitRepository>();
-            services.AddScoped<IModifierRepository, ModifierRepository>();
-            services.AddScoped<ISectionRepository, SectionRepository>();
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IUserService, UserService>();
+
             services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<IMappingMenuItemsWithModifierRepository, MappingMenuItemsWithModifierRepository>();
+            services.AddScoped<IMenuCategoryRepository, MenuCategoryRepository>();
+            services.AddScoped<IMenuItemsRepository, MenuItemRepository>();
+            services.AddScoped<IMenuModifierGroupRepository, MenuModifierGroupRepository>();
+            services.AddScoped<IMenuModifierRepository, MenuModifierRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<ISectionRepository, SectionRepository>();
             services.AddScoped<ITableRepository, TableRepository>();
             services.AddScoped<ITaxAndFeeRepository, TaxAndFeeRepository>();
-            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IUnitRepository, UnitRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddSingleton<IConfiguration>(configuration);
         }
     }

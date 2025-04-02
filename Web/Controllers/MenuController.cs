@@ -1,330 +1,433 @@
-using Entity.Shared;
+using System.Text.Json;
+using Entity.Data;
 using Entity.ViewModel;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using Pizzashop.Service.Interfaces;
 using Service.Interface;
-using Web.Attributes;
 
+namespace Web.Controllers;
 
-namespace Web.Controllers
+public class MenuController: Controller
 {
-    public class MenuController : Controller
+    private readonly IMenuService _menuService;
+    private readonly IMenuModifierService _menuModifierService;
+    private readonly ITokenService _tokenService;
+    public MenuController(IMenuService menuService, IMenuModifierService menuModifierService, ITokenService tokenService)
     {
-        private readonly IMenuService _menuService;
-        private readonly IUnitService _unitService;
-        private readonly IModifierService _modifierService;
-        private readonly ILogger<MenuController> _logger;
+        _menuService = menuService;
+        _menuModifierService = menuModifierService;
+        _tokenService = tokenService;
+    }
 
-        public MenuController(IMenuService menuService, IUnitService unitService, IModifierService modifierService, ILogger<MenuController> logger)
+    [HttpGet]
+    public async Task<IActionResult> Menu(int pageSize = 5, int pageIndex = 1, string searchString = "")
+    {
+        var categories = await _menuService.GetAllMenuCategoriesAsync();
+        if (!categories.Any())
         {
-            _menuService = menuService;
-            _unitService = unitService;
-            _modifierService = modifierService;
-            _logger = logger;
+            return NotFound("No categories found.");
         }
 
-        [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanView)]
-        [HttpGet]
-        public async Task<IActionResult> MenuList(int? categoryId)
+        var validCategoryId = categories.First().Id;
+        var itemTabDetails = await _menuService.GetItemTabDetails(validCategoryId, pageSize, pageIndex, searchString);
+
+        //modifierTab data
+        var modifierGroups = await _menuModifierService.GetAllMenuModifierGroupAsync();
+
+        var validModifierGroupId = modifierGroups.First().Id;
+        var modifierTabDetails = await _menuModifierService.GetModifierTabDetails(validModifierGroupId, pageSize, pageIndex, searchString);
+
+        var model = new MenuViewModel
         {
-            var categories = await _menuService.GetAllCategories();
+            ItemTab = itemTabDetails,
+            ModifierTab = modifierTabDetails
+        };
 
-            if (!categoryId.HasValue && categories.Any())
-            {
-                categoryId = categories.First().Id;
-            }
+        return View(model);
+    }
 
-            ViewBag.SelectedCategory = categoryId.Value;
-            ViewBag.MenuItems = await _menuService.GetItemsByCategory(categoryId.Value);
-
-            return View(categories);
-        }
-
-        [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanEdit)]
-        [HttpGet]
-        public IActionResult AddCategory()
+    [HttpPost]
+    public async Task<IActionResult> AddCategory(MenuCategoryViewModel model)
+    {
+        if (ModelState.IsValid)
         {
-            return PartialView("_AddCategoryPartial", new MenuCategoryViewModel());
-        }
+            var category = await _menuService.AddNewCategory(model.Name, model);
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddCategory(MenuCategoryViewModel model)
-        {
-            if (!ModelState.IsValid)
+            if (category)
             {
-                return PartialView("_AddCategoryPartial", model);
-            }
-
-            try
-            {
-                var category = await _menuService.AddNewCategory(model.Name, model, User);
-                if (category)
-                {
-                    TempData["SuccessMessage"] = "Category created successfully.";
-                    return Json(new { success = true, redirectUrl = Url.Action("MenuList") });
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "A category with this name already exists.";
-                    return PartialView("_AddCategoryPartial", model);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error adding category");
-                TempData["ErrorMessage"] = "An error occurred while adding the category. Please try again.";
-                return PartialView("_AddCategoryPartial", model);
-            }
-        }
-        [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanEdit)]
-        [HttpGet]
-        public async Task<IActionResult> EditCategory(int Id)
-        {
-            var category = await _menuService.GetCategoryDetailById(Id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            return PartialView("_EditCategoryPartial", category);
-        }
-        [HttpPost]
-        public async Task<IActionResult> EditCategory(MenuCategoryViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var updated = await _menuService.EditCategory(model, model.Id);
-
-                    if (updated)
-                    {
-                        TempData["SuccessMessage"] = "Category updated successfully.";
-                        return Json(new { success = true, redirectUrl = Url.Action("MenuList") });
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    return Json(new { success = false, message = ex.Message });
-                }
-            }
-
-            var errors = string.Join("; ", ModelState.Values
-                                        .SelectMany(v => v.Errors)
-                                        .Select(e => e.ErrorMessage));
-
-            return Json(new { success = false, message = "Invalid data.", errors = errors });
-        }
-        [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanDelete)]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteCategory(int id)
-        {
-            var result = await _menuService.DeleteCategoryById(id);
-
-            if (result)
-            {
-                TempData["SuccessMessage"] = "Category deleted successfully.";
-                return RedirectToAction("MenuList");
+                TempData["ToastrMessage"] = "Category created successfully.";
+                TempData["ToastrType"] = "success";
+                return Json(new { success = true, message = "Category Added successfully." });
             }
             else
             {
-                TempData["ErrorMessage"] = "Error deleting category or category not found.";
-                return RedirectToAction("MenuList");
+                TempData["ToastrMessage"] = "A category with this name already exists.";
+                TempData["ToastrType"] = "error";
+                return Json(new { success = false, message = "A category with this name already exists." });
             }
         }
 
-        [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanEdit)]
-        [HttpGet]
-        public async Task<IActionResult> AddItem()
+        return Json(new { success = false, message = "Invalid data." });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> EditCategory(int id)
+    {
+        var category = await _menuService.GetCategoryDetailById(id);
+        if (category == null)
         {
-            try
-            {
-                ViewBag.Categories = new SelectList(await _menuService.GetAllCategories(), "Id", "Name");
-                ViewBag.Units = new SelectList(await _unitService.GetAllUnits(), "Id", "Name");
-                ViewBag.ModifierGroups = new SelectList(await _modifierService.GetAllModifiers(), "Id", "Name");
-                return PartialView("_AddItemPartial", new MenuItemViewModel());
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error loading add item form");
-                return StatusCode(500, "Internal server error");
-            }
+            return NotFound();
         }
+        return PartialView("_EditCategory", category);
+    }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddItem(MenuItemViewModel model, IFormFile? Image)
+    [HttpPost]
+    public async Task<IActionResult> EditCategory(MenuCategoryViewModel model)
+    {
+        if (ModelState.IsValid)
         {
-            if (!ModelState.IsValid)
-            {
-                ViewBag.Categories = new SelectList(await _menuService.GetAllCategories(), "Id", "Name");
-                ViewBag.Units = new SelectList(await _unitService.GetAllUnits(), "Id", "Name");
-                ViewBag.ModifierGroups = new SelectList(await _modifierService.GetAllModifiers(), "Id", "Name");
-                return PartialView("_AddItemPartial", model);
-            }
+            var result = await _menuService.EditCategory(model, model.Id);
 
-            try
+            if (result)
             {
-                if (Image != null && Image.Length > 0)
-                {
-                    var fileName = Path.GetFileName(Image.FileName);
-                    var filePath = Path.Combine("wwwroot/uploads", fileName);
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await Image.CopyToAsync(stream);
-                    }
-                    model.Image = fileName;
-                }
-
-                await _menuService.AddNewItem(model, User);
-                return Json(new { success = true, redirectUrl = Url.Action("MenuList") });
+                TempData["ToastrMessage"] = "Category updated successfully.";
+                TempData["ToastrType"] = "success";
+                return Json(new { success = true, message = "Category updated successfully.", redirectUrl = Url.Action("Menu") });
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError(ex, "Error adding item");
-                return Json(new { success = false, message = ex.Message });
+                TempData["ToastrMessage"] = "Failed to update the Category. Please try again.";
+                TempData["ToastrType"] = "error";
+                return Json(new { success = false, message = "A category with this name already exists.", redirectUrl = Url.Action("Menu") });
             }
         }
 
-        [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanEdit)]
-        [HttpGet]
-        public async Task<IActionResult> EditItem(int id)
+        return Json(new { success = false, message = "Invalid data." });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetItemsByCategory(int categoryId, int pageSize, int pageIndex, string searchString = "")
+    {
+        List<MenuItemViewModel> items = await _menuService.GetItemsByCategory(categoryId, pageSize == 0 ? 5 : pageSize, pageIndex == 0 ? 1 : pageIndex, searchString);
+        var totalItemCount = _menuService.GetItemsCountByCId(categoryId, searchString);
+
+        var model = new ItemTabViewModel
         {
-            try
-            {
-                var item = await _menuService.GetItemDetailsById(id);
+            itemList = items,
+            PageSize = pageSize,
+            PageIndex = pageIndex,
+            SearchString = searchString,
+            TotalPage = (int)Math.Ceiling(totalItemCount / (double)pageSize),
+            TotalItems = totalItemCount
+        };
+        return PartialView("_ItemListPartial", model);
+    }
 
-                if (item == null)
-                {
-                    return NotFound();
-                }
-
-                ViewBag.Categories = new SelectList(await _menuService.GetAllCategories(), "Id", "Name", item.CategoryId);
-                ViewBag.Units = new SelectList(await _unitService.GetAllUnits(), "Id", "Name", item.UnitId);
-                ViewBag.ModifierGroups = new SelectList(await _modifierService.GetAllModifiers(), "Id", "Name");
-
-                return PartialView("_EditItemPartial", item);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error loading edit item form");
-                return StatusCode(500, "Internal server error");
-            }
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditItem(MenuItemViewModel menuItemViewModel)
+    [HttpPost]
+    public IActionResult DeleteCategory(int id)
+    {
+        var result = _menuService.SoftDeleteCategory(id);
+        if (result)
         {
-            if (!ModelState.IsValid)
-            {
-                ViewBag.Categories = new SelectList(await _menuService.GetAllCategories(), "Id", "Name", menuItemViewModel.CategoryId);
-                ViewBag.Units = new SelectList(await _unitService.GetAllUnits(), "Id", "Name", menuItemViewModel.UnitId);
-                ViewBag.ModifierGroups = new SelectList(await _modifierService.GetAllModifiers(), "Id", "Name");
-                return PartialView("_EditItemPartial", menuItemViewModel);
-            }
-
-            try
-            {
-                var result = await _menuService.EditItemAsync(menuItemViewModel, User);
-
-                if (result)
-                {
-                    TempData["SuccessMessage"] = "Item updated successfully.";
-                    return Json(new { success = true, redirectUrl = Url.Action("MenuList") });
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Failed to update item.");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error editing item");
-                ModelState.AddModelError("", "Error editing item.");
-            }
-
-            ViewBag.Categories = new SelectList(await _menuService.GetAllCategories(), "Id", "Name", menuItemViewModel.CategoryId);
-            ViewBag.Units = new SelectList(await _unitService.GetAllUnits(), "Id", "Name", menuItemViewModel.UnitId);
-            ViewBag.ModifierGroups = new SelectList(await _modifierService.GetAllModifiers(), "Id", "Name");
-
-            return PartialView("_EditItemPartial", menuItemViewModel);
+            TempData["ToastrMessage"] = "Category deleted successfully.";
+            TempData["ToastrType"] = "success";
+            return Json(new { success = true, message = "Category deleted successfully." });
         }
-
-        [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanDelete)]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteItem(int id)
+        else
         {
-            try
-            {
-                var result = await _menuService.DeleteItemById(id);
-
-                if (result)
-                {
-                    TempData["SuccessMessage"] = "Item deleted successfully.";
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Error deleting item or item not found.";
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error deleting item");
-                TempData["ErrorMessage"] = "Error deleting item.";
-            }
-
-            return RedirectToAction("MenuList");
+            TempData["ToastrMessage"] = "Failed to delete category.";
+            TempData["ToastrType"] = "error";
+            return Json(new { success = false, message = "Failed to delete category." });
         }
-        [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanDelete)]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteMultipleItems([FromBody] List<int> itemIds)
+    }
+
+    [HttpGet]
+    public JsonResult GetAllUnits()
+    {
+        var units = Json(_menuService.GetAllUnits());
+        return units;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllCategory()
+    {
+        var categories = await _menuService.GetAllMenuCategoriesAsync();
+        return PartialView("_CategoryList", categories.ToList());
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> AddItem()
+    {
+        List<MenuModifierGroupViewModel> ModifierGroups = await _menuModifierService.GetAllMenuModifierGroupAsync();
+        List<Unit> units = _menuService.GetAllUnits();
+        List<MenuCategoryViewModel> categories = await _menuService.GetAllMenuCategoriesAsync();
+        var model = new MenuItemViewModel
         {
-            if (itemIds == null || !itemIds.Any())
-            {
-                return BadRequest("No items selected for deletion.");
-            }
+            Units = units,
+            Categories = categories,
+            ModifierGroups = ModifierGroups
+        };
+        return PartialView("_AddItem", model);
+    }
 
-            try
-            {
-                foreach (var itemId in itemIds)
-                {
-                    await _menuService.DeleteItemById(itemId);
-                }
-
-                TempData["SuccessMessage"] = "Selected items deleted successfully.";
-                return Ok(new { success = true });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error deleting multiple items");
-                return StatusCode(500, new { success = false, message = "Error deleting items." });
-            }
-        }
-        [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanView)]
-        [HttpGet]
-        public async Task<IActionResult> SelectedModifiers(int groupId)
+    [HttpPost]
+    public async Task<IActionResult> AddItem(MenuItemViewModel model, string ItemModifiers)
+    {
+        if (!ModelState.IsValid)
         {
-            try
+            return Json(new { isValid = false, message = "Please fill all required field" });
+        }
+        var token = Request.Cookies["Token"];
+        if (string.IsNullOrEmpty(token))
+            return RedirectToAction("Login", "Authentication");
+
+        // var (email, id, isFirstLogin) = await _tokenDataService.GetEmailFromToken(token!);
+        try
+        {
+            bool isItemExist = _menuService.IsItemExist(model.Name, model.CategoryId);
+            if (isItemExist)
             {
-                var modifiers = await _modifierService.GetModifiersByGroupIdAsync(groupId);
-                if (modifiers == null)
-                {
-                    return BadRequest("An error occurred while fetching modifiers. Please try again.");
-                }
-                return PartialView("_ModifierGroupPartial", modifiers);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error fetching modifiers");
-                return StatusCode(500, "Internal server error");
+                return Json(new { isExist = true, message = "This item is already exist" });
             }
         }
+        catch (System.Exception)
+        {
+            return Json(new { isSuccess = false, message = "Error while add new item" });
+        }
+
+
+        List<ItemModifierViewModel> itemModifiers = new List<ItemModifierViewModel>();
+        if (!string.IsNullOrEmpty(ItemModifiers))
+        {
+            itemModifiers = JsonSerializer.Deserialize<List<ItemModifierViewModel>>(ItemModifiers);
+        }
+        model.ItemModifiersList = itemModifiers;
+        try
+        {
+            var response = await _menuService.AddNewItem(model, int.Parse(id));
+            return Json(new { isSuccess = true, message = "Item added successfully" });
+        }
+        catch (Exception e)
+        {
+            return Json(new { isSuccess = false, message = "Error while add new item" });
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> EditMenuItem(int itemId)
+    {
+        var menuItem = await _menuService.GetMenuItemById(itemId);
+        return PartialView("_EditItem", menuItem);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult?> EditMenuItem([FromForm] MenuItemViewModel model, string ItemModifiers)
+    {
+        // var token = Request.Cookies["Token"];
+        // if (string.IsNullOrEmpty(token))
+        //     return null;
+        // var (email, id, isFirstLogin) = await _tokenDataService.GetEmailFromToken(token!);
+        // if (email == null)
+        //     return null;
+        try
+        {
+            List<ItemModifierViewModel> itemModifiers = new List<ItemModifierViewModel>();
+            if (!string.IsNullOrEmpty(ItemModifiers))
+            {
+                itemModifiers = JsonSerializer.Deserialize<List<ItemModifierViewModel>>(ItemModifiers);
+            }
+            model.ItemModifiersList = itemModifiers;
+            _menuService.EditItem(model, int.Parse(id));
+            return Json(new { isSuccess = true, message = "Item updated successfully" });
+        }
+        catch (System.Exception)
+        {
+            return Json(new { isSuccess = false, message = "Error while edit item" });
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult>? DeleteMenuItem(int id)
+    {
+        // var token = Request.Cookies["Token"];
+        // if (token == null)
+        //     return RedirectToAction("Login", "Auth");
+
+        // var (email, userId, isFirstLogin) = await _tokenDataService.GetEmailFromToken(token!);
+        // if (email == null)
+        //     return null!;
+        try
+        {
+            _menuService.DeleteMenuItem(id);
+            return Json(new { isSuccess = true, message = "Item Deleted Successfully" });
+        }
+        catch (System.Exception)
+        {
+            return Json(new { isSuccess = false, message = "Error While Delete Item" });
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult>? MultiDeleteMenuItem(int[] itemIds)
+    {
+        // var token = Request.Cookies["Token"];
+        // if (token == null)
+        //     return RedirectToAction("Login", "Auth");
+        // var (email, userId, isFirstLogin) = await _tokenDataService.GetEmailFromToken(token!);
+        // if (email == null)
+        //     return null!;
+        try
+        {
+            _menuService.MultiDeleteMenuItem(itemIds);
+            return Json(new { isSuccess = true, message = "Items Deleted Successfully" });
+        }
+        catch (System.Exception)
+        {
+            return Json(new { isSuccess = false, message = "Error While Delete Item" });
+        }
+    }
+
+    // Modifier Section
+
+    [HttpGet]
+    public async Task<IActionResult> AddModifier()
+    {
+        var modifierGroup = await _menuModifierService.GetAllMenuModifierGroupAsync();
+        var units = _menuService.GetAllUnits();
+        var modal = new AddEditModifierViewModel();
+        modal.Units = units;
+        modal.ModifierGroups = modifierGroup;
+        return PartialView("_AddModifier", modal);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetModifiersByModifierGroup(int modifierGroupId, int pageSize, int pageIndex, string searchString = "")
+    {
+        List<MenuModifierViewModel> filteredModifiers = await _menuModifierService.GetModifiersByModifierGroup(modifierGroupId, pageSize == 0 ? 5 : pageSize, pageIndex == 0 ? 1 : pageIndex, searchString);
+        int totalModifierCount = _menuModifierService.GetModifiersCountByCId(modifierGroupId, searchString);
+        var model = new ModifierTabViewModel
+        {
+            modifier = filteredModifiers,
+            PageSize = pageSize,
+            PageIndex = pageIndex,
+            SearchString = searchString,
+            TotalPage = (int)Math.Ceiling(totalModifierCount / (double)pageSize),
+            TotalItems = totalModifierCount
+        };
+        return PartialView("_Modifier", model);
+    }
+
+    [HttpGet]
+    public async Task<JsonResult> GetAllModifierGroups()
+    {
+        var modifiers = await _menuModifierService.GetAllMenuModifierGroupAsync();
+        return Json(modifiers);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetModifiersByGroup(int id, string name)
+    {
+        List<MenuModifierViewModel> Modifiers = _menuModifierService.GetModifiersByGroupId(id);
+        var itemModifiers = new ItemModifierViewModel
+        {
+            ModifierList = Modifiers,
+            ModifierGroupId = id,
+            Name = name,
+        };
+        return PartialView("_ItemModifiers", itemModifiers);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddModifier(AddEditModifierViewModel model)
+    {
+        // var AuthToken = Request.Cookies["Token"];
+
+        // var (email, userId, isFirstLogin) = await _tokenDataService.GetEmailFromToken(AuthToken);
+
+        try
+        {
+            bool isAdded = _menuModifierService.AddModifier(model, int.Parse(userId));
+
+            if (isAdded)
+            {
+                return Json(new { isSuccess = true, message = "New modifier added successfully" });
+            }
+            else
+                return Json(new { isSuccess = false, message = "Modifier already exist" });  //if null is Modifier Exist
+        }
+        catch (System.Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return Json(new { isSuccess = false, message = "Error while add new modifier" });
+        }
+
+    }
+
+    [HttpGet]
+    public IActionResult EditModifier(int id)
+    {
+
+        var editModifier = _menuModifierService.GetModifierByid(id);
+        return PartialView("_EditModifier", editModifier);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> EditModifier(AddEditModifierViewModel model)
+    {
+        // var AuthToken = Request.Cookies["Token"];
+        // var (email, userId, isFirstLogin) = await _tokenDataService.GetEmailFromToken(AuthToken);
+        // if (string.IsNullOrEmpty(email))
+        //     return null;
+        try
+        {
+            bool isEdited = _menuModifierService.EditModifier(model, int.Parse(userId));
+            if (isEdited)
+                return Json(new { isSuccess = true, message = "Modifier updated successfully" });
+            else
+                return Json(new { isSuccess = false, message = "Modifier is already exist" });
+        }
+        catch (System.Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return Json(new { isSuccess = false, message = "Error while edit modifier" });
+        }
+    }
+
+    [HttpPost]
+    public IActionResult DeleteModifier(int id)
+    {
+        try
+        {
+            _menuModifierService.DeleteModifier(id);
+            return Json(new { isSuccess = true, message = "Modifier deleted successfully" });
+        }
+        catch (System.Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return Json(new { isSuccess = false, isAuthenticate = true, message = "Error while delete modifier" });
+        }
+    }
+
+    [HttpPost]
+    public IActionResult DeleteMultipleModifier(int[] modifierIds)
+    {
+        try
+        {
+            _menuModifierService.DeleteMultipleModifiers(modifierIds);
+            return Json(new { isSuccess = true, message = "Modifiers deleted successfully" });
+        }
+        catch (System.Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return Json(new { isSuccess = true, message = "Error while delete Modifiers" });
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllModifiers(int pageSize, int pageIndex, string? searchString)
+    {
+        var modifiers = await _menuModifierService.GetAllModifiers(pageSize, pageIndex, searchString);
+
+        return PartialView("_AddExistingModifier", modifiers);
     }
 }
