@@ -184,7 +184,7 @@ public class MenuService: IMenuService
             string ProfileImagePath = null;
             if (model.ProfileImagePath != null && model.ProfileImagePath.Length > 0)
             {
-                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/ProfileImages");
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
                 if (!Directory.Exists(folderPath))
                 {
                     Directory.CreateDirectory(folderPath);
@@ -195,7 +195,7 @@ public class MenuService: IMenuService
                 {
                     model.ProfileImagePath.CopyTo(stream);
                 }
-                ProfileImagePath = "/ProfileImages/" + filename;
+                ProfileImagePath =  filename;
             }
             if (ProfileImagePath != null)
                 model.Image = ProfileImagePath;
@@ -221,11 +221,17 @@ public class MenuService: IMenuService
             };
 
             bool item = _menuItemRepository.AddNewItem(menuItem);
-            if (!item) return false;
-
+if (!item)
+{
+    Console.WriteLine("Failed to save the menu item.");
+    return false;
+}
             bool isAddModifierMapping = await _mappingMenuItemsWithModifierRepository.AddMapping(model.ItemModifiersList, menuItem.Id, userId);
-            if (!isAddModifierMapping)
-                return false;
+if (!isAddModifierMapping)
+{
+    Console.WriteLine("Failed to save the item modifiers.");
+    return false;
+}
             return true;
         }
 

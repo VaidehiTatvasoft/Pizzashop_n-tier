@@ -46,19 +46,21 @@ public class MenuItemRepository: IMenuItemsRepository
     }
 
     public bool AddNewItem(MenuItem model)
+{
+    try
     {
-        try
-        {
-            _context.MenuItems.Add(model);
-            _context.SaveChanges();
-            return true;
-        }
-        catch (Exception Error)
-        {
-            Console.WriteLine(Error);
-            return false;
-        }
+        Console.WriteLine($"Adding MenuItem: {System.Text.Json.JsonSerializer.Serialize(model)}");
+        _context.MenuItems.Add(model);
+        _context.SaveChanges();
+        return true;
     }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error saving menu item: {ex.Message}");
+        return false;
+    }
+}
+    
 
     public bool IsItemExist(string name, int catId)
     {

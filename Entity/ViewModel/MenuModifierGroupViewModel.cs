@@ -1,4 +1,4 @@
-using Entity.Data;
+using Entity.ViewModel;
 
 namespace Entity.ViewModel;
 
@@ -19,7 +19,12 @@ public class MenuModifierGroupViewModel
     public DateTime? ModifiedAt { get; set; }
 
     public int? ModifiedBy { get; set; }
-    public virtual List<Modifier>? Modifiers { get; set; }
-    public List<int>? ExistingModifiers { get; set; }
-    public List<int>? RemovedModifiers { get; set; }
+
+    public List<MenuModifierViewModel>? ExistingModifiers { get; set; }
+
+    public List<MenuModifierViewModel>? RemainingModifiers { get; set; }
+
+    public List<int>? SelectedModifierIds { get; set; }
+
+    public List<int>? UnselectedModifierIds { get; set; }
 }

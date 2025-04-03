@@ -15,4 +15,7 @@ public interface IMenuModifierService
     public AddEditModifierViewModel GetModifierByid(int id);
     public List<MenuModifierViewModel> GetModifiersByGroupId(int id);
     public Task<AddEditExistingModifiersViewModel> GetAllModifiers(int pageSize, int pageIndex, string? searchString);
+Task<int> AddModifierGroupAsync(MenuModifierGroupViewModel model);
+
+Task AddModifiersToGroupAsync(int modifierGroupId, List<int> modifierIds);
 }

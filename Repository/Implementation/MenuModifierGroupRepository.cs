@@ -25,4 +25,23 @@ public class MenuModifierGroupRepository: IMenuModifierGroupRepository
 
         return modifierGroups;
     }
+  public async Task<int> AddModifierGroupAsync(MenuModifierGroupViewModel model)
+{
+    if (_context.ModifierGroups.Any(mg => mg.Name == model.Name && mg.IsDeleted == false))
+    {
+        throw new InvalidOperationException("A modifier group with this name already exists.");
+    }
+
+    var modifierGroup = new ModifierGroup
+    {
+        Name = model.Name,
+        Description = model.Description,
+        CreatedAt = DateTime.UtcNow,
+    };
+
+    _context.ModifierGroups.Add(modifierGroup);
+    await _context.SaveChangesAsync();
+
+    return modifierGroup.Id;
+}
 }

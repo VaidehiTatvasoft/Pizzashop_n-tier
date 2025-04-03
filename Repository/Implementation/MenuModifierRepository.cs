@@ -151,4 +151,30 @@ public class MenuModifierRepository : IMenuModifierRepository
 
         return filteredModifiers;
     }
+        public async Task AddModifiersToGroupAsync(int modifierGroupId, List<int> modifierIds)
+{
+    // Fetch existing modifiers for the group
+    var existingModifiers = _context.Modifiers
+        .Where(m => m.ModifierGroupId == modifierGroupId && m.IsDeleted == false)
+        .Select(m => m.Id)
+        .ToList();
+
+    // Add new modifiers
+    var newModifiers = modifierIds.Except(existingModifiers).ToList();
+    if (newModifiers.Any())
+    {
+        foreach (var modifierId in newModifiers)
+        {
+            var modifier = _context.Modifiers.FirstOrDefault(m => m.Id == modifierId && m.IsDeleted == false);
+            if (modifier != null)
+            {
+                modifier.ModifierGroupId = modifierGroupId;
+                modifier.ModifiedAt = DateTime.UtcNow;
+            }
+        }
+    }
+
+    await _context.SaveChangesAsync();
+}
+
 }

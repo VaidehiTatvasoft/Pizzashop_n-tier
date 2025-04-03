@@ -44,12 +44,11 @@
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-floating">
-                                                    <select class="form-select" id="select-role"
-                                                        asp-for="Type" name="Type">
-                                                        <option value="">Select Item Type</option>
-                                                        <option value="Veg">Veg</option>
-                                                        <option value="Non-Veg">Non-Veg</option>
-                                                    </select>
+                                                    <select class="form-select" id="select-role" asp-for="Type" name="Type">
+    <option value="">Type</option>
+    <option value="true">Veg</option>
+    <option value="false">Non-Veg</option>
+</select>
                                                     <label for="Type">Item Type*</label>
                                                     <span class="text-danger ms-2"
                                                         asp-validation-for="Type"></span>
@@ -102,14 +101,14 @@
                                         <div class="row d-flex justify-content-center align-items-center" style="margin-left: 2px;">
                                             <div class="form-check form-switch mb-0 col-md-6 d-flex justify-content-center align-items-center" style="gap:5px;">
                                                 <input type="checkbox" class="form-check-input mt-0 large-switch" asp-for="IsAvailable"
-                                                    value="true" name="Isavailable" style="height: 30px; width: 50px;"/>
+                                                    value="true" name="IsAvailable" style="height: 30px; width: 50px;"/>
                                                 <input type="hidden" value="false" />
                                                 <label for="">Available</label>
                                                 <span class="text-danger ms-2" asp-validation-for="IsAvailable"></span>
                                             </div>
                                             <div class="form-check form-switch mb-0 col-md-6 d-flex justify-content-center align-items-center" style="gap:4px;">
                                                 <input type="checkbox" class="form-check-input mt-0 large-switch" asp-for="IsDefaultTax"
-                                                    value="true" name="Isdefaulttax" style="height: 30px; width: 50px;"/>
+                                                    value="true" name="IsDefaultTax" style="height: 30px; width: 50px;"/>
                                                 <input type="hidden" value="false" />
                                                 <label for="">DefaultTax</label>
                                                 <span class="text-danger ms-2" asp-validation-for="IsDefaultTax"></span>
@@ -153,8 +152,8 @@
                                     <br />
                                     Drag and Drop or Browse files
                                 </label>
-                                <input id="imageInput" asp-for="ProfileImagePath" type="file" name="ProfileImagePath" accept="image/*" class="input-file" hidden />
-                                <span id="file-upload-name"></span>
+<input id="imageInput" asp-for="ProfileImagePath" type="file" name="ProfileImagePath" accept="image/*" class="input-file" hidden />                            
+    <span id="file-upload-name"></span>
                             </div>
                         </div>
                         <div class="col-md-5 border rounded-3 p-2" style="background-color: #fcf4e6;">
@@ -214,23 +213,22 @@
         event.preventDefault();
         var form = $("#addItemForm")[0];
         var formData = new FormData(form);
-        var modifiers = [];
-        $("#listModifiers .modifier-group").each(function () {
-            var name = $(this).find(".modifierGrp-name").data("name");
-            var modifierGroupId = $(this).find(".modifierGrp-name").data("id");
-            var minValue = parseInt($(this).find(".min-value").val(), 10);
-            var maxValue = parseInt($(this).find(".max-value").val(), 10);
+var modifiers = [];
+$("#listModifiers .modifier-group").each(function () {
+    var name = $(this).find(".modifierGrp-name").data("name");
+    var modifierGroupId = $(this).find(".modifierGrp-name").data("id");
+    var minValue = parseInt($(this).find(".min-value").val(), 10);
+    var maxValue = parseInt($(this).find(".max-value").val(), 10);
 
-            modifiers.push({
-                ModifierGroupId: modifierGroupId,
-                Name: name,
-                Minselectionrequired: minValue,
-                Maxselectionrequired: maxValue
-            });
-        })
+    modifiers.push({
+        ModifierGroupId: modifierGroupId,
+        Name: name,
+        Minselectionrequired: minValue,
+        Maxselectionrequired: maxValue
+    });
+});
 
-        formData.append("ItemModifiers", JSON.stringify(modifiers));
-
+formData.append("ItemModifiers", JSON.stringify(modifiers));
         $.ajax({
             url: '/Menu/AddItem',
             type: 'POST',
@@ -241,6 +239,7 @@
                 if (response.isSuccess) {
                     toastr.success(response.message);
                     $("#addItemModal").modal("hide");
+                    location.reload();
                     GetFilteredItems()
                 } else {
                     if (response.isValid == false) {
@@ -251,9 +250,10 @@
                     }
                 }
             },
-            error: function (error) {
-                toastr.error(response.message);
-            }
+            error: function (xhr, status, error) {
+    console.error("Error:", error);
+    toastr.error("An error occurred while adding the item.");
+}
         });
     });
 

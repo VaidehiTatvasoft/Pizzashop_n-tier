@@ -166,4 +166,16 @@ public class MenuModifierService: IMenuModifierService
         };
         return addEditModifierViewModel;
     }
+  public async Task<int> AddModifierGroupAsync(MenuModifierGroupViewModel model)
+{
+    // Delegate the operation to the repository
+    return await _menuModifierGroupRepository.AddModifierGroupAsync(model);
+}
+
+public async Task AddModifiersToGroupAsync(int modifierGroupId, List<int> modifierIds)
+{
+    // Delegate the operation to the repository
+    await _menuModifierRepository.AddModifiersToGroupAsync(modifierGroupId, modifierIds);
+}
+     
 }

@@ -48,10 +48,10 @@
                                             <div class="col-md-6">
                                                 <div class="form-floating">
                                                     <select class="form-select" id="select-role"
-                                                        asp-for="Type" name="Itemtype">
-                                                        <option value="" disabled>Select ItemType</option>
-                                                        <option value="true">Vegetarian</option>
-                                                        <option value="false">Non Vegetarian</option>
+                                                        asp-for="Type" name="Type">
+                                                        <option value="">Type</option>
+    <option value="true">Vegetarian</option>
+    <option value="false">Non-Vegetarian</option>
                                                     </select>
                                                     <label for="itemType">Item Type*</label>
                                                     <span class="text-danger ms-2"
@@ -105,14 +105,14 @@
                                         <div class="row d-flex justify-content-center align-items-center" style="margin-left: 2px;">
                                             <div class="form-check form-switch col-md-6 d-flex justify-content-center align-items-center" style="gap:5px;">
                                                 <input type="checkbox" class="form-check-input mt-0" asp-for="IsAvailable"
-                                                    value="true" name="Isavailable" style="height: 30px; width: 50px;"/>
+                                                    value="true" name="IsAvailable" style="height: 30px; width: 50px;"/>
                                                 <input type="hidden" value="false" />
                                                 <label for="">Available</label>
                                                 <span class="text-danger ms-2" asp-validation-for="IsAvailable"></span>
                                             </div>
                                             <div class="form-check form-switch col-md-6 d-flex justify-content-center align-items-center" style="gap:4px;">
                                                 <input type="checkbox" class="form-check-input mt-0 " asp-for="IsDefaultTax"
-                                                    value="true" name="Isdefaulttax" style="height: 30px; width: 50px;"/>
+                                                    value="true" name="IsDefaultTax" style="height: 30px; width: 50px;"/>
                                                 <input type="hidden" value="false" />
                                                 <label for="">DefaultTax</label>
                                                 <span class="text-danger ms-2" asp-validation-for="IsDefaultTax"></span>
@@ -229,6 +229,7 @@
                 {
                     GetFilteredItems();
                     $("#EditItemModel").modal('hide'); 
+                    location.reload();
                     toastr.success(response.message)
                     
                 }else{

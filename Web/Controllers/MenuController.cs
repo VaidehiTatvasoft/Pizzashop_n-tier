@@ -12,10 +12,30 @@ public class MenuController : Controller
 {
     private readonly IMenuService _menuService;
     private readonly IMenuModifierService _menuModifierService;
+
     public MenuController(IMenuService menuService, IMenuModifierService menuModifierService)
     {
         _menuService = menuService;
         _menuModifierService = menuModifierService;
+    }
+
+    // Helper method to fetch userId from claims
+    private int? GetUserIdFromClaims()
+    {
+        var userIdClaim = User.FindFirst("UserId");
+        if (userIdClaim == null || string.IsNullOrEmpty(userIdClaim.Value))
+        {
+            Console.WriteLine("UserId claim is missing or invalid.");
+            return null;
+        }
+
+        if (!int.TryParse(userIdClaim.Value, out var userId))
+        {
+            Console.WriteLine($"Invalid UserIdClaim Value: {userIdClaim.Value}");
+            return null;
+        }
+
+        return userId;
     }
 
     [HttpGet]
@@ -30,9 +50,7 @@ public class MenuController : Controller
         var validCategoryId = categories.First().Id;
         var itemTabDetails = await _menuService.GetItemTabDetails(validCategoryId, pageSize, pageIndex, searchString);
 
-        //modifierTab data
         var modifierGroups = await _menuModifierService.GetAllMenuModifierGroupAsync();
-
         var validModifierGroupId = modifierGroups.First().Id;
         var modifierTabDetails = await _menuModifierService.GetModifierTabDetails(validModifierGroupId, pageSize, pageIndex, searchString);
 
@@ -55,7 +73,7 @@ public class MenuController : Controller
             if (category)
             {
                 TempData["SuccessMessage"] = "Category created successfully.";
-                return Json(new { success = true, message = "Category Added successfully." });
+                return Json(new { success = true, message = "Category added successfully." });
             }
             else
             {
@@ -87,12 +105,10 @@ public class MenuController : Controller
 
             if (result)
             {
-                // TempData["SuccessMessage"] = "Category updated successfully.";
                 return Json(new { success = true, message = "Category updated successfully.", redirectUrl = Url.Action("Menu") });
             }
             else
             {
-                // TempData["ErrorMessage"] = "Failed to update the Category. Please try again.";
                 return Json(new { success = false, message = "A category with this name already exists.", redirectUrl = Url.Action("Menu") });
             }
         }
@@ -166,45 +182,60 @@ public class MenuController : Controller
     [HttpPost]
     public async Task<IActionResult> AddItem(MenuItemViewModel model, string ItemModifiers)
     {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-        if (userIdClaim == null)
+        var userId = GetUserIdFromClaims();
+        if (userId == null)
         {
-            return null;
+            return Json(new { isSuccess = false, message = "User ID claim is missing or invalid." });
         }
+
         if (!ModelState.IsValid)
         {
-            return Json(new { isValid = false, message = "Please fill all required field" });
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+            return Json(new { isValid = false, message = "Validation failed", errors });
         }
-        
+
         try
         {
             bool isItemExist = _menuService.IsItemExist(model.Name, model.CategoryId);
             if (isItemExist)
             {
-                return Json(new { isExist = true, message = "This item is already exist" });
+                return Json(new { isExist = true, message = "This item already exists in the selected category." });
             }
         }
-        catch (System.Exception)
+        catch (Exception ex)
         {
-            return Json(new { isSuccess = false, message = "Error while add new item" });
+            Console.WriteLine($"Error checking item existence: {ex.Message}");
+            return Json(new { isSuccess = false, message = "Error while checking item existence." });
         }
-
 
         List<ItemModifierViewModel> itemModifiers = new List<ItemModifierViewModel>();
         if (!string.IsNullOrEmpty(ItemModifiers))
         {
-            itemModifiers = JsonSerializer.Deserialize<List<ItemModifierViewModel>>(ItemModifiers);
+            try
+            {
+                itemModifiers = JsonSerializer.Deserialize<List<ItemModifierViewModel>>(ItemModifiers);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deserializing ItemModifiers: {ex.Message}");
+                return Json(new { isSuccess = false, message = "Invalid modifiers format.", error = ex.Message });
+            }
         }
         model.ItemModifiersList = itemModifiers;
 
         try
         {
-            var response = await _menuService.AddNewItem(model, int.Parse(userIdClaim.Value));
+            var response = await _menuService.AddNewItem(model, userId.Value);
             return Json(new { isSuccess = true, message = "Item added successfully" });
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            return Json(new { isSuccess = false, message = "Error while add new item" });
+            Console.WriteLine($"Error adding item: {ex.Message}, StackTrace: {ex.StackTrace}");
+            if (ex.InnerException != null)
+            {
+                Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+            }
+            return Json(new { isSuccess = false, message = "Error while adding new item", error = ex.Message });
         }
     }
 
@@ -218,44 +249,61 @@ public class MenuController : Controller
     [HttpPost]
     public async Task<IActionResult?> EditMenuItem([FromForm] MenuItemViewModel model, string ItemModifiers)
     {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-        if (userIdClaim == null)
+        var userId = GetUserIdFromClaims();
+        if (userId == null)
         {
-            return null;
+            return Json(new { isSuccess = false, message = "User ID claim is missing or invalid." });
         }
-        try
+
+        if (!ModelState.IsValid)
         {
-            List<ItemModifierViewModel> itemModifiers = new List<ItemModifierViewModel>();
-            if (!string.IsNullOrEmpty(ItemModifiers))
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+            return Json(new { isValid = false, message = "Validation failed", errors });
+        }
+
+        List<ItemModifierViewModel> itemModifiers = new List<ItemModifierViewModel>();
+        if (!string.IsNullOrEmpty(ItemModifiers))
+        {
+            try
             {
                 itemModifiers = JsonSerializer.Deserialize<List<ItemModifierViewModel>>(ItemModifiers);
             }
-            model.ItemModifiersList = itemModifiers;
-            _menuService.EditItem(model, int.Parse(userIdClaim.Value));
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deserializing ItemModifiers: {ex.Message}");
+                return Json(new { isSuccess = false, message = "Invalid modifiers format.", error = ex.Message });
+            }
+        }
+        model.ItemModifiersList = itemModifiers;
+
+        try
+        {
+            _menuService.EditItem(model, userId.Value);
             return Json(new { isSuccess = true, message = "Item updated successfully" });
         }
-        catch (System.Exception)
+        catch (Exception ex)
         {
-            return Json(new { isSuccess = false, message = "Error while edit item" });
+            Console.WriteLine($"Error editing item: {ex.Message}, StackTrace: {ex.StackTrace}");
+            if (ex.InnerException != null)
+            {
+                Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+            }
+            return Json(new { isSuccess = false, message = "Error while editing item", error = ex.Message });
         }
     }
 
     [HttpPost]
     public async Task<IActionResult>? DeleteMenuItem(int id)
     {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-        if (userIdClaim == null)
-        {
-            return null;
-        }
         try
         {
             _menuService.DeleteMenuItem(id);
-            return Json(new { isSuccess = true, message = "Item Deleted Successfully" });
+            return Json(new { isSuccess = true, message = "Item deleted successfully" });
         }
-        catch (System.Exception)
+        catch (Exception ex)
         {
-            return Json(new { isSuccess = false, message = "Error While Delete Item" });
+            Console.WriteLine($"Error deleting item: {ex.Message}");
+            return Json(new { isSuccess = false, message = "Error while deleting item" });
         }
     }
 
@@ -265,11 +313,12 @@ public class MenuController : Controller
         try
         {
             _menuService.MultiDeleteMenuItem(itemIds);
-            return Json(new { isSuccess = true, message = "Items Deleted Successfully" });
+            return Json(new { isSuccess = true, message = "Items deleted successfully" });
         }
-        catch (System.Exception)
+        catch (Exception ex)
         {
-            return Json(new { isSuccess = false, message = "Error While Delete Item" });
+            Console.WriteLine($"Error deleting items: {ex.Message}");
+            return Json(new { isSuccess = false, message = "Error while deleting items" });
         }
     }
 
@@ -280,9 +329,11 @@ public class MenuController : Controller
     {
         var modifierGroup = await _menuModifierService.GetAllMenuModifierGroupAsync();
         var units = _menuService.GetAllUnits();
-        var modal = new AddEditModifierViewModel();
-        modal.Units = units;
-        modal.ModifierGroups = modifierGroup;
+        var modal = new AddEditModifierViewModel
+        {
+            Units = units,
+            ModifierGroups = modifierGroup
+        };
         return PartialView("_AddModifier", modal);
     }
 
@@ -326,59 +377,64 @@ public class MenuController : Controller
     [HttpPost]
     public async Task<IActionResult> AddModifier(AddEditModifierViewModel model)
     {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-        if (userIdClaim == null)
+        var userId = GetUserIdFromClaims();
+        if (userId == null)
         {
-            return null;
+            return Json(new { isSuccess = false, message = "User ID claim is missing or invalid." });
         }
 
         try
         {
-            bool isAdded = _menuModifierService.AddModifier(model, int.Parse(userIdClaim.Value));
+            bool isAdded = _menuModifierService.AddModifier(model, userId.Value);
 
             if (isAdded)
             {
                 return Json(new { isSuccess = true, message = "New modifier added successfully" });
             }
             else
-                return Json(new { isSuccess = false, message = "Modifier already exist" });
+            {
+                return Json(new { isSuccess = false, message = "Modifier already exists" });
+            }
         }
-        catch (System.Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine(e.Message);
-            return Json(new { isSuccess = false, message = "Error while add new modifier" });
+            Console.WriteLine($"Error adding modifier: {ex.Message}");
+            return Json(new { isSuccess = false, message = "Error while adding new modifier" });
         }
-
     }
 
     [HttpGet]
     public IActionResult EditModifier(int id)
     {
-
         var editModifier = _menuModifierService.GetModifierByid(id);
         return PartialView("_EditModifier", editModifier);
     }
 
     [HttpPost]
-    public async Task<IActionResult> EditModifier(AddEditModifierViewModel model )
+    public async Task<IActionResult> EditModifier(AddEditModifierViewModel model)
     {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-        if (userIdClaim == null)
+        var userId = GetUserIdFromClaims();
+        if (userId == null)
         {
-            return null;
+            return Json(new { isSuccess = false, message = "User ID claim is missing or invalid." });
         }
+
         try
         {
-            bool isEdited = _menuModifierService.EditModifier(model, int.Parse(userIdClaim.Value));
+            bool isEdited = _menuModifierService.EditModifier(model, userId.Value);
             if (isEdited)
+            {
                 return Json(new { isSuccess = true, message = "Modifier updated successfully" });
+            }
             else
-                return Json(new { isSuccess = false, message = "Modifier is already exist" });
+            {
+                return Json(new { isSuccess = false, message = "Modifier already exists" });
+            }
         }
-        catch (System.Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine(e.Message);
-            return Json(new { isSuccess = false, message = "Error while edit modifier" });
+            Console.WriteLine($"Error editing modifier: {ex.Message}");
+            return Json(new { isSuccess = false, message = "Error while editing modifier" });
         }
     }
 
@@ -390,10 +446,10 @@ public class MenuController : Controller
             _menuModifierService.DeleteModifier(id);
             return Json(new { isSuccess = true, message = "Modifier deleted successfully" });
         }
-        catch (System.Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine(e.Message);
-            return Json(new { isSuccess = false, isAuthenticate = true, message = "Error while delete modifier" });
+            Console.WriteLine($"Error deleting modifier: {ex.Message}");
+            return Json(new { isSuccess = false, message = "Error while deleting modifier" });
         }
     }
 
@@ -405,10 +461,10 @@ public class MenuController : Controller
             _menuModifierService.DeleteMultipleModifiers(modifierIds);
             return Json(new { isSuccess = true, message = "Modifiers deleted successfully" });
         }
-        catch (System.Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine(e.Message);
-            return Json(new { isSuccess = true, message = "Error while delete Modifiers" });
+            Console.WriteLine($"Error deleting modifiers: {ex.Message}");
+            return Json(new { isSuccess = false, message = "Error while deleting modifiers" });
         }
     }
 
@@ -416,7 +472,33 @@ public class MenuController : Controller
     public async Task<IActionResult> GetAllModifiers(int pageSize, int pageIndex, string? searchString)
     {
         var modifiers = await _menuModifierService.GetAllModifiers(pageSize, pageIndex, searchString);
-
         return PartialView("_AddExistingModifier", modifiers);
     }
+[HttpPost]
+public async Task<IActionResult> AddModifierGroup([FromBody] MenuModifierGroupViewModel model)
+{
+    if (string.IsNullOrEmpty(model.Name))
+    {
+        return Json(new { isSuccess = false, message = "Modifier group name is required." });
+    }
+
+    try
+    {
+        // Add the modifier group
+        var modifierGroupId = await _menuModifierService.AddModifierGroupAsync(model);
+
+        // Associate selected modifiers with the new group
+        if (model.SelectedModifierIds != null && model.SelectedModifierIds.Any())
+        {
+            await _menuModifierService.AddModifiersToGroupAsync(modifierGroupId, model.SelectedModifierIds);
+        }
+
+        return Json(new { isSuccess = true, message = "Modifier group added successfully.", groupId = modifierGroupId });
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error adding modifier group: {ex.Message}");
+        return Json(new { isSuccess = false, message = "An error occurred while adding the modifier group." });
+    }
+}
 }

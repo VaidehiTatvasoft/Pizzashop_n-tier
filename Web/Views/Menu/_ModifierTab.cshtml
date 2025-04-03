@@ -10,26 +10,25 @@
     }
 </style>
 <section>
-    <div class="row mx-0" style="border-radius: 5px;"> 
+    <div class="row mx-0" style="border-radius: 5px;">
         <aside class="col-md-3 col-xl-2 left-section" style="background-image: linear-gradient(to right, white, #f2f2f2);">
             <!-- Modifier header -->
             <div class="d-flex flex-wrap justify-content-between align-items-center pt-3 pb-4" style="color: #0066A7;">
                 <h5>Modifier Group</h5>
-               <i class="cat-i fa-regular fa-square-plus" id="AddModifierGroup"data-bs-toggle="modal"
+                <i class="cat-i fa-regular fa-square-plus" id="AddModifierGroup" data-bs-toggle="modal"
                     data-bs-target="#addModifierGroupModal" style="height: 30px; width:30px;"></i>
             </div>
             <!-- ModifierGroup list -->
             <partial name="_ModifierGroup" model="Model.modifierGroup" />
-            </partial>
         </aside>
-        <div class="col-md-9 col-xl-10 border-custom  bg-white">
+        <div class="col-md-9 col-xl-10 border-custom bg-white">
             <div class="d-flex justify-content-between align-items-center pt-3 pb-3">
                 <!-- Modifier header -->
                 <div>
                     <h5 class="p-2 mb-0" style="color:#0066A7">Modifiers</h5>
                 </div>
                 <div class="d-flex upper-div justify-content-end align-items-center mb-3">
-                    <div class="d-flex justify-content-center align-items-center ">
+                    <div class="d-flex justify-content-center align-items-center">
                         <div class="search-box" style="margin-right: 13px;">
                             <input type="text" placeholder="Search" name="search" id="searchModifier" />
                             <i class="fa-solid fa-magnifying-glass search-btn part-2"></i>
@@ -39,9 +38,9 @@
                         <i class="bi bi-trash m-1 massdelete" style="cursor: pointer; color: #adadad;"></i>
                     </button>
                     <button class="btn btn-primary" id="addNewModifier"
-                        style="border-radius: 5px;  margin:5px; height:43px;">
-                        <span class="part-1"><i class="fa-solid fa-plus "></i></span>
-                        <span class="part-2"> New Modifier </span> 
+                        style="border-radius: 5px; margin:5px; height:43px;">
+                        <span class="part-1"><i class="fa-solid fa-plus"></i></span>
+                        <span class="part-2"> New Modifier </span>
                     </button>
                 </div>
             </div>
@@ -53,17 +52,17 @@
     </div>
 </section>
 
-<!-- Add Modifier group Modal -->
+<!-- Add Modifier Group Modal -->
 <div class="modal fade" id="addModifierGroupModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header pb-0 border-0">
-                <h5 class="modal-title " id="exampleModalLabel" style="color:grey;">
+                <h5 class="modal-title" id="exampleModalLabel" style="color:grey;">
                     Add Modifier Group
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body text-center " style="color:grey;">
+            <div class="modal-body text-center" style="color:grey;">
                 <form action="" class="p-2">
                     <div class="form-floating mb-3 p-0">
                         <input type="text" class="form-control" id="modifierName" placeholder="Category" />
@@ -82,12 +81,12 @@
                     <i class="fa-solid fa-plus me-2"></i>Add Existing Modifier
                 </button>
             </div>
-            <div id="selectedModifiersDisplay">
-
+            <div id="selectedModifiersDisplay" class="mt-3">
+                <!-- Selected modifiers will be displayed here -->
             </div>
             <div class="modal-footer d-flex justify-content-end border-0">
-                <button type="button" class="btn update-button" style=" width: 80px;">Save</button>
-                <button type="button" class="btn cancel-button" data-bs-dismiss="modal" style=" width: 80px;">Cancel</button>
+                <button id="saveModifierGroupButton" type="button" class="btn update-button" style="width: 80px;">Save</button>
+                <button type="button" class="btn cancel-button" data-bs-dismiss="modal" style="width: 80px;">Cancel</button>
             </div>
         </div>
     </div>
@@ -143,32 +142,38 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" style="color:grey;">
-                @* <div class="search-box">
-                    <input type="text" id="searchExistingModifier" class="form-control" placeholder="Search...">
-                </div> *@
                 <div class="search-box" style="margin-right: 13px;">
-                            <input type="text" placeholder="Search" name="search" id="searchExistingModifier"style="margin-right: 13px;height: 43px;width: 200px; border: 1px solid #adadad;border-radius: 5px;margin: 5px;padding: 3px;" />
-                            <i class="fa-solid fa-magnifying-glass search-btn part-2"></i>
-                        </div>
+                    <input type="text" placeholder="Search" name="search" id="searchExistingModifier"
+                        style="margin-right: 13px; height: 43px; width: 200px; border: 1px solid #adadad; border-radius: 5px; margin: 5px; padding: 3px;" />
+                    <i class="fa-solid fa-magnifying-glass search-btn part-2"></i>
+                </div>
                 <br>
-                <div id="existingModifiersList" style=" overflow-y: scroll; height: 400px;">
+                <div id="existingModifiersList" style="overflow-y: scroll; height: 400px;">
                     <!-- Table and pagination will be loaded here via AJAX -->
                 </div>
-
             </div>
             <div class="modal-footer border-0">
-                <button id="saveModifiersButton" class="btn update-button" style=" width: 80px;">Add</button>
-                <button id="cancelBtn" class="btn cancel-button" data-bs-dismiss="modal" style=" width: 80px;">Cancel</button>
+                <button id="saveModifiersButton" class="btn update-button" style="width: 80px;">Add</button>
+                <button id="cancelBtn" class="btn cancel-button" data-bs-dismiss="modal" style="width: 80px;">Cancel</button>
             </div>
         </div>
     </div>
 </div>
-</section>
-</div>
 
 <script>
     var pageIndex = @Model.PageIndex;
+// Open the nested modal
+$('#OpenExistingModifierModal').click(function () {
+    console.log('Opening nested modal');
+    $('#addModifierGroupModal').modal('hide'); // Hide the parent modal
+    $('#selectExistingModifierModal').modal('show'); // Show the nested modal
+});
 
+// Restore the parent modal when the nested modal is closed
+$('#selectExistingModifierModal').on('hidden.bs.modal', function () {
+    console.log('Restoring parent modal');
+    $('#addModifierGroupModal').modal('show'); // Show the parent modal
+});
     function GetFilteredModifiers() {
         var SearchString = $("#searchModifier").val();
         var pageSize = $("#pageSizeModifiers").val();
@@ -271,24 +276,34 @@
         }, 600)
     });
 
-    $("#saveModifiersButton").click(function () {
-        // Clear the selectedModifiers array
-        selectedModifiers = [];
+$("#saveModifiersButton").off("click").on("click", function () {
+    // Clear the selectedModifiers array
+    selectedModifiers = [];
 
-        // Get all selected checkboxes
-        $(".modifier-checkbox:checked").each(function () {
-            const modifierId = $(this).val();
-            const modifierName = $(this).data("name");
+    // Get all selected checkboxes
+    $(".modifier-checkbox:checked").each(function () {
+        const modifierId = $(this).val();
+        const modifierName = $(this).data("name");
 
-            // Add to selectedModifiers array
-            selectedModifiers.push({ id: modifierId, name: modifierName });
-        });
-        console.log(selectedModifiers)
-        // Update the UI in Modal 1
-        updateSelectedModifiersUI();
-        $("#selectExistingModifierModal").modal("hide");
+        // Add to selectedModifiers array
+        selectedModifiers.push({ id: modifierId, name: modifierName });
     });
 
+    console.log(selectedModifiers);
+
+    // Update the UI in the "Add Modifier Group" modal
+    updateSelectedModifiersUI();
+
+    // Properly hide the "Select Existing Modifier" modal
+    $("#selectExistingModifierModal").modal("hide");
+
+    // Ensure the event listener for `hidden.bs.modal` is added only once
+    $("#selectExistingModifierModal").off("hidden.bs.modal").on("hidden.bs.modal", function () {
+        $("#addModifierGroupModal").modal("show");
+    });
+});
+
+    // Update the UI to display selected modifiers
     function updateSelectedModifiersUI() {
         console.log("updateSelected")
         const selectedModifiersDisplay = $("#selectedModifiersDisplay");
@@ -318,6 +333,7 @@
         });
     }
 
+    // Remove a selected modifier
     $(document).on("click", ".remove-modifier", function () {
         const modifierId = $(this).data("id");
 
