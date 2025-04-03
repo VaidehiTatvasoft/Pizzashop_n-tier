@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text.Json;
 using Entity.Data;
 using Entity.ViewModel;
@@ -7,16 +8,14 @@ using Service.Interface;
 
 namespace Web.Controllers;
 
-public class MenuController: Controller
+public class MenuController : Controller
 {
     private readonly IMenuService _menuService;
     private readonly IMenuModifierService _menuModifierService;
-    private readonly ITokenService _tokenService;
-    public MenuController(IMenuService menuService, IMenuModifierService menuModifierService, ITokenService tokenService)
+    public MenuController(IMenuService menuService, IMenuModifierService menuModifierService)
     {
         _menuService = menuService;
         _menuModifierService = menuModifierService;
-        _tokenService = tokenService;
     }
 
     [HttpGet]
@@ -55,14 +54,12 @@ public class MenuController: Controller
 
             if (category)
             {
-                TempData["ToastrMessage"] = "Category created successfully.";
-                TempData["ToastrType"] = "success";
+                TempData["SuccessMessage"] = "Category created successfully.";
                 return Json(new { success = true, message = "Category Added successfully." });
             }
             else
             {
-                TempData["ToastrMessage"] = "A category with this name already exists.";
-                TempData["ToastrType"] = "error";
+                TempData["ErrorMessage"] = "A category with this name already exists.";
                 return Json(new { success = false, message = "A category with this name already exists." });
             }
         }
@@ -90,14 +87,12 @@ public class MenuController: Controller
 
             if (result)
             {
-                TempData["ToastrMessage"] = "Category updated successfully.";
-                TempData["ToastrType"] = "success";
+                // TempData["SuccessMessage"] = "Category updated successfully.";
                 return Json(new { success = true, message = "Category updated successfully.", redirectUrl = Url.Action("Menu") });
             }
             else
             {
-                TempData["ToastrMessage"] = "Failed to update the Category. Please try again.";
-                TempData["ToastrType"] = "error";
+                // TempData["ErrorMessage"] = "Failed to update the Category. Please try again.";
                 return Json(new { success = false, message = "A category with this name already exists.", redirectUrl = Url.Action("Menu") });
             }
         }
@@ -129,14 +124,12 @@ public class MenuController: Controller
         var result = _menuService.SoftDeleteCategory(id);
         if (result)
         {
-            TempData["ToastrMessage"] = "Category deleted successfully.";
-            TempData["ToastrType"] = "success";
+            TempData["SuccessMessage"] = "Category deleted successfully.";
             return Json(new { success = true, message = "Category deleted successfully." });
         }
         else
         {
-            TempData["ToastrMessage"] = "Failed to delete category.";
-            TempData["ToastrType"] = "error";
+            TempData["ErrorMessage"] = "Failed to delete category.";
             return Json(new { success = false, message = "Failed to delete category." });
         }
     }
@@ -173,15 +166,16 @@ public class MenuController: Controller
     [HttpPost]
     public async Task<IActionResult> AddItem(MenuItemViewModel model, string ItemModifiers)
     {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return null;
+        }
         if (!ModelState.IsValid)
         {
             return Json(new { isValid = false, message = "Please fill all required field" });
         }
-        var token = Request.Cookies["Token"];
-        if (string.IsNullOrEmpty(token))
-            return RedirectToAction("Login", "Authentication");
-
-        // var (email, id, isFirstLogin) = await _tokenDataService.GetEmailFromToken(token!);
+        
         try
         {
             bool isItemExist = _menuService.IsItemExist(model.Name, model.CategoryId);
@@ -202,9 +196,10 @@ public class MenuController: Controller
             itemModifiers = JsonSerializer.Deserialize<List<ItemModifierViewModel>>(ItemModifiers);
         }
         model.ItemModifiersList = itemModifiers;
+
         try
         {
-            var response = await _menuService.AddNewItem(model, int.Parse(id));
+            var response = await _menuService.AddNewItem(model, int.Parse(userIdClaim.Value));
             return Json(new { isSuccess = true, message = "Item added successfully" });
         }
         catch (Exception e)
@@ -223,12 +218,11 @@ public class MenuController: Controller
     [HttpPost]
     public async Task<IActionResult?> EditMenuItem([FromForm] MenuItemViewModel model, string ItemModifiers)
     {
-        // var token = Request.Cookies["Token"];
-        // if (string.IsNullOrEmpty(token))
-        //     return null;
-        // var (email, id, isFirstLogin) = await _tokenDataService.GetEmailFromToken(token!);
-        // if (email == null)
-        //     return null;
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return null;
+        }
         try
         {
             List<ItemModifierViewModel> itemModifiers = new List<ItemModifierViewModel>();
@@ -237,7 +231,7 @@ public class MenuController: Controller
                 itemModifiers = JsonSerializer.Deserialize<List<ItemModifierViewModel>>(ItemModifiers);
             }
             model.ItemModifiersList = itemModifiers;
-            _menuService.EditItem(model, int.Parse(id));
+            _menuService.EditItem(model, int.Parse(userIdClaim.Value));
             return Json(new { isSuccess = true, message = "Item updated successfully" });
         }
         catch (System.Exception)
@@ -249,13 +243,11 @@ public class MenuController: Controller
     [HttpPost]
     public async Task<IActionResult>? DeleteMenuItem(int id)
     {
-        // var token = Request.Cookies["Token"];
-        // if (token == null)
-        //     return RedirectToAction("Login", "Auth");
-
-        // var (email, userId, isFirstLogin) = await _tokenDataService.GetEmailFromToken(token!);
-        // if (email == null)
-        //     return null!;
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return null;
+        }
         try
         {
             _menuService.DeleteMenuItem(id);
@@ -270,12 +262,6 @@ public class MenuController: Controller
     [HttpPost]
     public async Task<IActionResult>? MultiDeleteMenuItem(int[] itemIds)
     {
-        // var token = Request.Cookies["Token"];
-        // if (token == null)
-        //     return RedirectToAction("Login", "Auth");
-        // var (email, userId, isFirstLogin) = await _tokenDataService.GetEmailFromToken(token!);
-        // if (email == null)
-        //     return null!;
         try
         {
             _menuService.MultiDeleteMenuItem(itemIds);
@@ -340,20 +326,22 @@ public class MenuController: Controller
     [HttpPost]
     public async Task<IActionResult> AddModifier(AddEditModifierViewModel model)
     {
-        // var AuthToken = Request.Cookies["Token"];
-
-        // var (email, userId, isFirstLogin) = await _tokenDataService.GetEmailFromToken(AuthToken);
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return null;
+        }
 
         try
         {
-            bool isAdded = _menuModifierService.AddModifier(model, int.Parse(userId));
+            bool isAdded = _menuModifierService.AddModifier(model, int.Parse(userIdClaim.Value));
 
             if (isAdded)
             {
                 return Json(new { isSuccess = true, message = "New modifier added successfully" });
             }
             else
-                return Json(new { isSuccess = false, message = "Modifier already exist" });  //if null is Modifier Exist
+                return Json(new { isSuccess = false, message = "Modifier already exist" });
         }
         catch (System.Exception e)
         {
@@ -372,15 +360,16 @@ public class MenuController: Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> EditModifier(AddEditModifierViewModel model)
+    public async Task<IActionResult> EditModifier(AddEditModifierViewModel model )
     {
-        // var AuthToken = Request.Cookies["Token"];
-        // var (email, userId, isFirstLogin) = await _tokenDataService.GetEmailFromToken(AuthToken);
-        // if (string.IsNullOrEmpty(email))
-        //     return null;
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return null;
+        }
         try
         {
-            bool isEdited = _menuModifierService.EditModifier(model, int.Parse(userId));
+            bool isEdited = _menuModifierService.EditModifier(model, int.Parse(userIdClaim.Value));
             if (isEdited)
                 return Json(new { isSuccess = true, message = "Modifier updated successfully" });
             else

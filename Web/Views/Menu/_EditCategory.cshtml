@@ -7,20 +7,17 @@
 <div class="modal-body" style="color:grey;">
     <form id="editCategoryForm">
         <input type="hidden" id="editCategoryId" name="Id" value="@Model.Id" />
-        <div class="form-floating mb-3 ">
-            <input type="text" class="form-control" id="editCategoryName" name="Name*" placeholder="Category"
-                value="@Model.Name" />
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="editCategoryName" name="Name" placeholder="Category" value="@Model.Name" />
             <label for="editCategoryName">Name*</label>
         </div>
         <div class="form-floating mb-3">
-            <textarea class="form-control" name="Description" placeholder="Description"
-                id="editCategoryDesc">@Model.Description</textarea>
+            <textarea class="form-control" name="Description" placeholder="Description" id="editCategoryDesc">@Model.Description</textarea>
             <label for="editCategoryDesc">Description</label>
         </div>
     </form>
     <div class="modal-footer d-flex justify-content-end border-0" style="padding-right:0;">
-    <button type="button" class="btn update-button" data-bs-dismiss="modal" id="saveCategoryBtn"
-        style=" width: 80px;">Save</button>
-    <button type="button" class="btn cancel-button" data-bs-dismiss="modal" style=" width: 80px;">Cancel</button>
-</div>
+        <button type="button" class="btn update-button" data-bs-dismiss="modal" id="saveCategoryBtn" style="width: 80px;">Save</button>
+        <button type="button" class="btn cancel-button" data-bs-dismiss="modal" style="width: 80px;">Cancel</button>
+    </div>
 </div>
