@@ -4,14 +4,14 @@
 <div class="modal fade" id="EditItemModel" tabindex="-1" aria-labelledby="AddItemModelLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
-            <div class="modal-header border-0">
-                <h1 class="modal-title fs-5" id="AddItemModelLabel">
-                    Add New MenuItem
-                </h1>
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title" id="AddItemModelLabel" style="color:grey;">
+                    Update Menu Item
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <div class="modal-body text-center p-3">
+            <div class="modal-body text-center p-3" style="color:rgb(63, 63, 63);">
                 <form id="EditItemForm" enctype="multipart/form-data" method="post">
                 <input type="text" asp-for="Id" hidden>
                     <div class="row p-2">
@@ -50,8 +50,8 @@
                                                     <select class="form-select" id="select-role"
                                                         asp-for="Type" name="Itemtype">
                                                         <option value="" disabled>Select ItemType</option>
-                                                        <option value="true">Veg</option>
-                                                        <option value="false">Non-Veg</option>
+                                                        <option value="true">Vegetarian</option>
+                                                        <option value="false">Non Vegetarian</option>
                                                     </select>
                                                     <label for="itemType">Item Type*</label>
                                                     <span class="text-danger ms-2"
@@ -101,18 +101,18 @@
                             </div>
                             <div>
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="row d-flex justify-content-center align-items-center">
-                                            <div class="form-check form-switch mb-0 col-md-6">
-                                                <input type="checkbox" class="form-check-input mt-0 large-switch" asp-for="IsAvailable"
-                                                    value="true" name="Isavailable"/>
+                                    <div class="col-md-6 pt-3" >
+                                        <div class="row d-flex justify-content-center align-items-center" style="margin-left: 2px;">
+                                            <div class="form-check form-switch col-md-6 d-flex justify-content-center align-items-center" style="gap:5px;">
+                                                <input type="checkbox" class="form-check-input mt-0" asp-for="IsAvailable"
+                                                    value="true" name="Isavailable" style="height: 30px; width: 50px;"/>
                                                 <input type="hidden" value="false" />
                                                 <label for="">Available</label>
                                                 <span class="text-danger ms-2" asp-validation-for="IsAvailable"></span>
                                             </div>
-                                            <div class="form-check form-switch mb-0 col-md-6">
-                                                <input type="checkbox" class="form-check-input mt-0 large-switch" asp-for="IsDefaultTax"
-                                                    value="true" name="Isdefaulttax"/>
+                                            <div class="form-check form-switch col-md-6 d-flex justify-content-center align-items-center" style="gap:4px;">
+                                                <input type="checkbox" class="form-check-input mt-0 " asp-for="IsDefaultTax"
+                                                    value="true" name="Isdefaulttax" style="height: 30px; width: 50px;"/>
                                                 <input type="hidden" value="false" />
                                                 <label for="">DefaultTax</label>
                                                 <span class="text-danger ms-2" asp-validation-for="IsDefaultTax"></span>
@@ -143,25 +143,27 @@
                             </div>
                             <div>
                                 <div class="form-floating">
-                                    <textarea class="form-control" id="floatingTextarea" asp-for="Description" name="Description"></textarea>
+                                    <textarea class="form-control" id="floatingTextarea" asp-for="Description" name="Description" style="height: 90px;"></textarea>
                                     <label for="floatingTextarea">Description</label>
                                     <span class="text-danger ms-2" asp-validation-for="Description"></span>
                                 </div>
                             </div>
-                             <div class="mb-3 upload-container d-flex flex-col">
+                            <label class="d-flex justify-content-start">Upload Image</label>
+                            <div class="mb-3 upload-container d-flex flex-col justify-content-center align-tiems-center">
                                 <label for="imageInput" class="mx-1">
-                                    <img src="~/images/cloud-upload.svg" alt="upload-icon" class="mx-4" />
+                                    @* <img src="~/images/cloud-upload.svg" alt="upload-icon" class="mx-4" /> *@
+                                    <i class="fa-solid fa-cloud-arrow-up mx-4"></i>
                                     <br />
-                                    Browse File
+                                    Drag and Drop or Browse files
                                 </label>
                                 <input id="imageInput" asp-for="ProfileImagePath" type="file" name="ProfileImagePath" accept="image/*" class="input-file" hidden onchange="showFileName()"/>
                                 <span id="file-upload-name"></span>
                             </div>
                         </div>
-                        <div class="col-md-5 border rounded-3 p-2" style="background-color: rgb(255, 238, 190);">
+                        <div class="col-md-5 border rounded-3 p-2" style="background-color: #fcf4e6;">
                             <div>
                                 <select class="form-select" aria-label="Default select example" id="SelectEditModifierGroup">
-                                    <option value="" selected>Select ModifierGroup</option>
+                                    <option value="" selected>Select Modifier Group(s)</option>
                                     @foreach (var mg in Model.ModifierGroups)
                                     {
                                         <option value="@mg.Id">@mg.Name</option>
@@ -178,9 +180,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-end gap-2">
-                        <button class="fill-btn" type="submit" id="addItemBtn">Save</button>
-                        <button class="outline-btn" type="button" data-bs-dismiss="modal">Cancel</button>
+                    <div class="d-flex justify-content-end gap-2" style="padding-right:0;">
+                        <button class="btn update-button" type="submit" id="addItemBtn" style=" width: 80px;">Save</button>
+                        <button class="btn cancel-button" type="button" data-bs-dismiss="modal" style=" width: 80px;">Cancel</button>
                     </div>
                 </form>
 
@@ -189,7 +191,9 @@
         </div>
     </div>
 </div>
-
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
     $('#EditItemForm').submit(function(event){
         event.preventDefault();

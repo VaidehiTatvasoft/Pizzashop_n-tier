@@ -4,20 +4,19 @@
     @foreach (var category in Model)
     {
         <div class="d-flex flex-wrap justify-content-between align-items-center item-category-btn p-2 my-2 itemCategory"
-            data-id="@category.Id">
+         data-id="@category.Id">
             <div class="category-btn border-0 bg-light">
-                @* href="@Url.Action("Menu", "Menu", new { categoryId = category.Id })" *@
                 <h6 class=" mb-0">
                     <i class="fa-solid fa-grip-vertical"></i>
-                    @category.Name
+                    <b>@category.Name</b>
                 </h6>
             </div>
             <span class="edit-delete-icon">
                 <a href="javascript:void(0);" data-id="@category.Id" class="edit-btn edit-category"
                     style="text-decoration: none; color: inherit;">
-                    <i class="fa-solid fa-pencil m-1" data-bs-toggle="modal" data-bs-target="#EditCategoryModal"></i>
+                    <i class="bi bi-pen m-1 edit-icon" data-bs-toggle="modal" data-bs-target="#EditCategoryModal"></i>
                 </a>
-                <i class="fa-regular fa-trash-can mx-2 delete-category" id="deleteCategory" data-id="@category.Id"></i>
+                <i class="bi bi-trash m-1 delete-icon delete-category" id="deleteCategory" data-id="@category.Id" style="color:black"></i>
             </span>
         </div>
     }

@@ -1,31 +1,26 @@
 @model Entity.ViewModel.MenuCategoryViewModel
 
 <div class="modal-header border-0">
-    <h1 class="modal-title fs-5" id="exampleModalLabel">
-        Edit Category
-    </h1>
+    <h5 class="modal-title" id="exampleModalLabel" style="color:grey;">Edit Category</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
-<div class="modal-body text-center p-1">
-    <form id="editCategoryForm" class="p-3">
+<div class="modal-body" style="color:grey;">
+    <form id="editCategoryForm">
         <input type="hidden" id="editCategoryId" name="Id" value="@Model.Id" />
-        <div class="form-floating mb-3 p-0">
-            <input type="text" class="form-control" id="editCategoryName" name="Name" placeholder="Category"
+        <div class="form-floating mb-3 ">
+            <input type="text" class="form-control" id="editCategoryName" name="Name*" placeholder="Category"
                 value="@Model.Name" />
-            <label for="editCategoryName">Name</label>
+            <label for="editCategoryName">Name*</label>
         </div>
-        <div class="form-floating p-0">
+        <div class="form-floating mb-3">
             <textarea class="form-control" name="Description" placeholder="Description"
                 id="editCategoryDesc">@Model.Description</textarea>
             <label for="editCategoryDesc">Description</label>
         </div>
     </form>
+    <div class="modal-footer d-flex justify-content-end border-0" style="padding-right:0;">
+    <button type="button" class="btn update-button" data-bs-dismiss="modal" id="saveCategoryBtn"
+        style=" width: 80px;">Save</button>
+    <button type="button" class="btn cancel-button" data-bs-dismiss="modal" style=" width: 80px;">Cancel</button>
 </div>
-<div class="modal-footer d-flex justify-content-end border-0">
-    <button type="button" class="fill-btn" data-bs-dismiss="modal" id="saveCategoryBtn">
-        Save
-    </button>
-    <button type="button" class="outline-btn" data-bs-dismiss="modal">
-        Cancel
-    </button>
 </div>

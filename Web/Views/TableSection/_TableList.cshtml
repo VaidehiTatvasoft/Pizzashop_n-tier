@@ -7,33 +7,42 @@
     var TotalItems = Model.TotalItems;
 }
 <section class="table-responsive">
-    <table class="table user-table mb-0 menu-table">
+   
+   @if (Model.Tables.Count == 0)
+    {
+        <div class="d-flex justify-content-center align-items-center mt-5">
+            <img src="~/assets/emptytable.png">
+        </div>
+    }
+    else
+    {
+         <table class="table mb-0">
         <thead>
             <tr>
-                <th style="margin-right:0;">
-                    <div class="form-check pr-0 mr-0">
+                <th style="width:8px;padding:5px;">
+                    @* <div class="form-check pr-0 mr-0">
                         <input class="form-check-input " type="checkbox" value="" id="flexCheckDefault" />
-                    </div>
+                    </div> *@
                 </th>
-                <th style="width:45%;padding:10px;">Name</th>
-                <th style="padding:10px;"><p class="d-flex justify-content-center align-items-center p-0 m-0">Capacity</p></th>
-                <th style="padding:10px;"><p class="d-flex justify-content-center align-items-center p-0 m-0">Status</p></th>
-                <th style="padding:10px;"><p class="d-flex justify-content-center align-items-center p-0 m-0">Action</p></th>
+                <th style="width:45%;">Name</th>
+                <th>Capacity</th>
+                <th>Status</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody class="table-group-divider tables" id="tableList">
             @for (var i = 0; i < Model.Tables.Count; i++)
             {
                 <tr>
-                    <td>
+                    <td  style="padding:3px;">
                         <div class="form-check pr-0 mr-0">
                             <input class="form-check-input tableCheckBox" value="@Model.Tables[i].Id" type="checkbox"
-                                value="" id="flexCheckDefault" />
+                                value="" id="flexCheckDefault" style="border:1px solid rgb(85, 85, 85);" />
                         </div>
                     </td>
                     <td>@Model.Tables[i].Name</td>
-                    <td><p class="d-flex justify-content-center align-items-center p-0 m-0"> @Model.Tables[i].Capacity</p></td>
-                    <td class="d-flex justify-content-center align-items-center">
+                    <td> @Model.Tables[i].Capacity</td>
+                    <td >
                         @if ((bool)@Model.Tables[i].IsAvailable)
                         {
                             <div class="available">Available</div>
@@ -57,6 +66,7 @@
             }
         </tbody>
     </table>
+    }
     <div class="d-flex justify-content-end align-items-center mt-2 p-2">
         <div class="d-flex justify-content-end align-items-center">
         <label for="form-select" class="mx-2">Items per Page:</label>
@@ -105,9 +115,9 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header border-0">
-                <h1 class="modal-title fs-5" id="deleteTableLable" style="color:grey;">
+                <h5 class="modal-title" id="deleteTableLable" style="color:grey;">
                     Delete Confirmation
-                </h1>
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-center p-1" style="color:grey;">
@@ -131,12 +141,12 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header border-0">
-                <h1 class="modal-title fs-5" id="deleteTableLable" style="color:grey;">
+                <h5 class="modal-title" id="deleteTableLable" style="color:grey;">
                     Multiple Delete Confirmation
-                </h1>
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body text-center p-1" style="color:grey;">
+            <div class="modal-body text-center" style="color:grey;">
                 <i class="fa-solid fa-triangle-exclamation fa-2xl pb-2" style="color: #FFD43B;"></i>
                 <p class="mb-0">
                     Are you sure you want to delete these tables?

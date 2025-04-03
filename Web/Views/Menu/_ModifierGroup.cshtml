@@ -12,12 +12,12 @@
                 </h6>
             </div>
             <span class="edit-delete-icon">
-                <a href="javascript:void(0);" data-id="@modifierGroup.Id" class="edit-btn edit-category"
+                <a href="javascript:void(0);" data-id="@modifierGroup.Id" class="edit-btn"
                     style="text-decoration: none; color: inherit;">
-                    <i class="fa-solid fa-pencil m-1" data-bs-toggle="modal" data-bs-target="#EditCategoryModal"></i>
+                    <i class="bi bi-pen m-1 edit-icon" data-bs-toggle="modal" data-bs-target="#editModifierGroupModal"></i>
                 </a>
-                <i class="fa-regular fa-trash-can mx-2 delete-modifiergroup" data-bs-target="#deleteModifierGroupModal"
-                    data-bs-toggle="modal" id="deleteModifierGroup" data-id="@modifierGroup.Id"></i>
+                <i class="bi bi-trash m-1 delete-icon delete-modifiergroup" data-bs-target="#deleteModifierGroupModal"
+                    data-bs-toggle="modal" id="deleteModifierGroup" data-id="@modifierGroup.Id" style="color:black"></i>
             </span>
         </div>
     }
@@ -29,23 +29,25 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header border-0">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Confirmation</h1>
+                <h5 class="modal-title" id="exampleModalLabel" style="color:grey;">Delete Confirmation</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="text-center">
-                <i class="fa-solid fa-triangle-exclamation fa-2xl" style="color: #FFD43B;"></i>
-            </div>
-            <div class="modal-body text-center p-1">
-                <p class="fw-bold mb-0">Are you sure you want to delete this modifiergroup?</p>
+            <div class="modal-body text-center p-1" style="color:grey;">
+            <i class="fa-solid fa-triangle-exclamation fa-2xl" style="color: #FFD43B;"></i>
+                <p class=" mb-0">
+                    Are you sure you want to delete this ModifierGroup?
+                </p>
             </div>
             <div class="modal-footer d-flex justify-content-center border-0">
-                <button type="button" class="btn btn-primary" id="confirmDeleteCategoryBtn">Yes</button>
-                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">No</button>
+                <button type="button" class="btn update-button" id="confirmDeleteCategoryBtn" style=" width: 80px;">Yes</button>
+                <button type="button" class="btn cancel-button" data-bs-dismiss="modal" style=" width: 80px;">No</button>
             </div>
         </div>
     </div>
 </div>
-
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
     var modifierGroupId = @Model.First().Id;
     $(document).on('click', '.delete-modifiergroup', function () {

@@ -26,10 +26,18 @@ h2 {
   background-color: yellow;
 }
 
-.tab {
+.top-pills.active{
+  color: #0066a6 !important;
+  display: flex;
+  border-bottom: 4px solid #0066a6 !important;
+  background-color: white !important;
+
+}
+.top-pills{
   background-color: white;
-  padding: 10px 20px;
   cursor: pointer;
+  color:black !important;
+  border:none;
 }
 
 .update-button {
@@ -419,6 +427,7 @@ body {
   vertical-align: middle;
   color: gray !important;
   padding: 10px;
+  white-space: nowrap;
 }
 .active-status {
   width: 90px;
@@ -602,7 +611,7 @@ a i {
 }
 
 .upload-container {
-  border: 2px solid #adadad;
+  border: 1px dashed #7a7a7a;
   border-radius: 10px;
   padding: 20px;
   text-align: center;
@@ -639,7 +648,7 @@ a i {
 .file-upload-label {
   width: 100%;
   background-color: #F8F9FA;
-  border: 1px solid #B3B3B7;
+  border: 1px dashed #B3B3B7;
   padding: 10px;
   text-align: center;
   cursor: pointer;
@@ -706,7 +715,14 @@ a i {
   margin: 5px;
   padding: 3px;
 }
-
+#searchString {
+  height: 43px;
+  width: 200px;
+  border: 1px solid #adadad;
+  border-radius: 5px;
+  margin: 5px;
+  padding: 3px;
+}
 .sort-icon {
   display: inline-flex;
   align-items: center;
@@ -717,7 +733,14 @@ a i {
     display: inline;
   }
 }
-
+#searchModifier {
+  height: 43px;
+  width: 200px;
+  border: 1px solid #adadad;
+  border-radius: 5px;
+  margin: 5px;
+  padding: 3px;
+}
 @media (max-width: 425px) {
   .search-box {
     width: 95%;
@@ -726,6 +749,12 @@ a i {
 
   #searchInput {
     width: 95%;
+  }
+  #searchString {
+    width: 95%;
+  }
+  #searchModifier{
+    width:95%;
   }
 }
 
@@ -749,18 +778,6 @@ a i {
   margin-right: 6px;
 }
 
-.tab-link.active {
-  color: var(--textBlue) !important;
-  border-bottom: 2px solid var(--textBlue);
-}
-
-.tab-link:hover {
-  color: var(--textBlue) !important;
-}
-.tab-link {
-  color: black;
-  font-size: large;
-}
 
 .category-list {
   max-height: 400px;
@@ -772,6 +789,10 @@ a i {
   transition: 0.4s ease;
 }
 .item-category-btn:hover {
+  color: var(--textBlue);
+  background-color: white;
+}
+.item-category .active {
   color: var(--textBlue);
   background-color: white;
 }
@@ -818,20 +839,12 @@ a i {
 }
 
 .modal-backdrop {
-  background-color: rgba(0, 0, 0, 0.1) !important; /* Light opacity */
+  background-color: rgba(0, 0, 0, 0.5) !important;
 }
 
-.bg-white {
-  background-color: white;
-}
 
 .active-new {
-  color: var(--textBlue) !important;
-  background-color: white;
-}
-
-.section-heading {
-  color: var(--textBlue);
+  color: #0066A7 !important;
 }
 
 @media (max-width: 767px) {

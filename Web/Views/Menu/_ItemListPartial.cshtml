@@ -6,44 +6,54 @@
     var SearchString = Model.SearchString;
     var TotalItems = Model.TotalItems;
 }
+<style>
+    .menuItems td th {
+        display: flex;
+        justify-content: center !important;
+        align-items: center !important;
+        color: gray !important;
+        padding: 10px;
+        white-space: nowrap;
+    }
+</style>
 <section class="table-responsive">
     @if (Model.itemList.Count == 0)
     {
         <div class="d-flex justify-content-center align-items-center mt-5">
-            <p>Items Not Found</p>
+            <img src="~/assets/emptytable.png" />
         </div>
     }
     else
     {
-        <table class="table user-table mb-0 menu-table">
+        <table class="table menuItems mb-0">
             <thead>
                 <tr>
-                    <th>
+                    <th style="width:8px;padding:5px;">
                         @* <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
                         </div> *@
                     </th>
-                    <th scope="col">Name</th>
-                    <th scope="col">ItemType</th>
-                    <th scope="col">Rate</th>
-                    <th scope="col">Quantity</th>
-                    <th scope="col">Available</th>
-                    <th scope="col">Action</th>
+                    <th>Name</th>
+                    <th>ItemType</th>
+                    <th>Rate</th>
+                    <th>Quantity</th>
+                    <th>Available</th>
+                    <th>Action</th>
                 </tr>
             </thead>
-            <tbody class="table-group-divider menuItems" id="itemsList">
+            <tbody class="table-group-divider " id="itemsList">
                 @for (var i = 0; i < Model.itemList.Count; i++)
                 {
                     <tr>
-                        <td>
+                        <td style="padding:3px;">
                             <div class="form-check">
                                 <input class="form-check-input itemCheckBox" value="@Model.itemList[i].Id" type="checkbox"
-                                    value="" id="flexCheckDefault" />
+                                    value="" id="flexCheckDefault" style="border:1px solid rgb(85, 85, 85);" />
                             </div>
                         </td>
-                        <td class="">
+                        <td >
                             <span class="me-2">
-                                <img src="~/images/@(Model.itemList[i].Image != null ? Model.itemList[i].Image : "dining-menu.png")"
+                                <img src="~/assets/@(Model.itemList[i].Image != null ? Model.itemList[i].Image : "dining-menu.png")"
                                     alt="dining-menu" class="dining-menu-icon user-profile-img rounded-circle" />
                             </span><span>
                                 @Model.itemList[i].Name
@@ -53,11 +63,11 @@
                             <div class="">
                                 @if ((bool)Model.itemList[i].Type)
                                 {
-                                    <img src="~/images/icons/veg-icon.svg" class="veg-icon" alt="veg-icon" />
+                                    <img src="~/assets/veg-icon.svg" class="veg-icon" alt="veg-icon" />
                                 }
                                 else
                                 {
-                                    <img src="~/images/icons/non-veg-icon.svg" class="veg-icon" alt="veg-icon" />
+                                    <img src="~/assets/non-veg-icon.svg" class="veg-icon" alt="veg-icon" />
                                 }
                             </div>
                         </td>
@@ -70,18 +80,20 @@
                             </div>
                         </td>
                         <td>
-                            <button type="button" class="btn border-0 editItemBtn" data-itemid="@Model.itemList[i].Id">
-                                <i class="fa-solid fa-pen-clip me-3 "></i>
+                            @* <div class="d-flex justify-content-center align-items-center p-0 m-0"> *@
+                            <button type="button" class="btn border-0 editItemBtn p-0" data-itemid="@Model.itemList[i].Id">
+                                <i class="bi bi-pen m-2 edit-icon"></i>
                             </button>
-                            <button type="button" class="btn border-0 deleteItem" value="@Model.itemList[i].Id">
-                                <i class="fa-regular fa-trash-can"></i>
+                            <button type="button" class="btn border-0 deleteItem p-0" value="@Model.itemList[i].Id">
+                                <i class="bi bi-trash m-2 delete-icon"></i>
                             </button>
+                            @* </div> *@
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
-        <div class="d-flex justify-content-end align-items-center mt-2">
+        <div class="d-flex justify-content-end align-items-center mt-2" style="color: black !important;">
             <p class="mb-0">Items Per page</p>
             <select class="ms-3 form-select w-auto" aria-label="Default select example" id="pageSizedropdown">
                 <option value="5" selected="@(PageSize == 5 ? true : false)">5</option>
@@ -119,27 +131,28 @@
         </div>
     }
 </section>
-@* <partial name="_AddItem" model="new PizzaShop.Entity.ViewModels.MenuItemViewModel()"></partial>
-<partial name="_EditItem" model="new PizzaShop.Entity.ViewModels.MenuItemViewModel()"></partial> *@
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 @* DeleteItemModel*@
 <div class="modal fade" id="deleteItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header border-0">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">
+                <h1 class="modal-title fs-5" id="exampleModalLabel" style="color:grey;">
                     Delete Confirmation
                 </h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body text-center p-1">
-                <i class="fa-solid fa-triangle-exclamation fa-2xl" style="color: #FFD43B;"></i>
-                <p class="fw-bold mb-0">
+            <div class="modal-body text-center p-1" style="color:grey;">
+                <i class="fa-solid fa-triangle-exclamation fa-2xl pb-2" style="color: #FFD43B;"></i>
+                <p class="mb-0">
                     Are you sure you want to delete this Item?
                 </p>
             </div>
             <div class="modal-footer d-flex justify-content-center border-0">
-                <button type="button" id="deleteItemBtn" class="fill-btn">Yes</button>
-                <button type="button" class="outline-btn" data-bs-dismiss="modal">
+                <button type="button" id="deleteItemBtn" class="btn update-button" style=" width: 70px;">Yes</button>
+                <button type="button" class="btn cancel-button" data-bs-dismiss="modal" style=" width: 70px;">
                     No
                 </button>
             </div>
@@ -153,20 +166,20 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header border-0">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">
-                    Multiple Delete Confirmation
-                </h1>
+                <h5 class="modal-title " id="exampleModalLabel" style="color:grey;">
+                    Delete Confirmation
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body text-center p-1">
-                <i class="fa-solid fa-triangle-exclamation fa-2xl" style="color: #FFD43B;"></i>
-                <p class="fw-bold mb-0">
-                    Are you sure you want to delete Multiple Items?
+            <div class="modal-body text-center" style="color:grey;">
+                <i class="fa-solid fa-triangle-exclamation fa-2xl pb-2" style="color: #FFD43B;"></i>
+                <p class="mb-0">
+                    Are you sure you want to delete these Items?
                 </p>
             </div>
             <div class="modal-footer d-flex justify-content-center border-0">
-                <button type="button" id="multiDeleteItemBtn" class="fill-btn">Yes</button>
-                <button type="button" class="outline-btn" data-bs-dismiss="modal">
+                <button type="button" id="multiDeleteItemBtn" class="btn update-button" style=" width: 70px;">Yes</button>
+                <button type="button" class="btn cancel-button" data-bs-dismiss="modal" style=" width: 70px;"> 
                     No
                 </button>
             </div>
@@ -174,11 +187,12 @@
     </div>
 </div>
 <div id="AddItemPartial">
-
 </div>
 <div id="EditItemPartial">
-
 </div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
     var debounce;
     var ajaxRequest;

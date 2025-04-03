@@ -5,28 +5,25 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header border-0">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add Category</h1>
+                    <h5 class="modal-title " id="exampleModalLabel "  style="color:grey;">Add Category</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body text-center p-1">
-                    <form class="p-3" id="addNewCategoryForm">
-                        <div class="form-floating mb-3 p-0">
-                            <input asp-for="Name" type="text" class="form-control" id="categoryName" name="Name"
-                                placeholder="Category" />
-                            <label for="categoryName" asp-validation-for="">Name</label>
+                <div class="modal-body" style="color:grey;">
+                    <form id="addNewCategoryForm">
+                        <div class="form-floating mb-3">
+                            <input asp-for="Name" type="text" class="form-control" id="categoryName" name="Name" placeholder="Category" />
+                            <label for="categoryName" asp-validation-for="">Name*</label>
                             <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
-
-                        <div class="form-floating p-0">
+                        <div class="form-floating mb-3">
                             <textarea asp-for="Description" class="form-control" name="Description"
                                 placeholder="Description" id="categoryDescription"></textarea>
                             <label for="categoryDescription">Description</label>
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
-
-                        <div class="modal-footer d-flex justify-content-end border-0">
-                            <button class="fill-btn" id="submitNewCategory">Save</button>
-                            <button type="button" class="btn outline-btn" data-bs-dismiss="modal">Cancel</button>
+                        <div class="modal-footer d-flex justify-content-end border-0" style="padding-right:0;">
+                            <button class="btn update-button" id="submitNewCategory"  style=" width: 80px;">Save</button>
+                            <button type="button" class="btn cancel-button" data-bs-dismiss="modal"  style=" width: 80px;">Cancel</button>
                         </div>
                     </form>
                 </div>
