@@ -15,7 +15,7 @@ public class AddEditModifierViewModel
 
     [Required(ErrorMessage = "Rate is required.")]
     [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Invalid Rate.")]
-    [Range(0.01, double.MaxValue, ErrorMessage = "Invalid Rate.")]
+    [Range(0.01, double.MaxValue, ErrorMessage = "Rate is required.")]
     public decimal Rate { get; set; }
 
     [Required(ErrorMessage = "Quantity is required.")]
@@ -26,7 +26,7 @@ public class AddEditModifierViewModel
 
     public string? Description { get; set; } = null!;
 
-    [Required(ErrorMessage = "ModifierGroup is required.")]
+    [Required(ErrorMessage = "Modifier Group is required.")]
     public int Modifiergroupid { get; set; }
 
     public int? UnitId { get; set; }

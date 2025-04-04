@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Entity.Data;
 
 namespace Entity.ViewModel;
@@ -5,10 +6,11 @@ namespace Entity.ViewModel;
 public partial class MenuCategoryViewModel
 {
     public int Id { get; set; }
+    [Required(ErrorMessage = "Name is required.")]
 
     public string Name { get; set; } = null!;
-
-    public string? Description { get; set; }
+    [Required(ErrorMessage = "Description is required.")]
+    public string Description { get; set; }
 
     public bool? IsDeleted { get; set; }
 

@@ -2,8 +2,8 @@
 <partial name="_ValidationScriptsPartial" />
 
 <!-- Add New Modifier Modal -->
-<div class="modal fade" id="editModifierModal" tabindex="-1" aria-labelledby="addModifierModalLabel" aria-hidden="true">
-    <div class="modal-dialog  modal-dialog-centered">
+<div class="modal fade" id="editModifierModal" tabindex="-1"  role="dialog" aria-labelledby="addModifierModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header" style="color:grey;">
                 <h4 class="modal-title" id="addModifierModalLabel">Edit Modifier</h4>
@@ -108,19 +108,18 @@
             processData: false,
             contentType: false,
             success: function (response) {
-                if (response.isAuthenticate == false)
-                    navigateToLogin();
+
                 if (response.isSuccess) {
                     toastr.success(response.message);
-                    $("#editModifierModal").modal('hide');
+                    @* $("#editModifierModal").modal('hide'); *@
+                    $("#editModifierModal").remove(); 
+                $('.modal-backdrop').remove();
                     GetFilteredModifiers();
                 } else {
                     toastr.error(response.message);
                 }
             },
-            error: function (error) {
-                toastr.error(error.message)
-            }
+                error: handleAjaxError
         })
     })
 

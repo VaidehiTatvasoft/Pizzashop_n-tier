@@ -136,11 +136,12 @@
             });
 
             $(document).on('submit', "#addNewTableForm", function (event) {
-                var tableId = $(this).data("id");
                 event.preventDefault();
-                var form = $("#addNewTableForm");
+                var form = $(this);
+                var tableId = form.data("id");
+                var url = tableId ? '/TableSection/EditTable' : '/TableSection/AddNewTable';
                 $.ajax({
-                    url: tableId ? '/TableSection/EditTable' : '/TableSection/AddNewTable',
+                    url: url,
                     type: 'POST',
                     data: form.serialize(),
                     success: function (response) {
@@ -148,10 +149,10 @@
                             console.log("Saved");
                             GetFilteredItems();
                             toastr.success(response.message);
+                            $("#addTableModal").modal('hide');
                         } else {
                             toastr.error(response.message);
                         }
-                        $("#addTableModal").modal('hide');
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         handleAjaxError(jqXHR, textStatus, errorThrown);

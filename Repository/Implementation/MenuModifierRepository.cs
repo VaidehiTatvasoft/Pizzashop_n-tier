@@ -107,6 +107,7 @@ public class MenuModifierRepository : IMenuModifierRepository
     public void EditModifier(AddEditModifierViewModel model, int userId)
     {
         var modifier = _context.Modifiers.FirstOrDefault(m => m.Id == model.Id);
+        modifier.ModifierGroupId = model.Modifiergroupid;
         modifier!.Name = model.Name;
         modifier.Rate = model.Rate;
         modifier.Quantity = model.Quantity;

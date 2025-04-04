@@ -45,7 +45,7 @@
 </tbody>
                     </table>
                 </section>
-            @* <div class="d-flex justify-content-end align-items-center mt-2">
+            <div class="d-flex justify-content-end align-items-center mt-2">
                 <p class="mb-0">Items Per page</p>
                 <select class="ms-3 form-select w-auto" aria-label="Default select example" id="pageSizeExistingModifiers">
                     <option value="5" selected="@(PageSize == 5 ? true : false)">5</option>
@@ -83,14 +83,13 @@
                         <i class="fa fa-chevron-right"></i>
                     </button>
                 }
-            </div> *@
+            </div>
 <script>
 var debounce;
 var ajaxRequest;
 var deleteItemId;
 var selectedModifiers = [];
 
-@* Pagination Script *@
                     $(document).ready(function () {
                         var pageIndex = @Model.PageIndex;
 
@@ -108,7 +107,8 @@ var selectedModifiers = [];
                                 },
                                 success: function (data) {
                                     $("#existingModifiersList").html(data);
-                                }
+                                },
+                error: handleAjaxError
                             })
                         }
 
@@ -140,6 +140,4 @@ var selectedModifiers = [];
                             GetFilteredExistingModifiers()
                         })
                     });
-
-
 </script>

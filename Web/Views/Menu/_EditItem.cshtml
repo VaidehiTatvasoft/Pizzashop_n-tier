@@ -1,8 +1,8 @@
 @model Entity.ViewModel.MenuItemViewModel;
 <partial name="_ValidationScriptsPartial" />
 
-<div class="modal fade" id="EditItemModel" tabindex="-1" aria-labelledby="AddItemModelLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
+<div class="modal fade" id="EditItemModel" tabindex="-1"  role="dialog" aria-labelledby="AddItemModelLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header border-0 pb-0">
                 <h5 class="modal-title" id="AddItemModelLabel" style="color:grey;">
@@ -156,9 +156,10 @@
                                     <br />
                                     Drag and Drop or Browse files
                                 </label>
-                                <input id="imageInput" asp-for="ProfileImagePath" type="file" name="ProfileImagePath" accept="image/*" class="input-file" hidden onchange="showFileName()"/>
                                 <span id="file-upload-name"></span>
+                                <input id="imageInput" asp-for="ProfileImagePath" type="file" name="ProfileImagePath" accept="image/*" class="input-file" hidden onchange="showFileName()"/>
                             </div>
+                            
                         </div>
                         <div class="col-md-5 border rounded-3 p-2" style="background-color: #fcf4e6;">
                             <div>
@@ -224,21 +225,20 @@
             processData:false,
             success: function(response){
                 if(response == null)
-                    window.location.href = "/Authentication/Login"
+                    window.location.href = "/unauthorized"
                 if(response.isSuccess)
                 {
                     GetFilteredItems();
-                    $("#EditItemModel").modal('hide'); 
-                    location.reload();
+                    $("#EditItemModel").remove(); 
+                $('.modal-backdrop').remove();
                     toastr.success(response.message)
                     
                 }else{
                     toastr.error(response.message)
                 }
             },
-            error: function(e){
-                toastr.error("Error")
-            }
+                error: handleAjaxError
+
         })
     })
      $(document).on("click", ".remove-modifier", function () {
@@ -255,10 +255,11 @@
             success: function (response) {
                 $("#EditModifiersLists").append(response);
             },
-            error: function (error) {  
-            }
+                error: handleAjaxError
+
         });
     });
+    
       function showFileName() {
             var input = document.getElementById('imageInput');
             var fileNameSpan = document.getElementById('file-upload-name');

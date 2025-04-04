@@ -1,27 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Repository\\Repository.csproj": {}
+    "D:\\Project_pce54\\Pizzashop_n-tier\\Repository\\Repository.csproj": {}
   },
   "projects": {
-    "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Entity\\Entity.csproj": {
+    "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Entity\\Entity.csproj",
+        "projectUniqueName": "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj",
         "projectName": "Entity",
-        "projectPath": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Entity\\Entity.csproj",
-        "packagesPath": "C:\\Users\\patel\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Entity\\obj\\",
+        "projectPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj",
+        "packagesPath": "C:\\Users\\pce54\\.nuget\\packages\\",
+        "outputPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\patel\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\pce54\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -109,32 +107,30 @@
         }
       }
     },
-    "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Repository\\Repository.csproj": {
+    "D:\\Project_pce54\\Pizzashop_n-tier\\Repository\\Repository.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Repository\\Repository.csproj",
+        "projectUniqueName": "D:\\Project_pce54\\Pizzashop_n-tier\\Repository\\Repository.csproj",
         "projectName": "Repository",
-        "projectPath": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Repository\\Repository.csproj",
-        "packagesPath": "C:\\Users\\patel\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Repository\\obj\\",
+        "projectPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Repository\\Repository.csproj",
+        "packagesPath": "C:\\Users\\pce54\\.nuget\\packages\\",
+        "outputPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Repository\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\patel\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\pce54\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Entity\\Entity.csproj": {
-                "projectPath": "C:\\Users\\patel\\pizzashop\\Pizzashop_n-tier\\Entity\\Entity.csproj"
+              "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj": {
+                "projectPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj"
               }
             }
           }

@@ -1,4 +1,6 @@
 @model Entity.ViewModel.ModifierTabViewModel;
+<partial name="_ValidationScriptsPartial" />
+
 <style>
     #multiDeleteModifiersBtn {
         width: 40px;
@@ -53,8 +55,8 @@
 </section>
 
 <!-- Add Modifier Group Modal -->
-<div class="modal fade" id="addModifierGroupModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade" id="addModifierGroupModal" tabindex="-1"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header pb-0 border-0">
                 <h5 class="modal-title" id="exampleModalLabel" style="color:grey;">
@@ -92,9 +94,9 @@
     </div>
 </div>
 <!-- Edit Modifier group -->
-<div class="modal fade" id="editModifierGroupModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+<div class="modal fade" id="editModifierGroupModal" tabindex="-1"  role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header border-0" style="color:grey;">
                 <h1 class="modal-title fs-5" id="exampleModalLabel">
@@ -133,7 +135,7 @@
     </div>
 </div>
 <!-- Add ExistingModifiers Modal-->
-<div class="modal fade modal-md" id="selectExistingModifierModal" tabindex="-1"
+<div class="modal fade modal-md" id="selectExistingModifierModal" tabindex="-1" role="dialog"
     aria-labelledby="selectExistingModifierLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -191,7 +193,8 @@ $('#selectExistingModifierModal').on('hidden.bs.modal', function () {
             },
             success: function (data) {
                 $("#modifierList").html(data);
-            }
+            },
+                error: handleAjaxError
         })
     }
 
@@ -212,7 +215,8 @@ $('#selectExistingModifierModal').on('hidden.bs.modal', function () {
             data: { modifierGroupId: modifierGroupId, pageSize: @Model.PageSize, pageIndex: @Model.PageIndex, searchString: "" },
             success: function (response) {
                 $('#modifierList').html(response);
-            }
+            },
+                error: handleAjaxError
         })
     })
 
@@ -240,7 +244,8 @@ $('#selectExistingModifierModal').on('hidden.bs.modal', function () {
             data: { pageSize: @Model.PageSize, pageIndex: @Model.PageIndex, searchString: "" },
             success: function (response) {
                 $('#existingModifiersList').html(response);
-            }
+            },
+                error: handleAjaxError
         })
         console.log('show');
     });
@@ -261,7 +266,8 @@ $('#selectExistingModifierModal').on('hidden.bs.modal', function () {
                 },
                 success: function (data) {
                     $("#existingModifiersList").html(data);
-                }
+                },
+                error: handleAjaxError
             })
         }
 

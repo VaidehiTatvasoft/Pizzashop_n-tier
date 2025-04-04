@@ -11,7 +11,6 @@
             <input type="text" class="form-control" asp-for="Name" placeholder="Name*" style="height: 50px;">
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
-        <br>
         <div class="col-xl-12 mt-2">
             <div class="row g-2">
                 <div class="form-floating col-xl-6 col-12">
@@ -59,20 +58,3 @@
     </form>
 </div>
 
-<script>
-    $(document).ready(function () {
-        @if (TempData["SuccessMessage"] != null)
-            {
-                <text>
-                    toastr.success("@TempData["SuccessMessage"]");
-                </text>
-        }
-
-            @if (TempData["ErrorMessage"] != null)
-            {
-                <text>
-                    toastr.error("@TempData["ErrorMessage"]");
-                </text>
-        }
-    });
-</script>

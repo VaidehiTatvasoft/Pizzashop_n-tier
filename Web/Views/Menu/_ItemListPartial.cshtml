@@ -135,8 +135,8 @@
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 @* DeleteItemModel*@
-<div class="modal fade" id="deleteItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade" id="deleteItemModal" tabindex="-1"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header border-0">
                 <h1 class="modal-title fs-5" id="exampleModalLabel" style="color:grey;">
@@ -161,9 +161,9 @@
 </div>
 
 @* Delete Multiple Item Model*@
-<div class="modal fade" id="deleteMultipleItemModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+<div class="modal fade" id="deleteMultipleItemModal" tabindex="-1"  role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header border-0">
                 <h5 class="modal-title " id="exampleModalLabel" style="color:grey;">
@@ -190,9 +190,9 @@
 </div>
 <div id="EditItemPartial">
 </div>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
+@* <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> *@
 <script>
     var debounce;
     var ajaxRequest;
@@ -220,26 +220,17 @@
             data: { id: deleteItemId },
             success: function (response) {
                 if (response == null)
-                    window.location.href = "/Authentication/Login";
+                    window.location.href = "/unauthorized";
                 if (response.isSuccess) {
                     GetFilteredItems();
-                    toastr.success(response.message, {
-                        closeButton: true,
-                        progressBar: true,
-                        timeOut: 2000,
-                        positionClass: "toast-top-right"
-                    });
+                    toastr.success(response.message);
 
                 } else {
-                    toastr.error(response.message, {
-                        closeButton: true,
-                        progressBar: true,
-                        timeOut: 2000,
-                        positionClass: "toast-top-right"
-                    });
+                    toastr.error(response.message);
                 }
                 $("#deleteItemModal").modal('hide');
-            }
+            },
+                error: handleAjaxError
         })
     })
 
@@ -263,7 +254,8 @@
             },
             success: function (data) {
                 $("#itemList").html(data);
-            }
+            },
+                error: handleAjaxError
         })
     }
 
@@ -303,10 +295,11 @@
             data: { itemId: itemId },
             success: function (data) {
                 if (data == null)
-                    window.location.href = "/Authentication/Login"
+                    window.location.href = "/unauthorized"
                 $("#EditItemPartial").html(data);
                 $("#EditItemModel").modal('show');
-            }
+            },
+                error: handleAjaxError
         })
     })
     @* EditItem *@
@@ -329,9 +322,8 @@
                                 toastr.error(response.message);
                             }
                         },
-                        error: function (xhr, status, error) {
-                            console.error("Error while editing the item:", status, error);
-                        }
+                            error: handleAjaxError
+
                     });
             });
         });

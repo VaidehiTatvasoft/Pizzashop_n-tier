@@ -19,8 +19,7 @@ public class RolePermissionController : Controller
         _user = user;
         _rolePermission = rolePermission;
     }
-    // [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)]
-    [CustomAuthorize(1,RolePermissionEnum.Permission.RolesAndPermissions_CanView)]
+    [CustomAuthorize(1, RolePermissionEnum.Permission.RolesAndPermissions_CanView)]
     [Route("/roles")]
     [HttpGet]
     public async Task<IActionResult> Role()
@@ -28,9 +27,8 @@ public class RolePermissionController : Controller
         var roles = await _rolePermission.GetAllRoles();
         return View(roles);
     }
-    // [CustomAuthorize(1, RolePermissionEnum.Permission.CanView)]
-    [CustomAuthorize(1,RolePermissionEnum.Permission.RolesAndPermissions_CanView)]
-    [Route("/permission")]
+    [CustomAuthorize(1, RolePermissionEnum.Permission.RolesAndPermissions_CanView)]
+    [Route("/permission/{id}")]
     [HttpGet]
     public IActionResult Permission(int id)
     {
@@ -44,11 +42,10 @@ public class RolePermissionController : Controller
             return View(model);
         return RedirectToAction("Permission");
     }
-    //  [CustomAuthorize(1, RolePermissionEnum.Permission.CanEdit)]
-    [CustomAuthorize(1,RolePermissionEnum.Permission.RolesAndPermissions_CanEdit)]
-    [Route("/permission")]
+    [CustomAuthorize(1, RolePermissionEnum.Permission.RolesAndPermissions_CanEdit)]
+    [Route("/permission/{id}")]
     [HttpPost]
-    public async Task<IActionResult> Permission(List<RolePermissionViewModel> model)
+    public async Task<IActionResult> Permission(List<RolePermissionViewModel> model, int id)
     {
         if (ModelState.IsValid)
         {
@@ -64,14 +61,14 @@ public class RolePermissionController : Controller
             if (updateRolePermission)
             {
                 TempData["SuccessUpdate"] = "Role And Permissions Updated Successfully";
-                return View(model);
+                return RedirectToAction("Permission", new { id = id });
             }
             TempData["ErrorUpdate"] = "Something went wrong Please Try Again";
-            return View(model);
+            return RedirectToAction("Permission", new { id = id });
         }
         else
         {
-            return View(model);
+            return RedirectToAction("Permission", new { id = id });
         }
     }
 }

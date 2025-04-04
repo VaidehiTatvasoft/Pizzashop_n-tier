@@ -1,15 +1,16 @@
 @model Entity.ViewModel.MenuCategoryViewModel;
+<partial name="_ValidationScriptsPartial" />
 
 <div class="container mt-5">
-    <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+    <div class="modal fade" id="addCategoryModal" tabindex="-1"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header border-0">
                     <h5 class="modal-title " id="exampleModalLabel "  style="color:grey;">Add Category</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="color:grey;">
-                    <form id="addNewCategoryForm">
+                    <form id="addNewCategoryForm" method=" post">
                         <div class="form-floating mb-3">
                             <input asp-for="Name" type="text" class="form-control" id="categoryName" name="Name" placeholder="Category" />
                             <label for="categoryName" asp-validation-for="">Name*</label>
@@ -18,7 +19,7 @@
                         <div class="form-floating mb-3">
                             <textarea asp-for="Description" class="form-control" name="Description"
                                 placeholder="Description" id="categoryDescription"></textarea>
-                            <label for="categoryDescription">Description</label>
+                            <label for="categoryDescription">Description*</label>
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
                         <div class="modal-footer d-flex justify-content-end border-0" style="padding-right:0;">

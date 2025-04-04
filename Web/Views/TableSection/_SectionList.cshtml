@@ -68,7 +68,7 @@
             data: { id: deleteSectionId },
             success: function (response) {
                 if (response == null) {
-                    window.location.href = "/Auth/Login";
+                    window.location.href = "/unauthorized";
                     toastr.error("Your Session is Expired. Please Login Again!");
                 } else if (response.isSuccess) {
                     GetFilteredSections();

@@ -39,6 +39,8 @@ public class HomeController : Controller
     {
         return View("404");
     }
+        [Route("/unauthorized")]
+
     public IActionResult Unauthorized()
     {
         return RedirectToAction("Login", "Accounts");

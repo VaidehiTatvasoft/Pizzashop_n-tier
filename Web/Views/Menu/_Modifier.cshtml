@@ -116,9 +116,9 @@
             <partial name="_EditModifier" model="Model.AddEditModifierViewModel"></partial> *@
 
             <!-- delete Modifier Modal -->
-            <div class="modal fade" id="deleteModifiersModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            <div class="modal fade" id="deleteModifiersModal" tabindex="-1"  role="dialog" aria-labelledby="exampleModalLabel"
                 aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header border-0">
                             <h1 class="modal-title fs-5" id="exampleModalLabel" style="color:grey;">Delete Confirmation</h1>
@@ -137,9 +137,9 @@
             </div>
 
             <!-- delete Multiple Modifier Modal -->
-            <div class="modal fade" id="deleteMultipleModifierModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            <div class="modal fade" id="deleteMultipleModifierModal" tabindex="-1"  role="dialog" aria-labelledby="exampleModalLabel"
                 aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header border-0">
                             <h1 class="modal-title fs-5" id="exampleModalLabel" style="color:grey;">Delete Confirmation</h1>
@@ -156,7 +156,9 @@
                     </div>
                 </div>
             </div>
-
+@* <script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> *@
             <script>
                 var debounce;
                 var ajaxRequest;
@@ -201,7 +203,8 @@
                                 },
                                 success: function (data) {
                                     $("#modifierList").html(data);
-                                }
+                                },
+                error: handleAjaxError
                             })
                         }
 
@@ -240,16 +243,18 @@
                                 data: {id:deleteItemId},
                                 success:function(response){
                                 if (response == null)
-                                        window.location.href = "/Auth/Login";
+                                        window.location.href = "/unauthorized";
                                     if (response.isSuccess) {
                                         GetFilteredModifiers();
                                         toastr.success(response.message);
-                                        $("#deleteModifiersModal").modal('hide');
+                                        $("#deleteModifiersModal").remove();
                                         $(".modal-backdrop").remove();
+                                        @* location.reload(); *@
                                     } else {
                                         toastr.error(response.message);
                                     }
-                                }
+                                },
+                error: handleAjaxError
                             });
                         })
 
@@ -266,7 +271,8 @@
                 console.log("Modifier edited", response);
                 $("#EditModifierPartial").html(response);
                 $("#editModifierModal").modal('show');
-            }
+            },
+                error: handleAjaxError
         });
     });
 
@@ -279,7 +285,7 @@
             },
             success: function (response) {
                 if (response == null)
-                    window.location.href = "/Auth/Login"
+                    window.location.href = "/unauthorized"
                 if (response.isSuccess) {
                     GetFilteredModifiers();
                     toastr.success(response.message);
@@ -287,7 +293,8 @@
                 } else {
                     toastr.error(response.message);
                 }
-            }
+            },
+                error: handleAjaxError
         })
     })
     </script>

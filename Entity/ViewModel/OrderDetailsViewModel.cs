@@ -16,7 +16,7 @@ namespace Entity.ViewModel
         public int NoOfPerson { get; set; }
         public string TableName { get; set; }
         public string SectionName { get; set; }
-        public int InvoiceId { get; set; }
+    public string InvoiceNumber { get; set; } 
         public List<OrderItemViewModel> Items { get; set; }
         public decimal SubTotal { get; set; }
         public decimal CGST { get; set; }

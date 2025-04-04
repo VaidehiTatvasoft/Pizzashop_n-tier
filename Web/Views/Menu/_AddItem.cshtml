@@ -1,12 +1,15 @@
 @model Entity.ViewModel.MenuItemViewModel;
-<div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="AddItemModelLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
+<partial name="_ValidationScriptsPartial" />
+
+<div class="modal fade" id="addItemModal" tabindex="-1" role="dialog" aria-labelledby="AddItemModelLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header border-0" style="color:grey;">
                 <h1 class="modal-title fs-5" id="AddItemModelLabel">
                     Add New Menu Item
                 </h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+</button>
             </div>
 
             <div class="modal-body text-center p-3" style="color:rgb(63, 63, 63);">
@@ -188,47 +191,47 @@
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
-        $("#ModifierGroups").change(function () {
-            var id = $(this).val();
-            var label = $("#ModifierGroups option:selected").text();
-            $.ajax({
-                url: '@Url.Action("GetModifiersByGroup", "Menu")',
-                type: 'GET',
-                data: { id: id, name: label },
-                success: function (response) {
-                    console.log(response);
-                        $("#listModifiers").append(response);
-                },
-                error: function (error) {
-                    console.log(error);
-                }
-            });
+       $(document).ready(function () {
+    $("#ModifierGroups").change(function () {
+        var id = $(this).val();
+        var label = $("#ModifierGroups option:selected").text();
+        $.ajax({
+            url: '@Url.Action("GetModifiersByGroup", "Menu")',
+            type: 'GET',
+            data: { id: id, name: label },
+            success: function (response) {
+                console.log(response);
+                $("#listModifiers").append(response);
+            },
+                error: handleAjaxError
         });
-
-         $(document).on("click", ".remove-modifier", function () {
-    var id = $(this).data("id");
-    $("#modifier-group-" + id).remove();
     });
+
+    $(document).on("click", ".remove-modifier", function () {
+        var id = $(this).data("id");
+        $("#modifier-group-" + id).remove();
+    });
+
     $("#addItemForm").submit(function (event) {
         event.preventDefault();
         var form = $("#addItemForm")[0];
         var formData = new FormData(form);
-var modifiers = [];
-$("#listModifiers .modifier-group").each(function () {
-    var name = $(this).find(".modifierGrp-name").data("name");
-    var modifierGroupId = $(this).find(".modifierGrp-name").data("id");
-    var minValue = parseInt($(this).find(".min-value").val(), 10);
-    var maxValue = parseInt($(this).find(".max-value").val(), 10);
+        var modifiers = [];
+        $("#listModifiers .modifier-group").each(function () {
+            var name = $(this).find(".modifierGrp-name").data("name");
+            var modifierGroupId = $(this).find(".modifierGrp-name").data("id");
+            var minValue = parseInt($(this).find(".min-value").val(), 10);
+            var maxValue = parseInt($(this).find(".max-value").val(), 10);
 
-    modifiers.push({
-        ModifierGroupId: modifierGroupId,
-        Name: name,
-        Minselectionrequired: minValue,
-        Maxselectionrequired: maxValue
-    });
-});
+            modifiers.push({
+                ModifierGroupId: modifierGroupId,
+                Name: name,
+                Minselectionrequired: minValue,
+                Maxselectionrequired: maxValue
+            });
+        });
 
-formData.append("ItemModifiers", JSON.stringify(modifiers));
+        formData.append("ItemModifiers", JSON.stringify(modifiers));
         $.ajax({
             url: '/Menu/AddItem',
             type: 'POST',
@@ -237,34 +240,56 @@ formData.append("ItemModifiers", JSON.stringify(modifiers));
             contentType: false,
             success: function (response) {
                 if (response.isSuccess) {
-                    toastr.success(response.message);
+                    GetFilteredItems();
+                    $("#addItemModal").remove(); 
+                $('.modal-backdrop').remove();
+                    toastr.success(response.message)
+                    @* toastr.success(response.message);
                     $("#addItemModal").modal("hide");
-                    location.reload();
-                    GetFilteredItems()
+                    location.reload(); *@
                 } else {
                     if (response.isValid == false) {
                         toastr.warning(response.message);
-                    }
-                    else{
-                    toastr.error(response.message)
+                    } else {
+                        toastr.error(response.message);
                     }
                 }
             },
-            error: function (xhr, status, error) {
-    console.error("Error:", error);
-    toastr.error("An error occurred while adding the item.");
-}
+                error: handleAjaxError;
         });
     });
 
-     function showFileName() {
-            var input = document.getElementById('imageInput');
-            var fileNameSpan = document.getElementById('file-upload-name');
-            if (input.files && input.files[0]) {
-                fileNameSpan.textContent = input.files[0].name;
-                fileNameSpan.style.display = 'block';
-            } else {
-                fileNameSpan.style.display = 'none';
-            }
+    function GetFilteredItems() {
+        var SearchString = $("#searchString").val();
+        var pageSize = $("#pageSizedropdown").val();
+        if (ajaxRequest && ajaxRequest.readyState !== 4) {
+            ajaxRequest.abort();
         }
+        ajaxRequest = $.ajax({
+            url: "/Menu/GetItemsByCategory",
+            type: "GET",
+            data: {
+                categoryId: categoryId,
+                pageIndex: pageIndex,
+                pageSize: pageSize,
+                searchString: SearchString
+            },
+            success: function (data) {
+                $("#itemList").html(data);
+            },
+                error: handleAjaxError
+        });
+    }
+
+    function showFileName() {
+        var input = document.getElementById('imageInput');
+        var fileNameSpan = document.getElementById('file-upload-name');
+        if (input.files && input.files[0]) {
+            fileNameSpan.textContent = input.files[0].name;
+            fileNameSpan.style.display = 'block';
+        } else {
+            fileNameSpan.style.display = 'none';
+        }
+    }
+});
 </script>

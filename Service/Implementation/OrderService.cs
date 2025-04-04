@@ -30,6 +30,10 @@ public class OrderService : IOrderService
         var table = await _tableRepository.GetTableById(tableOrderMapping.TableId);
         var section = _sectionRepository.GetSectionById(table.SectionId);
 
+        var currentYear = DateTime.Now.Year;
+        var invoice = order.Invoices.FirstOrDefault();
+        var invoiceNumber = invoice != null ? $"PS{currentYear}{invoice.Id:D6}" : string.Empty;
+
         var orderDetailsViewModel = new OrderDetailsViewModel
         {
             OrderId = order.Id,
@@ -42,8 +46,8 @@ public class OrderService : IOrderService
             NoOfPerson = tableOrderMapping.NoOfPeople,
             TableName = table.Name,
             SectionName = section.Name,
-            InvoiceId = order.Invoices.FirstOrDefault()?.Id ?? 0,
-             Items = order.OrderedItems.Select(item => new OrderItemViewModel
+            InvoiceNumber = invoiceNumber,
+            Items = order.OrderedItems.Select(item => new OrderItemViewModel
             {
                 ItemName = item.Name,
                 Quantity = item.Quantity,
@@ -65,14 +69,14 @@ public class OrderService : IOrderService
             Total = order.TotalAmount
         };
 
-
         return orderDetailsViewModel;
     }
 
     public IEnumerable<OrderViewModel> GetFilteredOrderViewModels(string searchTerm, string sortOrder, int pageIndex, int pageSize, string statusFilter, DateTime? startDate, DateTime? endDate, out int count)
     {
-
         var orders = _orderRepository.GetAllOrders(searchTerm, sortOrder, pageIndex, pageSize, statusFilter, startDate, endDate, out count);
+        var currentYear = DateTime.Now.Year;
+
         var orderViewModels = orders.Select(o => new OrderViewModel
         {
             Id = o.Id,
@@ -81,7 +85,8 @@ public class OrderService : IOrderService
             OrderStatus = ((OrderStatusEnum)o.OrderStatus).ToString(),
             PaymentMethod = o.Invoices.Select(i => ((PaymentMethodEnum)i.Payments.FirstOrDefault()?.PaymentMethod).ToString()).FirstOrDefault(),
             TotalAmount = o.TotalAmount,
-            AvgRating = o.Feedbacks.Any() ? o.Feedbacks.Select(f => f.AvgRating).FirstOrDefault() ?? 0 : 0
+            AvgRating = o.Feedbacks.Any() ? o.Feedbacks.Select(f => f.AvgRating).FirstOrDefault() ?? 0 : 0,
+            InvoiceNumber = o.Invoices.FirstOrDefault() != null ? $"PS{currentYear}{o.Invoices.FirstOrDefault().Id:D6}" : string.Empty
         }).ToList();
 
         return orderViewModels;

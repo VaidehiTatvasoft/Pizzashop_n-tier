@@ -59,13 +59,37 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
-    var pageIndex = @Model.PageIndex;
+$(document).ready(function () {
+    // Function to Get Filtered Categories
+    function GetFilteredCategory() {
+        $.ajax({
+            url: "/Menu/GetAllCategory",
+            type: "GET",
+            data: {},
+            success: function (data) {
+                $("#categoryList").html(data);
+            },
+                error: handleAjaxError
+        });
+    }
+
+    function GetFilteredItems() {
+        $.ajax({
+            url: "/Menu/GetAllItems",
+            type: "GET",
+            data: {},
+            success: function (data) {
+                $("#itemList").html(data);
+            },
+                error: handleAjaxError
+        });
+    }
 
     $(".addItemBtn").click(function () {
         $.get('@Url.Action("AddItem", "Menu")', function (data) {
             $("#AddItemPartial").html(data);
             $("#addItemModal").modal('show');
-        })
+        });
     });
 
     $(".itemCategory").first().addClass("active-new");
@@ -74,114 +98,92 @@
         $(this).addClass("active-new");
     });
 
-    $(document).ready(function () {
-        $('.edit-category').click(function () {
-            var categoryId = $(this).data("id");
-            $.ajax({
-                url: '/Menu/EditCategory',
-                type: 'GET',
-                data: { id: categoryId },
-                success: function (response) {
-                    $("#editCategoryModalContent").html(response);
-                    $("#EditCategoryModal").modal('show');
-                },
-                error: function (xhr, status, error) {
-                    toastr.error("An error occurred while fetching the category details. Please try again.");
-                }
-            });
+    $(document).on('click', '.edit-category', function () {
+        var categoryId = $(this).data("id");
+        $.ajax({
+            url: '/Menu/EditCategory',
+            type: 'GET',
+            data: { id: categoryId },
+            success: function (response) {
+                $("#editCategoryModalContent").html(response);
+                $("#EditCategoryModal").modal('show');
+            },
+               error: handleAjaxError
+
         });
-
-        $(document).on('click', '#saveCategoryBtn', function () {
-            var form = $('#editCategoryForm');
-            var formData = form.serialize();
-
-            $.ajax({
-                type: "POST",
-                url: '/Menu/EditCategory',
-                data: formData,
-                success: function (response) {
-                    if (response.success) {
-                        GetFilteredCategory();
-                        $('#EditCategoryModal').modal('hide');
-                        toastr.success(response.message);
-                    } else {
-                        toastr.error(response.message);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    toastr.error("An error occurred while updating the category. Please try again.");
-                }
-            });
-        });
-
-        $("#submitNewCategory").click(function () {
-            var form = $('#addNewCategoryForm');
-            var formData = form.serialize();
-            $.ajax({
-                type: "POST",
-                url: '/Menu/AddCategory',
-                data: formData,
-                success: function (response) {
-                    if (response.success) {
-                        GetFilteredCategory();
-                        $('#addCategoryModal').modal('hide');
-                        toastr.success(response.message);
-                    } else {
-                        toastr.error(response.message);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    toastr.error("An error occurred while updating the category. Please try again.");
-                }
-            });
-        });
-
-        $(document).on('click', '.delete-category', function () {
-            categoryIdToDelete = $(this).data("id");
-            $('#deleteCategoryModal').modal('show');
-        });
-
-        $('#confirmDeleteCategoryItemBtn').click(function () {
-            $.ajax({
-                type: "POST",
-                url: '/Menu/DeleteCategory',
-                data: { id: categoryIdToDelete },
-                success: function (response) {
-                    if (response.success) {
-                        $('#deleteCategoryModal').modal('hide');
-                        GetFilteredCategory();
-                        toastr.success(response.message);
-                    } else {
-                        toastr.error(response.message);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    toastr.error("An error occurred while deleting the category. Please try again.");
-                }
-            });
-        });
-        var successMessage = '@TempData["SuccessMessage"]';
-        var errorMessage = '@TempData["ErrorMessage"]';
-
-        if (successMessage) {
-            toastr.success(successMessage);
-        }
-        if (errorMessage) {
-            toastr.error(errorMessage);
-        }
-
     });
 
-    function GetFilteredCategory() {
+    $(document).on('click', '#saveCategoryBtn', function (event) {
+        event.preventDefault();
+        var form = $('#editCategoryForm');
+        var formData = form.serialize();
+
         $.ajax({
-            url: "/Menu/GetAllCategory",
-            type: "GET",
-            data: {},
-            success: function (data) {
-                $("#categoryList").html(data);
-            }
-        })
-    }
+            type: "POST",
+            url: '/Menu/EditCategory',
+            data: formData,
+            success: function (response) {
+                if (response.success) {
+                    GetFilteredCategory();
+                    $('#EditCategoryModal').modal('hide');
+                    toastr.success(response.message);
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+                error: handleAjaxError
+
+        });
+    });
+
+    $(document).on('click', '#submitNewCategory', function (event) {
+        event.preventDefault();
+        var form = $('#addNewCategoryForm');
+        var formData = form.serialize();
+
+        $.ajax({
+            type: "POST",
+            url: '/Menu/AddCategory',
+            data: formData,
+            success: function (response) {
+                console.log("Response received:", response);
+                if (response.success) {
+                    GetFilteredCategory();
+                    $('#addCategoryModal').modal('hide');
+                    $('.modal-backdrop').remove();
+                    toastr.success(response.message);
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+                error: handleAjaxError
+
+        });
+    });
+
+   $(document).on('click', '.delete-category', function () {
+        categoryIdToDelete = $(this).data("id");
+        $('#deleteCategoryModal').modal('show');
+    });
+
+    $('#confirmDeleteCategoryItemBtn').click(function () {
+        $.ajax({
+            type: "POST",
+            url: '/Menu/DeleteCategory',
+            data: { id: categoryIdToDelete },
+            success: function (response) {
+                if (response.success) {
+                    $('#deleteCategoryModal').modal('hide');
+                    GetFilteredCategory();
+                    toastr.success(response.message);
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+                error: handleAjaxError
+
+        });
+    });
 
     $('#multiDeleteBtn').click(function () {
         if (deleteItemIds.length == 0) {
@@ -189,7 +191,8 @@
         } else {
             $('#deleteMultipleItemModal').modal('show');
         }
-    })
+    });
+
     $('#multiDeleteItemBtn').click(function () {
         $.ajax({
             url: "/Menu/MultiDeleteMenuItem",
@@ -199,7 +202,7 @@
             },
             success: function (response) {
                 if (response == null)
-                    window.location.href = "/Auth/Login"
+                    window.location.href = "/unauthorized";
                 if (response.isSuccess) {
                     GetFilteredItems();
                     toastr.success(response.message);
@@ -207,8 +210,13 @@
                     toastr.error(response.message);
                 }
                 $("#deleteMultipleItemModal").modal('hide');
-            }
-        })
-    })
+            },
+                error: handleAjaxError
+        });
+    });
 
+     $('.modal').on('hidden.bs.modal', function () {
+        $(this).removeData('bs.modal');
+    });
+});
 </script>

@@ -7,7 +7,7 @@ namespace Entity.ViewModel;
 public partial class MenuItemViewModel
 {
     public int Id { get; set; }
-    public int id { get; set; }
+    // public int id { get; set; }
     [Required(ErrorMessage = "Category is required")]
     public int CategoryId { get; set; }
 
@@ -18,12 +18,12 @@ public partial class MenuItemViewModel
     [MaxLength(20)]
     public string Name { get; set; } = null!;
 
-    [Required(ErrorMessage = "required")]
+    [Required(ErrorMessage = "Type is required")]
     public bool? Type { get; set; }
 
     [Required(ErrorMessage = "Rate is required")]
     [Range(1, 9999999.99, ErrorMessage = "Invalid rate")]
-    [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Invalid rate")]
+    [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Rate is required")]
     public decimal Rate { get; set; }
 
     [Required(ErrorMessage = "Quantity is required")]

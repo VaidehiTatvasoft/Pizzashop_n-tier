@@ -127,42 +127,45 @@ public class TableService : ITableService
         return false;
     }
 
-    public async Task<TableViewModel> GetTableById(int id)
+    public async Task<Table> GetTableById(int id)
     {
         return await _tableRepository.GetTableById(id);
     }
 
-    public bool UpdateTable(TableViewModel model, ClaimsPrincipal userClaims, out string message)
+public bool UpdateTable(TableViewModel model, ClaimsPrincipal userClaims, out string message)
+{
+    var userIdClaim = userClaims.FindFirst("UserId");
+    if (userIdClaim == null)
     {
-        Table isTable = _tableRepository.IsTableExist(model.Name, model.SectionId, model.Id);
-        var userIdClaim = userClaims.FindFirst("UserId");
-        if (userIdClaim == null)
-        {
-            message = "User not authorized.";
-            return false;
-        }
-        var userId = int.Parse(userIdClaim.Value);
-        if (isTable == null || isTable.Id == model.Id)
-        {
-            var table = _tableRepository.GetTableById(model.Id).Result;
+        message = "User not authorized.";
+        return false;
+    }
+    var userId = int.Parse(userIdClaim.Value);
 
-            if (table != null)
-            {
-                table.Name = model.Name;
-                table.SectionId = model.SectionId;
-                table.Capacity = model.Capacity;
-                table.IsAvailable = model.IsAvailable;
-                table.ModifiedBy = userId;
-                table.ModifiedAt = DateTime.UtcNow;
-
-                bool isUpdated = _tableRepository.UpdateTable(isTable);
-                message = isUpdated ? "Table updated successfully." : "Failed to update table.";
-                return isUpdated;
-            }
-            message = "Table not found.";
-            return false;
-        }
+    Table existingTable = _tableRepository.IsTableExist(model.Name, model.SectionId, model.Id);
+    if (existingTable != null && existingTable.Id != model.Id)
+    {
         message = "Table with the same name already exists.";
         return false;
     }
+
+    var table = _tableRepository.GetTableById(model.Id).Result;
+    if (table == null)
+    {
+        message = "Table not found.";
+        return false;
+    }
+
+    table.Name = model.Name;
+    table.SectionId = model.SectionId;
+    table.Capacity = model.Capacity;
+    table.IsAvailable = model.IsAvailable;
+    table.ModifiedBy = userId;
+    table.ModifiedAt = DateTime.UtcNow;
+    table.IsDeleted = false;
+
+    bool isUpdated = _tableRepository.UpdateTable(table);
+    message = isUpdated ? "Table updated successfully." : "Failed to update table.";
+    return isUpdated;
+}
 }

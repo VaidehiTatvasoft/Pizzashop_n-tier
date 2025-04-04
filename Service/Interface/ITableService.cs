@@ -1,5 +1,7 @@
 using System.Security.Claims;
 using Entity.ViewModel;
+using Entity.Data;
+
 
 namespace Service.Interface;
 
@@ -10,8 +12,7 @@ public interface ITableService
     public bool MultiDeleteTable(int[] tableIds, ClaimsPrincipal userClaims);
     public bool AddTable(TableViewModel model, ClaimsPrincipal userClaims , out string message);
     public bool UpdateTable(TableViewModel model, ClaimsPrincipal userClaims,out string message);
-    public Task<TableViewModel> GetTableById(int id);
+    public Task<Table> GetTableById(int id);
     public int GetTableCountBySectionId(int sId, string? searchInput);
     public TableSectionViewModel GetTablesBySectionId(int sectionId, int pageSize, int pageIndex, string? searchInput);
-
 }

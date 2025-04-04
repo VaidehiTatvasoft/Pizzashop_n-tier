@@ -37,7 +37,7 @@ namespace Repository.Implementation
             switch (sortOrder)
             {
                 case "date_asc":
-                    customerQuery = customerQuery.OrderBy(c => c.Orders.Min(o => o.OrderDate));
+                    customerQuery = customerQuery.OrderBy(c => c.Orders.Max(o => o.OrderDate));
                     break;
                 case "date_desc":
                     customerQuery = customerQuery.OrderByDescending(c => c.Orders.Max(o => o.OrderDate));

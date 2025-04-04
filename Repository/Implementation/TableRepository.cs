@@ -103,6 +103,11 @@ public class TableRepository : ITableRepository
     {
         try
         {
+            var existingEntity = _context.Tables.Local.FirstOrDefault(t => t.Id == model.Id);
+            if (existingEntity != null)
+            {
+                _context.Entry(existingEntity).State = EntityState.Detached;
+            }
             _context.Tables.Update(model);
             _context.SaveChanges();
             return true;
@@ -118,11 +123,12 @@ public class TableRepository : ITableRepository
         }
     }
 
-    public async Task<TableViewModel> GetTableById(int id)
+    public async Task<Table> GetTableById(int id)
     {
         var table = await _context.Tables
+            .AsNoTracking()
             .Where(t => t.Id == id && t.IsDeleted == false)
-            .Select(t => new TableViewModel
+            .Select(t => new Table
             {
                 Id = t.Id,
                 Name = t.Name,

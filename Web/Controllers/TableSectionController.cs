@@ -138,7 +138,17 @@ public class TableSectionController : Controller
         {
             return NotFound();
         }
-        return PartialView("_AddEditTable", table);
+
+        var tableViewModel = new TableViewModel
+        {
+            Id = table.Id,
+            Name = table.Name,
+            SectionId = table.SectionId,
+            Capacity = table.Capacity,
+            IsAvailable = table.IsAvailable
+        };
+
+        return PartialView("_AddEditTable", tableViewModel);
     }
 
     [HttpPost]

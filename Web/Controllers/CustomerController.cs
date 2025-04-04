@@ -54,7 +54,7 @@ namespace Web.Controllers
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
         }
-
+        [CustomAuthorize(1, RolePermissionEnum.Permission.Customers_CanView)]
         [Route("/customer/exportcustomers")]
         [HttpGet]
         public IActionResult ExportCustomers(string searchTerm, string sortOrder, string dateRangeFilter = "All Time", DateTime? fromDate = null, DateTime? toDate = null)

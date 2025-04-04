@@ -1,10 +1,12 @@
 using System.Security.Claims;
 using System.Text.Json;
 using Entity.Data;
+using Entity.Shared;
 using Entity.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Pizzashop.Service.Interfaces;
 using Service.Interface;
+using Web.Attributes;
 
 namespace Web.Controllers;
 
@@ -19,7 +21,6 @@ public class MenuController : Controller
         _menuModifierService = menuModifierService;
     }
 
-    // Helper method to fetch userId from claims
     private int? GetUserIdFromClaims()
     {
         var userIdClaim = User.FindFirst("UserId");
@@ -37,7 +38,7 @@ public class MenuController : Controller
 
         return userId;
     }
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanView)]
     [HttpGet]
     public async Task<IActionResult> Menu(int pageSize = 5, int pageIndex = 1, string searchString = "")
     {
@@ -62,15 +63,15 @@ public class MenuController : Controller
 
         return View(model);
     }
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanEdit)]
     [HttpPost]
     public async Task<IActionResult> AddCategory(MenuCategoryViewModel model)
     {
         if (ModelState.IsValid)
         {
-            var category = await _menuService.AddNewCategory(model.Name, model);
+            var categoryAdded = await _menuService.AddNewCategory(model.Name, model);
 
-            if (category)
+            if (categoryAdded)
             {
                 TempData["SuccessMessage"] = "Category created successfully.";
                 return Json(new { success = true, message = "Category added successfully." });
@@ -82,9 +83,9 @@ public class MenuController : Controller
             }
         }
 
-        return Json(new { success = false, message = "Invalid data." });
+        return Json(new { success = false, message = "Fill all the required fields" });
     }
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanEdit)]
     [HttpGet]
     public async Task<IActionResult> EditCategory(int id)
     {
@@ -95,7 +96,7 @@ public class MenuController : Controller
         }
         return PartialView("_EditCategory", category);
     }
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanEdit)]
     [HttpPost]
     public async Task<IActionResult> EditCategory(MenuCategoryViewModel model)
     {
@@ -105,17 +106,19 @@ public class MenuController : Controller
 
             if (result)
             {
-                return Json(new { success = true, message = "Category updated successfully.", redirectUrl = Url.Action("Menu") });
+                TempData["SuccessMessage"] = "Category updated successfully.";
+                return Json(new { success = true, message = "Category updated successfully." });
             }
             else
             {
-                return Json(new { success = false, message = "A category with this name already exists.", redirectUrl = Url.Action("Menu") });
+                TempData["ErrorMessage"] = "A category with this name already exists.";
+                return Json(new { success = false, message = "A category with this name already exists." });
             }
         }
 
-        return Json(new { success = false, message = "Invalid data." });
+        return Json(new { success = false, message = "Fill all the required fields" });
     }
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanView)]
     [HttpGet]
     public async Task<IActionResult> GetItemsByCategory(int categoryId, int pageSize, int pageIndex, string searchString = "")
     {
@@ -133,7 +136,7 @@ public class MenuController : Controller
         };
         return PartialView("_ItemListPartial", model);
     }
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanDelete)]
     [HttpPost]
     public IActionResult DeleteCategory(int id)
     {
@@ -156,14 +159,14 @@ public class MenuController : Controller
         var units = Json(_menuService.GetAllUnits());
         return units;
     }
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanView)]
     [HttpGet]
     public async Task<IActionResult> GetAllCategory()
     {
         var categories = await _menuService.GetAllMenuCategoriesAsync();
         return PartialView("_CategoryList", categories.ToList());
     }
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanEdit)]
     [HttpGet]
     public async Task<IActionResult> AddItem()
     {
@@ -178,7 +181,7 @@ public class MenuController : Controller
         };
         return PartialView("_AddItem", model);
     }
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanEdit)]
     [HttpPost]
     public async Task<IActionResult> AddItem(MenuItemViewModel model, string ItemModifiers)
     {
@@ -238,14 +241,14 @@ public class MenuController : Controller
             return Json(new { isSuccess = false, message = "Error while adding new item", error = ex.Message });
         }
     }
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanEdit)]
     [HttpGet]
     public async Task<IActionResult> EditMenuItem(int itemId)
     {
         var menuItem = await _menuService.GetMenuItemById(itemId);
         return PartialView("_EditItem", menuItem);
     }
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanEdit)]
     [HttpPost]
     public async Task<IActionResult?> EditMenuItem([FromForm] MenuItemViewModel model, string ItemModifiers)
     {
@@ -291,7 +294,7 @@ public class MenuController : Controller
             return Json(new { isSuccess = false, message = "Error while editing item", error = ex.Message });
         }
     }
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanDelete)]
     [HttpPost]
     public async Task<IActionResult>? DeleteMenuItem(int id)
     {
@@ -306,7 +309,7 @@ public class MenuController : Controller
             return Json(new { isSuccess = false, message = "Error while deleting item" });
         }
     }
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanDelete)]
     [HttpPost]
     public async Task<IActionResult>? MultiDeleteMenuItem(int[] itemIds)
     {
@@ -323,7 +326,7 @@ public class MenuController : Controller
     }
 
     // Modifier Section
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanEdit)]
     [HttpGet]
     public async Task<IActionResult> AddModifier()
     {
@@ -353,14 +356,14 @@ public class MenuController : Controller
         };
         return PartialView("_Modifier", model);
     }
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanView)]
     [HttpGet]
     public async Task<JsonResult> GetAllModifierGroups()
     {
         var modifiers = await _menuModifierService.GetAllMenuModifierGroupAsync();
         return Json(modifiers);
     }
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanView)]
     [HttpGet]
     public async Task<IActionResult> GetModifiersByGroup(int id, string name)
     {
@@ -373,7 +376,7 @@ public class MenuController : Controller
         };
         return PartialView("_ItemModifiers", itemModifiers);
     }
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanEdit)]
     [HttpPost]
     public async Task<IActionResult> AddModifier(AddEditModifierViewModel model)
     {
@@ -402,14 +405,14 @@ public class MenuController : Controller
             return Json(new { isSuccess = false, message = "Error while adding new modifier" });
         }
     }
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanEdit)]
     [HttpGet]
     public IActionResult EditModifier(int id)
     {
         var editModifier = _menuModifierService.GetModifierByid(id);
         return PartialView("_EditModifier", editModifier);
     }
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanEdit)]
     [HttpPost]
     public async Task<IActionResult> EditModifier(AddEditModifierViewModel model)
     {
@@ -437,7 +440,7 @@ public class MenuController : Controller
             return Json(new { isSuccess = false, message = "Error while editing modifier" });
         }
     }
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanDelete)]
     [HttpPost]
     public IActionResult DeleteModifier(int id)
     {
@@ -452,7 +455,7 @@ public class MenuController : Controller
             return Json(new { isSuccess = false, message = "Error while deleting modifier" });
         }
     }
-
+    [CustomAuthorize(1, RolePermissionEnum.Permission.Menu_CanDelete)]
     [HttpPost]
     public IActionResult DeleteMultipleModifier(int[] modifierIds)
     {
@@ -474,31 +477,29 @@ public class MenuController : Controller
         var modifiers = await _menuModifierService.GetAllModifiers(pageSize, pageIndex, searchString);
         return PartialView("_AddExistingModifier", modifiers);
     }
-[HttpPost]
-public async Task<IActionResult> AddModifierGroup([FromBody] MenuModifierGroupViewModel model)
-{
-    if (string.IsNullOrEmpty(model.Name))
+    [HttpPost]
+    public async Task<IActionResult> AddModifierGroup([FromBody] MenuModifierGroupViewModel model)
     {
-        return Json(new { isSuccess = false, message = "Modifier group name is required." });
-    }
-
-    try
-    {
-        // Add the modifier group
-        var modifierGroupId = await _menuModifierService.AddModifierGroupAsync(model);
-
-        // Associate selected modifiers with the new group
-        if (model.SelectedModifierIds != null && model.SelectedModifierIds.Any())
+        if (string.IsNullOrEmpty(model.Name))
         {
-            await _menuModifierService.AddModifiersToGroupAsync(modifierGroupId, model.SelectedModifierIds);
+            return Json(new { isSuccess = false, message = "Modifier group name is required." });
         }
 
-        return Json(new { isSuccess = true, message = "Modifier group added successfully.", groupId = modifierGroupId });
+        try
+        {
+            var modifierGroupId = await _menuModifierService.AddModifierGroupAsync(model);
+
+            if (model.SelectedModifierIds != null && model.SelectedModifierIds.Any())
+            {
+                await _menuModifierService.AddModifiersToGroupAsync(modifierGroupId, model.SelectedModifierIds);
+            }
+
+            return Json(new { isSuccess = true, message = "Modifier group added successfully.", groupId = modifierGroupId });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error adding modifier group: {ex.Message}");
+            return Json(new { isSuccess = false, message = "An error occurred while adding the modifier group." });
+        }
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error adding modifier group: {ex.Message}");
-        return Json(new { isSuccess = false, message = "An error occurred while adding the modifier group." });
-    }
-}
 }

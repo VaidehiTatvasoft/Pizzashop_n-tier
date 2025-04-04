@@ -87,6 +87,8 @@
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            const roleId = '@Model.First().RoleId';
+            const roleName = '@Model.First().RoleName';
             const permissionCheckboxes = document.querySelectorAll(".permission-checkbox");
             const selectAllCheckbox = document.getElementById("selectAll");
 
