@@ -204,5 +204,16 @@ namespace Web.Controllers
             IEnumerable<CustomerViewModel> customerViewModel = _customerService.GetFilteredCustomerViewModels(searchTerm, sortOrder, pageIndex, pageSize, startDate, endDate, out int totalItems);
             return (customerViewModel, totalItems);
         }
+         public IActionResult GetCustomerDetail(int id)
+        {
+            var customer = _customerService.GetCustomerViewModelById(id);
+
+            if (customer == null)
+            {
+                return NotFound(); 
+            }
+
+            return PartialView("_CustomerDetailModal", customer); 
+        }
     }
 }

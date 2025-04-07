@@ -26,7 +26,6 @@ public partial class OrderedItem
     public decimal TotalAmount { get; set; }
 
     public string? Instruction { get; set; }
-    public int ? OrderStatus { get; set; }
 
     public bool? IsDeleted { get; set; }
 
@@ -39,6 +38,8 @@ public partial class OrderedItem
     public DateTime? ModifiedAt { get; set; }
 
     public int? ModifiedBy { get; set; }
+
+    public int? OrderStatus { get; set; }
 
     public virtual User CreatedByNavigation { get; set; } = null!;
 

@@ -1,0 +1,39 @@
+@model Entity.ViewModel.CustomerDetailViewModal
+
+<div class="modal-header">
+    <h5 class="modal-title" id="customerDetailModalLabel">Customer Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">    </button>
+</div>
+<div class="modal-body">
+    <p><strong>Name:</strong> @Model.Name</p>
+    <p><strong>Phone:</strong> @Model.Phone</p>
+    <p><strong>Coming Since:</strong> @Model.CreatedAt?.ToString("yyyy-MM-dd")</p>
+    <p><strong>Max Bill:</strong> @Model.MaxBill</p>
+    <p><strong>Average Bill:</strong> @Model.AverageBill</p>
+    <p><strong>Visits:</strong> @Model.Visits</p>
+
+    <h5>Orders:</h5>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order Date</th>
+                <th>Order Type</th>
+                <th>Payment Method</th>
+                <th>Items</th>
+                <th>Total Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model.Orders)
+            {
+                <tr>
+                    <td>@order.OrderDate?.ToString("yyyy-MM-dd")</td>
+                    <td>@order.Order_Type</td>
+                    <td>@order.PaymentMethod</td>
+                    <td>@order.Items</td>
+                    <td>@order.TotalAmount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

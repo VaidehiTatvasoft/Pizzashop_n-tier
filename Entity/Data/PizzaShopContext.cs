@@ -454,7 +454,12 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.Notes).HasColumnName("notes");
             entity.Property(e => e.OrderDate).HasColumnName("order_date");
             entity.Property(e => e.OrderNo).HasColumnName("order_no");
-            entity.Property(e => e.OrderStatus).HasColumnName("order_status");
+            entity.Property(e => e.OrderStatus)
+                .HasDefaultValueSql("0")
+                .HasColumnName("order_status");
+            entity.Property(e => e.OrderType)
+                .HasDefaultValueSql("0")
+                .HasColumnName("order_type");
             entity.Property(e => e.PaidAmount)
                 .HasPrecision(18, 2)
                 .HasColumnName("paid_amount");
@@ -553,8 +558,8 @@ public partial class PizzaShopContext : DbContext
             entity.Property(e => e.Rate).HasColumnName("rate");
             entity.Property(e => e.ReadyItemQuantity).HasColumnName("ready_item_quantity");
             entity.Property(e => e.Tax).HasColumnName("tax");
-            entity.Property(e => e.TotalModifierAmount).HasColumnName("total_modifier_amount");
             entity.Property(e => e.TotalAmount).HasColumnName("total_amount");
+            entity.Property(e => e.TotalModifierAmount).HasColumnName("total_modifier_amount");
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.OrderedItemCreatedByNavigations)
                 .HasForeignKey(d => d.CreatedBy)

@@ -37,6 +37,8 @@ public partial class Order
 
     public int? OrderStatus { get; set; }
 
+    public int? OrderType { get; set; }
+
     public virtual User CreatedByNavigation { get; set; } = null!;
 
     public virtual Customer Customer { get; set; } = null!;
