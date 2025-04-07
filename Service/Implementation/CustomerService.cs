@@ -16,7 +16,7 @@ namespace Service.Implementation
             _customerRepository = customerRepository;
 
         }
-
+ 
         public IEnumerable<CustomerViewModel> GetFilteredCustomerViewModels(string searchTerm, string sortOrder, int pageIndex, int pageSize, DateTime? startDate, DateTime? endDate, out int totalItems)
         {
             return _customerRepository.GetFilteredCustomers(searchTerm, sortOrder, pageIndex, pageSize, startDate, endDate, out totalItems);
@@ -26,4 +26,4 @@ namespace Service.Implementation
             return _customerRepository.GetCustomerViewModelById(id);
         }
     }
-}
+} 
