@@ -220,7 +220,7 @@
             data: { id: deleteItemId },
             success: function (response) {
                 if (response == null)
-                    window.location.href = "/unauthorized";
+                    window.location.href = "";
                 if (response.isSuccess) {
                     GetFilteredItems();
                     toastr.success(response.message);
@@ -295,7 +295,7 @@
             data: { itemId: itemId },
             success: function (data) {
                 if (data == null)
-                    window.location.href = "/unauthorized"
+                    window.location.href = ""
                 $("#EditItemPartial").html(data);
                 $("#EditItemModel").modal('show');
             },

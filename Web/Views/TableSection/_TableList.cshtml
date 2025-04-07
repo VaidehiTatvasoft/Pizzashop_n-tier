@@ -179,7 +179,7 @@
                 data: { id: deleteTableId },
                 success: function (response) {
                     if (response == null) {
-                        window.location.href = "/unauthorized";
+                        window.location.href = "";
                         toastr.error("Your Session is Expired. Please Login Again!");
                     } else if (response.isSuccess) {
                         GetFilteredItems();

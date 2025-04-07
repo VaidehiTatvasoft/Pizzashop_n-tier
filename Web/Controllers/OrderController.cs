@@ -9,6 +9,7 @@ using Service.Interface;
 using System.Linq;
 using System.Threading.Tasks;
 using Web.Attributes;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
@@ -23,7 +24,7 @@ namespace Web.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        [CustomAuthorize(1, RolePermissionEnum.Permission.Orders_CanView)]
+        [CustomAuthorize(RolePermissionEnum.Permission.Orders_CanView)]
         [Route("/order")]
         [HttpGet]
         public IActionResult Order(string searchTerm, string sortOrder, int pageIndex = 1, int pageSize = 5, string statusFilter = "All Status", string dateRangeFilter = "All Time", DateTime? fromDate = null, DateTime? toDate = null)
@@ -158,7 +159,7 @@ namespace Web.Controllers
                 }
             }
         }
-
+        [CustomAuthorize(RolePermissionEnum.Permission.Orders_CanView)]
         private (DateTime? startDate, DateTime? endDate) GetDateRange(string dateRangeFilter, DateTime? fromDate, DateTime? toDate)
         {
             DateTime? startDate = null;
@@ -201,7 +202,7 @@ namespace Web.Controllers
             IEnumerable<OrderViewModel> orderViewModel = _orderService.GetFilteredOrderViewModels(searchTerm, sortOrder, pageIndex, pageSize, statusFilter, startDate, endDate, out int totalItems);
             return (orderViewModel, totalItems);
         }
-
+        [CustomAuthorize(RolePermissionEnum.Permission.Orders_CanView)]
         [Route("/order/orderdetails")]
         [HttpGet]
         public async Task<IActionResult> OrderDetails(int orderId)
@@ -213,6 +214,7 @@ namespace Web.Controllers
             }
             return View("_OrderDetails", order);
         }
+        [CustomAuthorize(RolePermissionEnum.Permission.Orders_CanView)]
         [Route("/order/invoicetemplate")]
         [HttpGet]
         public async Task<ActionResult> InvoiceTemplate(int orderId)

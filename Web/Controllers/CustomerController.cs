@@ -8,6 +8,7 @@ using Web.Attributes;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Hosting;
 using Entity.Shared;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
@@ -22,7 +23,7 @@ namespace Web.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        [CustomAuthorize(1, RolePermissionEnum.Permission.Customers_CanView)]
+        [CustomAuthorize(RolePermissionEnum.Permission.Customers_CanView)]
         [Route("/customer")]
         [HttpGet]
         public IActionResult Customer(string searchTerm, string sortOrder, int pageIndex = 1, int pageSize = 5, string dateRangeFilter = "All Time", DateTime? fromDate = null, DateTime? toDate = null)
@@ -54,7 +55,7 @@ namespace Web.Controllers
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
         }
-        [CustomAuthorize(1, RolePermissionEnum.Permission.Customers_CanView)]
+        [CustomAuthorize( RolePermissionEnum.Permission.Customers_CanView)]
         [Route("/customer/exportcustomers")]
         [HttpGet]
         public IActionResult ExportCustomers(string searchTerm, string sortOrder, string dateRangeFilter = "All Time", DateTime? fromDate = null, DateTime? toDate = null)
@@ -154,7 +155,7 @@ namespace Web.Controllers
                 }
             }
         }
-
+        [CustomAuthorize( RolePermissionEnum.Permission.Customers_CanView)]
         private (DateTime? startDate, DateTime? endDate) GetDateRange(string dateRangeFilter, DateTime? fromDate, DateTime? toDate)
         {
             DateTime currentDate = DateTime.UtcNow;
@@ -198,12 +199,14 @@ namespace Web.Controllers
 
             return (startDate, endDate);
         }
+        [CustomAuthorize( RolePermissionEnum.Permission.Customers_CanView)]
         private (IEnumerable<CustomerViewModel>, int) GetFilteredCustomers(string searchTerm, string sortOrder, int pageIndex, int pageSize, string dateRangeFilter, DateTime? fromDate, DateTime? toDate)
         {
             var (startDate, endDate) = GetDateRange(dateRangeFilter, fromDate, toDate);
             IEnumerable<CustomerViewModel> customerViewModel = _customerService.GetFilteredCustomerViewModels(searchTerm, sortOrder, pageIndex, pageSize, startDate, endDate, out int totalItems);
             return (customerViewModel, totalItems);
         }
+        
          public IActionResult GetCustomerDetail(int id)
         {
             var customer = _customerService.GetCustomerViewModelById(id);

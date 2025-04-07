@@ -7,7 +7,6 @@ using Web.Attributes;
 
 namespace Web.Controllers;
 [Route("tax")]
-[Authorize]
 public class TaxController : Controller
 {
     private readonly ITaxAndFeeService _taxAndFeeService;
@@ -16,7 +15,7 @@ public class TaxController : Controller
     {
         _taxAndFeeService = taxAndFeeService;
     }
-    [CustomAuthorize(1, RolePermissionEnum.Permission.TaxesAndFees_CanView)]
+    [CustomAuthorize(RolePermissionEnum.Permission.TaxesAndFees_CanView)]
     [Route("taxlist")]
     [HttpGet]
     public async Task<IActionResult> TaxList()
@@ -24,7 +23,7 @@ public class TaxController : Controller
         var taxes = await _taxAndFeeService.GetAllTaxes();
         return View(taxes);
     }
-    [CustomAuthorize(1, RolePermissionEnum.Permission.TaxesAndFees_CanEdit)]
+    [CustomAuthorize(RolePermissionEnum.Permission.TaxesAndFees_CanEdit)]
     [Route("taxform")]
     [HttpGet]
     public async Task<IActionResult> TaxForm(int? id)
@@ -36,7 +35,7 @@ public class TaxController : Controller
         }
         return PartialView("_TaxFormPartial", new TaxandFeeViewModel());
     }
-    [CustomAuthorize(1, RolePermissionEnum.Permission.TaxesAndFees_CanEdit)]
+    [CustomAuthorize(RolePermissionEnum.Permission.TaxesAndFees_CanEdit)]
     [Route("addtax")]
     [HttpPost]
     public async Task<IActionResult> AddTax(TaxandFeeViewModel model)
@@ -59,7 +58,7 @@ public class TaxController : Controller
         TempData["ErrorMessage"] = "Invalid input.";
         return PartialView("_TaxFormPartial", model);
     }
-    [CustomAuthorize(1, RolePermissionEnum.Permission.TaxesAndFees_CanEdit)]
+    [CustomAuthorize(RolePermissionEnum.Permission.TaxesAndFees_CanEdit)]
     [Route("edit")]
     [HttpPost]
     public async Task<IActionResult> Edit(TaxandFeeViewModel model)
@@ -82,7 +81,7 @@ public class TaxController : Controller
         TempData["ErrorMessage"] = "Invalid input.";
         return PartialView("_TaxFormPartial", model);
     }
-    [CustomAuthorize(1, RolePermissionEnum.Permission.TaxesAndFees_CanDelete)]
+    [CustomAuthorize(RolePermissionEnum.Permission.TaxesAndFees_CanDelete)]
     [Route("delete/{id}")]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -111,7 +110,7 @@ public class TaxController : Controller
         }
         return PartialView("_TaxTablePartial", taxes);
     }
-    [CustomAuthorize(1, RolePermissionEnum.Permission.TaxesAndFees_CanEdit)]
+    [CustomAuthorize(RolePermissionEnum.Permission.TaxesAndFees_CanEdit)]
     [Route("updateTaxStatus")]
     [HttpPost]
     public async Task<IActionResult> UpdateTaxStatus(int id, bool isActive, bool isDefault)

@@ -33,7 +33,7 @@ namespace Pizzashop.Web.Controllers
                 {
                     var roleId = userClaims.FindFirst(ClaimTypes.Role)?.Value;
 
-                    if (roleId == "1")
+                    if (roleId == "1" || roleId == "2")
                     {
                         return RedirectToAction("AdminDashboard", "Home");
                     }
@@ -75,8 +75,8 @@ namespace Pizzashop.Web.Controllers
             {
                 return RedirectToAction("ChangePassword", "User");
             }
-
-            if (user.RoleId == 1)
+            ViewBag.UserRole = user.RoleId;
+            if (user.RoleId == 1 || user.RoleId == 2)
             {
                 return RedirectToAction("AdminDashboard", "Home");
             }

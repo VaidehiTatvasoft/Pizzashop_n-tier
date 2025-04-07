@@ -18,7 +18,7 @@ namespace pizzashop.Services.Interfaces
         Task<bool> EditUserAsync(UserViewModel model);
         Task<bool> DeleteUserAsync(int id);
         Task<string> GetUserProfileImageAsync(string email);
-        IEnumerable<User> GetUsersList(string searchString, string sortOrder, int pageIndex, int pageSize, out int count);
+        IEnumerable<User> GetUsersList(int id,string searchString, string sortOrder, int pageIndex, int pageSize, out int count);
         Task<UserViewModel> GetUserProfileAsync(ClaimsPrincipal userClaims);
         Task<bool> UpdateProfileAsync(UserViewModel model);
         Task<bool> ChangePasswordAsync(ChangePasswordModel model, ClaimsPrincipal userClaims);

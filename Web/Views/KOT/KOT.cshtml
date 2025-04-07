@@ -1,0 +1,39 @@
+@{
+    Layout = "_OrderAppLayout";
+}
+<div class="p-3">
+<h2>KOT</h2>
+<div class="bg-white p-2 rounded shadow">
+        <ul class="nav " style="gap: 2px;">
+            <li class="nav-item">
+                <a class="nav-link top-pills active" href="#" data-category-id="all" style="border:none">All</a>
+            </li>
+            @foreach (var category in Model)
+            {
+                <li class="nav-item">
+                    <a class="nav-link top-pills" href="#" data-category-id="@category.Id" style="border:none">@category.Name</a>
+                </li>
+            }
+        </ul>
+    </div>
+ <div class="bg-white mt-2 p-2 rounded shadow">
+        <p id="selected-category-id"> All</p>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabs = document.querySelectorAll('.nav-link.top-pills');
+        const selectedCategoryIdElement = document.getElementById('selected-category-id');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const categoryId = this.getAttribute('data-category-id');
+                selectedCategoryIdElement.textContent = ` ${categoryId}`;
+            });
+        });
+    });
+</script>

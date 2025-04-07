@@ -9,13 +9,11 @@ namespace Web.Attributes
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
     public class CustomAuthorizeAttribute : Attribute, IAuthorizationFilter
     {
-        private readonly int _requiredRoleId;
         private readonly RolePermissionEnum.Permission _requiredPermission;
         private ITempDataDictionaryFactory _tempDataDictionaryFactory;
 
-        public CustomAuthorizeAttribute(int roleId, RolePermissionEnum.Permission permission)
+        public CustomAuthorizeAttribute( RolePermissionEnum.Permission permission)
         {
-            _requiredRoleId = roleId;
             _requiredPermission = permission;
         }
 
@@ -25,14 +23,7 @@ namespace Web.Attributes
             var user = context.HttpContext.User;
             if (!user.Identity.IsAuthenticated)
             {
-                context.Result = new UnauthorizedResult();
-                return;
-            }
-
-            var roleClaim = user.FindFirst(System.Security.Claims.ClaimTypes.Role);
-            if (roleClaim == null || !int.TryParse(roleClaim.Value, out int userRoleId) || userRoleId != _requiredRoleId)
-            {
-                context.Result = new RedirectToActionResult("Forbidden", "Home", null);
+                context.Result = new RedirectToActionResult("Login", "Accounts", null);
                 return;
             }
 

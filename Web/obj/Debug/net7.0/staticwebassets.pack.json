@@ -149,6 +149,10 @@
       "PackagePath": "staticwebassets\\css\\AdminDashboard.css"
     },
     {
+      "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\css\\OrderApp.css",
+      "PackagePath": "staticwebassets\\css\\OrderApp.css"
+    },
+    {
       "Id": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\css\\login.css",
       "PackagePath": "staticwebassets\\css\\login.css"
     },

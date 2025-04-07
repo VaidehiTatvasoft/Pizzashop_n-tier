@@ -1,6 +1,7 @@
 @model Entity.ViewModel.UserViewModel
 
 @{
+    Layout = ViewBag.UseOrderAppLayout ? "_OrderAppLayout" : "_Layout";
     ViewData["Title"] = "Profile";
 }
 
@@ -11,7 +12,7 @@
     </div>
     <form asp-controller="User" asp-action="Profile" method="post" class="row needs-validation mt-1 mb-3 mx-2"
         enctype="multipart/form-data" id="profileForm">
-        <input type="int" asp-for="Id" value="@Model.Id" hidden>
+        <input type="int" asp-for="Id" hidden>
         <div class="row mx-2">
             <div class="col-2 col-md-1 d-flex justify-content-center p-0">
                 <img src="~/uploads/@(Model?.ProfileImage)" class="profile-img profile-photo rounded-circle"
@@ -110,14 +111,11 @@
                     <span class="text-danger fs-6 ms-2" asp-validation-for="Zipcode"></span>
                 </div>
             </div>
-            <div>
-                <div class="mt-2 gap-3 d-flex justify-content-end">
-                    <button class="btn update-button" type="submit">Update</button>
-                    <button class="btn cancel-button" type="button" id="Cancel"
-                        onclick="location.href='@Url.Action("AdminDashboard", "Home")'">Cancel</button>
-                </div>
-                <span class="text-success">@ViewData["ProfileSuccessMessage"]</span>
+            <div class="mt-2 gap-3 d-flex justify-content-end">
+                <button class="btn update-button" type="submit">Update</button>
+                <button class="btn cancel-button" type="button" id="Cancel" onclick="history.back();">Cancel</button>
             </div>
+            <span class="text-success">@ViewData["ProfileSuccessMessage"]</span>
         </div>
     </form>
 </div>
@@ -157,8 +155,6 @@
                     cityDropdown.empty().append('<option value="">Select City</option>');
                 }
             });
-
-
             $("#StateId").change(function () {
                 var stateId = $(this).val();
                 if (stateId) {

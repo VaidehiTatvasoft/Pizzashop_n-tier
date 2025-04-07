@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "sKTPDzP8pWCVc4zYVWP2hQfBtEJXOo1+UW07T01d3kk=",
+  "Hash": "2DgQYFfzM9q4m56TCHoX5tStvxMj6F9qSGJHPEMJoFg=",
   "Source": "Web",
   "BasePath": "_content/Web",
   "Mode": "Default",
@@ -678,6 +678,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\login.css"
+    },
+    {
+      "Identity": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\css\\OrderApp.css",
+      "SourceId": "Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\",
+      "BasePath": "_content/Web",
+      "RelativePath": "css/OrderApp.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\OrderApp.css"
     },
     {
       "Identity": "D:\\Project_pce54\\Pizzashop_n-tier\\Web\\wwwroot\\css\\site.css",

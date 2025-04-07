@@ -153,9 +153,9 @@ namespace Pizzashop.Service.Implementation
             return await _userRepository.DeleteUserAsync(id);
         }
 
-        public IEnumerable<User> GetUsersList(string searchString, string sortOrder, int pageIndex, int pageSize, out int count)
+        public IEnumerable<User> GetUsersList(int id,string searchString, string sortOrder, int pageIndex, int pageSize, out int count)
         {
-            return _userRepository.GetUserList(searchString, sortOrder, pageIndex, pageSize, out count);
+            return _userRepository.GetUserList(id,searchString, sortOrder, pageIndex, pageSize, out count);
         }
 
         public async Task<UserViewModel> GetUserProfileAsync(ClaimsPrincipal userClaims)

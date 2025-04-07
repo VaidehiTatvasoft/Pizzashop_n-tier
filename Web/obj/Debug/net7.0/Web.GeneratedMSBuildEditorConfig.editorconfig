@@ -52,6 +52,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/Project_pce54/Pizzashop_n-tier/Web/Views/KOT/KOT.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS09UXEtPVC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/Project_pce54/Pizzashop_n-tier/Web/Views/MenuModifier/_Modifier.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVudU1vZGlmaWVyXF9Nb2RpZmllci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -120,6 +124,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVudVxfTW9kaWZpZXJUYWIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/Project_pce54/Pizzashop_n-tier/Web/Views/OrderAppMenu/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJBcHBNZW51XEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Project_pce54/Pizzashop_n-tier/Web/Views/OrderAppTable/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJBcHBUYWJsZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/Project_pce54/Pizzashop_n-tier/Web/Views/Order/InvoiceTemplate.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcSW52b2ljZVRlbXBsYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -166,6 +178,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/Project_pce54/Pizzashop_n-tier/Web/Views/Shared/_MenuTabs.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9NZW51VGFicy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Project_pce54/Pizzashop_n-tier/Web/Views/Shared/_OrderAppLayout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9PcmRlckFwcExheW91dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/Project_pce54/Pizzashop_n-tier/Web/Views/Shared/_ValidationScriptsPartial.cshtml]
@@ -226,6 +242,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/Project_pce54/Pizzashop_n-tier/Web/Views/User/UserList.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxVc2VyTGlzdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Project_pce54/Pizzashop_n-tier/Web/Views/WaitingToken/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcV2FpdGluZ1Rva2VuXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/Project_pce54/Pizzashop_n-tier/Web/Views/_ViewImports.cshtml]

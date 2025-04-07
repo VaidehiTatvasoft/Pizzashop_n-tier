@@ -80,9 +80,9 @@ public class UserRepository : IUserRepository
         return await _context.SaveChangesAsync() > 0;
     }
 
-    public IEnumerable<User> GetUserList(string searchString, string sortOrder, int pageIndex, int pageSize, out int count)
+    public IEnumerable<User> GetUserList( int id, string searchString, string sortOrder, int pageIndex, int pageSize, out int count)
     {
-        var userQuery = _context.Users.Where(u => u.IsDeleted == false);
+        var userQuery = _context.Users.Where(u => u.IsDeleted == false && u.Id != id);
 
         if (!string.IsNullOrEmpty(searchString))
         {

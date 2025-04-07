@@ -6,7 +6,6 @@ using Web.Attributes;
 using Web.Models;
 
 namespace Web.Controllers;
-
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -20,12 +19,12 @@ public class HomeController : Controller
     {
         return View();
     }
-    [Authorize(Roles = "2")]
+    [Authorize]
     public IActionResult Dashboard()
     {
         return View();
     }
-    [Authorize(Roles = "1")]
+    [Authorize]
     [Route("/home/admindashboard")]
     public IActionResult AdminDashboard()
     {
@@ -39,8 +38,7 @@ public class HomeController : Controller
     {
         return View("404");
     }
-        [Route("/unauthorized")]
-
+    [Route("/unauthorized")]
     public IActionResult Unauthorized()
     {
         return RedirectToAction("Login", "Accounts");

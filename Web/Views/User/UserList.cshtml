@@ -152,7 +152,7 @@
                 <input type="hidden" name="searchString" value="@searchString" />
                 <input type="hidden" name="sortOrder" value="@sortOrder" />
                 <span>Showing @(Math.Min(((pageIndex - 1) * pageSize) + 1,
-                        totalItems)) - @(Math.Min(pageIndex * pageSize, totalItems))out of <span>@totalItems</span></span>
+                        totalItems)) - @(Math.Min(pageIndex * pageSize, totalItems)) out of <span>@totalItems</span></span>
                 @if (pageIndex > 1)
                 {
                     <a href="@Url.Action("UserList", new { searchString = searchString, pageIndex = pageIndex - 1, pageSize = pageSize, sortOrder = sortOrder })"

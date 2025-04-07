@@ -202,7 +202,7 @@ $(document).ready(function () {
             },
             success: function (response) {
                 if (response == null)
-                    window.location.href = "/unauthorized";
+                    window.location.href = "";
                 if (response.isSuccess) {
                     GetFilteredItems();
                     toastr.success(response.message);

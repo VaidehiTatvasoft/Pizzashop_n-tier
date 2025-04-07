@@ -8,7 +8,6 @@ using Service.Interface;
 using Web.Attributes;
 
 namespace Web.Controllers;
-
 public class RolePermissionController : Controller
 {
     private readonly IUserService _user;
@@ -19,7 +18,7 @@ public class RolePermissionController : Controller
         _user = user;
         _rolePermission = rolePermission;
     }
-    [CustomAuthorize(1, RolePermissionEnum.Permission.RolesAndPermissions_CanView)]
+    [CustomAuthorize(RolePermissionEnum.Permission.RolesAndPermissions_CanView)]
     [Route("/roles")]
     [HttpGet]
     public async Task<IActionResult> Role()
@@ -27,7 +26,7 @@ public class RolePermissionController : Controller
         var roles = await _rolePermission.GetAllRoles();
         return View(roles);
     }
-    [CustomAuthorize(1, RolePermissionEnum.Permission.RolesAndPermissions_CanView)]
+    [CustomAuthorize(RolePermissionEnum.Permission.RolesAndPermissions_CanView)]
     [Route("/permission/{id}")]
     [HttpGet]
     public IActionResult Permission(int id)
@@ -42,7 +41,7 @@ public class RolePermissionController : Controller
             return View(model);
         return RedirectToAction("Permission");
     }
-    [CustomAuthorize(1, RolePermissionEnum.Permission.RolesAndPermissions_CanEdit)]
+    [CustomAuthorize(RolePermissionEnum.Permission.RolesAndPermissions_CanEdit)]
     [Route("/permission/{id}")]
     [HttpPost]
     public async Task<IActionResult> Permission(List<RolePermissionViewModel> model, int id)
