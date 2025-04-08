@@ -37,6 +37,5 @@ namespace Web.Controllers
             var orders = await _orderappkotService.GetOrdersAsync(categoryId);
             return Json(orders);
         }
-
     }
 }

@@ -5,7 +5,7 @@ public enum OrderStatusEnum
         Pending,
         Completed,
         InProgress,
-        Served,
+        Ready,
         Cancelled,
         OnHold,
         Failed

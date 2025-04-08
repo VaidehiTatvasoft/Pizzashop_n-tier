@@ -27,7 +27,7 @@ namespace Repository.Implementation
 
             if (categoryId.HasValue)
             {
-                query = query.Where(o => o.OrderedItems.Any(oi => oi.MenuItemId == categoryId));
+                query = query.Where(o => o.OrderedItems.Any(oi => oi.MenuItem.CategoryId == categoryId));
             }
 
             return await query.ToListAsync();

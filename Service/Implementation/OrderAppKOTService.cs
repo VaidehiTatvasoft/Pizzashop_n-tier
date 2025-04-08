@@ -20,6 +20,7 @@ namespace Service.Implementation
             {
                 OrderNo = o.OrderNo,
                 OrderDate = o.OrderDate,
+                OrderStatus = o.OrderStatus,
                 ModifiedAt = o.ModifiedAt,
                 SectionName = o.TableOrderMappings.FirstOrDefault()?.Table?.Section.Name,
                 TableName = o.TableOrderMappings.FirstOrDefault()?.Table?.Name,
