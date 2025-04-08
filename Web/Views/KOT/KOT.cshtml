@@ -1,6 +1,10 @@
+@using Entity.ViewModel
+@model KOTViewModel
+
 @{
     Layout = "_OrderAppLayout";
 }
+
 <div class="p-3">
     <h2>KOT</h2>
     <div class="bg-white p-2 rounded shadow">
@@ -8,7 +12,7 @@
             <li class="nav-item">
                 <a class="nav-link top-pills active" href="#" data-category-id="all" style="border:none">All</a>
             </li>
-            @foreach (var category in Model)
+            @foreach (var category in Model.Categories)
             {
                 <li class="nav-item">
                     <a class="nav-link top-pills" href="#" data-category-id="@category.Id"
@@ -17,63 +21,57 @@
             }
         </ul>
     </div>
-    <div class="bg-white mt-2 p-2 rounded shadow">
+    <div class="bg-white d-flex mt-2 p-2 rounded shadow">
         <div class="d-flex flex-row justify-content-between align-items-center">
             <div class="m-2" id="selected-category-id">
                 <h4 style="color:#0066a6;">All</h4>
-                //CategoryName Should be displayed of the selected Category
             </div>
             <div>
                 1
             </div>
         </div>
-        <div class="kot-card m-2 ">
-            <section class="card-header">
-                <div class="d-flex justify-content-between">
-                    <b style="color: #026fad;">#OrderNumber</b>
-                    <div><i class="fa-solid fa-stopwatch"></i>OrderDuration</div>
-                </div>
-                <div class="d-flex text-dark">
-                    SectionName <i class="bi bi-dot"></i> TableName
-                </div>
-            </section>
-            <section class="card-content ">
-                <div class="d-flex justify-content-between">
-                    <div class="col-11">
-                        <c style="font-size: 18px;"> ItemName1</c>
-                        <ul style="font-size: 15px;">
-                            @* @foreach (var i in item.Modifiers)
-                                {
-                                    <li>@i.Name</li>
-                                } *@
-                            <li>ModfierName1</li>
-                            <em style="color:rgb(0, 174, 255);font-size:15px;"> Instructions1(if any)</em>
-                            <c style="color:black;font-size:15px;">:Instruction </c>
-                        </ul>
+        @foreach (var order in Model.Orders)
+        {
+            <div class="kot-card m-2 ">
+                <section class="card-header">
+                    <div class="d-flex justify-content-between">
+                        <b style="color: #026fad;">#@order.OrderNo</b>
+                        <div><i class="fa-solid fa-stopwatch"></i> @order.OrderDuration </div>
                     </div>
-                    <div class="col-1" style="color:black; font-size:15px;">ItemQuantity1</div>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <div class="col-11">
-                        <c style="font-size: 18px;"> ItemName2</c>
-                        <ul style="font-size: 15px;">
-                            @* @foreach (var i in item.Modifiers)
-                                {
-                                    <li>@i.Name</li>
-                                } *@
-                            <li>ModfierName2</li>
-                            
-                        </ul>
+                    <div class="d-flex text-dark">
+                        @order.SectionName <i class="bi bi-dot"></i> @order.TableName
                     </div>
-                    <div class="col-1" style="color:black; font-size:15px;">ItemQuantity2</div>
-                </div>
-            </section>
-            <section class="card-footer border-top ">
-                <em style="color:rgb(0, 174, 255)"> Order Instructions(if any)</em>
-                <c style="color:black">: Add extra Vegies</c>
-            </section>
-        </div>
-        </p>
+                </section>
+                <section class="card-content ">
+                    @foreach (var item in order.Items)
+                    {
+                        <div class="d-flex justify-content-between">
+                            <div class="col-11">
+                                <c style="font-size: 18px;">@item.Name</c>
+                                <ul style="font-size: 15px;">
+                                    @foreach (var modifier in item.Modifiers)
+                                    {
+                                        <li>@modifier</li>
+                                    }
+                                    @if (!string.IsNullOrEmpty(item.Instruction))
+                                    {
+                                        <em style="color:rgb(0, 174, 255);font-size:15px;">@item.Instruction</em>
+                                    }
+                                </ul>
+                            </div>
+                            <div class="col-1" style="color:black; font-size:15px;">@item.Quantity</div>
+                        </div>
+                    }
+                </section>
+                <section class="card-footer border-top ">
+                    @if (!string.IsNullOrEmpty(order.OrderInstructions))
+                    {
+                        <em style="color:rgb(0, 174, 255)">Order Instructions</em>
+                        <c style="color:black">: @order.OrderInstructions</c>
+                    }
+                </section>
+            </div>
+        }
     </div>
 </div>
 <script>
@@ -87,8 +85,52 @@
                 tabs.forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
                 
+                const categoryName = this.textContent.trim();
+                selectedCategoryIdElement.querySelector('h4').textContent = categoryName;
+                
                 const categoryId = this.getAttribute('data-category-id');
-                selectedCategoryIdElement.textContent = ` ${categoryId}`;
+                const url = categoryId === 'all' ? '/KOT/GetOrders' : `/KOT/GetOrders?categoryId=${categoryId}`;
+                
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        const ordersContainer = document.querySelector('.bg-white.mt-2.p-2.rounded.shadow');
+                        ordersContainer.innerHTML = '';
+                        
+                        data.forEach(order => {
+                            const orderCard = `
+                                <div class="kot-card m-2 ">
+                                    <section class="card-header">
+                                        <div class="d-flex justify-content-between">
+                                            <b style="color: #026fad;">#${order.OrderNo}</b>
+                                            <div><i class="fa-solid fa-stopwatch"></i> ${order.OrderDuration} </div>
+                                        </div>
+                                        <div class="d-flex text-dark">
+                                            ${order.SectionName} <i class="bi bi-dot"></i> ${order.TableName}
+                                        </div>
+                                    </section>
+                                    <section class="card-content ">
+                                        ${order.Items.map(item => `
+                                            <div class="d-flex justify-content-between">
+                                                <div class="col-11">
+                                                    <c style="font-size: 18px;">${item.Name}</c>
+                                                    <ul style="font-size: 15px;">
+                                                        ${item.Modifiers.map(modifier => `<li>${modifier}</li>`).join('')}
+                                                        ${item.Instruction ? `<em style="color:rgb(0, 174, 255);font-size:15px;">${item.Instruction}</em>` : ''}
+                                                    </ul>
+                                                </div>
+                                                <div class="col-1" style="color:black; font-size:15px;">${item.Quantity}</div>
+                                            </div>
+                                        `).join('')}
+                                    </section>
+                                    <section class="card-footer border-top ">
+                                        ${order.OrderInstructions ? `<em style="color:rgb(0, 174, 255)">Order Instructions</em><c style="color:black">: ${order.OrderInstructions}</c>` : ''}
+                                    </section>
+                                </div>
+                            `;
+                            ordersContainer.insertAdjacentHTML('beforeend', orderCard);
+                        });
+                    });
             });
         });
     });

@@ -66,3 +66,50 @@ html, body {
     color: rgb(107, 107, 107) !important;
     border: none;
   }
+  .card-heading {
+    color: var(--textBlue);
+    font-size: x-large;
+    font-weight: 700;
+  }
+  
+  .tab-link.active {
+    color: var(--textBlue) !important;
+    border-bottom: 2px solid var(--textBlue);
+  }
+  
+  .tab-link:hover {
+    color: var(--textBlue) !important;
+  }
+  .tab-link {
+    color: gray;
+    font-size: large;
+    font-weight: 600;
+  }
+  
+  .kot-card-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+  }
+  .kot-card {
+    height: 250px;
+    width: 320px;
+    border: dotted rgb(199, 199, 199);
+    color: gray;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .card-header {
+    background-color: #f0ecea;
+    height: 50px;
+  }
+  .card-footer {
+    background-color: #f0ecea;
+    height: 40px;
+  }
+  .card-content {
+    overflow-y: scroll;
+    color: gray;
+    height: 160px;
+    font-size: 20px;
+  }

@@ -24,6 +24,7 @@ namespace Web
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IMenuModifierService, MenuModifierService>();
             services.AddScoped<IMenuService, MenuService>();
+            services.AddScoped<IOrderAppKOTService, OrderAppKOTService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IRolePermissionService, RolePermissionService>();
             services.AddScoped<ISectionService, SectionService>();
@@ -38,6 +39,7 @@ namespace Web
             services.AddScoped<IMenuItemsRepository, MenuItemRepository>();
             services.AddScoped<IMenuModifierGroupRepository, MenuModifierGroupRepository>();
             services.AddScoped<IMenuModifierRepository, MenuModifierRepository>();
+            services.AddScoped<IOrderAppKOTRepository, OrderAppKOTRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
