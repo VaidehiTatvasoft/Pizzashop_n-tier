@@ -2,8 +2,8 @@
     Layout = "_OrderAppLayout";
 }
 <div class="p-3">
-<h2>KOT</h2>
-<div class="bg-white p-2 rounded shadow">
+    <h2>KOT</h2>
+    <div class="bg-white p-2 rounded shadow">
         <ul class="nav " style="gap: 2px;">
             <li class="nav-item">
                 <a class="nav-link top-pills active" href="#" data-category-id="all" style="border:none">All</a>
@@ -11,22 +11,78 @@
             @foreach (var category in Model)
             {
                 <li class="nav-item">
-                    <a class="nav-link top-pills" href="#" data-category-id="@category.Id" style="border:none">@category.Name</a>
+                    <a class="nav-link top-pills" href="#" data-category-id="@category.Id"
+                        style="border:none">@category.Name</a>
                 </li>
             }
         </ul>
     </div>
- <div class="bg-white mt-2 p-2 rounded shadow">
-        <p id="selected-category-id"> All</p>
+    <div class="bg-white mt-2 p-2 rounded shadow">
+        <div class="d-flex flex-row justify-content-between align-items-center">
+            <div class="m-2" id="selected-category-id">
+                <h4 style="color:#0066a6;">All</h4>
+                //CategoryName Should be displayed of the selected Category
+            </div>
+            <div>
+                1
+            </div>
+        </div>
+        <div class="kot-card m-2 ">
+            <section class="card-header">
+                <div class="d-flex justify-content-between">
+                    <b style="color: #026fad;">#OrderNumber</b>
+                    <div><i class="fa-solid fa-stopwatch"></i>OrderDuration</div>
+                </div>
+                <div class="d-flex text-dark">
+                    SectionName <i class="bi bi-dot"></i> TableName
+                </div>
+            </section>
+            <section class="card-content ">
+                <div class="d-flex justify-content-between">
+                    <div class="col-11">
+                        <c style="font-size: 18px;"> ItemName1</c>
+                        <ul style="font-size: 15px;">
+                            @* @foreach (var i in item.Modifiers)
+                                {
+                                    <li>@i.Name</li>
+                                } *@
+                            <li>ModfierName1</li>
+                            <em style="color:rgb(0, 174, 255);font-size:15px;"> Instructions1(if any)</em>
+                            <c style="color:black;font-size:15px;">:Instruction </c>
+                        </ul>
+                    </div>
+                    <div class="col-1" style="color:black; font-size:15px;">ItemQuantity1</div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div class="col-11">
+                        <c style="font-size: 18px;"> ItemName2</c>
+                        <ul style="font-size: 15px;">
+                            @* @foreach (var i in item.Modifiers)
+                                {
+                                    <li>@i.Name</li>
+                                } *@
+                            <li>ModfierName2</li>
+                            
+                        </ul>
+                    </div>
+                    <div class="col-1" style="color:black; font-size:15px;">ItemQuantity2</div>
+                </div>
+            </section>
+            <section class="card-footer border-top ">
+                <em style="color:rgb(0, 174, 255)"> Order Instructions(if any)</em>
+                <c style="color:black">: Add extra Vegies</c>
+            </section>
+        </div>
+        </p>
     </div>
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const tabs = document.querySelectorAll('.nav-link.top-pills');
         const selectedCategoryIdElement = document.getElementById('selected-category-id');
-        
+
         tabs.forEach(tab => {
-            tab.addEventListener('click', function(e) {
+            tab.addEventListener('click', function (e) {
                 e.preventDefault();
                 tabs.forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
