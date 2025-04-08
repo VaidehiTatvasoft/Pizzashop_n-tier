@@ -44,30 +44,38 @@
                                     <div class="capsule-container">
                                         <a class="capsule" asp-controller="KOT" asp-action="KOT"><i
                                                 class="bi bi-clipboard-fill" style="color:white"></i>KOT</a>
+                                        @if (userRole == "2")
+                                        {
                                         <a class="capsule" asp-controller="WaitingToken" asp-action="Index"><i
                                                 class="bi bi-clock-fill" style="color:white"></i>WaitingToken</a>
                                         <a class="capsule" asp-controller="OrderAppTable" asp-action="Index"><i
                                                 class="bi bi-square-fill" style="color:white"></i>Table</a>
                                         <a class="capsule" asp-controller="OrderappMenu" asp-action="Index"><i
                                                 class="fa-solid fa-monument me-2"></i>Menu</a>
+                                        }
                                     </div>
+                                    
                                     <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle dropdown-toggle-icon"
+                                        <button class="capsule capsule-toggle"
                                             type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
-                                            aria-expanded="false">
-                                            Menu
+                                            aria-expanded="false" >
+                                        <i class="fas fa-bars px-0"></i>
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <li><a class="dropdown-item" href="@Url.Action("Index", "KOT")"><i
+                                            <li><a class="dropdown-item" href="@Url.Action("KOT", "KOT")"><i
                                                         class="bi bi-clipboard-fill"></i>KOT</a></li>
+                                                         @if (userRole == "2"){
                                             <li><a class="dropdown-item" href="@Url.Action("Index", "WaitingToken")"><i
                                                         class="bi bi-clock-fill"></i>WaitingToken</a></li>
                                             <li><a class="dropdown-item" href="@Url.Action("Index", "OrderAppTable")"><i
                                                         class="bi bi-square-fill"></i>Table</a></li>
                                             <li><a class="dropdown-item" href="@Url.Action("Index", "OrderappMenu")"><i
                                                         class="fa-solid fa-monument me-2"></i>Menu</a></li>
+                                                        }
                                         </ul>
+                                        
                                     </div>
+                                    
                                 </div>
                                 <a class="navbar-brand" data-bs-toggle="dropdown" aria-expanded="false">
                                     <img id="profileImage" src="@Url.Content("~/assets/Default_pfp.svg.png")" width="40"
@@ -86,7 +94,7 @@
                                             asp-route-useOrderAppLayout="true"><i class="fa fa-user-circle"
                                                 style="color:grey"></i> My Profile</a></li>
                                     <li class="drop"><a class="dropdown-item" asp-controller="User"
-                                            asp-action="ChangePassword"><i class="fas fa-redo-alt"
+                                            asp-action="ChangePassword" asp-route-useOrderAppLayout="true"><i class="fas fa-redo-alt"
                                                 style="color:grey"></i> Change Password</a></li>
                                     <li class="drop"><a class="dropdown-item" type="button" data-bs-toggle="modal"
                                             data-bs-target="#staticBackdrop"><i class="fa fa-sign-out"

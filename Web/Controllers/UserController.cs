@@ -282,92 +282,99 @@ namespace pizzashop.Controllers
 
             return View(users);
         }
-       [Authorize]
-[Route("/user/profile")]
-[HttpGet]
-public async Task<IActionResult> Profile(bool useOrderAppLayout = false)
-{
-    var user = await _userService.GetUserProfileAsync(User);
-    if (user == null)
-    {
-        return Unauthorized("User not found");
-    }
-    ViewBag.UseOrderAppLayout = useOrderAppLayout;
-    await LoadDropdowns(user);
-    return View(user);
-}
-
-[HttpPost]
-public async Task<IActionResult> Profile(UserViewModel model, IFormFile? ProfileImage, bool useOrderAppLayout)
-{
-    if (ModelState.IsValid)
-    {
-        if (ProfileImage != null && ProfileImage.Length > 0)
+        [Authorize]
+        [Route("/user/profile")]
+        [HttpGet]
+        public async Task<IActionResult> Profile(bool useOrderAppLayout = false)
         {
-            if (!IsImageFile(ProfileImage))
+            var user = await _userService.GetUserProfileAsync(User);
+            if (user == null)
             {
-                TempData["ErrorMessage"] = "Only image files are allowed.";
-                ModelState.AddModelError("ProfileImage", "Only image files are allowed.");
-                ViewBag.UseOrderAppLayout = useOrderAppLayout;
-                await LoadDropdowns(model);
-                return View(model);
+                return Unauthorized("User not found");
             }
 
-            var fileName = Path.GetFileName(ProfileImage.FileName);
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            if (user.RoleId != 2 && user.RoleId != 3)
             {
-                await ProfileImage.CopyToAsync(stream);
+                useOrderAppLayout = false;
             }
 
-            model.ProfileImage = fileName;
+            ViewBag.UseOrderAppLayout = useOrderAppLayout;
+            await LoadDropdowns(user);
+            return View(user);
         }
-        else
+
+        [HttpPost]
+        public async Task<IActionResult> Profile(UserViewModel model, IFormFile? ProfileImage, bool useOrderAppLayout)
         {
-            var existingUser = await _userService.GetUserViewModelByIdAsync(model.Id);
-            if (existingUser != null)
+            if (ModelState.IsValid)
             {
-                model.ProfileImage = existingUser.ProfileImage;
+
+                if (ProfileImage != null && ProfileImage.Length > 0)
+                {
+                    if (!IsImageFile(ProfileImage))
+                    {
+                        TempData["ErrorMessage"] = "Only image files are allowed.";
+                        ModelState.AddModelError("ProfileImage", "Only image files are allowed.");
+                        ViewBag.UseOrderAppLayout = useOrderAppLayout;
+                        await LoadDropdowns(model);
+                        return View(model);
+                    }
+
+                    var fileName = Path.GetFileName(ProfileImage.FileName);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await ProfileImage.CopyToAsync(stream);
+                    }
+
+                    model.ProfileImage = fileName;
+                }
+                else
+                {
+                    var existingUser = await _userService.GetUserViewModelByIdAsync(model.Id);
+                    if (existingUser != null)
+                    {
+                        model.ProfileImage = existingUser.ProfileImage;
+                    }
+                }
+                var existingUserByUsername = await _userService.GetUserByUsername(model.Username);
+                if (existingUserByUsername != null && existingUserByUsername.Id != model.Id)
+                {
+                    TempData["ErrorMessage"] = "Username already exists.";
+                    ModelState.AddModelError("", "Username already exists.");
+                    ViewBag.UseOrderAppLayout = useOrderAppLayout;
+                    await LoadDropdowns(model);
+                    return View(model);
+                }
+                var result = await _userService.UpdateProfileAsync(model);
+                if (result)
+                {
+                    // ViewBag.UseOrderAppLayout = useOrderAppLayout;
+                    TempData["SuccessMessage"] = "Profile updated successfully.";
+                    if (useOrderAppLayout)
+                    {
+                        return RedirectToAction("Index", "OrderAppTable");
+                    }
+                    else
+                    {
+                        return RedirectToAction("AdminDashboard", "Home");
+                    }
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Error updating profile.";
+                }
             }
-        }
-        var existingUserByUsername = await _userService.GetUserByUsername(model.Username);
-        if (existingUserByUsername != null && existingUserByUsername.Id != model.Id)
-        {
-            TempData["ErrorMessage"] = "Username already exists.";
-            ModelState.AddModelError("", "Username already exists.");
+            else
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                TempData["ErrorMessage"] = string.Join(", ", errors);
+            }
             ViewBag.UseOrderAppLayout = useOrderAppLayout;
             await LoadDropdowns(model);
             return View(model);
         }
-        var result = await _userService.UpdateProfileAsync(model);
-        if (result)
-        {
-            ViewBag.UseOrderAppLayout = useOrderAppLayout;
-            TempData["SuccessMessage"] = "Profile updated successfully.";
-            if (useOrderAppLayout)
-            {
-                return RedirectToAction("Index", "OrderAppTable");
-            }
-            else
-            {
-                return RedirectToAction("AdminDashboard", "Home");
-            }
-        }
-        else
-        {
-            TempData["ErrorMessage"] = "Error updating profile.";
-        }
-    }
-    else
-    {
-        var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-        TempData["ErrorMessage"] = string.Join(", ", errors);
-    }
-    ViewBag.UseOrderAppLayout = useOrderAppLayout;
-    await LoadDropdowns(model);
-    return View(model);
-}
         private bool IsImageFile(IFormFile file)
         {
             string[] permittedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".jfif" };
@@ -377,8 +384,19 @@ public async Task<IActionResult> Profile(UserViewModel model, IFormFile? Profile
         [Authorize]
         [Route("/user/changepassword")]
         [HttpGet]
-        public async Task<IActionResult> ChangePassword()
+        public async Task<IActionResult> ChangePassword(bool useOrderAppLayout = false)
         {
+            var user = await _userService.GetUserProfileAsync(User);
+            if (user == null)
+            {
+                return Unauthorized("User not found");
+            }
+
+            if (user.RoleId != 2 && user.RoleId != 3)
+            {
+                useOrderAppLayout = false;
+            }
+            ViewBag.UseOrderAppLayout = useOrderAppLayout;
             return View();
         }
 

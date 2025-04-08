@@ -37,9 +37,9 @@ namespace Pizzashop.Web.Controllers
                     {
                         return RedirectToAction("AdminDashboard", "Home");
                     }
-                    else
+                    else if (roleId == "3")
                     {
-                        return RedirectToAction("Dashboard", "Home");
+                        return RedirectToAction("KOT", "KOT");
                     }
                 }
             }
@@ -80,10 +80,11 @@ namespace Pizzashop.Web.Controllers
             {
                 return RedirectToAction("AdminDashboard", "Home");
             }
-            else
+            else if (user.RoleId == 3)
             {
-                return RedirectToAction("Dashboard", "Home");
+                return RedirectToAction("KOT", "KOT");
             }
+            return RedirectToAction("Login");
 
         }
         [Route("/forgotpassword")]

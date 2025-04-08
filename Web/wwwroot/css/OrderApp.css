@@ -42,13 +42,13 @@ html, body {
     c{
     font-size: 10px;
     }
-    .dropdown-toggle-icon {
+    .capsule-toggle {
         display: block;
     }
 }
 
 @media (min-width: 427px) {
-    .dropdown-toggle-icon {
+    .capsule-toggle {
         display: none;
     }
 }

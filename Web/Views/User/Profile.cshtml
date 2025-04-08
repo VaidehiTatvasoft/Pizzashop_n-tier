@@ -13,6 +13,7 @@
     <form asp-controller="User" asp-action="Profile" method="post" class="row needs-validation mt-1 mb-3 mx-2"
         enctype="multipart/form-data" id="profileForm">
         <input type="int" asp-for="Id" hidden>
+        <input type="bool" asp-for="useOrderAppLayout" hidden>
         <div class="row mx-2">
             <div class="col-2 col-md-1 d-flex justify-content-center p-0">
                 <img src="~/uploads/@(Model?.ProfileImage)" class="profile-img profile-photo rounded-circle"

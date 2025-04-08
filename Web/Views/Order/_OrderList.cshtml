@@ -68,7 +68,16 @@
                     <td>@order.OrderDate?.ToString("yyyy-MM-dd")</td>
                     <td>@order.CustomerName</td>
                     <td>@order.OrderStatus</td>
-                    <td>@order.PaymentMethod</td>
+                    <td>
+                    @if (order.OrderStatus == "Completed") 
+                    {
+                        @order.PaymentMethod
+                    }
+                    else
+                    {
+                        @order.OrderStatus
+                    }
+                </td>
                     <td>
                         <div class="star-rating">
                             <div class="star-rating-filled" style="width: @(order.AvgRating * 20)%;">

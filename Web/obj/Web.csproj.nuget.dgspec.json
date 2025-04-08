@@ -107,14 +107,14 @@
         }
       }
     },
-    "d:\\Project_pce54\\Pizzashop_n-tier\\Repository\\Repository.csproj": {
+    "D:\\Project_pce54\\Pizzashop_n-tier\\Repository\\Repository.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "d:\\Project_pce54\\Pizzashop_n-tier\\Repository\\Repository.csproj",
+        "projectUniqueName": "D:\\Project_pce54\\Pizzashop_n-tier\\Repository\\Repository.csproj",
         "projectName": "Repository",
-        "projectPath": "d:\\Project_pce54\\Pizzashop_n-tier\\Repository\\Repository.csproj",
+        "projectPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Repository\\Repository.csproj",
         "packagesPath": "C:\\Users\\pce54\\.nuget\\packages\\",
-        "outputPath": "d:\\Project_pce54\\Pizzashop_n-tier\\Repository\\obj\\",
+        "outputPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Repository\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\pce54\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -189,8 +189,8 @@
               "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj": {
                 "projectPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Entity\\Entity.csproj"
               },
-              "d:\\Project_pce54\\Pizzashop_n-tier\\Repository\\Repository.csproj": {
-                "projectPath": "d:\\Project_pce54\\Pizzashop_n-tier\\Repository\\Repository.csproj"
+              "D:\\Project_pce54\\Pizzashop_n-tier\\Repository\\Repository.csproj": {
+                "projectPath": "D:\\Project_pce54\\Pizzashop_n-tier\\Repository\\Repository.csproj"
               }
             }
           }

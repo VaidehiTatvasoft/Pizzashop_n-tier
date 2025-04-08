@@ -56,4 +56,6 @@ public class UserViewModel
   public List<State> States { get; set; } = new List<State>();
   public List<City> Cities { get; set; } = new List<City>();
   public List<Role> Roles { get; set; } = new List<Role>();
+  public bool useOrderAppLayout ;
+
 }

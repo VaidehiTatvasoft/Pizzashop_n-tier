@@ -19,12 +19,7 @@ public class HomeController : Controller
     {
         return View();
     }
-    [Authorize]
-    public IActionResult Dashboard()
-    {
-        return View();
-    }
-    [Authorize]
+    [Authorize(Roles = "1,2")]
     [Route("/home/admindashboard")]
     public IActionResult AdminDashboard()
     {
