@@ -526,25 +526,19 @@ a i {
 
 .rtable {
   width: 80%;
-  padding: 90px;
+  padding: 40px;
 }
 
 .rtable td {
   justify-content: center;
   background-color: white;
   color: gray !important;
-  padding-left: 30px;
-  padding-right: 30px;
 }
 
 .rtable th {
   justify-content: center;
   background-color: white;
   color: gray !important;
-  padding-top: 30px;
-  padding-left: 30px;
-  padding-right: 30px;
-
 }
 
 .category-link {
@@ -589,9 +583,6 @@ a i {
   display: inline;
 }
 
-.role {
-  margin: 38px;
-}
 
 .form-switch .form-check-input:checked {
   background-color: #026fad !important;

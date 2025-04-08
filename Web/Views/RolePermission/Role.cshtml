@@ -4,22 +4,20 @@
     ViewData["Title"] = "Role";
 }
 
-<div class="role"style="
-    height: 100%;
-">
-<table class="table  table-responsive rtable " >
-    <thead >
+<div class="role" >
+<table class="table table-responsive mx-4 my-4 rtable " >
+    <thead>
         <tr>
             <th>Role</th>
-            <th class="d-flex justify-content-end">Actions</th>
+            <th class="text-end">Actions</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var role in Model)
         {
             <tr>
-                <td><b>@role.Name</b></td>
-                <td class="d-flex justify-content-end">
+                <td ><b>@role.Name</b></td>
+                <td class="text-end">
                     <a asp-action="Permission" asp-route-id="@role.Id"><i class="bi bi-pen m-1"></i></a>
                 </td>
             </tr>
