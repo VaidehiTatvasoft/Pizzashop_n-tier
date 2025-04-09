@@ -158,16 +158,34 @@
 
 <script>
     var pageIndex = @Model.PageIndex;
-$('#OpenExistingModifierModal').click(function () {
-    console.log('Opening nested modal');
-    $('#addModifierGroupModal').modal('hide');
-    $('#selectExistingModifierModal').modal('show'); 
-});
+    var selectedAddModifiers = [];
+    var selectedEditModifiers = [];
+    var lastOpenedParentModal = null;
 
-$('#selectExistingModifierModal').on('hidden.bs.modal', function () {
-    console.log('Restoring parent modal');
-    $('#addModifierGroupModal').modal('show'); 
-});
+    // Open the nested modal for Add Modifier Group
+    $('#OpenExistingModifierModal').click(function () {
+        console.log('Opening nested modal');
+        lastOpenedParentModal = '#addModifierGroupModal';
+        $(lastOpenedParentModal).modal('hide');
+        $('#selectExistingModifierModal').modal('show');
+    });
+
+    // Open the nested modal for Edit Modifier Group
+    $('#OpenExistingModifierModalEdit').click(function () {
+        console.log('Opening nested modal');
+        lastOpenedParentModal = '#editModifierGroupModal';
+        $(lastOpenedParentModal).modal('hide');
+        $('#selectExistingModifierModal').modal('show');
+    });
+
+    // Restore the correct parent modal when the nested modal is closed
+    $('#selectExistingModifierModal').on('hidden.bs.modal', function () {
+        console.log('Restoring parent modal');
+        if (lastOpenedParentModal) {
+            $(lastOpenedParentModal).modal('show');
+            lastOpenedParentModal = null;
+        }
+    });
     function GetFilteredModifiers() {
         var SearchString = $("#searchModifier").val();
         var pageSize = $("#pageSizeModifiers").val();
@@ -242,6 +260,7 @@ $('#selectExistingModifierModal').on('hidden.bs.modal', function () {
         console.log('show');
     });
 
+    @* var pageIndex = @Model.PageIndex; *@
 
         function GetFilteredExistingModifiers() {
             var SearchString = $("#searchExistingModifier").val();
@@ -275,11 +294,13 @@ $('#selectExistingModifierModal').on('hidden.bs.modal', function () {
 
 $("#saveModifiersButton").off("click").on("click", function () {
     selectedModifiers = [];
+
     $(".modifier-checkbox:checked").each(function () {
         const modifierId = $(this).val();
         const modifierName = $(this).data("name");
         selectedModifiers.push({ id: modifierId, name: modifierName });
     });
+
     console.log(selectedModifiers);
     updateSelectedModifiersUI();
     $("#selectExistingModifierModal").modal("hide");
@@ -307,7 +328,6 @@ $("#saveModifiersButton").off("click").on("click", function () {
     $(document).on("click", ".remove-modifier", function () {
         const modifierId = $(this).data("id");
         selectedModifiers = selectedModifiers.filter(mod => mod.id != modifierId);
-
         updateSelectedModifiersUI();
     });
 $("#saveModifierGroupButton").click(function () {
@@ -349,7 +369,7 @@ $(document).on('click', '.edit-icon', function () {
                 $('#editModifierGroupModal #modifierName').val(response.name);
                 $('#editModifierGroupModal #modifierDesc').val(response.description);
                 selectedModifiers = response.selectedModifierIds.map(id => {
-                    return { id: id, name: '' }; 
+                    return { id: id, name: '' }; // Fetch modifier names separately if needed
                 });
                 updateSelectedModifiersUI();
                 $('#editModifierGroupModal').modal('show');
@@ -362,7 +382,6 @@ $(document).on('click', '.edit-icon', function () {
         }
     });
 });
-
 function updateSelectedModifiersUI() {
     const selectedModifiersDisplay = $("#editModifierGroupModal #selectedModifiersDisplay");
     selectedModifiersDisplay.empty();
