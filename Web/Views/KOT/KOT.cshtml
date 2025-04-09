@@ -8,30 +8,30 @@
 <div class="p-3">
     <h2>KOT</h2>
     <div class="bg-white p-2 rounded shadow">
-<ul class="nav d-none d-md-flex" style="gap: 2px;">
+        <ul class="nav d-none d-md-flex" style="gap: 2px;">
+            <li class="nav-item">
+                <a class="nav-link top-pills active" href="#" data-category-id="all" style="border:none">All</a>
+            </li>
+            @foreach (var category in Model.Categories)
+            {
                 <li class="nav-item">
-                    <a class="nav-link top-pills active" href="#" data-category-id="all" style="border:none">All</a>
+                    <a class="nav-link top-pills" href="#" data-category-id="@category.Id" style="border:none">@category.Name</a>
                 </li>
+            }
+        </ul>
+        <div class="dropdown d-md-none">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Categories
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                <li><a class="dropdown-item" href="#" data-category-id="all">All</a></li>
                 @foreach (var category in Model.Categories)
                 {
-                    <li class="nav-item">
-                        <a class="nav-link top-pills" href="#" data-category-id="@category.Id" style="border:none">@category.Name</a>
-                    </li>
+                    <li><a class="dropdown-item" href="#" data-category-id="@category.Id">@category.Name</a></li>
                 }
             </ul>
-            <div class="dropdown d-md-none">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    Categories
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
-                    <li><a class="dropdown-item" href="#" data-category-id="all">All</a></li>
-                    @foreach (var category in Model.Categories)
-                    {
-                        <li><a class="dropdown-item" href="#" data-category-id="@category.Id">@category.Name</a></li>
-                    }
-                </ul>
-            </div>
         </div>
+    </div>
     <div class="bg-white mt-2 p-2 rounded shadow">
         <div>
             <div class="d-flex flex-row justify-content-between align-items-center">
@@ -39,206 +39,136 @@
                     <h4 style="color:#0066a6;">All</h4>
                 </div>
                 <div class="d-flex">
-                    <button class="btn btn-primary m-1 status-filter active" data-status="2">InProgress</button>
-                    <button class="btn btn-primary m-1 status-filter" data-status="3">Ready</button>
-                    <a class="bg-light border-1 p-2 btn btn-outline-dark scroll" data-direction="left">
-                        <i class="fa-solid fa-less-than"></i>
+                    <button class="btn update-button m-1 status-filter " data-status="2"><b>In Progress</b></button>
+                    <button class="btn cancel-button m-1 status-filter" data-status="3"><b>Ready</b></button>
+                    <a class="bg-white border-1 m-1 btn btn-outline-dark scroll" data-direction="left" style="border-color:#0066A7;">
+                        <i class="fa fa-less-than"></i>
                     </a>
-                    <a class="bg-light border-1 mx-2 p-2 btn btn-outline-dark scroll" data-direction="right">
-                        <i class="fa-solid fa-greater-than"></i>
+                    <a class="bg-white border-1 m-1 btn btn-outline-dark scroll" data-direction="right" style="border-color:#0066A7;">
+                        <i class="fa fa-greater-than"></i>
                     </a>
                 </div>
             </div>
             <div class="orders-container d-flex flex-wrap">
-                @foreach (var order in Model.Orders.Where(o => o.OrderStatus == 2).Take(4))
-                {
-                    <div class="kot-card m-2">
-                        <section class="card-header">
-                            <div class="d-flex justify-content-between">
-                                <b style="color: #026fad;">#@order.OrderNo</b>
-                                <div><i class="fa-solid fa-stopwatch"></i> @order.OrderDuration </div>
-                            </div>
-                            <div class="d-flex text-dark">
-                                @order.SectionName <i class="bi bi-dot"></i> @order.TableName
-                            </div>
-                        </section>
-                        <section class="card-content">
-                            @foreach (var item in order.Items)
-                            {
-                                <div class="d-flex justify-content-between">
-                                    <div class="col-11">
-                                        <c style="font-size: 18px;">@item.Name</c>
-                                        <ul style="font-size: 15px;">
-                                            @foreach (var modifier in item.Modifiers)
-                                            {
-                                                <li>@modifier</li>
-                                            }
-                                            @if (!string.IsNullOrEmpty(item.Instruction))
-                                            {
-                                                <em style="color:rgb(0, 174, 255);font-size:15px;">@item.Instruction</em>
-                                            }
-                                        </ul>
-                                    </div>
-                                    <div class="col-1" style="color:black; font-size:15px;">@item.Quantity</div>
-                                </div>
-                            }
-                        </section>
-                        <section class="card-footer border-top">
-                            @if (!string.IsNullOrEmpty(order.OrderInstructions))
-                            {
-                                <em style="color:rgb(0, 174, 255)">Order Instructions</em>
-                                <c style="color:black">: @order.OrderInstructions</c>
-                            }
-                        </section>
-                    </div>
-                }
+                <!-- Orders will be loaded here -->
             </div>
         </div>
     </div>
 </div>
-@section Scripts{
+
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const tabs = document.querySelectorAll('.nav-link.top-pills, .dropdown-item');
-        const statusButtons = document.querySelectorAll('.status-filter');
-        const scrollButtons = document.querySelectorAll('.scroll');
-        const dropdownButton = document.getElementById('categoryDropdown');
-        let currentStatus = '2';
-        let currentCategoryId = 'all';
-        let currentOrders = [];
-        let currentIndex = 0;
-        let itemsPerPage = getItemsPerPage();
+document.addEventListener('DOMContentLoaded', () => {
+    const tabs = document.querySelectorAll('.nav-link.top-pills, .dropdown-item');
+    const statusButtons = document.querySelectorAll('.status-filter');
+    const scrollButtons = document.querySelectorAll('.scroll');
+    const dropdownButton = document.getElementById('categoryDropdown');
+    let currentStatus = '2'; 
+    let currentCategoryId = 'all';
+    let currentOrders = [];
+    let currentIndex = 0;
+    let itemsPerPage = getItemsPerPage();
 
-        function getItemsPerPage() {
-            const width = window.innerWidth;
-            if (width >= 2000) {
-                return 6;
-            } else if (width >= 1440) {
-                return 4;
-            } else if (width >= 1108) {
-                return 3;
-            } else if (width >= 768) {
-                return 2;
-            } else {
-                return 1;
-            }
+    function getItemsPerPage() {
+        const width = window.innerWidth;
+        if (width >= 1800) {
+            return 5;
+        } else if (width >= 1440) {
+            return 4;
+        } else if (width >= 1108) {
+            return 3;
+        } else if (width >= 768) {
+            return 2;
+        } else {
+            return 1;
         }
+    }
 
-        function fetchOrders() {
-            let url = '/KOT/GetOrders';
-            if (currentCategoryId !== 'all') {
-                url += `?categoryId=${currentCategoryId}`;
-            }
-            console.log(`Fetching orders from URL: ${url}`);
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Fetched data:', data);
-                    currentOrders = data.filter(order => order.orderStatus === parseInt(currentStatus));
-                    currentIndex = 0;
-                    displayOrders();
-                })
-                .catch(error => {
-                    console.error('Error fetching orders:', error);
-                });
+    function fetchOrders() {
+        let url = new URL('/KOT/GetOrdersPartial', window.location.origin);
+        url.searchParams.append('categoryId', currentCategoryId);
+        if (currentStatus !== null) {
+            url.searchParams.append('status', currentStatus);
         }
-
-        function displayOrders() {
-            const ordersContainer = document.querySelector('.orders-container');
-            ordersContainer.innerHTML = '';
-            itemsPerPage = getItemsPerPage();
-            const ordersToDisplay = currentOrders.slice(currentIndex, currentIndex + itemsPerPage);
-            console.log('Displaying orders:', ordersToDisplay);
-            if (ordersToDisplay.length === 0) {
-                ordersContainer.innerHTML = '<p>No orders found.</p>';
-            } else {
-                ordersToDisplay.forEach(order => {
-                    const orderCard = `
-                    <div class="kot-card m-2">
-                        <section class="card-header">
-                            <div class="d-flex justify-content-between">
-                                <b style="color: #026fad;">#${order.orderNo}</b>
-                                <div><i class="fa-solid fa-stopwatch"></i> ${order.orderDuration} </div>
-                            </div>
-                            <div class="d-flex text-dark">
-                                ${order.sectionName} <i class="bi bi-dot"></i> ${order.tableName}
-                            </div>
-                        </section>
-                        <section class="card-content">
-                            ${order.items.map(item => `
-                                <div class="d-flex justify-content-between">
-                                    <div class="col-11">
-                                        <c style="font-size: 18px;">${item.name}</c>
-                                        <ul style="font-size: 15px;">
-                                            ${item.modifiers.map(modifier => `<li>${modifier}</li>`).join('')}
-                                            ${item.instruction ? `<em style="color:rgb(0, 174, 255);font-size:15px;">${item.instruction}</em>` : ''}
-                                        </ul>
-                                    </div>
-                                    <div class="col-1" style="color:black; font-size:15px;">${item.quantity}</div>
-                                </div>
-                            `).join('')}
-                        </section>
-                        <section class="card-footer border-top">
-                            ${order.orderInstructions ? `<em style="color:rgb(0, 174, 255)">Order Instructions</em><c style="color:black">: ${order.orderInstructions}</c>` : ''}
-                        </section>
-                    </div>
-                `;
-                    ordersContainer.insertAdjacentHTML('beforeend', orderCard);
-                });
-            }
-        }
-
-        tabs.forEach(tab => {
-            tab.addEventListener('click', function (e) {
-                e.preventDefault();
-                tabs.forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-
-                const categoryName = this.textContent.trim();
-                document.getElementById('selected-category-id').querySelector('h4').textContent = categoryName;
-
-                if (dropdownButton) {
-                    dropdownButton.textContent = categoryName;
+        console.log(`Fetching orders from URL: ${url}`);
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
-
-                currentCategoryId = this.getAttribute('data-category-id');
-                fetchOrders();
-            });
-        });
-
-        statusButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                statusButtons.forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-
-                currentStatus = this.getAttribute('data-status');
+                return response.text();
+            })
+            .then(data => {
+                document.querySelector('.orders-container').innerHTML = data;
+                currentOrders = Array.from(document.querySelectorAll('.kot-card'));
                 displayOrders();
+            })
+            .catch(error => {
+                console.error('Error fetching orders:', error);
             });
-        });
+    }
 
-        scrollButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const direction = this.getAttribute('data-direction');
-                if (direction === 'left' && currentIndex > 0) {
-                    currentIndex--;
-                } else if (direction === 'right' && currentIndex + itemsPerPage < currentOrders.length) {
-                    currentIndex++;
-                }
-                displayOrders();
+    function displayOrders() {
+        const ordersContainer = document.querySelector('.orders-container');
+        ordersContainer.innerHTML = '';
+        itemsPerPage = getItemsPerPage();
+        const ordersToDisplay = currentOrders.slice(currentIndex, currentIndex + itemsPerPage);
+        console.log('Displaying orders:', ordersToDisplay);
+        if (ordersToDisplay.length === 0) {
+            ordersContainer.innerHTML = '<p>No orders found.</p>';
+        } else {
+            ordersToDisplay.forEach(order => {
+                ordersContainer.appendChild(order);
             });
-        });
+        }
+    }
 
-        window.addEventListener('resize', () => {
-            itemsPerPage = getItemsPerPage();
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function (e) {
+            e.preventDefault();
+            tabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+
+            const categoryName = this.textContent.trim();
+            document.getElementById('selected-category-id').querySelector('h4').textContent = categoryName;
+
+            if (dropdownButton) {
+                dropdownButton.textContent = categoryName;
+            }
+
+            currentCategoryId = this.getAttribute('data-category-id');
+            currentIndex = 0; 
+            fetchOrders();
+        });
+    });
+
+    statusButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            statusButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+
+            currentStatus = this.getAttribute('data-status');
+            currentIndex = 0; 
+            fetchOrders();
+        });
+    });
+
+    scrollButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const direction = this.getAttribute('data-direction');
+            if (direction === 'left' && currentIndex > 0) {
+                currentIndex -= 1; 
+            } else if (direction === 'right' && currentIndex + itemsPerPage < currentOrders.length) {
+                currentIndex += 1; 
+            }
             displayOrders();
         });
-
-        fetchOrders();
     });
+
+    window.addEventListener('resize', () => {
+        itemsPerPage = getItemsPerPage();
+        displayOrders();
+    });
+
+    fetchOrders();
+});
 </script>
-}

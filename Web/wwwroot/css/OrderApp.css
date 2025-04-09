@@ -113,3 +113,18 @@ html, body {
     height: 160px;
     font-size: 20px;
   }
+  .update-button {
+    background-color: #0066A7;
+    color: white;
+    border: 1px solid #0066A7;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .cancel-button {
+    background-color: white;
+    color: #0066A7;
+    border: 1px solid #0066A7;
+    justify-content: center;
+    align-items: center;
+  }

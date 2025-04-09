@@ -2,6 +2,7 @@ using Entity.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interface;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Web.Controllers
@@ -36,6 +37,17 @@ namespace Web.Controllers
         {
             var orders = await _orderappkotService.GetOrdersAsync(categoryId);
             return Json(orders);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetOrdersPartial(int? categoryId, int? status)
+        {
+            var orders = await _orderappkotService.GetOrdersAsync(categoryId);
+            if (status.HasValue)
+            {
+                orders = orders.Where(o => o.OrderStatus == status.Value).ToList();
+            }
+            return PartialView("_OrderListPartial", orders);
         }
     }
 }

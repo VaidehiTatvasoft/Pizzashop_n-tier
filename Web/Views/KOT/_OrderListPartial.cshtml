@@ -1,0 +1,46 @@
+@model IEnumerable<Entity.ViewModel.OrderAppOrderViewModel>
+
+<div class="orders-container d-flex flex-wrap">
+    @foreach (var order in Model)
+    {
+        <div class="kot-card m-2">
+            <section class="card-header">
+                <div class="d-flex justify-content-between">
+                    <b style="color: #026fad;">#@order.OrderNo</b>
+                    <div><i class="fa-solid fa-stopwatch"></i> @order.OrderDuration </div>
+                </div>
+                <div class="d-flex text-dark">
+                    @order.SectionName <i class="bi bi-dot"></i> @order.TableName
+                </div>
+            </section>
+            <section class="card-content">
+                @foreach (var item in order.Items)
+                {
+                    <div class="d-flex justify-content-between">
+                        <div class="col-11">
+                            <c style="font-size: 18px;">@item.Name</c>
+                            <ul style="font-size: 15px;">
+                                @foreach (var modifier in item.Modifiers)
+                                {
+                                    <li>@modifier</li>
+                                }
+                                @if (!string.IsNullOrEmpty(item.Instruction))
+                                {
+                                    <em style="color:rgb(0, 174, 255);font-size:15px;">@item.Instruction</em>
+                                }
+                            </ul>
+                        </div>
+                        <div class="col-1" style="color:black; font-size:15px;">@item.Quantity</div>
+                    </div>
+                }
+            </section>
+            <section class="card-footer border-top">
+                @if (!string.IsNullOrEmpty(order.OrderInstructions))
+                {
+                    <em style="color:rgb(0, 174, 255)">Order Instructions</em>
+                    <c style="color:black">: @order.OrderInstructions</c>
+                }
+            </section>
+        </div>
+    }
+</div>
