@@ -158,17 +158,15 @@
 
 <script>
     var pageIndex = @Model.PageIndex;
-// Open the nested modal
 $('#OpenExistingModifierModal').click(function () {
     console.log('Opening nested modal');
-    $('#addModifierGroupModal').modal('hide'); // Hide the parent modal
-    $('#selectExistingModifierModal').modal('show'); // Show the nested modal
+    $('#addModifierGroupModal').modal('hide');
+    $('#selectExistingModifierModal').modal('show'); 
 });
 
-// Restore the parent modal when the nested modal is closed
 $('#selectExistingModifierModal').on('hidden.bs.modal', function () {
     console.log('Restoring parent modal');
-    $('#addModifierGroupModal').modal('show'); // Show the parent modal
+    $('#addModifierGroupModal').modal('show'); 
 });
     function GetFilteredModifiers() {
         var SearchString = $("#searchModifier").val();
@@ -244,7 +242,6 @@ $('#selectExistingModifierModal').on('hidden.bs.modal', function () {
         console.log('show');
     });
 
-    @* var pageIndex = @Model.PageIndex; *@
 
         function GetFilteredExistingModifiers() {
             var SearchString = $("#searchExistingModifier").val();
@@ -277,46 +274,25 @@ $('#selectExistingModifierModal').on('hidden.bs.modal', function () {
     });
 
 $("#saveModifiersButton").off("click").on("click", function () {
-    // Clear the selectedModifiers array
     selectedModifiers = [];
-
-    // Get all selected checkboxes
     $(".modifier-checkbox:checked").each(function () {
         const modifierId = $(this).val();
         const modifierName = $(this).data("name");
-
-        // Add to selectedModifiers array
         selectedModifiers.push({ id: modifierId, name: modifierName });
     });
-
     console.log(selectedModifiers);
-
-    // Update the UI in the "Add Modifier Group" modal
     updateSelectedModifiersUI();
-
-    // Properly hide the "Select Existing Modifier" modal
     $("#selectExistingModifierModal").modal("hide");
-
-    // Ensure the event listener for `hidden.bs.modal` is added only once
     $("#selectExistingModifierModal").off("hidden.bs.modal").on("hidden.bs.modal", function () {
         $("#addModifierGroupModal").modal("show");
     });
 });
-
-    // Update the UI to display selected modifiers
     function updateSelectedModifiersUI() {
         console.log("updateSelected")
         const selectedModifiersDisplay = $("#selectedModifiersDisplay");
-        @* const selectedModifiersContainer = $("#selectedModifiersContainer"); *@
-
-            // Clear the existing UI
             selectedModifiersDisplay.empty();
-        @* selectedModifiersContainer.empty(); *@
-
-            // Append each selected modifier
             selectedModifiers.forEach(mod => {
                 console.log(mod)
-                // Display in the list with a cancel icon
                 selectedModifiersDisplay.append(`
          <span class="badge bg-light border text-muted small d-inline-flex align-items-center me-2 p-2">
             ${mod.name}
@@ -325,22 +301,13 @@ $("#saveModifiersButton").off("click").on("click", function () {
             </button>
         </span>
         `);
-
-                // Add hidden input for form submission
-                @* selectedModifiersContainer.append(`
-            <input type="hidden" name="SelectedModifierIds" value="${mod.id}">
-        `); *@
         });
     }
 
-    // Remove a selected modifier
     $(document).on("click", ".remove-modifier", function () {
         const modifierId = $(this).data("id");
-
-        // Remove from the selectedModifiers array
         selectedModifiers = selectedModifiers.filter(mod => mod.id != modifierId);
 
-        // Update the UI
         updateSelectedModifiersUI();
     });
 $("#saveModifierGroupButton").click(function () {
@@ -361,20 +328,17 @@ $("#saveModifierGroupButton").click(function () {
         data: JSON.stringify(data),
         success: function (response) {
             if (response.isSuccess) {
-                // Handle success, e.g., show a success message or reload the page
                 alert("Modifier group added successfully!");
             } else {
-                // Handle failure, e.g., show an error message
                 alert("Error: " + response.message);
             }
         },
         error: function (xhr, status, error) {
-            // Handle AJAX error
             alert("An error occurred: " + error);
         }
     });
 });
-@* $(document).on('click', '.edit-icon', function () {
+$(document).on('click', '.edit-icon', function () {
     var modifierGroupId = $(this).data('id');
     $.ajax({
         url: '@Url.Action("GetModifierGroup", "Menu")',
@@ -384,9 +348,8 @@ $("#saveModifierGroupButton").click(function () {
             if (response) {
                 $('#editModifierGroupModal #modifierName').val(response.name);
                 $('#editModifierGroupModal #modifierDesc').val(response.description);
-                // Clear the selected modifiers and populate with the ones from the response
                 selectedModifiers = response.selectedModifierIds.map(id => {
-                    return { id: id, name: '' }; // Fetch modifier names separately if needed
+                    return { id: id, name: '' }; 
                 });
                 updateSelectedModifiersUI();
                 $('#editModifierGroupModal').modal('show');
@@ -400,7 +363,6 @@ $("#saveModifierGroupButton").click(function () {
     });
 });
 
-// Function to update the UI with selected modifiers
 function updateSelectedModifiersUI() {
     const selectedModifiersDisplay = $("#editModifierGroupModal #selectedModifiersDisplay");
     selectedModifiersDisplay.empty();
@@ -415,7 +377,7 @@ function updateSelectedModifiersUI() {
             </span>
         `);
     });
-} *@
+}
     @* Load Checkboxes *@
         function initializeCheckboxes() {
             $('.modifier-checkbox').each(function () {
