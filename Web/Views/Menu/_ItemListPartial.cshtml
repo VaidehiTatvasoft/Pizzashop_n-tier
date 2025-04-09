@@ -41,17 +41,17 @@
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody class="table-group-divider " id="itemsList">
+            <tbody class="table-group-divider" id="itemsList">
                 @for (var i = 0; i < Model.itemList.Count; i++)
                 {
                     <tr>
                         <td style="padding:3px;">
                             <div class="form-check">
                                 <input class="form-check-input itemCheckBox" value="@Model.itemList[i].Id" type="checkbox"
-                                    value="" id="flexCheckDefault" style="border:1px solid rgb(85, 85, 85);" />
+                                    id="flexCheckDefault" style="border:1px solid rgb(85, 85, 85);" />
                             </div>
                         </td>
-                        <td >
+                        <td>
                             <span class="me-2">
                                 <img src="~/assets/@(Model.itemList[i].Image != null ? Model.itemList[i].Image : "dining-menu.png")"
                                     alt="dining-menu" class="dining-menu-icon user-profile-img rounded-circle" />
@@ -93,49 +93,49 @@
                 }
             </tbody>
         </table>
-        <div class="d-flex justify-content-end align-items-center mt-2" style="color: black !important;">
-            <p class="mb-0">Items Per page</p>
-            <select class="ms-3 form-select w-auto" aria-label="Default select example" id="pageSizedropdown">
-                <option value="5" selected="@(PageSize == 5 ? true : false)">5</option>
-                <option value="10" selected="@(PageSize == 10 ? true : false)">10</option>
-                <option value="15" selected="@(PageSize == 15 ? true : false)">15</option>
-            </select>
-            <span class="mb-0 ms-2 me-2 d-none d-md-block" id="showing">Showing @(Math.Min(((PageIndex - 1) * PageSize) + 1,
-                            TotalItems)) -
-            @(Math.Min(PageIndex * PageSize, TotalItems)) of @TotalItems</span>
-        @if (PageIndex > 1)
-            {
-                <a class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" name="PageIndex" id="Previous">
-                    <i class="fa fa-chevron-left"></i>
-                </a>
-            }
-            else
-            {
-                <button class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" name="PageIndex" hidden>
-                    <i class="fa fa-chevron-left"></i>
-                </button>
-            }
-
-            @if (PageIndex < TotalPage)
-            {
-                <a class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" name="PageIndex" id="Next">
-                    <i class="fa fa-chevron-right"></i>
-                </a>
-            }
-            else
-            {
-                <button class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" name="PageIndex" hidden>
-                    <i class="fa fa-chevron-right"></i>
-                </button>
-            }
-        </div>
     }
 </section>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-@* DeleteItemModel*@
-<div class="modal fade" id="deleteItemModal" tabindex="-1"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="d-flex justify-content-end align-items-center mt-2" style="color: black !important;">
+    <p class="mb-0">Items Per page</p>
+    <select class="ms-3 form-select w-auto" aria-label="Default select example" id="pageSizedropdown">
+        <option value="5" selected="@(PageSize == 5 ? true : false)">5</option>
+        <option value="10" selected="@(PageSize == 10 ? true : false)">10</option>
+        <option value="15" selected="@(PageSize == 15 ? true : false)">15</option>
+    </select>
+    <span class="mb-0 ms-2 me-2 d-none d-md-block" id="showing">Showing @(Math.Min(((PageIndex - 1) * PageSize) + 1,
+                TotalItems)) - @(Math.Min(PageIndex * PageSize, TotalItems)) of @TotalItems</span>
+    @if (PageIndex > 1)
+    {
+        <a class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" name="PageIndex" id="Previous">
+            <i class="fa fa-chevron-left"></i>
+        </a>
+    }
+    else
+    {
+        <button class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" name="PageIndex" hidden>
+            <i class="fa fa-chevron-left"></i>
+        </button>
+    }
+
+    @if (PageIndex < TotalPage)
+    {
+        <a class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" name="PageIndex" id="Next">
+            <i class="fa fa-chevron-right"></i>
+        </a>
+    }
+    else
+    {
+        <button class="bg-light border-1 bg-light mx-2 px-2 btn btn-outline-dark" name="PageIndex" hidden>
+            <i class="fa fa-chevron-right"></i>
+        </button>
+    }
+</div>
+
+<div id="AddItemPartial"></div>
+<div id="EditItemPartial"></div>
+
+@* DeleteItemModel *@
+<div class="modal fade" id="deleteItemModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header border-0">
@@ -160,9 +160,8 @@
     </div>
 </div>
 
-@* Delete Multiple Item Model*@
-<div class="modal fade" id="deleteMultipleItemModal" tabindex="-1"  role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
+@* Delete Multiple Item Model *@
+<div class="modal fade" id="deleteMultipleItemModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header border-0">
@@ -178,117 +177,122 @@
                 </p>
             </div>
             <div class="modal-footer d-flex justify-content-center border-0">
-                <button type="button" id="multiDeleteItemBtn" class="btn update-button" style=" width: 70px;">Yes</button>
-                <button type="button" class="btn cancel-button" data-bs-dismiss="modal" style=" width: 70px;"> 
+                <button type="button" id="confirmDeleteItemsBtn" class="btn update-button" style=" width: 70px;">Yes</button>
+                <button type="button" class="btn cancel-button" data-bs-dismiss="modal" style=" width: 70px;">
                     No
                 </button>
             </div>
         </div>
     </div>
 </div>
-<div id="AddItemPartial">
-</div>
-<div id="EditItemPartial">
-</div>
-@* <script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> *@
+
 <script>
     var debounce;
     var ajaxRequest;
-    @* Delete Item Script *@
-      var deleteItemIds = [];
+    var deleteItemId;
+    var deleteItemIds = [];
+
     $('#itemsList').on("click", ".itemCheckBox", function () {
         var itemId = $(this).val();
         if (this.checked == true) {
             deleteItemIds.push(parseInt(itemId));
-            @* console.log(deleteItemIds) *@
         }
         else {
             deleteItemIds = deleteItemIds.filter(id => id != parseInt(itemId));
         }
-    })
-    var deleteItemId;
+    });
+
     $(".deleteItem").click(function () {
         deleteItemId = $(this).val();
         $('#deleteItemModal').modal('show');
-    })
-    $('#deleteItemBtn').click(function () {
-        $.ajax({
-            url: '/Menu/DeleteMenuItem',
-            type: 'post',
-            data: { id: deleteItemId },
-            success: function (response) {
-                if (response == null)
-                    window.location.href = "";
-                if (response.isSuccess) {
-                    GetFilteredItems();
-                    toastr.success(response.message);
+    });
 
-                } else {
-                    toastr.error(response.message);
-                }
-                $("#deleteItemModal").modal('hide');
-            },
+    $(document).ready(function () {
+        var pageIndex = @Model.PageIndex;
+
+        function GetFilteredItems() {
+            var SearchString = $("#searchString").val();
+            var pageSize = $("#pageSizedropdown").val();
+            if (ajaxRequest && ajaxRequest.readyState !== 4) {
+                ajaxRequest.abort();
+            }
+            ajaxRequest = $.ajax({
+                url: "/Menu/GetItemsByCategory",
+                type: "GET",
+                data: {
+                    categoryId: categoryId,
+                    pageIndex: pageIndex,
+                    pageSize: pageSize,
+                    searchString: SearchString
+                },
+                success: function (data) {
+                    $("#itemList").html(data);
+                },
                 error: handleAjaxError
-        })
-    })
-
-    @* Pagination Script *@
-    var pageIndex = @Model.PageIndex;
-
-    function GetFilteredItems() {
-        var SearchString = $("#searchString").val();
-        var pageSize = $("#pageSizedropdown").val();
-        if (ajaxRequest && ajaxRequest.readyState !== 4) {
-            ajaxRequest.abort();
+            })
         }
-        ajaxRequest = $.ajax({
-            url: "/Menu/GetItemsByCategory",
-            type: "GET",
-            data: {
-                categoryId: categoryId,
-                pageIndex: pageIndex,
-                pageSize: pageSize,
-                searchString: SearchString
-            },
-            success: function (data) {
-                $("#itemList").html(data);
-            },
-                error: handleAjaxError
-        })
-    }
 
-    $('#pageSizedropdown').change(function () {
-        pageIndex = 1;
-        console.log(pageIndex)
-        var pageSize = $(this).val();
-        GetFilteredItems();
-    })
-
-    $('#searchString').keyup(function () {
-        clearTimeout(debounce);
-        pageIndex = 1
-        pageSize = @Model.PageSize;
-        debounce = setTimeout(() => {
+        $('#pageSizedropdown').change(function () {
+            pageIndex = 1;
+            var pageSize = $(this).val();
             GetFilteredItems();
-        }, 600)
-    })
+        });
 
-    $("#Previous").click(function () {
-        pageIndex -= 1;
-        GetFilteredItems()
-    })
+        $('#searchString').keyup(function () {
+            clearTimeout(debounce);
+            pageIndex = 1;
+            pageSize = @Model.PageSize;
+            debounce = setTimeout(() => {
+                GetFilteredItems();
+            }, 600)
+        });
 
-    $('#Next').click(function () {
-        $("#PreviousBtn").attr('disabled', false)
-        pageIndex += 1;
-        GetFilteredItems()
-    })
+        $("#Previous").click(function () {
+            pageIndex -= 1;
+            GetFilteredItems()
+        });
+
+        $('#Next').click(function () {
+            $("#PreviousBtn").attr('disabled', false)
+            pageIndex += 1;
+            GetFilteredItems()
+        });
+
+        $('#deleteItemBtn').click(function () {
+            $.ajax({
+                url: '/Menu/DeleteMenuItem',
+                type: 'post',
+                data: { id: deleteItemId },
+                success: function (response) {
+                    if (response == null)
+                        window.location.href = "";
+                    if (response.isSuccess) {
+                        GetFilteredItems();
+                        toastr.success(response.message);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                    $("#deleteItemModal").modal('hide');
+                },
+                error: handleAjaxError
+            })
+        });
+
+        function handleAjaxError(xhr, status, error) {
+            if (xhr.status === 401) {
+                toastr.error("You are not authenticated. Please log in.");
+            } else if (xhr.status === 403) {
+                toastr.error(xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : "You are not authorized to perform this action.");
+                $('.modal-backdrop').remove();
+            } else {
+                toastr.error("An error occurred while processing your request. Please try again.");
+                console.error("Error details:", status, error, xhr.responseText);
+            }
+        }
+    });
 
     $('.editItemBtn').click(function () {
         var itemId = $(this).data("itemid");
-        console.log(itemId);
         $.ajax({
             url: "/Menu/EditMenuItem",
             type: "GET",
@@ -299,7 +303,7 @@
                 $("#EditItemPartial").html(data);
                 $("#EditItemModel").modal('show');
             },
-                error: handleAjaxError
+            error: handleAjaxError
         })
     })
     @* EditItem *@
@@ -327,4 +331,25 @@
                     });
             });
         });
+        $('#multiDeleteItemBtn').click(function () {
+        $.ajax({
+            url: "/Menu/MultiDeleteMenuItem",
+            type: 'POST',
+            data: {
+                itemIds: deleteItemIds
+            },
+            success: function (response) {
+                if (response == null)
+                    window.location.href = "";
+                if (response.isSuccess) {
+                    GetFilteredItems();
+                    toastr.success(response.message);
+                } else {
+                    toastr.error(response.message);
+                }
+                $("#deleteMultipleItemModal").modal('hide');
+            },
+                error: handleAjaxError
+        });
+    });
 </script>

@@ -32,7 +32,7 @@ namespace Entity.ViewModel
                         return "N/A";
                     }
 
-                    return $"{duration.Days}days {duration.Hours}hours {duration.Minutes}min {duration.Seconds}sec";
+                    return $"{duration.Days}d {duration.Hours}hr {duration.Minutes}m {duration.Seconds}s";
                 }
                 return "N/A";
             }

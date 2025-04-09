@@ -156,9 +156,7 @@
                     </div>
                 </div>
             </div>
-@* <script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> *@
+
             <script>
                 var debounce;
                 var ajaxRequest;
@@ -204,7 +202,7 @@
                                 success: function (data) {
                                     $("#modifierList").html(data);
                                 },
-                error: handleAjaxError
+                                error: handleAjaxError
                             })
                         }
 
@@ -254,7 +252,7 @@
                                         toastr.error(response.message);
                                     }
                                 },
-                error: handleAjaxError
+                                error: handleAjaxError
                             });
                         })
 

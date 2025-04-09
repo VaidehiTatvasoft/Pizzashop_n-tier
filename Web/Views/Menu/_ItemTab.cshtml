@@ -60,7 +60,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
 $(document).ready(function () {
-    // Function to Get Filtered Categories
     function GetFilteredCategory() {
         $.ajax({
             url: "/Menu/GetAllCategory",
@@ -193,27 +192,7 @@ $(document).ready(function () {
         }
     });
 
-    $('#multiDeleteItemBtn').click(function () {
-        $.ajax({
-            url: "/Menu/MultiDeleteMenuItem",
-            type: 'POST',
-            data: {
-                itemIds: deleteItemIds
-            },
-            success: function (response) {
-                if (response == null)
-                    window.location.href = "";
-                if (response.isSuccess) {
-                    GetFilteredItems();
-                    toastr.success(response.message);
-                } else {
-                    toastr.error(response.message);
-                }
-                $("#deleteMultipleItemModal").modal('hide');
-            },
-                error: handleAjaxError
-        });
-    });
+    
 
      $('.modal').on('hidden.bs.modal', function () {
         $(this).removeData('bs.modal');
