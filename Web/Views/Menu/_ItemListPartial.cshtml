@@ -135,7 +135,8 @@
 <div id="EditItemPartial"></div>
 
 @* DeleteItemModel *@
-<div class="modal fade" id="deleteItemModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteItemModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header border-0">
@@ -161,7 +162,8 @@
 </div>
 
 @* Delete Multiple Item Model *@
-<div class="modal fade" id="deleteMultipleItemModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteMultipleItemModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header border-0">
@@ -177,7 +179,8 @@
                 </p>
             </div>
             <div class="modal-footer d-flex justify-content-center border-0">
-                <button type="button" id="confirmDeleteItemsBtn" class="btn update-button" style=" width: 70px;">Yes</button>
+                <button type="button" id="confirmDeleteItemsBtn" class="btn update-button"
+                    style=" width: 70px;">Yes</button>
                 <button type="button" class="btn cancel-button" data-bs-dismiss="modal" style=" width: 70px;">
                     No
                 </button>
@@ -207,89 +210,105 @@
         $('#deleteItemModal').modal('show');
     });
 
-    $(document).ready(function () {
-        var pageIndex = @Model.PageIndex;
-
-        function GetFilteredItems() {
-            var SearchString = $("#searchString").val();
-            var pageSize = $("#pageSizedropdown").val();
-            if (ajaxRequest && ajaxRequest.readyState !== 4) {
-                ajaxRequest.abort();
-            }
-            ajaxRequest = $.ajax({
-                url: "/Menu/GetItemsByCategory",
-                type: "GET",
-                data: {
-                    categoryId: categoryId,
-                    pageIndex: pageIndex,
-                    pageSize: pageSize,
-                    searchString: SearchString
-                },
-                success: function (data) {
-                    $("#itemList").html(data);
-                },
-                error: handleAjaxError
-            })
-        }
-
-        $('#pageSizedropdown').change(function () {
-            pageIndex = 1;
-            var pageSize = $(this).val();
-            GetFilteredItems();
+    @* $(document).on("click", ".editItemBtn", function () {
+        var itemId = $(this).data("itemid");
+        $.ajax({
+            url: "/Menu/EditMenuItem",
+            type: "GET",
+            data: { itemId: itemId },
+            success: function (data) {
+                if (data == null)
+                    window.location.href = "";
+                $("#EditItemPartial").html(data);
+                $("#EditItemModel").modal('show');
+            },
+            error: handleAjaxError
         });
+    }); *@
 
-        $('#searchString').keyup(function () {
-            clearTimeout(debounce);
-            pageIndex = 1;
-            pageSize = @Model.PageSize;
-            debounce = setTimeout(() => {
+        $(document).ready(function () {
+            var pageIndex = @Model.PageIndex;
+
+            function GetFilteredItems() {
+                var SearchString = $("#searchString").val();
+                var pageSize = $("#pageSizedropdown").val();
+                if (ajaxRequest && ajaxRequest.readyState !== 4) {
+                    ajaxRequest.abort();
+                }
+                ajaxRequest = $.ajax({
+                    url: "/Menu/GetItemsByCategory",
+                    type: "GET",
+                    data: {
+                        categoryId: categoryId,
+                        pageIndex: pageIndex,
+                        pageSize: pageSize,
+                        searchString: SearchString
+                    },
+                    success: function (data) {
+                        $("#itemList").html(data);
+                    },
+                    error: handleAjaxError
+                });
+            }
+
+            $('#pageSizedropdown').change(function () {
+                pageIndex = 1;
+                var pageSize = $(this).val();
                 GetFilteredItems();
-            }, 600)
-        });
+            });
 
-        $("#Previous").click(function () {
-            pageIndex -= 1;
-            GetFilteredItems()
-        });
+            $('#searchString').keyup(function () {
+                clearTimeout(debounce);
+                pageIndex = 1;
+                pageSize = @Model.PageSize;
+                debounce = setTimeout(() => {
+                    GetFilteredItems();
+                }, 600);
+            });
 
-        $('#Next').click(function () {
-            $("#PreviousBtn").attr('disabled', false)
-            pageIndex += 1;
-            GetFilteredItems()
-        });
+            $("#Previous").click(function () {
+                pageIndex -= 1;
+                GetFilteredItems();
+            });
 
-        $('#deleteItemBtn').click(function () {
-            $.ajax({
-                url: '/Menu/DeleteMenuItem',
-                type: 'post',
-                data: { id: deleteItemId },
-                success: function (response) {
-                    if (response == null)
-                        window.location.href = "";
-                    if (response.isSuccess) {
-                        GetFilteredItems();
-                        toastr.success(response.message);
-                    } else {
-                        toastr.error(response.message);
-                    }
-                    $("#deleteItemModal").modal('hide');
-                },
-                error: handleAjaxError
-            })
-        });
+            $('#Next').click(function () {
+                $("#PreviousBtn").attr('disabled', false);
+                pageIndex += 1;
+                GetFilteredItems();
+            });
 
-        function handleAjaxError(xhr, status, error) {
-            if (xhr.status === 401) {
-                toastr.error("You are not authenticated. Please log in.");
-            } else if (xhr.status === 403) {
-                toastr.error(xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : "You are not authorized to perform this action.");
-                $('.modal-backdrop').remove();
-            } else {
-                toastr.error("An error occurred while processing your request. Please try again.");
-                console.error("Error details:", status, error, xhr.responseText);
-            }
+            $('#deleteItemBtn').click(function () {
+                $.ajax({
+                    url: '/Menu/DeleteMenuItem',
+                    type: 'post',
+                    data: { id: deleteItemId },
+                    success: function (response) {
+                        if (response == null)
+                            window.location.href = "";
+                        if (response.isSuccess) {
+                            GetFilteredItems();
+                            toastr.success(response.message);
+                        } else {
+                            toastr.error(response.message);
+                        }
+                        $("#deleteItemModal").modal('hide');
+                    },
+                    error: handleAjaxError
+                });
+            });
+        });
+    @* function handleAjaxError(xhr, status, error) {
+        if (xhr.status === 401) {
+            toastr.error("You are not authenticated. Please log in.");
+        } else if (xhr.status === 403) {
+            toastr.error(xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : "You are not authorized to perform this action.");
+            $('.modal-backdrop').remove();
+        } else {
+            toastr.error("An error occurred while processing your request. Please try again.");
+            console.error("Error details:", status, error, xhr.responseText);
         }
-    });
+    }
+    }); *@
 
     $('.editItemBtn').click(function () {
         var itemId = $(this).data("itemid");
@@ -304,14 +323,14 @@
                 $("#EditItemModel").modal('show');
             },
             error: handleAjaxError
-        })
-    })
-    @* EditItem *@
-        $(document).ready(function () {
+        });
+    });
+    @* EditItem  *@
+         $(document).ready(function () {
             $('#editItemForm').on('submit', function (e) {
                 e.preventDefault();
                 var formData = new FormData(this);
-                @* console.log("EditITemFormData", formData) *@
+                 @* console.log("EditITemFormData", formData) *@
                     $.ajax({
                         type: "POST",
                         url: $(this).attr('action'),
@@ -326,12 +345,12 @@
                                 toastr.error(response.message);
                             }
                         },
-                            error: handleAjaxError
+                        error: handleAjaxError
 
                     });
             });
         });
-        $('#multiDeleteItemBtn').click(function () {
+    $('#multiDeleteItemBtn').click(function () {
         $.ajax({
             url: "/Menu/MultiDeleteMenuItem",
             type: 'POST',
@@ -349,7 +368,7 @@
                 }
                 $("#deleteMultipleItemModal").modal('hide');
             },
-                error: handleAjaxError
+            error: handleAjaxError
         });
     });
 </script>

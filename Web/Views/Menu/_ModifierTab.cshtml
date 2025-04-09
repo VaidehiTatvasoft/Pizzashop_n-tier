@@ -94,46 +94,40 @@
     </div>
 </div>
 <!-- Edit Modifier group -->
-<div class="modal fade" id="editModifierGroupModal" tabindex="-1"  role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header border-0" style="color:grey;">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">
-                    Edit Modifier Group
-                </h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center p-1" style="color:grey;">
-                <form action="" class="p-3">
-                    <div class="form-floating mb-3 p-0">
-                        <input type="text" class="form-control" id="modifierName" placeholder="Category" />
-                        <label for="modifierName">Name</label>
-                    </div>
-
-                    <div class="form-floating p-0">
-                        <textarea class="form-control" placeholder="Description" id="modifierDesc"></textarea>
-                        <label for="modifierDesc">Description</label>
-                    </div>
-                </form>
-            </div>
-            <div>
-                <button class="btn btn-light border-0 text-primary bg-light" type="button">
-                    <i class="fa-solid fa-plus me-2"></i>Add Existing
-                    Modifier
-                </button>
-            </div>
-            <div class="modal-footer d-flex justify-content-end border-0">
-                <button type="button" class="btn update-button" style=" width: 80px;">
-                    Save
-                </button>
-                <button type="button" class="btn cancel-button" data-bs-dismiss="modal" style=" width: 80px;">
-                    Cancel
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+   <div class="modal fade" id="editModifierGroupModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+       <div class="modal-dialog modal-dialog-centered" role="document">
+           <div class="modal-content">
+               <div class="modal-header border-0" style="color:grey;">
+                   <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Modifier Group</h1>
+                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body text-center p-1" style="color:grey;">
+                   <form action="" class="p-3">
+                       <div class="form-floating mb-3 p-0">
+                           <input type="text" class="form-control" id="modifierName" placeholder="Category" />
+                           <label for="modifierName">Name</label>
+                       </div>
+                       <div class="form-floating p-0">
+                           <textarea class="form-control" placeholder="Description" id="modifierDesc"></textarea>
+                           <label for="modifierDesc">Description</label>
+                       </div>
+                   </form>
+               </div>
+               <div>
+                   <button class="btn btn-light border-0 text-primary bg-light" id="OpenExistingModifierModalEdit" type="button">
+                       <i class="fa-solid fa-plus me-2"></i>Add Existing Modifier
+                   </button>
+               </div>
+               <div id="selectedModifiersDisplay" class="mt-3">
+                   <!-- Selected modifiers will be displayed here -->
+               </div>
+               <div class="modal-footer d-flex justify-content-end border-0">
+                   <button id="saveEditModifierGroupButton" type="button" class="btn update-button" style="width: 80px;">Save</button>
+                   <button type="button" class="btn cancel-button" data-bs-dismiss="modal" style="width: 80px;">Cancel</button>
+               </div>
+           </div>
+       </div>
+   </div>
 <!-- Add ExistingModifiers Modal-->
 <div class="modal fade modal-md" id="selectExistingModifierModal" tabindex="-1" role="dialog"
     aria-labelledby="selectExistingModifierLabel" aria-hidden="true">
@@ -349,7 +343,79 @@ $("#saveModifiersButton").off("click").on("click", function () {
         // Update the UI
         updateSelectedModifiersUI();
     });
+$("#saveModifierGroupButton").click(function () {
+    var name = $("#modifierName").val();
+    var description = $("#modifierDesc").val();
+    var selectedModifierIds = selectedModifiers.map(mod => mod.id);
 
+    var data = {
+        Name: name,
+        Description: description,
+        SelectedModifierIds: selectedModifierIds
+    };
+
+    $.ajax({
+        url: '@Url.Action("AddModifierGroup", "Menu")',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function (response) {
+            if (response.isSuccess) {
+                // Handle success, e.g., show a success message or reload the page
+                alert("Modifier group added successfully!");
+            } else {
+                // Handle failure, e.g., show an error message
+                alert("Error: " + response.message);
+            }
+        },
+        error: function (xhr, status, error) {
+            // Handle AJAX error
+            alert("An error occurred: " + error);
+        }
+    });
+});
+@* $(document).on('click', '.edit-icon', function () {
+    var modifierGroupId = $(this).data('id');
+    $.ajax({
+        url: '@Url.Action("GetModifierGroup", "Menu")',
+        type: 'GET',
+        data: { id: modifierGroupId },
+        success: function (response) {
+            if (response) {
+                $('#editModifierGroupModal #modifierName').val(response.name);
+                $('#editModifierGroupModal #modifierDesc').val(response.description);
+                // Clear the selected modifiers and populate with the ones from the response
+                selectedModifiers = response.selectedModifierIds.map(id => {
+                    return { id: id, name: '' }; // Fetch modifier names separately if needed
+                });
+                updateSelectedModifiersUI();
+                $('#editModifierGroupModal').modal('show');
+            } else {
+                alert("Modifier group not found!");
+            }
+        },
+        error: function (xhr, status, error) {
+            alert("An error occurred: " + error);
+        }
+    });
+});
+
+// Function to update the UI with selected modifiers
+function updateSelectedModifiersUI() {
+    const selectedModifiersDisplay = $("#editModifierGroupModal #selectedModifiersDisplay");
+    selectedModifiersDisplay.empty();
+
+    selectedModifiers.forEach(mod => {
+        selectedModifiersDisplay.append(`
+            <span class="badge bg-light border text-muted small d-inline-flex align-items-center me-2 p-2">
+                ${mod.name}
+                <button type="button" class="btn btn-sm p-0 ms-2 text-secondary remove-modifier" data-id="${mod.id}" style="border: none; background: none;">
+                    <i class="fa fa-close"></i>
+                </button>
+            </span>
+        `);
+    });
+} *@
     @* Load Checkboxes *@
         function initializeCheckboxes() {
             $('.modifier-checkbox').each(function () {

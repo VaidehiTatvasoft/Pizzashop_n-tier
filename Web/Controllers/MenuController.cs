@@ -11,7 +11,7 @@ using Web.Attributes;
 
 namespace Web.Controllers;
 public class MenuController : Controller
-{    
+{
 
     private readonly IMenuService _menuService;
     private readonly IMenuModifierService _menuModifierService;
@@ -456,7 +456,7 @@ public class MenuController : Controller
             return Json(new { isSuccess = false, message = "Error while deleting modifier" });
         }
     }
-    [CustomAuthorize( RolePermissionEnum.Permission.Menu_CanDelete)]
+    [CustomAuthorize(RolePermissionEnum.Permission.Menu_CanDelete)]
     [HttpPost]
     public IActionResult DeleteMultipleModifier(int[] modifierIds)
     {
@@ -481,6 +481,12 @@ public class MenuController : Controller
     [HttpPost]
     public async Task<IActionResult> AddModifierGroup([FromBody] MenuModifierGroupViewModel model)
     {
+        var userId = GetUserIdFromClaims();
+        if (userId == null)
+        {
+            return Json(new { isSuccess = false, message = "User ID claim is missing or invalid." });
+        }
+
         if (string.IsNullOrEmpty(model.Name))
         {
             return Json(new { isSuccess = false, message = "Modifier group name is required." });
@@ -488,7 +494,7 @@ public class MenuController : Controller
 
         try
         {
-            var modifierGroupId = await _menuModifierService.AddModifierGroupAsync(model);
+            var modifierGroupId = await _menuModifierService.AddModifierGroupAsync(model, userId.Value);
 
             if (model.SelectedModifierIds != null && model.SelectedModifierIds.Any())
             {
@@ -501,6 +507,47 @@ public class MenuController : Controller
         {
             Console.WriteLine($"Error adding modifier group: {ex.Message}");
             return Json(new { isSuccess = false, message = "An error occurred while adding the modifier group." });
+        }
+    }
+    [HttpGet]
+    public async Task<IActionResult> GetModifierGroup(int id)
+    {
+        var modifierGroup = await _menuModifierService.GetModifierGroupByIdAsync(id);
+        if (modifierGroup == null)
+        {
+            return NotFound();
+        }
+        return Json(modifierGroup);
+    }
+    [HttpPost]
+    public async Task<IActionResult> EditModifierGroup([FromBody] MenuModifierGroupViewModel model)
+    {
+        var userId = GetUserIdFromClaims();
+        if (userId == null)
+        {
+            return Json(new { isSuccess = false, message = "User ID claim is missing or invalid." });
+        }
+
+        if (string.IsNullOrEmpty(model.Name))
+        {
+            return Json(new { isSuccess = false, message = "Modifier group name is required." });
+        }
+
+        try
+        {
+            await _menuModifierService.EditModifierGroupAsync(model, userId.Value);
+
+            if (model.SelectedModifierIds != null && model.SelectedModifierIds.Any())
+            {
+                await _menuModifierService.UpdateModifiersInGroupAsync(model.Id, model.SelectedModifierIds);
+            }
+
+            return Json(new { isSuccess = true, message = "Modifier group updated successfully." });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error updating modifier group: {ex.Message}");
+            return Json(new { isSuccess = false, message = "An error occurred while updating the modifier group." });
         }
     }
 }

@@ -1,5 +1,6 @@
 using Entity.Data;
 using Entity.ViewModel;
+using Microsoft.EntityFrameworkCore;
 using Repository.Interface;
 
 namespace Repository.Implementation;
@@ -152,30 +153,46 @@ public class MenuModifierRepository : IMenuModifierRepository
 
         return filteredModifiers;
     }
-        public async Task AddModifiersToGroupAsync(int modifierGroupId, List<int> modifierIds)
-{
-    // Fetch existing modifiers for the group
-    var existingModifiers = _context.Modifiers
-        .Where(m => m.ModifierGroupId == modifierGroupId && m.IsDeleted == false)
-        .Select(m => m.Id)
-        .ToList();
-
-    // Add new modifiers
-    var newModifiers = modifierIds.Except(existingModifiers).ToList();
-    if (newModifiers.Any())
+public async Task AddModifiersToGroupAsync(int modifierGroupId, List<int> modifierIds)
     {
-        foreach (var modifierId in newModifiers)
+        var modifierGroup = await _context.ModifierGroups.FindAsync(modifierGroupId);
+        if (modifierGroup == null)
         {
-            var modifier = _context.Modifiers.FirstOrDefault(m => m.Id == modifierId && m.IsDeleted == false);
+            throw new InvalidOperationException("Modifier group not found.");
+        }
+
+        foreach (var modifierId in modifierIds)
+        {
+            var modifier = await _context.Modifiers.FindAsync(modifierId);
             if (modifier != null)
             {
-                modifier.ModifierGroupId = modifierGroupId;
-                modifier.ModifiedAt = DateTime.UtcNow;
+                modifierGroup.Modifiers.Add(modifier);
             }
         }
+
+        await _context.SaveChangesAsync();
     }
+public async Task UpdateModifiersInGroupAsync(int modifierGroupId, List<int> modifierIds)
+   {
+       var modifierGroup = await _context.ModifierGroups.Include(mg => mg.Modifiers).FirstOrDefaultAsync(mg => mg.Id == modifierGroupId);
+       if (modifierGroup == null)
+       {
+           throw new InvalidOperationException("Modifier group not found.");
+       }
 
-    await _context.SaveChangesAsync();
-}
+       // Clear existing modifiers and add new ones
+       modifierGroup.Modifiers.Clear();
+       foreach (var modifierId in modifierIds)
+       {
+           var modifier = await _context.Modifiers.FindAsync(modifierId);
+           if (modifier != null)
+           {
+               modifierGroup.Modifiers.Add(modifier);
+           }
+       }
 
+       _context.ModifierGroups.Update(modifierGroup);
+       await _context.SaveChangesAsync();
+   }
+   
 }

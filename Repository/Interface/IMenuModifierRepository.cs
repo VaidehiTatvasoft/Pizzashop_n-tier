@@ -16,6 +16,7 @@ public interface IMenuModifierRepository
 
     public List<Modifier> GetModifiersByGroupId(int id);
     public Task<List<MenuModifierViewModel>> GetAllModifiers(string? searchString);
-    // Associates modifiers with a modifier group
 Task AddModifiersToGroupAsync(int modifierGroupId, List<int> modifierIds);
+Task UpdateModifiersInGroupAsync(int modifierGroupId, List<int> modifierIds);
+
 }

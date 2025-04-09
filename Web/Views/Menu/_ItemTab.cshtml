@@ -54,10 +54,10 @@
         </div>
     </div>
 </section>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
+@* <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script> *@
 <script>
 $(document).ready(function () {
     function GetFilteredCategory() {
@@ -68,7 +68,7 @@ $(document).ready(function () {
             success: function (data) {
                 $("#categoryList").html(data);
             },
-                error: handleAjaxError
+            error: handleAjaxError
         });
     }
 
@@ -80,7 +80,7 @@ $(document).ready(function () {
             success: function (data) {
                 $("#itemList").html(data);
             },
-                error: handleAjaxError
+            error: handleAjaxError
         });
     }
 
@@ -107,8 +107,7 @@ $(document).ready(function () {
                 $("#editCategoryModalContent").html(response);
                 $("#EditCategoryModal").modal('show');
             },
-               error: handleAjaxError
-
+            error: handleAjaxError
         });
     });
 
@@ -130,8 +129,7 @@ $(document).ready(function () {
                     toastr.error(response.message);
                 }
             },
-                error: handleAjaxError
-
+            error: handleAjaxError
         });
     });
 
@@ -155,12 +153,11 @@ $(document).ready(function () {
                     toastr.error(response.message);
                 }
             },
-                error: handleAjaxError
-
+            error: handleAjaxError
         });
     });
 
-   $(document).on('click', '.delete-category', function () {
+    $(document).on('click', '.delete-category', function () {
         categoryIdToDelete = $(this).data("id");
         $('#deleteCategoryModal').modal('show');
     });
@@ -179,8 +176,7 @@ $(document).ready(function () {
                     toastr.error(response.message);
                 }
             },
-                error: handleAjaxError
-
+            error: handleAjaxError
         });
     });
 
