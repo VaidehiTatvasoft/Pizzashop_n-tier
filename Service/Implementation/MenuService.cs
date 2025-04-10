@@ -431,17 +431,17 @@ public class MenuService : IMenuService
 
     public bool MultiDeleteMenuItem(int[] itemIds)
     {
+        if (itemIds == null || itemIds.Length == 0)
+            return false;
+
         try
         {
-            foreach (var item in itemIds)
-            {
-                _menuItemRepository.DeleteMenuItem(item);
-            }
+            _menuItemRepository.BatchDeleteMenuItems(itemIds);
             return true;
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
-            Console.WriteLine(e);
+            Console.WriteLine($"Error occurred while deleting menu items: {e.Message}");
             return false;
         }
     }

@@ -104,7 +104,20 @@ public class MenuItemRepository: IMenuItemsRepository
         menuItem!.IsDeleted = true;
         _context.SaveChanges();
     }
+public void BatchDeleteMenuItems(int[] itemIds)
+{
+    if (itemIds == null || itemIds.Length == 0)
+        return;
 
+    var menuItems = _context.MenuItems.Where(i => itemIds.Contains(i.Id)).ToList();
+
+    foreach (var menuItem in menuItems)
+    {
+        menuItem.IsDeleted = true; 
+    }
+
+    _context.SaveChanges(); 
+}
     public bool UpdateMenuItem(MenuItem item)
     {
         try

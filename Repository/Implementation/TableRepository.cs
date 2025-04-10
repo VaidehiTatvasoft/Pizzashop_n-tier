@@ -79,7 +79,32 @@ public class TableRepository : ITableRepository
 
         return true;
     }
+    public bool BatchDeleteTables(int[] tableIds, int userId)
+    {
+        if (tableIds == null || tableIds.Length == 0)
+            return false;
 
+        var tables = _context.Tables.Where(t => tableIds.Contains(t.Id)).ToList();
+
+        bool occupied = false;
+
+        foreach (var table in tables)
+        {
+            if (table.IsAvailable == false)
+            {
+                occupied = true;
+                break;
+            }
+
+            table.IsDeleted = true;
+            table.ModifiedBy = userId;
+        }
+        if (occupied)
+            return false;
+
+        _context.SaveChanges();
+        return true;
+    }
     public bool AddTable(Table model)
     {
         try

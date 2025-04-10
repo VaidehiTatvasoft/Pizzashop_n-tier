@@ -67,32 +67,20 @@ public class TableService : ITableService
 
     public bool MultiDeleteTable(int[] tableIds, ClaimsPrincipal userClaims)
     {
+        if (tableIds == null || tableIds.Length == 0)
+            return false;
         var userIdClaim = userClaims.FindFirst("UserId");
         if (userIdClaim == null)
-        {
             return false;
-        }
         var userId = int.Parse(userIdClaim.Value);
         try
         {
-            var occupied = false;
-
-            foreach (var table in tableIds)
-            {
-                var isDelete = _tableRepository.DeleteTable(table, userId);
-                if (isDelete == false)
-                {
-                    occupied = true;
-                    break;
-                }
-            }
-            if (occupied == true)
-                return false;
-            return true;
+            var result = _tableRepository.BatchDeleteTables(tableIds, userId);
+            return result;
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
-            Console.WriteLine(e);
+            Console.WriteLine($"Error occurred while deleting tables: {e.Message}");
             return false;
         }
     }
@@ -132,40 +120,40 @@ public class TableService : ITableService
         return await _tableRepository.GetTableById(id);
     }
 
-public bool UpdateTable(TableViewModel model, ClaimsPrincipal userClaims, out string message)
-{
-    var userIdClaim = userClaims.FindFirst("UserId");
-    if (userIdClaim == null)
+    public bool UpdateTable(TableViewModel model, ClaimsPrincipal userClaims, out string message)
     {
-        message = "User not authorized.";
-        return false;
+        var userIdClaim = userClaims.FindFirst("UserId");
+        if (userIdClaim == null)
+        {
+            message = "User not authorized.";
+            return false;
+        }
+        var userId = int.Parse(userIdClaim.Value);
+
+        Table existingTable = _tableRepository.IsTableExist(model.Name, model.SectionId, model.Id);
+        if (existingTable != null && existingTable.Id != model.Id)
+        {
+            message = "Table with the same name already exists.";
+            return false;
+        }
+
+        var table = _tableRepository.GetTableById(model.Id).Result;
+        if (table == null)
+        {
+            message = "Table not found.";
+            return false;
+        }
+
+        table.Name = model.Name;
+        table.SectionId = model.SectionId;
+        table.Capacity = model.Capacity;
+        table.IsAvailable = model.IsAvailable;
+        table.ModifiedBy = userId;
+        table.ModifiedAt = DateTime.UtcNow;
+        table.IsDeleted = false;
+
+        bool isUpdated = _tableRepository.UpdateTable(table);
+        message = isUpdated ? "Table updated successfully." : "Failed to update table.";
+        return isUpdated;
     }
-    var userId = int.Parse(userIdClaim.Value);
-
-    Table existingTable = _tableRepository.IsTableExist(model.Name, model.SectionId, model.Id);
-    if (existingTable != null && existingTable.Id != model.Id)
-    {
-        message = "Table with the same name already exists.";
-        return false;
-    }
-
-    var table = _tableRepository.GetTableById(model.Id).Result;
-    if (table == null)
-    {
-        message = "Table not found.";
-        return false;
-    }
-
-    table.Name = model.Name;
-    table.SectionId = model.SectionId;
-    table.Capacity = model.Capacity;
-    table.IsAvailable = model.IsAvailable;
-    table.ModifiedBy = userId;
-    table.ModifiedAt = DateTime.UtcNow;
-    table.IsDeleted = false;
-
-    bool isUpdated = _tableRepository.UpdateTable(table);
-    message = isUpdated ? "Table updated successfully." : "Failed to update table.";
-    return isUpdated;
-}
 }

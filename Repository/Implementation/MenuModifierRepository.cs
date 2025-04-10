@@ -67,7 +67,21 @@ public class MenuModifierRepository : IMenuModifierRepository
         modifier!.IsDeleted = true;
         _context.SaveChanges();
     }
+    public void DeleteMultipleModifiers(int[] modifierIds)
+    {
 
+        if (modifierIds.Length > 0)
+        {
+            var modifiers = _context.Modifiers.Where(m => modifierIds.Contains(m.Id)).ToList();
+
+            foreach (var modifier in modifiers)
+            {
+                modifier.IsDeleted = true;
+            }
+
+            _context.SaveChanges();
+        }
+    }
     public void AddModifier(AddEditModifierViewModel model, int userId)
     {
 
@@ -173,26 +187,26 @@ public class MenuModifierRepository : IMenuModifierRepository
         await _context.SaveChangesAsync();
     }
     public async Task UpdateModifiersInGroupAsync(int modifierGroupId, List<int> modifierIds)
-{
-    var modifierGroup = await _context.ModifierGroups.Include(mg => mg.Modifiers).FirstOrDefaultAsync(mg => mg.Id == modifierGroupId);
-    if (modifierGroup == null)
     {
-        throw new InvalidOperationException("Modifier group not found.");
-    }
-
-
-    modifierGroup.Modifiers.Clear();
-    foreach (var modifierId in modifierIds)
-    {
-        var modifier = await _context.Modifiers.FindAsync(modifierId);
-        if (modifier != null)
+        var modifierGroup = await _context.ModifierGroups.Include(mg => mg.Modifiers).FirstOrDefaultAsync(mg => mg.Id == modifierGroupId);
+        if (modifierGroup == null)
         {
-            modifierGroup.Modifiers.Add(modifier);
+            throw new InvalidOperationException("Modifier group not found.");
         }
-    }
 
-    _context.ModifierGroups.Update(modifierGroup);
-    await _context.SaveChangesAsync();
-}
+
+        modifierGroup.Modifiers.Clear();
+        foreach (var modifierId in modifierIds)
+        {
+            var modifier = await _context.Modifiers.FindAsync(modifierId);
+            if (modifier != null)
+            {
+                modifierGroup.Modifiers.Add(modifier);
+            }
+        }
+
+        _context.ModifierGroups.Update(modifierGroup);
+        await _context.SaveChangesAsync();
+    }
 
 }

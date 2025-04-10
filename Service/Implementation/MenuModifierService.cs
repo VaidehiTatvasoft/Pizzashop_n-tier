@@ -118,15 +118,9 @@ public class MenuModifierService : IMenuModifierService
     }
 
     public void DeleteMultipleModifiers(int[] modifierIds)
-    {
-        if (modifierIds.Length > 0)
-        {
-            foreach (var id in modifierIds)
-            {
-                _menuModifierRepository.DeleteModifier(id);
-            }
-        }
-    }
+{
+    _menuModifierRepository.DeleteMultipleModifiers(modifierIds); 
+}
     public AddEditModifierViewModel GetModifierByid(int id)
     {
         var modifier = _menuModifierRepository.GetModifierById(id);

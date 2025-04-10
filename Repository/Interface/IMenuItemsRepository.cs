@@ -20,4 +20,5 @@ public interface IMenuItemsRepository
     public void DeleteMenuItem(int id);
 
     public bool UpdateMenuItem(MenuItem item);
+    public void BatchDeleteMenuItems(int[] itemIds);
 }

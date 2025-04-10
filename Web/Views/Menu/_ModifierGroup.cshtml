@@ -40,7 +40,7 @@
                 </p>
             </div>
             <div class="modal-footer d-flex justify-content-center border-0">
-                <button type="button" class="btn update-button" id="confirmDeleteCategoryBtn" style=" width: 80px;">Yes</button>
+                <button type="button" class="btn update-button" id="confirmDeleteModifierBtn" style=" width: 80px;">Yes</button>
                 <button type="button" class="btn cancel-button" data-bs-dismiss="modal" style=" width: 80px;">No</button>
             </div>
         </div>
@@ -57,7 +57,7 @@ $(document).on("click", ".delete-modifiergroup", function () {
     console.log("Delete Modifier Group ID:", modifierGroupIdToDelete);
     $('#deleteModifierGroupModal').modal('show');
 });
-$('#confirmDeleteCategoryBtn').click(function () {
+$('#confirmDeleteModifierBtn').click(function () {
     $.ajax({
         url: '/Menu/DeleteModifierGroup',
         type: 'POST',
