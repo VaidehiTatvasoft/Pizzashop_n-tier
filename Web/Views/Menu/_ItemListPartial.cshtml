@@ -197,11 +197,10 @@
 
     $('#itemsList').on("click", ".itemCheckBox", function () {
         var itemId = $(this).val();
-        if (this.checked == true) {
+        if (this.checked) {
             deleteItemIds.push(parseInt(itemId));
-        }
-        else {
-            deleteItemIds = deleteItemIds.filter(id => id != parseInt(itemId));
+        } else {
+            deleteItemIds = deleteItemIds.filter(id => id !== parseInt(itemId));
         }
     });
 
@@ -225,11 +224,7 @@
             error: handleAjaxError
         });
     }); *@
-
-        $(document).ready(function () {
-            var pageIndex = @Model.PageIndex;
-
-            function GetFilteredItems() {
+    function GetFilteredItems() {
                 var SearchString = $("#searchString").val();
                 var pageSize = $("#pageSizedropdown").val();
                 if (ajaxRequest && ajaxRequest.readyState !== 4) {
@@ -250,6 +245,8 @@
                     error: handleAjaxError
                 });
             }
+        $(document).ready(function () {
+            var pageIndex = @Model.PageIndex;
 
             $('#pageSizedropdown').change(function () {
                 pageIndex = 1;
@@ -310,27 +307,27 @@
     }
     }); *@
 
-    $('.editItemBtn').click(function () {
-        var itemId = $(this).data("itemid");
-        $.ajax({
-            url: "/Menu/EditMenuItem",
-            type: "GET",
-            data: { itemId: itemId },
-            success: function (data) {
-                if (data == null)
-                    window.location.href = ""
-                $("#EditItemPartial").html(data);
-                $("#EditItemModel").modal('show');
-            },
-            error: handleAjaxError
+        $('.editItemBtn').click(function () {
+            var itemId = $(this).data("itemid");
+            $.ajax({
+                url: "/Menu/EditMenuItem",
+                type: "GET",
+                data: { itemId: itemId },
+                success: function (data) {
+                    if (data == null)
+                        window.location.href = ""
+                    $("#EditItemPartial").html(data);
+                    $("#EditItemModel").modal('show');
+                },
+                error: handleAjaxError
+            });
         });
-    });
     @* EditItem  *@
-         $(document).ready(function () {
+        $(document).ready(function () {
             $('#editItemForm').on('submit', function (e) {
                 e.preventDefault();
                 var formData = new FormData(this);
-                 @* console.log("EditITemFormData", formData) *@
+                @* console.log("EditITemFormData", formData) *@
                     $.ajax({
                         type: "POST",
                         url: $(this).attr('action'),
@@ -350,7 +347,7 @@
                     });
             });
         });
-    $('#multiDeleteItemBtn').click(function () {
+    $('#confirmDeleteItemsBtn').click(function () {
         $.ajax({
             url: "/Menu/MultiDeleteMenuItem",
             type: 'POST',
