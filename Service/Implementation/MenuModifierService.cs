@@ -5,7 +5,7 @@ using Service.Interface;
 
 namespace Service.Implementation;
 
-public class MenuModifierService: IMenuModifierService
+public class MenuModifierService : IMenuModifierService
 {
     private readonly IMenuModifierGroupRepository _menuModifierGroupRepository;
     private readonly IMenuModifierRepository _menuModifierRepository;
@@ -166,25 +166,25 @@ public class MenuModifierService: IMenuModifierService
         };
         return addEditModifierViewModel;
     }
- public async Task<int> AddModifierGroupAsync(MenuModifierGroupViewModel model, int userId)
-{
-    return await _menuModifierGroupRepository.AddModifierGroupAsync(model, userId);
-}
+    public async Task<int> AddModifierGroupAsync(MenuModifierGroupViewModel model, int userId)
+    {
+        return await _menuModifierGroupRepository.AddModifierGroupAsync(model, userId);
+    }
 
-public async Task AddModifiersToGroupAsync(int modifierGroupId, List<int> modifierIds)
-{
-    await _menuModifierRepository.AddModifiersToGroupAsync(modifierGroupId, modifierIds);
-}
-     public async Task EditModifierGroupAsync(MenuModifierGroupViewModel model, int userId)
-   {
-       await _menuModifierGroupRepository.EditModifierGroupAsync(model, userId);
-   }
-public async Task<MenuModifierGroupViewModel> GetModifierGroupByIdAsync(int id)
-{
-    return await _menuModifierGroupRepository.GetModifierGroupByIdAsync(id);
-}
-   public async Task UpdateModifiersInGroupAsync(int modifierGroupId, List<int> modifierIds)
-   {
-       await _menuModifierRepository.UpdateModifiersInGroupAsync(modifierGroupId, modifierIds);
-   }
+    public async Task AddModifiersToGroupAsync(int modifierGroupId, List<int> modifierIds)
+    {
+        await _menuModifierRepository.AddModifiersToGroupAsync(modifierGroupId, modifierIds);
+    }
+    public async Task EditModifierGroupAsync(MenuModifierGroupViewModel model, int userId)
+    {
+        await _menuModifierGroupRepository.EditModifierGroupAsync(model, userId);
+    }
+    public async Task<MenuModifierGroupViewModel> GetModifierGroupByIdAsync(int id)
+    {
+        return await _menuModifierGroupRepository.GetModifierGroupByIdAsync(id);
+    }
+    public async Task UpdateModifiersInGroupAsync(int modifierGroupId, List<int> modifierIds)
+    {
+        await _menuModifierRepository.UpdateModifiersInGroupAsync(modifierGroupId, modifierIds);
+    }
 }
