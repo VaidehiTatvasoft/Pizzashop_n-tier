@@ -187,4 +187,8 @@ public class MenuModifierService : IMenuModifierService
     {
         await _menuModifierRepository.UpdateModifiersInGroupAsync(modifierGroupId, modifierIds);
     }
+    public async Task DeleteModifierGroupAsync(int modifierGroupId)
+    {
+        await _menuModifierGroupRepository.DeleteModifierGroupAsync(modifierGroupId);
+    }
 }

@@ -521,33 +521,49 @@ public class MenuController : Controller
     }
     [HttpPost]
     public async Task<IActionResult> EditModifierGroup([FromBody] MenuModifierGroupViewModel model)
+{
+    var userId = GetUserIdFromClaims();
+    if (userId == null)
     {
-        var userId = GetUserIdFromClaims();
-        if (userId == null)
-        {
-            return Json(new { isSuccess = false, message = "User ID claim is missing or invalid." });
-        }
-
-        if (string.IsNullOrEmpty(model.Name))
-        {
-            return Json(new { isSuccess = false, message = "Modifier group name is required." });
-        }
-
-        try
-        {
-            await _menuModifierService.EditModifierGroupAsync(model, userId.Value);
-
-            if (model.SelectedModifierIds != null && model.SelectedModifierIds.Any())
-            {
-                await _menuModifierService.UpdateModifiersInGroupAsync(model.Id, model.SelectedModifierIds);
-            }
-
-            return Json(new { isSuccess = true, message = "Modifier group updated successfully." });
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error updating modifier group: {ex.Message}");
-            return Json(new { isSuccess = false, message = "An error occurred while updating the modifier group." });
-        }
+        return Json(new { isSuccess = false, message = "User ID claim is missing or invalid." });
     }
+
+    if (string.IsNullOrEmpty(model.Name))
+    {
+        return Json(new { isSuccess = false, message = "Modifier group name is required." });
+    }
+
+    try
+    {
+        await _menuModifierService.EditModifierGroupAsync(model, userId.Value);
+
+        if (model.SelectedModifierIds != null)
+        {
+            await _menuModifierService.UpdateModifiersInGroupAsync(model.Id, model.SelectedModifierIds);
+        }
+
+        return Json(new { isSuccess = true, message = "Modifier group updated successfully." });
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error updating modifier group: {ex.Message}");
+        return Json(new { isSuccess = false, message = "An error occurred while updating the modifier group." });
+    }
+}
+[CustomAuthorize(RolePermissionEnum.Permission.Menu_CanDelete)]
+[HttpPost]
+public async Task<IActionResult> DeleteModifierGroup( int id)
+{
+    Console.WriteLine($"Received Modifier Group ID: {id}");
+    try
+    {
+        await _menuModifierService.DeleteModifierGroupAsync(id);
+        return Json(new { isSuccess = true, message = "Modifier group deleted successfully" });
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error deleting modifier group: {ex.Message}");
+        return Json(new { isSuccess = false, message = "Error while deleting modifier group" });
+    }
+}
 }

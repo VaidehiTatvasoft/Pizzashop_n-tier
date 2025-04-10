@@ -51,11 +51,31 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
     var modifierGroupId = @Model.First().Id;
-    $(document).on('click', '.delete-modifiergroup', function () {
-        modifierId = $(this).data("id");
-        console.log("Delete", modifierId)
-        $('#deleteModifierGroupModal').modal('show');
+    var modifierGroupIdToDelete ;
+$(document).on("click", ".delete-modifiergroup", function () {
+        modifierGroupIdToDelete = $(this).data("id");
+    console.log("Delete Modifier Group ID:", modifierGroupIdToDelete);
+    $('#deleteModifierGroupModal').modal('show');
+});
+$('#confirmDeleteCategoryBtn').click(function () {
+    $.ajax({
+        url: '/Menu/DeleteModifierGroup',
+        type: 'POST',
+        data: { id: modifierGroupIdToDelete },
+        success: function (response) {
+            if (response.isSuccess) {
+                alert(response.message);
+                $(`.modifierGroup[data-id='${modifierGroupIdToDelete}']`).remove(); 
+                $('#deleteModifierGroupModal').modal('hide');
+            } else {
+                alert("Error: " + response.message);
+            }
+        },
+        error: function (xhr, status, error) {
+            alert("An error occurred: " + error);
+        }
     });
+});
 
     $(".modifierGroup").first().addClass("active-new");
     $(".modifierGroup").click(function () {
