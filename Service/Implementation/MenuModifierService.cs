@@ -118,9 +118,9 @@ public class MenuModifierService : IMenuModifierService
     }
 
     public void DeleteMultipleModifiers(int[] modifierIds)
-{
-    _menuModifierRepository.DeleteMultipleModifiers(modifierIds); 
-}
+    {
+        _menuModifierRepository.DeleteMultipleModifiersAsync(modifierIds);
+    }
     public AddEditModifierViewModel GetModifierByid(int id)
     {
         var modifier = _menuModifierRepository.GetModifierById(id);

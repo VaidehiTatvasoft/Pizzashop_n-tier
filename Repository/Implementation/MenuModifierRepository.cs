@@ -67,20 +67,16 @@ public class MenuModifierRepository : IMenuModifierRepository
         modifier!.IsDeleted = true;
         _context.SaveChanges();
     }
-    public void DeleteMultipleModifiers(int[] modifierIds)
+    public async Task DeleteMultipleModifiersAsync(int[] modifierIds)
     {
+        var modifiers = _context.Modifiers.Where(m => modifierIds.Contains(m.Id)).ToList();
 
-        if (modifierIds.Length > 0)
+        foreach (var modifier in modifiers)
         {
-            var modifiers = _context.Modifiers.Where(m => modifierIds.Contains(m.Id)).ToList();
-
-            foreach (var modifier in modifiers)
-            {
-                modifier.IsDeleted = true;
-            }
-
-            _context.SaveChanges();
+            modifier.IsDeleted = true;
         }
+
+        await _context.SaveChangesAsync();
     }
     public void AddModifier(AddEditModifierViewModel model, int userId)
     {
@@ -188,15 +184,31 @@ public class MenuModifierRepository : IMenuModifierRepository
     }
     public async Task UpdateModifiersInGroupAsync(int modifierGroupId, List<int> modifierIds)
     {
-        var modifierGroup = await _context.ModifierGroups.Include(mg => mg.Modifiers).FirstOrDefaultAsync(mg => mg.Id == modifierGroupId);
+        var modifierGroup = await _context.ModifierGroups
+            .Include(mg => mg.Modifiers)
+            .FirstOrDefaultAsync(mg => mg.Id == modifierGroupId);
+
         if (modifierGroup == null)
         {
             throw new InvalidOperationException("Modifier group not found.");
         }
 
+        var existingModifierIds = modifierGroup.Modifiers.Select(m => m.Id).ToList();
 
-        modifierGroup.Modifiers.Clear();
-        foreach (var modifierId in modifierIds)
+        var modifiersToRemove = modifierGroup.Modifiers
+            .Where(m => !modifierIds.Contains(m.Id))
+            .ToList();
+
+        foreach (var modifier in modifiersToRemove)
+        {
+            modifierGroup.Modifiers.Remove(modifier);
+        }
+
+        var modifierIdsToAdd = modifierIds
+            .Where(id => !existingModifierIds.Contains(id))
+            .ToList();
+
+        foreach (var modifierId in modifierIdsToAdd)
         {
             var modifier = await _context.Modifiers.FindAsync(modifierId);
             if (modifier != null)
@@ -204,9 +216,6 @@ public class MenuModifierRepository : IMenuModifierRepository
                 modifierGroup.Modifiers.Add(modifier);
             }
         }
-
-        _context.ModifierGroups.Update(modifierGroup);
         await _context.SaveChangesAsync();
     }
-
 }
