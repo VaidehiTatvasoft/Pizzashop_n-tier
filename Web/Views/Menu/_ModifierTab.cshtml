@@ -166,55 +166,55 @@
 </div>
 
 <script>
-var pageIndex = @Model.PageIndex;
-var selectedAddModifiers = []; 
-var selectedEditModifiers = []; 
-var lastOpenedParentModal = null; 
+    var pageIndex = @Model.PageIndex;
+    var selectedAddModifiers = [];
+    var selectedEditModifiers = [];
+    var lastOpenedParentModal = null;
 
-$('#OpenExistingModifierModal').click(function () {
-    console.log('Opening nested modal from Add Modifier Group');
-    lastOpenedParentModal = '#addModifierGroupModal';
-    $('#addModifierGroupModal').modal('hide');
-    $('#selectExistingModifierModal').modal('show');
+    $('#OpenExistingModifierModal').click(function () {
+        console.log('Opening nested modal from Add Modifier Group');
+        lastOpenedParentModal = '#addModifierGroupModal';
+        $('#addModifierGroupModal').modal('hide');
+        $('#selectExistingModifierModal').modal('show');
 
-    fetchAndPopulateExistingModifiers(selectedAddModifiers);
-});
+        fetchAndPopulateExistingModifiers(selectedAddModifiers);
+    });
 
-$('#OpenExistingModifierModalEdit').click(function () {
-    console.log('Opening nested modal from Edit Modifier Group');
-    lastOpenedParentModal = '#editModifierGroupModal';
-    $('#editModifierGroupModal').modal('hide');
-    $('#selectExistingModifierModal').modal('show');
+    $('#OpenExistingModifierModalEdit').click(function () {
+        console.log('Opening nested modal from Edit Modifier Group');
+        lastOpenedParentModal = '#editModifierGroupModal';
+        $('#editModifierGroupModal').modal('hide');
+        $('#selectExistingModifierModal').modal('show');
 
-    fetchAndPopulateExistingModifiers(selectedEditModifiers);
-});
+        fetchAndPopulateExistingModifiers(selectedEditModifiers);
+    });
 
-function fetchAndPopulateExistingModifiers(selectedModifiersArray) {
-    $("#existingModifiersList").empty(); 
-    $.ajax({
-        url: '/Menu/GetAllModifiers',
-        type: 'GET',
-        data: { pageSize: @Model.PageSize, pageIndex: @Model.PageIndex, searchString: "" },
-        success: function (response) {
-            $('#existingModifiersList').html(response);
+    function fetchAndPopulateExistingModifiers(selectedModifiersArray) {
+        $("#existingModifiersList").empty();
+        $.ajax({
+            url: '/Menu/GetAllModifiers',
+            type: 'GET',
+            data: { pageSize: @Model.PageSize, pageIndex: @Model.PageIndex, searchString: "" },
+            success: function (response) {
+                $('#existingModifiersList').html(response);
 
-            selectedModifiersArray.forEach(modifier => {
-                $(`#existingModifiersList .modifier-checkbox[value='${modifier.id}']`).prop('checked', true);
-            });
-        },
-        error: function (xhr, status, error) {
-            console.error("Failed to fetch existing modifiers:", error);
+                selectedModifiersArray.forEach(modifier => {
+                    $(`#existingModifiersList .modifier-checkbox[value='${modifier.id}']`).prop('checked', true);
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Failed to fetch existing modifiers:", error);
+            }
+        });
+    }
+
+    $('#selectExistingModifierModal').on('hidden.bs.modal', function () {
+        console.log('Restoring parent modal');
+        if (lastOpenedParentModal) {
+            $(lastOpenedParentModal).modal('show');
+            lastOpenedParentModal = null;
         }
     });
-}
-
-$('#selectExistingModifierModal').on('hidden.bs.modal', function () {
-    console.log('Restoring parent modal');
-    if (lastOpenedParentModal) {
-        $(lastOpenedParentModal).modal('show');
-        lastOpenedParentModal = null; 
-    }
-});
 
     function GetFilteredModifiers() {
         var SearchString = $("#searchModifier").val();
@@ -320,33 +320,33 @@ $('#selectExistingModifierModal').on('hidden.bs.modal', function () {
         }, 600)
     });
 
-$("#saveModifiersButton").off("click").on("click", function () {
-    var selectedModifiersArray = lastOpenedParentModal === '#addModifierGroupModal' ? selectedAddModifiers : selectedEditModifiers;
+    $("#saveModifiersButton").off("click").on("click", function () {
+        var selectedModifiersArray = lastOpenedParentModal === '#addModifierGroupModal' ? selectedAddModifiers : selectedEditModifiers;
 
-    selectedModifiersArray.length = 0; 
-    $(".modifier-checkbox:checked").each(function () {
-        const modifierId = $(this).val();
-        const modifierName = $(this).data("name");
-        selectedModifiersArray.push({ id: modifierId, name: modifierName });
+        selectedModifiersArray.length = 0;
+        $(".modifier-checkbox:checked").each(function () {
+            const modifierId = $(this).val();
+            const modifierName = $(this).data("name");
+            selectedModifiersArray.push({ id: modifierId, name: modifierName });
+        });
+
+        console.log("Selected Modifiers:", selectedModifiersArray);
+
+        updateSelectedModifiersUI(selectedModifiersArray);
+
+        $("#selectExistingModifierModal").modal("hide");
     });
 
-    console.log("Selected Modifiers:", selectedModifiersArray);
+    function updateSelectedModifiersUI(selectedModifiersArray) {
+        const selectedModifiersDisplay =
+            lastOpenedParentModal === '#addModifierGroupModal'
+                ? $("#addModifierGroupModal #selectedModifiersDisplay")
+                : $("#editModifierGroupModal #selectedModifiersDisplay");
 
-    updateSelectedModifiersUI(selectedModifiersArray);
+        selectedModifiersDisplay.empty();
 
-    $("#selectExistingModifierModal").modal("hide");
-});
-
-function updateSelectedModifiersUI(selectedModifiersArray) {
-    const selectedModifiersDisplay =
-        lastOpenedParentModal === '#addModifierGroupModal'
-            ? $("#addModifierGroupModal #selectedModifiersDisplay")
-            : $("#editModifierGroupModal #selectedModifiersDisplay");
-
-    selectedModifiersDisplay.empty(); 
-
-    selectedModifiersArray.forEach(mod => {
-        selectedModifiersDisplay.append(`
+        selectedModifiersArray.forEach(mod => {
+            selectedModifiersDisplay.append(`
             <span class="badge bg-light border text-muted small d-inline-flex align-items-center me-2 p-2">
                 ${mod.name}
                 <button type="button" class="btn btn-sm p-0 ms-2 text-secondary remove-modifier" data-id="${mod.id}" style="border: none; background: none;">
@@ -354,22 +354,22 @@ function updateSelectedModifiersUI(selectedModifiersArray) {
                 </button>
             </span>
         `);
+        });
+    }
+
+    $(document).on("click", ".remove-modifier", function () {
+        const modifierId = $(this).data("id");
+
+        var selectedModifiersArray = lastOpenedParentModal === '#addModifierGroupModal' ? selectedAddModifiers : selectedEditModifiers;
+
+        selectedModifiersArray = selectedModifiersArray.filter(mod => mod.id != modifierId);
+        updateSelectedModifiersUI(selectedModifiersArray);
     });
-}
-
-$(document).on("click", ".remove-modifier", function () {
-    const modifierId = $(this).data("id");
-
-    var selectedModifiersArray = lastOpenedParentModal === '#addModifierGroupModal' ? selectedAddModifiers : selectedEditModifiers;
-
-    selectedModifiersArray = selectedModifiersArray.filter(mod => mod.id != modifierId);
-    updateSelectedModifiersUI(selectedModifiersArray);
-});
 
     $("#saveModifierGroupButton").click(function () {
         var name = $("#modifierName").val();
         var description = $("#modifierDesc").val();
-        var selectedModifierIds = selectedModifiers.map(mod => mod.id);
+        var selectedModifierIds = selectedAddModifiers.map(mod => mod.id);
 
         var data = {
             Name: name,
@@ -385,6 +385,7 @@ $(document).on("click", ".remove-modifier", function () {
             success: function (response) {
                 if (response.isSuccess) {
                     alert("Modifier group added successfully!");
+                    location.reload();
                 } else {
                     alert("Error: " + response.message);
                 }
@@ -394,34 +395,67 @@ $(document).on("click", ".remove-modifier", function () {
             }
         });
     });
-$(document).on('click', '.edit-icon', function () {
-    var modifierGroupId = $(this).data('id');
+    $(document).on('click', '.edit-icon', function () {
+        var modifierGroupId = $(this).data('id');
 
-    $.ajax({
-        url: '@Url.Action("GetModifierGroup", "Menu")',
-        type: 'GET',
-        data: { id: modifierGroupId },
-        success: function (response) {
-            if (response) {
-                $('#editModifierGroupModal #modifierName').val(response.name);
-                $('#editModifierGroupModal #modifierDesc').val(response.description);
+        $.ajax({
+            url: '@Url.Action("GetModifierGroup", "Menu")',
+            type: 'GET',
+            data: { id: modifierGroupId },
+            success: function (response) {
+                if (response) {
+                    $('#editModifierGroupModal #modifierName').val(response.name);
+                    $('#editModifierGroupModal #modifierDesc').val(response.description);
+                    $('#editModifierGroupModal').data("group-id", response.id);
 
-                selectedEditModifiers = response.existingModifiers.map(mod => {
-                    return { id: mod.id, name: mod.name };
-                });
+                    selectedEditModifiers = response.existingModifiers.map(mod => {
+                        return { id: mod.id, name: mod.name };
+                    });
 
-                updateSelectedModifiersUI(selectedEditModifiers);
+                    updateSelectedModifiersUI(selectedEditModifiers);
 
-                $('#editModifierGroupModal').modal('show');
-            } else {
-                alert("Modifier group not found!");
+                    $('#editModifierGroupModal').modal('show');
+                } else {
+                    alert("Modifier group not found!");
+                }
+            },
+            error: function (xhr, status, error) {
+                alert("An error occurred: " + error);
             }
-        },
-        error: function (xhr, status, error) {
-            alert("An error occurred: " + error);
-        }
+        });
     });
-});
+    $("#saveEditModifierGroupButton").click(function () {
+        var groupId = $("#editModifierGroupModal").data("group-id");
+        var name = $("#editModifierGroupModal #modifierName").val();
+        var description = $("#editModifierGroupModal #modifierDesc").val();
+        var selectedModifierIds = selectedEditModifiers.map(mod => mod.id);
+
+        var data = {
+            Id: groupId,
+            Name: name,
+            Description: description,
+            SelectedModifierIds: selectedModifierIds
+        };
+
+        $.ajax({
+            url: '@Url.Action("EditModifierGroup", "Menu")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (response) {
+                if (response.isSuccess) {
+                    alert("Modifier group updated successfully!");
+                    $('#editModifierGroupModal').modal('hide');
+                    location.reload();
+                } else {
+                    alert("Error: " + response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                alert("An error occurred: " + error);
+            }
+        });
+    });
     @* Load Checkboxes *@
         function initializeCheckboxes() {
             $('.modifier-checkbox').each(function () {
