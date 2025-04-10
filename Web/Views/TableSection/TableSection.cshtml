@@ -74,6 +74,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function () {
+            
             function openAddEditModal(id) {
                 $.get('@Url.Action("AddEditSection", "TableSection")' + '?id=' + id, function (data) {
                     $('#modalContent').html(data);

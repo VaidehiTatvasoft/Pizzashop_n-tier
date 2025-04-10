@@ -153,7 +153,7 @@
                 </p>
             </div>
             <div class="modal-footer d-flex justify-content-center border-0">
-                <button type="submit" id="multiDeleteTableBtn" class="btn update-button" style=" width: 70px;">Yes</button>
+                <button type="submit" id="confirmDeleteMultiTable" class="btn update-button" style=" width: 70px;">Yes</button>
                 <button type="button" class="btn cancel-button" data-bs-dismiss="modal" style=" width: 70px;">No</button>
             </div>
         </div>
@@ -206,33 +206,34 @@
         });
 
         $('#multiDeleteTableBtn').click(function () {
-            if (deleteTableIds.length == 0) {
+            if (deleteTableIds.length === 0) {
                 toastr.warning("Select at Least One Item");
+                return;
             } else {
                 $('#deleteMultipleTableModal').modal('show');
             }
         });
 
-        $('#deleteMultipleTableModal').click(function () {
-            $.ajax({
-                url: '/TableSection/MultiDeleteTable',
-                type: 'POST',
-                data: { itemIds: deleteTableIds },
-                success: function (response) {
-                    if (response == null) {
-                        window.location.href = "/unauthorized";
-                        toastr.error("Your Session is Expired. Please Login Again!");
-                    } else if (response.isSuccess) {
-                        GetFilteredItems();
-                        toastr.success(response.message);
-                    } else {
-                        toastr.error(response.message);
-                    }
-                    $("#deleteMultipleTableModal").modal('hide');
-                },
-                error: handleAjaxError
-            });
-        });
+        $('#confirmDeleteMultiTable').click(function () {
+    $.ajax({
+        url: '/TableSection/MultiDeleteTable',
+        type: 'POST',
+        data: { itemIds: deleteTableIds },
+        success: function (response) {
+            if (response == null) {
+                window.location.href = "/unauthorized";
+                toastr.error("Your Session is Expired. Please Login Again!");
+            } else if (response.isSuccess) {
+                GetFilteredItems();
+                toastr.success(response.message);
+            } else {
+                toastr.error(response.message);
+            }
+            $("#deleteMultipleTableModal").modal('hide');
+        },
+        error: handleAjaxError
+    });
+});
 
         function GetFilteredItems() {
             var searchInput = $("#searchInput").val();
