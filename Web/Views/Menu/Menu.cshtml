@@ -81,7 +81,8 @@
     </div>
 
     <!-- Edit Category Modal -->
-    <div class="modal fade" id="EditCategoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="EditCategoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+      aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content" id="editCategoryModalContent">
           <!-- The content of the modal will be loaded here -->
@@ -89,7 +90,7 @@
       </div>
     </div>
 
-   
+
   </section>
 </div>
 @section Scripts {
@@ -110,12 +111,44 @@
         toastr.error("You are not authenticated. Please log in.");
       }
       else if (xhr.status === 403) {
-      toastr.error(xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : "You are not authorized to perform this action.");
+        toastr.error(xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : "You are not authorized to perform this action.");
         $('.modal-backdrop').remove();
       } else {
         toastr.error("An error occurred while processing your request. Please try again.");
         console.error("Error details:", status, error, xhr.responseText);
       }
     }
+    $(document).ready(function () {
+      var modifierGroupIdToDelete;
+      document.getElementById("confirmDeleteModifierBtn").onclick = function () {
+        $.ajax({
+          url: '/Menu/DeleteModifierGroup',
+          type: 'POST',
+          data: { id: modifierGroupIdToDelete },
+          success: function (response) {
+            if (response.isSuccess) {
+              toastr.success(response.message);
+              $('#deleteModifierGroupModal').modal('hide');
+              $(`.modifierGroup[data-id='${modifierGroupIdToDelete}']`).remove();
+              @* $(".modifierGroup").first().addClass("active-new"); *@
+                const firstModifierGroup = $(".modifierGroup").first();
+              if (firstModifierGroup.length > 0) {
+                firstModifierGroup.addClass("active-new");
+                firstModifierGroup.trigger("click"); 
+              }
+              console.log("Deleted Modifier Group ID:", modifierGroupIdToDelete);
+            }
+          },
+          error: function (xhr, status, error) {
+            toastr.error("An error occurred: " + error);
+          }
+        });
+      };
+      $(document).off("click", ".delete-modifiergroup").on("click", ".delete-modifiergroup", function () {
+        modifierGroupIdToDelete = $(this).data("id");
+        console.log("Delete Modifier Group ID:", modifierGroupIdToDelete);
+        $('#deleteModifierGroupModal').modal('show');
+      });
+    });
   </script>
 }

@@ -17,16 +17,15 @@
                     <i class="bi bi-pen m-1 edit-icon " data-bs-toggle="modal" data-bs-target="#editModifierGroupModal" data-id="@modifierGroup.Id"></i>
                     @* <button class="btn btn-sm btn-primary editModifierGroupBtn" data-id="@modifierGroup.Id">Edit</button> *@
                 </a>
-                <i class="bi bi-trash m-1 delete-icon delete-modifiergroup" data-bs-target="#deleteModifierGroupModal"
-                    data-bs-toggle="modal" id="deleteModifierGroup" data-id="@modifierGroup.Id" style="color:black"></i>
+                <i class="bi bi-trash m-1 delete-icon delete-modifiergroup" 
+                    id="deleteModifierGroup" data-id="@modifierGroup.Id" style="color:black"></i>
             </span>
         </div>
     }
 </div>
 
 <!-- Delete Modifier Group Modal -->
-<div class="modal fade" id="deleteModifierGroupModal" tabindex="-1"  role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
+<div class="modal fade" id="deleteModifierGroupModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header border-0">
@@ -34,48 +33,23 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-center p-1" style="color:grey;">
-            <i class="fa-solid fa-triangle-exclamation fa-2xl" style="color: #FFD43B;"></i>
-                <p class=" mb-0">
+                <i class="fa-solid fa-triangle-exclamation fa-2xl" style="color: #FFD43B;"></i>
+                <p class="mb-0">
                     Are you sure you want to delete this ModifierGroup?
                 </p>
             </div>
             <div class="modal-footer d-flex justify-content-center border-0">
-                <button type="button" class="btn update-button" id="confirmDeleteModifierBtn" style=" width: 80px;">Yes</button>
-                <button type="button" class="btn cancel-button" data-bs-dismiss="modal" style=" width: 80px;">No</button>
+                <button type="button" class="btn update-button" id="confirmDeleteModifierBtn" style="width: 80px;">Yes</button>
+                <button type="button" class="btn cancel-button" data-bs-dismiss="modal" style="width: 80px;">No</button>
             </div>
         </div>
     </div>
 </div>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script> 
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
     var modifierGroupId = @Model.First().Id;
-    var modifierGroupIdToDelete ;
-$(document).on("click", ".delete-modifiergroup", function () {
-        modifierGroupIdToDelete = $(this).data("id");
-    console.log("Delete Modifier Group ID:", modifierGroupIdToDelete);
-    $('#deleteModifierGroupModal').modal('show');
-});
-$('#confirmDeleteModifierBtn').click(function () {
-    $.ajax({
-        url: '/Menu/DeleteModifierGroup',
-        type: 'POST',
-        data: { id: modifierGroupIdToDelete },
-        success: function (response) {
-            if (response.isSuccess) {
-                alert(response.message);
-                $(`.modifierGroup[data-id='${modifierGroupIdToDelete}']`).remove(); 
-                $('#deleteModifierGroupModal').modal('hide');
-            } else {
-                alert("Error: " + response.message);
-            }
-        },
-        error: function (xhr, status, error) {
-            alert("An error occurred: " + error);
-        }
-    });
-});
 
     $(".modifierGroup").first().addClass("active-new");
     $(".modifierGroup").click(function () {

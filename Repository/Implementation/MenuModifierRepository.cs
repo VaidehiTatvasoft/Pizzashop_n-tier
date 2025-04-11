@@ -195,13 +195,13 @@ public class MenuModifierRepository : IMenuModifierRepository
 
         var existingModifierIds = modifierGroup.Modifiers.Select(m => m.Id).ToList();
 
-        var modifiersToRemove = modifierGroup.Modifiers
+        var modifiersToSoftDelete = modifierGroup.Modifiers
             .Where(m => !modifierIds.Contains(m.Id))
             .ToList();
 
-        foreach (var modifier in modifiersToRemove)
+        foreach (var modifier in modifiersToSoftDelete)
         {
-            modifierGroup.Modifiers.Remove(modifier);
+            modifier.IsDeleted = true;
         }
 
         var modifierIdsToAdd = modifierIds
@@ -213,9 +213,11 @@ public class MenuModifierRepository : IMenuModifierRepository
             var modifier = await _context.Modifiers.FindAsync(modifierId);
             if (modifier != null)
             {
+                modifier.IsDeleted = false;
                 modifierGroup.Modifiers.Add(modifier);
             }
         }
+
         await _context.SaveChangesAsync();
     }
 }

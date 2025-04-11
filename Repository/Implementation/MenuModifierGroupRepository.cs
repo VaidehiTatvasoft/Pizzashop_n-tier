@@ -97,16 +97,20 @@ public class MenuModifierGroupRepository : IMenuModifierGroupRepository
     public async Task DeleteModifierGroupAsync(int modifierGroupId)
 {
     var modifierGroup = await _context.ModifierGroups
-        .Include(mg => mg.Modifiers) 
+        .Include(mg => mg.Modifiers)
         .FirstOrDefaultAsync(mg => mg.Id == modifierGroupId);
 
     if (modifierGroup == null)
     {
         throw new InvalidOperationException("Modifier group not found.");
     }
-    foreach (var modifier in modifierGroup.Modifiers)
+
+    if (modifierGroup.Modifiers != null && modifierGroup.Modifiers.Any())
     {
-        modifier.IsDeleted = true;
+        foreach (var modifier in modifierGroup.Modifiers)
+        {
+            modifier.IsDeleted = true;
+        }
     }
     modifierGroup.IsDeleted = true;
     await _context.SaveChangesAsync();
