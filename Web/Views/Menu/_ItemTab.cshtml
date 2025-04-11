@@ -54,48 +54,48 @@
         </div>
     </div>
 </section>
-@* <script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script> *@
 <script>
-$(document).ready(function () {
-    function GetFilteredCategory() {
-        $.ajax({
-            url: "/Menu/GetAllCategory",
-            type: "GET",
-            data: {},
-            success: function (data) {
-                $("#categoryList").html(data);
-            },
-            error: handleAjaxError
-        });
-    }
+    $(document).ready(function () {
+        function GetFilteredCategory() {
+            $.ajax({
+                url: "/Menu/GetAllCategory",
+                type: "GET",
+                data: {},
+                success: function (data) {
+                    $("#categoryList").html(data);
+                    
+                },
+                error: handleAjaxError
+            });
+        }
 
-    function GetFilteredItems() {
-        $.ajax({
-            url: "/Menu/GetAllItems",
-            type: "GET",
-            data: {},
-            success: function (data) {
-                $("#itemList").html(data);
-            },
-            error: handleAjaxError
-        });
-    }
+        function GetFilteredItems() {
+            $.ajax({
+                url: "/Menu/GetAllItems",
+                type: "GET",
+                data: {},
+                success: function (data) {
+                    $("#itemList").html(data);
+                },
+                error: handleAjaxError
+            });
+        }
 
-    $(".addItemBtn").click(function () {
-        $.get('@Url.Action("AddItem", "Menu")', function (data) {
-            $("#AddItemPartial").html(data);
-            $("#addItemModal").modal('show');
+        $(".addItemBtn").click(function () {
+            $.get('@Url.Action("AddItem", "Menu")', function (data) {
+                $("#AddItemPartial").html(data);
+                $("#addItemModal").modal('show');
+            });
         });
-    });
 
-    $(".itemCategory").first().addClass("active-new");
-    $(".itemCategory").click(function () {
-        $(".itemCategory").removeClass("active-new");
-        $(this).addClass("active-new");
-    });
+        $(".itemCategory").first().addClass("active-new");
+        $(".itemCategory").click(function () {
+            $(".itemCategory").removeClass("active-new");
+            $(this).addClass("active-new");
+        });
 
     $(document).on('click', '.edit-category', function () {
         var categoryId = $(this).data("id");
@@ -124,6 +124,8 @@ $(document).ready(function () {
                 if (response.success) {
                     GetFilteredCategory();
                     $('#EditCategoryModal').modal('hide');
+                    @* $('.modal-backdrop').remove();
+                    location.reload(); *@
                     toastr.success(response.message);
                 } else {
                     toastr.error(response.message);
@@ -133,65 +135,66 @@ $(document).ready(function () {
         });
     });
 
-    $(document).on('click', '#submitNewCategory', function (event) {
-        event.preventDefault();
-        var form = $('#addNewCategoryForm');
-        var formData = form.serialize();
+        $(document).on('click', '#submitNewCategory', function (event) {
+            event.preventDefault();
+            var form = $('#addNewCategoryForm');
+            var formData = form.serialize();
 
-        $.ajax({
-            type: "POST",
-            url: '/Menu/AddCategory',
-            data: formData,
-            success: function (response) {
-                console.log("Response received:", response);
-                if (response.success) {
-                    GetFilteredCategory();
-                    $('#addCategoryModal').modal('hide');
-                    $('.modal-backdrop').remove();
-                    toastr.success(response.message);
-                } else {
-                    toastr.error(response.message);
-                }
-            },
-            error: handleAjaxError
+            $.ajax({
+                type: "POST",
+                url: '/Menu/AddCategory',
+                data: formData,
+                success: function (response) {
+                    console.log("Response received:", response);
+                    if (response.success) {
+                        GetFilteredCategory();
+                        $('#addCategoryModal').modal('hide');
+                        $('.modal-backdrop').remove();
+                        @* location.reload(); *@
+                        toastr.success(response.message);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: handleAjaxError
+            });
+        });
+
+        $(document).on('click', '.delete-category', function () {
+            categoryIdToDelete = $(this).data("id");
+            $('#deleteCategoryModal').modal('show');
+        });
+
+        $('#confirmDeleteCategoryItemBtn').click(function () {
+            $.ajax({
+                type: "POST",
+                url: '/Menu/DeleteCategory',
+                data: { id: categoryIdToDelete },
+                success: function (response) {
+                    if (response.success) {
+                        $('#deleteCategoryModal').modal('hide');
+                        GetFilteredCategory();
+                        toastr.success(response.message);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: handleAjaxError
+            });
+        });
+
+        $('#multiDeleteBtn').click(function () {
+            if (deleteItemIds.length == 0) {
+                toastr.warning("Select at Least One Item");
+            } else {
+                $('#deleteMultipleItemModal').modal('show');
+            }
+        });
+
+
+
+        $('.modal').on('hidden.bs.modal', function () {
+            $(this).removeData('bs.modal');
         });
     });
-
-    $(document).on('click', '.delete-category', function () {
-        categoryIdToDelete = $(this).data("id");
-        $('#deleteCategoryModal').modal('show');
-    });
-
-    $('#confirmDeleteCategoryItemBtn').click(function () {
-        $.ajax({
-            type: "POST",
-            url: '/Menu/DeleteCategory',
-            data: { id: categoryIdToDelete },
-            success: function (response) {
-                if (response.success) {
-                    $('#deleteCategoryModal').modal('hide');
-                    GetFilteredCategory();
-                    toastr.success(response.message);
-                } else {
-                    toastr.error(response.message);
-                }
-            },
-            error: handleAjaxError
-        });
-    });
-
-    $('#multiDeleteBtn').click(function () {
-        if (deleteItemIds.length == 0) {
-            toastr.warning("Select at Least One Item");
-        } else {
-            $('#deleteMultipleItemModal').modal('show');
-        }
-    });
-
-    
-
-     $('.modal').on('hidden.bs.modal', function () {
-        $(this).removeData('bs.modal');
-    });
-});
 </script>

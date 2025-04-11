@@ -463,7 +463,7 @@
                     $('#editModifierGroupModal #modifierDesc').val(response.description);
                     $('#editModifierGroupModal').data("group-id", response.id);
 
-                    selectedEditModifiers = response.existingModifiers.map(mod => {
+                    selectedEditModifiers = response && response.existingModifiers.map(mod => {
                         return { id: mod.id, name: mod.name };
                     });
 

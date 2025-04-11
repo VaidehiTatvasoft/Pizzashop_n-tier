@@ -96,6 +96,10 @@
 @section Scripts {
   <script>
     $(document).ready(function () {
+      @* $(document).on('hidden.bs.modal', '#EditCategoryModal', function () {
+        $(this).find('form')[0].reset();
+        $(this).remove();
+      }); *@
       var successMessage = '@TempData["SuccessMessage"]';
       var errorMessage = '@TempData["ErrorMessage"]';
 

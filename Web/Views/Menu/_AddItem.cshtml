@@ -229,7 +229,7 @@
                 Minselectionrequired: minValue,
                 Maxselectionrequired: maxValue
             });
-        });
+        })
 
         formData.append("ItemModifiers", JSON.stringify(modifiers));
         $.ajax({
@@ -244,20 +244,13 @@
                     $("#addItemModal").remove(); 
                 $('.modal-backdrop').remove();
                     toastr.success(response.message)
-                    @* toastr.success(response.message);
-                    $("#addItemModal").modal("hide");
-                    location.reload(); *@
                 } else {
-                    if (response.isValid == false) {
-                        toastr.warning(response.message);
-                    } else {
                         toastr.error(response.message);
                     }
-                }
             },
-                error: handleAjaxError;
-        });
-    });
+                error: handleAjaxError
+        })
+    })
 
     function GetFilteredItems() {
         var SearchString = $("#searchString").val();
